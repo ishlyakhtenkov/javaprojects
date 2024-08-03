@@ -1,0 +1,10 @@
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+logs/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr

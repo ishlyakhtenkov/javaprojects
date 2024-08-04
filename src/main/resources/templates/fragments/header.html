@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div th:fragment="header">
+  <header class="fixed-top">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+      <div class="container-lg container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/images/projector-logo.svg" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
+          <span class="h4 fw-bold">Projector</span>
+        </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler"
+                  aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Projects
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Project_1</a></li>
+                <li><a class="dropdown-item" href="#">Project_2</a></li>
+                <li><a class="dropdown-item" href="#">Project_3</a></li>
+                <li><a class="dropdown-item" href="#">Project_4</a></li>
+                <li><a class="dropdown-item" href="#">Project_5</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About the site</a>
+            </li>
+            <li class="nav-item d-lg-none">
+              <a class="nav-link" th:href="@{/login}">Login</a>
+            </li>
+          </ul>
+          <a th:href="@{/login}" type="button" class="btn btn-outline-secondary px-3 d-none d-lg-block">Login</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+</div>
+</html>

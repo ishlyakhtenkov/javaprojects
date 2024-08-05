@@ -5,7 +5,7 @@
   <header class="fixed-top">
     <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
       <div class="container-lg container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
           <img src="/images/projector-logo.svg" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
           <span class="h4 fw-bold">Projector</span>
         </a>
@@ -31,10 +31,10 @@
               <a class="nav-link" href="#">About the site</a>
             </li>
             <li class="nav-item d-lg-none">
-              <a class="nav-link" th:href="@{/login}">Login</a>
+              <a class="nav-link" href="/login">Login</a>
             </li>
           </ul>
-          <a th:href="@{/login}" type="button" class="btn btn-outline-secondary px-3 d-none d-lg-block">Login</a>
+          <a href="/login" type="button" class="btn btn-outline-secondary px-3 d-none d-lg-block">Login</a>
         </div>
       </div>
     </nav>

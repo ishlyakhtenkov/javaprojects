@@ -17,6 +17,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
+                                .requestMatchers("/register", "/profile/forgotPassword", "/profile/resetPassword").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()
                 )

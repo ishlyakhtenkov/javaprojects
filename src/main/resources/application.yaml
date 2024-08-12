@@ -94,6 +94,10 @@ register:
   token-expiration-time: 86400000
   confirm-url: https://javaprojects.ru/projector/register/confirm
 
+password-reset:
+  token-expiration-time: 86400000
+  url: https://javaprojects.ru/archivist/profile/resetPassword
+
 logging:
   charset:
     console: UTF-8

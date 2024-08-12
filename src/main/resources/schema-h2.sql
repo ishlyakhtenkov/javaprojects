@@ -34,3 +34,13 @@ CREATE TABLE register_tokens
     password    VARCHAR(128) NOT NULL
 );
 CREATE UNIQUE INDEX register_tokens_unique_email_idx ON register_tokens (email);
+
+CREATE TABLE password_reset_tokens
+(
+    id          BIGINT      DEFAULT nextval('global_seq')  PRIMARY KEY,
+    token       VARCHAR(36) NOT NULL,
+    expiry_date TIMESTAMP   NOT NULL,
+    user_id     BIGINT      NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX password_reset_tokens_unique_user_idx ON password_reset_tokens (user_id);

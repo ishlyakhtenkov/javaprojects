@@ -30,14 +30,14 @@ public class UIExceptionHandler {
     //https://stackoverflow.com/questions/45080119/spring-rest-exception-handling-fileuploadbasesizelimitexceededexception
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public @ResponseBody ProblemDetail maxUploadSizeException(HttpServletRequest req, MaxUploadSizeExceededException e) {
-        log.warn("MaxUploadSizeExceededException at request {}", req.getRequestURI());
+        log.warn("MaxUploadSizeExceededException at request {}: {}", req.getRequestURI(), e.toString());
         ErrorResponse.Builder builder = ErrorResponse.builder(e, HttpStatus.UNPROCESSABLE_ENTITY,
                 ValidationUtil.getRootCause(e).getLocalizedMessage());
         return builder.build().getBody();
     }
 
     @ExceptionHandler(LocalizedException.class)
-    public ModelAndView appExceptionHandler(HttpServletRequest req, LocalizedException e, Locale locale) {
+    public ModelAndView localizedExceptionHandler(HttpServletRequest req, LocalizedException e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
         String message = messageSource.getMessage(e.getMessageCode(), e.getMessageArgs(), locale);
         return createExceptionModelAndView(message);

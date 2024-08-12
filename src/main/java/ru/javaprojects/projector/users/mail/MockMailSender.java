@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!dev")
+@Profile("dev")
 @Slf4j
 public class MockMailSender implements MailSender{
     @Override

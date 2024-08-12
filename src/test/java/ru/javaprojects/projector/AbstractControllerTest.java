@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -28,6 +29,22 @@ public class AbstractControllerTest {
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return mockMvc.perform(builder);
+    }
+
+    protected ResultMatcher problemTitle(String title) {
+        return jsonPath("$.title").value(title);
+    }
+
+    protected ResultMatcher problemStatus(int status) {
+        return jsonPath("$.status").value(status);
+    }
+
+    protected ResultMatcher problemDetail(String detail) {
+        return jsonPath("$.detail").value(detail);
+    }
+
+    protected ResultMatcher problemInstance(String instance) {
+        return jsonPath("$.instance").value(instance);
     }
 
     public static class ExceptionResultMatchers {

@@ -86,11 +86,11 @@ class RegisterControllerTest extends AbstractControllerTest {
         assertEquals(newUserTo.getName(), createdToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newUserTo.getPassword(), createdToken.getPassword()));
         Locale locale = LocaleContextHolder.getLocale();
-        String confirmUrlLinkText = messageSource.getMessage("register.confirm-url.link-text", null, locale);
+        String confirmRegisterUrlLinkText = messageSource.getMessage("register.confirm-url-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.confirm-message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.confirm-message-text", null, locale);
         String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
-                confirmUrlLinkText);
+                confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newUserTo.getEmail(), confirmRegisterMessageSubject, emailText);
     }
@@ -110,11 +110,11 @@ class RegisterControllerTest extends AbstractControllerTest {
         assertEquals(newUserTo.getName(), updatedToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newUserTo.getPassword(), updatedToken.getPassword()));
         Locale locale = LocaleContextHolder.getLocale();
-        String confirmUrlLinkText = messageSource.getMessage("register.confirm-url.link-text", null, locale);
+        String confirmRegisterUrlLinkText = messageSource.getMessage("register.confirm-url-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.confirm-message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.confirm-message-text", null, locale);
         String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
-                confirmUrlLinkText);
+                confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newUserTo.getEmail(), confirmRegisterMessageSubject, emailText);
     }

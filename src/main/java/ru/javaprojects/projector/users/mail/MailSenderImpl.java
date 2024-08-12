@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 
 @Component
-@Profile("dev")
+@Profile("!dev")
 @RequiredArgsConstructor
 @Slf4j
 public class MailSenderImpl implements MailSender {

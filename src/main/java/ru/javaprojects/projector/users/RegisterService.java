@@ -37,7 +37,7 @@ public class RegisterService {
     public void register(UserTo userTo) {
         Assert.notNull(userTo, "userTo must not be null");
         prepareToSave(userTo);
-        RegisterToken registerToken = tokenRepository.findByEmailIgnoreCase(userTo.getEmail()).orElse(new RegisterToken());
+        RegisterToken registerToken = tokenRepository.findByEmailIgnoreCase(userTo.getEmail()).orElseGet(RegisterToken::new);
         registerToken.setToken(UUID.randomUUID().toString());
         registerToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
         registerToken.setEmail(userTo.getEmail());
@@ -49,10 +49,10 @@ public class RegisterService {
 
     private void sendEmail(String to, String token) {
         Locale locale = LocaleContextHolder.getLocale();
-        String confirmUrlLinkText = messageSource.getMessage("register.confirm-url.link-text", null, locale);
+        String confirmRegisterUrlLinkText = messageSource.getMessage("register.confirm-url-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.confirm-message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.confirm-message-text", null, locale);
-        String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, token, confirmUrlLinkText);
+        String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, token, confirmRegisterUrlLinkText);
         String text = confirmRegisterMessageText + link;
         mailSender.sendEmail(to, confirmRegisterMessageSubject, text);
     }

@@ -18,3 +18,13 @@
 .form-floating > label::after {
     background-color: transparent !important;
 }
+
+.btn-circle {
+    width: 37px;
+    height: 37px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 16px;
+    line-height: 1.428571429;
+    border-radius: 18px;
+}

@@ -196,7 +196,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .param(TOKEN, expiredRegisterToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("register.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenExpiredException.class));
+                        LocaleContextHolder.getLocale()), TokenException.class));
         assertTrue(userRepository.findByEmailIgnoreCase(expiredRegisterToken.getEmail()).isEmpty());
     }
 }

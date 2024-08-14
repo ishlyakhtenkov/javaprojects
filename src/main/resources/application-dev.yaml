@@ -28,4 +28,7 @@ register:
   confirm-url: http://localhost:8080/register/confirm
 
 password-reset:
-  url: http://localhost:8080/profile/resetPassword
+  url: http://localhost:8080/profile/reset-password
+
+change-email:
+  confirm-url: http://localhost:8080/profile/change-email

@@ -9,29 +9,31 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.PasswordResetTo;
-import ru.javaprojects.projector.users.TokenExpiredException;
+import ru.javaprojects.projector.users.TokenException;
+import ru.javaprojects.projector.users.User;
 import ru.javaprojects.projector.users.UserRepository;
+import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserDisabledException;
 
 import java.util.Objects;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
-import static ru.javaprojects.projector.CommonTestData.ACTION;
-import static ru.javaprojects.projector.CommonTestData.USER_MAIL;
+import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
 class ProfileControllerTest extends AbstractControllerTest {
-    private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/resetPassword";
+    private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/reset-password";
     private static final String RESET_PASSWORD_VIEW = "users/reset-password";
     private static final String PROFILE_VIEW = "users/profile";
+    private static final String CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
 
     @Autowired
     private MessageSource messageSource;
@@ -41,6 +43,9 @@ class ProfileControllerTest extends AbstractControllerTest {
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    private ChangeEmailTokenRepository changeEmailTokenRepository;
 
     @Test
     void showResetPasswordForm() throws Exception {
@@ -71,7 +76,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .param(TOKEN, expiredPasswordResetToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenExpiredException.class));
+                        LocaleContextHolder.getLocale()), TokenException.class));
     }
 
     @Test
@@ -125,7 +130,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .param(PASSWORD, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenExpiredException.class));
+                        LocaleContextHolder.getLocale()), TokenException.class));
         assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.
                 findById(expiredPasswordResetToken.getUser().id()).orElseThrow().getPassword()));
     }
@@ -174,5 +179,82 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .param(PASSWORD, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void showProfilePage() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROFILE_URL))
+                .andExpect(status().isOk())
+                .andExpect(view().name(PROFILE_VIEW))
+                .andExpect(model().attributeExists(USER_ATTRIBUTE))
+                .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(USER_ATTRIBUTE), user));
+    }
+
+    @Test
+    void showProfilePageUnAuthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROFILE_URL)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+    }
+
+    @Test
+    @WithUserDetails(USER2_MAIL)
+    void confirmChangeEmail() throws Exception {
+        perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
+                .param(TOKEN, changeEmailToken.getToken())
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(flash().attribute(ACTION, messageSource.getMessage("change-email.email-confirmed", null,
+                        LocaleContextHolder.getLocale())));
+        assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
+        User updated = userRepository.getExisted(USER2_ID);
+        assertEquals(changeEmailToken.getNewEmail(), updated.getEmail());
+    }
+
+    @Test
+    void confirmChangeEmailUnAuthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
+                .param(TOKEN, changeEmailToken.getToken())
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void confirmChangeEmailTokenNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
+                .param(TOKEN, UUID.randomUUID().toString())
+                .with(csrf()))
+                .andExpect(exception().message(messageSource.getMessage("change-email.token-not-found", null,
+                        LocaleContextHolder.getLocale()), NotFoundException.class));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void confirmChangeEmailTokenExpired() throws Exception {
+        perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
+                .param(TOKEN, expiredChangeEmailToken.getToken())
+                .with(csrf()))
+                .andExpect(exception().message(messageSource.getMessage("change-email.token-expired", null,
+                        LocaleContextHolder.getLocale()), TokenException.class));
+        assertNotEquals(expiredChangeEmailToken.getNewEmail(), userRepository.getExisted(ADMIN_ID).getEmail());
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void confirmChangeEmailTokenNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
+                .param(TOKEN, changeEmailToken.getToken())
+                .with(csrf()))
+                .andExpect(exception().message(messageSource.getMessage("change-email.token-not-belongs", null,
+                        LocaleContextHolder.getLocale()), TokenException.class));
+        assertNotEquals(changeEmailToken.getNewEmail(), userRepository.getExisted(ADMIN_ID).getEmail());
     }
 }

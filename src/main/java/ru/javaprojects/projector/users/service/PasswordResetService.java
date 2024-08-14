@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.PasswordResetTo;
-import ru.javaprojects.projector.users.TokenExpiredException;
+import ru.javaprojects.projector.users.TokenException;
 import ru.javaprojects.projector.users.User;
 import ru.javaprojects.projector.users.UserService;
 import ru.javaprojects.projector.users.mail.MailSender;
@@ -79,7 +79,7 @@ public class PasswordResetService {
         checkUserDisabled(passwordResetToken);
         Date expiryDate = passwordResetToken.getExpiryDate();
         if (new Date().after(expiryDate)) {
-            throw new TokenExpiredException("Password reset token=" + passwordResetToken.getToken() + " expired",
+            throw new TokenException("Password reset token=" + passwordResetToken.getToken() + " expired",
                     "password-reset.token-expired", null);
         }
         return passwordResetToken;

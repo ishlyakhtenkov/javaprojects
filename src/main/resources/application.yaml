@@ -96,7 +96,12 @@ register:
 
 password-reset:
   token-expiration-time: 86400000
-  url: https://javaprojects.ru/archivist/profile/resetPassword
+  url: https://javaprojects.ru/projector/profile/reset-password
+
+change-email:
+  token-expiration-time: 86400000
+  confirm-url: https://javaprojects.ru/projector/profile/change-email
+
 
 logging:
   charset:

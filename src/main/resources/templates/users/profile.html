@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.User"*/-->
+
+<th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+    <appMain>
+        <h2 class="text-secondary font-weight-bold"><i class="fa-solid fa-address-card me-2"></i>Profile</h2>
+        <div class="row">
+            <div class="col-12 col-md-6 col-xl-5">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div class="mb-2 mb-sm-0">
+                            <div class="float-end">
+                                <a type="button" class="text-secondary" title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item" data-bs-toggle="modal"
+                                           data-bs-target="#editProfileModal">Edit profile</button></li>
+                                    <li><button class="dropdown-item" data-bs-toggle="modal"
+                                           data-bs-target="#changeEmailModal">Change email</button></li>
+                                    <li><button class="dropdown-item" data-bs-toggle="modal"
+                                           data-bs-target="#changePasswordModal">Change password</button></li>
+                                </ul>
+                            </div>
+                            <h4 th:text="${user.name}" id="userName">Name</h4>
+                            <div th:text="'Email: ' + ${user.email}">Email</div>
+                            <div sec:authorize="hasRole('ADMIN')"
+                                 th:text="'Roles: ' + ${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}">
+                                Roles
+                            </div>
+                            <div th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}">Registered</div>
+                        </div>
+                        <div class="btn-toolbar mt-2 mb-1 float-end">
+                            <form th:action="@{/logout}" method="post">
+                                <button class="btn btn-sm btn-secondary ms-2" type="submit">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit profile modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Edit profile</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form onsubmit="return false;">
+                        <div class="modal-body">
+                            <div class="mb-4 mt-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="nameInput" required
+                                               placeholder="Name" />
+                                        <label for="nameInput" class="text-muted">Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success" onclick="updateProfile()">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change password modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Change password</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form onsubmit="return false;">
+                        <div class="modal-body">
+                            <div class="mb-4 mt-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="password" required
+                                               placeholder="New password" />
+                                        <label for="password" class="text-muted">New password</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="repeatPassword" required
+                                               placeholder="Repeat password" />
+                                        <label for="repeatPassword" class="text-muted">Repeat password</label>
+                                    </div>
+                                </div>
+                                <span>
+                                    <ul id="passwordMatchError" class="text-danger text-start"></ul>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning" onclick="changePassword()" id="confirmBtn">Change</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change email modal -->
+        <div class="modal fade" id="changeEmailModal" tabindex="-1" aria-labelledby="changeEmailModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center">Change email</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="forgotPasswordForm" onsubmit="return false;">
+                        <div class="modal-body text-left">
+                            <p>Change your email in three easy steps!</p>
+                            <ol class="list-unstyled">
+                                <li><span class="text-primary text-medium">1. </span>Enter your new email address below</li>
+                                <li><span class="text-primary text-medium">2. </span>Our system will send you a temporary link</li>
+                                <li><span class="text-primary text-medium">3. </span>Use the link to change your email</li>
+                            </ol>
+                            <div class="mb-4 mt-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="email" required placeholder="E-mail" />
+                                        <label for="email" class="text-muted">E-mail</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-warning" onclick="changeEmail()">Change email</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </appMain>
+
+    <ownScript>
+        <script src="/js/common.js?v=1"></script>
+        <script src="/js/profile.js?v=1"></script>
+        <script src="/js/check-passwords-match.js?v=1"></script>
+    </ownScript>
+</th:block>

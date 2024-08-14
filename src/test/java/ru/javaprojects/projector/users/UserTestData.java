@@ -3,6 +3,7 @@ package ru.javaprojects.projector.users;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
+import ru.javaprojects.projector.users.model.ChangeEmailToken;
 import ru.javaprojects.projector.users.model.PasswordResetToken;
 
 import java.text.ParseException;
@@ -11,8 +12,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-import static ru.javaprojects.projector.CommonTestData.DISABLED_USER_MAIL;
-import static ru.javaprojects.projector.CommonTestData.USER_MAIL;
+import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.users.Role.USER;
 
 public class UserTestData {
@@ -25,23 +25,33 @@ public class UserTestData {
     public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
 
+    public static final String USER_ATTRIBUTE = "user";
     public static final String USER_TO_ATTRIBUTE = "userTo";
     public static final String PASSWORD = "password";
     public static final String NAME = "name";
     public static final String EMAIL = "email";
+    public static final String NEW_EMAIL_PARAM = "newEmail";
     public static final String TOKEN = "token";
     public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();
     public static final String NEW_PASSWORD = "newPassword";
+    public static final String NEW_EMAIL = "newEmail@gmail.com";
+    public static final String NEW_EMAIL_SOMEONE_HAS_TOKEN = "someNew@gmail.com";
+    public static final String UPDATED_NAME = "someNewName";
     public static final String INVALID_PASSWORD = "pass";
+    public static final String INVALID_NAME = "<h1>name</h1>";
+    public static final String INVALID_EMAIL = "invEmail.gmail.ru";
 
     public static final long USER_ID = 100000;
     public static final long ADMIN_ID = 100001;
+    public static final long USER2_ID = 100002;
 
     public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "password", true, Set.of(Role.USER));
 
-    public static final User user2 = new User(100002L, "user2@gmail.com", "Alice Key", "somePassword", true, Set.of(Role.USER));
+    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "admin", true, Set.of(Role.USER, Role.ADMIN));
+
+    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER));
 
     public static final User disabledUser = new User(100003L, DISABLED_USER_MAIL, "Freeman25", "password", false, Set.of(Role.USER));
 
@@ -84,6 +94,12 @@ public class UserTestData {
 
     public static final PasswordResetToken disabledUserPasswordResetToken = new PasswordResetToken(100008L,
             "54ghh534-9778-4005-b81c-9131c9590c63", parseDate("2052-04-25 13:48:14"), disabledUser);
+
+    public static final ChangeEmailToken changeEmailToken = new ChangeEmailToken(100010L,
+            "1a43dx02-x23x-42xx-8r42-x6ff44275y67", parseDate("2052-01-22 06:17:32"), "someNew@gmail.com", user2);
+
+    public static final ChangeEmailToken expiredChangeEmailToken = new ChangeEmailToken(100009L,
+            "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseDate("2024-08-05 21:49:01"), "some@gmail.com", admin);
 
     public static Date parseDate(String date) {
         try {

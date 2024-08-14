@@ -11,13 +11,15 @@ public class ValidationUtil {
 
     public static void checkNew(HasId bean) {
         if (!bean.isNew()) {
-            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be new (id=null)");
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be new (id=null)",
+                    "has-id.must-be-new", new Object[]{bean.getClass().getSimpleName()});
         }
     }
 
     public static void checkNotNew(HasId bean) {
         if (bean.isNew()) {
-            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be not new (id!=null)");
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be not new (id!=null)",
+                    "has-id.must-be-not-new", new Object[]{bean.getClass().getSimpleName()});
         }
     }
 
@@ -26,7 +28,8 @@ public class ValidationUtil {
         if (bean.isNew()) {
             bean.setId(id);
         } else if (bean.id() != id) {
-            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must has id=" + id);
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must have id=" + id,
+                    "has-id.must-have-id", new Object[]{bean.getClass().getSimpleName(), id});
         }
     }
 

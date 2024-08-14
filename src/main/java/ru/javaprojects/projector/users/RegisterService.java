@@ -64,7 +64,7 @@ public class RegisterService {
                 .orElseThrow(() -> new NotFoundException("Not found register token=" + token, "register.token-not-found", null));
         Date expiryDate = registerToken.getExpiryDate();
         if (new Date().after(expiryDate)) {
-            throw new TokenExpiredException("Register token=" + registerToken.getToken() + " expired", "register.token-expired", null);
+            throw new TokenException("Register token=" + registerToken.getToken() + " expired", "register.token-expired", null);
         }
         userRepository.save(new User(null, registerToken.getEmail(), registerToken.getName(), registerToken.getPassword(),
                 true, Set.of(Role.USER)));

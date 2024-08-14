@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .addFilterAfter(userMdcFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/register/**", "/profile/forgotPassword", "/profile/resetPassword").anonymous()
+                                .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()
                 )

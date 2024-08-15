@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import ru.javaprojects.projector.common.DbConstraintMessageCodes;
 import ru.javaprojects.projector.common.error.LocalizedException;
 import ru.javaprojects.projector.common.util.validation.ValidationUtil;
+import ru.javaprojects.projector.users.AuthUser;
 
 import java.util.Locale;
 import java.util.Map;
@@ -40,14 +42,13 @@ public class UIExceptionHandler {
     public ModelAndView localizedExceptionHandler(HttpServletRequest req, LocalizedException e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
         String message = messageSource.getMessage(e.getMessageCode(), e.getMessageArgs(), locale);
-        return createExceptionModelAndView(message);
+        return createExceptionModelAndView(e, message);
     }
 
     @ExceptionHandler(Exception.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
         Throwable rootCause = ValidationUtil.getRootCause(e);
-        log.error(HttpStatus.INTERNAL_SERVER_ERROR + " at request {}: {}", req.getRequestURL(), rootCause.toString());
         String message = rootCause.getLocalizedMessage();
         if (e.getClass().isAssignableFrom(DataIntegrityViolationException.class)) {
             Optional<String> messageCode = DbConstraintMessageCodes.getMessageCode(message);
@@ -55,14 +56,18 @@ public class UIExceptionHandler {
                 message = messageSource.getMessage(messageCode.get(), null, locale);
             }
         }
-        return createExceptionModelAndView(message);
+        return createExceptionModelAndView(e, message);
     }
 
-    private ModelAndView createExceptionModelAndView(String message) {
+    private ModelAndView createExceptionModelAndView(Exception e, String message) {
+        if (e.getClass() == NoResourceFoundException.class) {
+            return new ModelAndView("error/404").addObject("authUser", AuthUser.safeGet());
+        }
         ModelAndView mav = new ModelAndView("error/exception",
                 Map.of("status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "typeMessage", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                         "message", message));
+        mav.addObject("authUser", AuthUser.safeGet());
         mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         return mav;
     }

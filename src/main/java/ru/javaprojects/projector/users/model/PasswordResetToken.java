@@ -1,15 +1,11 @@
 package ru.javaprojects.projector.users.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.users.User;
 
 import java.util.Date;
 
@@ -18,31 +14,9 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PasswordResetToken extends BaseEntity {
-
-    @NotBlank
-    @Column(name = "token", nullable = false)
-    private String token;
-
-    @NotNull
-    @Column(name = "expiry_date", nullable = false)
-    private Date expiryDate;
-
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+public class PasswordResetToken extends UserToken {
 
     public PasswordResetToken(Long id, String token, Date expiryDate, User user) {
-        super(id);
-        this.token = token;
-        this.expiryDate = expiryDate;
-        this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("PasswordResetToken[id=%d, expiryDate=%s]", id, expiryDate);
+        super(id, token, expiryDate, user);
     }
 }

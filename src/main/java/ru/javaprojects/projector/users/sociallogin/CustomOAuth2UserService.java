@@ -8,9 +8,9 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import ru.javaprojects.projector.users.Role;
-import ru.javaprojects.projector.users.User;
-import ru.javaprojects.projector.users.UserRepository;
+import ru.javaprojects.projector.users.model.Role;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.sociallogin.handler.OAuth2UserData;
 import ru.javaprojects.projector.users.sociallogin.handler.OAuth2UserDataHandler;
 

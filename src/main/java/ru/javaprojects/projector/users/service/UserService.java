@@ -1,11 +1,12 @@
-package ru.javaprojects.projector.users;
+package ru.javaprojects.projector.users.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.repository.UserRepository;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 
@@ -13,7 +14,6 @@ import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_EN
 @AllArgsConstructor
 public class UserService {
     private final UserRepository repository;
-    private final MessageSource messageSource;
 
     public User getByEmail(String email) {
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->

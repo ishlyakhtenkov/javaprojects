@@ -12,8 +12,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.users.RegisterService;
-import ru.javaprojects.projector.users.UserTo;
+import ru.javaprojects.projector.users.service.RegisterService;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
 

@@ -3,7 +3,7 @@ package ru.javaprojects.projector.users.sociallogin;
 import lombok.NonNull;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import ru.javaprojects.projector.users.AuthUser;
-import ru.javaprojects.projector.users.User;
+import ru.javaprojects.projector.users.model.User;
 
 import java.util.Map;
 

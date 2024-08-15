@@ -7,7 +7,7 @@ import ru.javaprojects.projector.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.CommonTestData.HOME_URL;
-import static ru.javaprojects.projector.CommonTestData.USER_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
 class LoginControllerTest extends AbstractControllerTest {

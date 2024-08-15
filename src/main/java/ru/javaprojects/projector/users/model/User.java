@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.users;
+package ru.javaprojects.projector.users.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

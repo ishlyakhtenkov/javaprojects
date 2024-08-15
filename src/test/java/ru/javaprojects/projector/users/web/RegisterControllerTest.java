@@ -12,8 +12,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.*;
+import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.mail.MailSender;
+import ru.javaprojects.projector.users.model.RegisterToken;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
+import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import java.util.Date;
 import java.util.Locale;
@@ -26,10 +31,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.ACTION;
-import static ru.javaprojects.projector.CommonTestData.USER_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.RegisterService.CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.UserTestData.*;
+import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.RegisterController.REGISTER_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;
@@ -86,10 +91,10 @@ class RegisterControllerTest extends AbstractControllerTest {
         assertEquals(newUserTo.getName(), createdToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newUserTo.getPassword(), createdToken.getPassword()));
         Locale locale = LocaleContextHolder.getLocale();
-        String confirmRegisterUrlLinkText = messageSource.getMessage("register.confirm-url-link-text", null, locale);
-        String confirmRegisterMessageSubject = messageSource.getMessage("register.confirm-message-subject", null, locale);
-        String confirmRegisterMessageText = messageSource.getMessage("register.confirm-message-text", null, locale);
-        String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
+        String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
+        String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
+        String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
+        String link = String.format(LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newUserTo.getEmail(), confirmRegisterMessageSubject, emailText);
@@ -110,10 +115,10 @@ class RegisterControllerTest extends AbstractControllerTest {
         assertEquals(newUserTo.getName(), updatedToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newUserTo.getPassword(), updatedToken.getPassword()));
         Locale locale = LocaleContextHolder.getLocale();
-        String confirmRegisterUrlLinkText = messageSource.getMessage("register.confirm-url-link-text", null, locale);
-        String confirmRegisterMessageSubject = messageSource.getMessage("register.confirm-message-subject", null, locale);
-        String confirmRegisterMessageText = messageSource.getMessage("register.confirm-message-text", null, locale);
-        String link = String.format(CONFIRM_REGISTER_MESSAGE_LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
+        String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
+        String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
+        String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
+        String link = String.format(LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newUserTo.getEmail(), confirmRegisterMessageSubject, emailText);
@@ -135,30 +140,30 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .params(newToInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(USER_TO_ATTRIBUTE, EMAIL, NAME, PASSWORD))
+                .andExpect(model().attributeHasFieldErrors(USER_TO_ATTRIBUTE, EMAIL_PARAM, NAME_PARAM, PASSWORD_PARAM))
                 .andExpect(view().name(REGISTER_PAGE_VIEW));
-        assertTrue(tokenRepository.findByEmailIgnoreCase(newToInvalidParams.get(EMAIL).get(0)).isEmpty());
+        assertTrue(tokenRepository.findByEmailIgnoreCase(newToInvalidParams.get(EMAIL_PARAM).get(0)).isEmpty());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     void registerDuplicateEmail() throws Exception {
         MultiValueMap<String, String> newToParams = getNewToParams();
-        newToParams.set(EMAIL, USER_MAIL);
+        newToParams.set(EMAIL_PARAM, USER_MAIL);
         perform(MockMvcRequestBuilders.post(REGISTER_URL)
                 .params(newToParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrorCode(USER_TO_ATTRIBUTE, EMAIL, DUPLICATE_ERROR_CODE))
+                .andExpect(model().attributeHasFieldErrorCode(USER_TO_ATTRIBUTE, EMAIL_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(REGISTER_PAGE_VIEW));
-        assertTrue(tokenRepository.findByEmailIgnoreCase(newToParams.get(EMAIL).get(0)).isEmpty());
+        assertTrue(tokenRepository.findByEmailIgnoreCase(newToParams.get(EMAIL_PARAM).get(0)).isEmpty());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     void confirmRegister() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
-                .param(TOKEN, registerToken.getToken())
+                .param(TOKEN_PARAM, registerToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
@@ -176,7 +181,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     void confirmRegisterAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.post(CONFIRM_REGISTER_URL)
-                .param(TOKEN, registerToken.getToken())
+                .param(TOKEN_PARAM, registerToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -184,7 +189,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     @Test
     void confirmRegisterTokenNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
-                .param(TOKEN, UUID.randomUUID().toString())
+                .param(TOKEN_PARAM, UUID.randomUUID().toString())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("register.token-not-found", null,
                         LocaleContextHolder.getLocale()), NotFoundException.class));
@@ -193,7 +198,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     @Test
     void confirmRegisterTokenExpired() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
-                .param(TOKEN, expiredRegisterToken.getToken())
+                .param(TOKEN_PARAM, expiredRegisterToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("register.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));

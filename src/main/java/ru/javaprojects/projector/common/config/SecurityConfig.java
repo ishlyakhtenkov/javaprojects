@@ -20,8 +20,8 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.client.RestTemplate;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.AuthUser;
-import ru.javaprojects.projector.users.User;
-import ru.javaprojects.projector.users.UserService;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.sociallogin.CustomOAuth2UserService;
 import ru.javaprojects.projector.users.sociallogin.CustomTokenResponseConverter;
 

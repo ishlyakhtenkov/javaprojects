@@ -22,7 +22,7 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.LocalizedException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.validation.ValidationUtil;
-import ru.javaprojects.projector.users.service.UserDisabledException;
+import ru.javaprojects.projector.users.error.UserDisabledException;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;

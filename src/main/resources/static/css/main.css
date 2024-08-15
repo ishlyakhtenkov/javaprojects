@@ -6,8 +6,8 @@
 .form-floating>.form-control,
 .form-floating>.form-control-plaintext,
 .form-floating>.form-select {
-    height: calc(2.8rem + 2px);
-    min-height: calc(2.8rem + 2px);
+    height: calc(2.6rem + 2px);
+    min-height: calc(2.6rem + 2px);
     line-height: 1;
 }
 
@@ -20,11 +20,15 @@
 }
 
 .btn-circle {
-    width: 37px;
-    height: 37px;
+    width: 30px;
+    height: 30px;
     text-align: center;
     padding: 6px 0;
-    font-size: 16px;
+    font-size: 12px;
     line-height: 1.428571429;
-    border-radius: 18px;
+    border-radius: 15px;
+}
+
+.modal-md {
+    max-width: 400px;
 }

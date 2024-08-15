@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <th:block th:fragment="page">
+<!--    <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">-->
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +23,7 @@
     <div class="app">
         <div th:replace="~{fragments/header :: header}"></div>
 
-        <main class="app-main pt-5 mt-5 px-xl-5 min-vh-100">
+        <main class="app-main py-3 px-xl-5 min-vh-100" style="margin-top: 62px;">
             <div class="container-lg container-fluid">
                 <th:block th:insert="${appMain}"/>
             </div>
@@ -39,5 +40,6 @@
 <!--    <script th:inline="javascript">-->
 <!--        const userRoles = [[${authUser != null ? authUser.user.roles : ''}]];-->
 <!--    </script>-->
+<!--    </html>-->
 </th:block>
 </html>

@@ -8,13 +8,13 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.PasswordResetTo;
-import ru.javaprojects.projector.users.TokenException;
-import ru.javaprojects.projector.users.User;
-import ru.javaprojects.projector.users.UserRepository;
+import ru.javaprojects.projector.users.to.PasswordResetTo;
+import ru.javaprojects.projector.users.error.TokenException;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
-import ru.javaprojects.projector.users.service.UserDisabledException;
+import ru.javaprojects.projector.users.error.UserDisabledException;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -50,7 +50,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void showResetPasswordForm() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, passwordResetToken.getToken())
+                .param(TOKEN_PARAM, passwordResetToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PASSWORD_RESET_TO_ATTRIBUTE))
@@ -64,7 +64,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void showResetPasswordFormTokenNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, NOT_EXISTING_TOKEN)
+                .param(TOKEN_PARAM, NOT_EXISTING_TOKEN)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-not-found", null,
                         LocaleContextHolder.getLocale()), NotFoundException.class));
@@ -73,7 +73,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void showResetPasswordFormTokenExpired() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, expiredPasswordResetToken.getToken())
+                .param(TOKEN_PARAM, expiredPasswordResetToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
@@ -83,7 +83,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     void showResetPasswordFormAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, passwordResetToken.getToken())
+                .param(TOKEN_PARAM, passwordResetToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -91,7 +91,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void showResetPasswordFormUserDisabled() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, disabledUserPasswordResetToken.getToken())
+                .param(TOKEN_PARAM, disabledUserPasswordResetToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("user.disabled",
                         new Object[]{disabledUserPasswordResetToken.getUser().getEmail()},
@@ -101,8 +101,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPassword() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, passwordResetToken.getToken())
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(TOKEN_PARAM, passwordResetToken.getToken())
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
@@ -116,8 +116,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPasswordTokenNotFound() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, NOT_EXISTING_TOKEN)
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(TOKEN_PARAM, NOT_EXISTING_TOKEN)
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-not-found", null,
                         LocaleContextHolder.getLocale()), NotFoundException.class));
@@ -126,8 +126,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPasswordTokenExpired() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, expiredPasswordResetToken.getToken())
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(TOKEN_PARAM, expiredPasswordResetToken.getToken())
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
@@ -138,8 +138,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPasswordUserDisabled() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, disabledUserPasswordResetToken.getToken())
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(TOKEN_PARAM, disabledUserPasswordResetToken.getToken())
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("user.disabled",
                         new Object[]{disabledUserPasswordResetToken.getUser().getEmail()},
@@ -151,11 +151,11 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPasswordInvalid() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, passwordResetToken.getToken())
-                .param(PASSWORD, INVALID_PASSWORD)
+                .param(TOKEN_PARAM, passwordResetToken.getToken())
+                .param(PASSWORD_PARAM, INVALID_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(PASSWORD_RESET_TO_ATTRIBUTE, PASSWORD))
+                .andExpect(model().attributeHasFieldErrors(PASSWORD_RESET_TO_ATTRIBUTE, PASSWORD_PARAM))
                 .andExpect(view().name(RESET_PASSWORD_VIEW));
         assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userRepository.findById(passwordResetToken.getUser().id())
                 .orElseThrow().getPassword()));
@@ -164,10 +164,10 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void resetPasswordWithoutTokenParam() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_RESET_PASSWORD_URL)
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(PASSWORD_RESET_TO_ATTRIBUTE, TOKEN))
+                .andExpect(model().attributeHasFieldErrors(PASSWORD_RESET_TO_ATTRIBUTE, TOKEN_PARAM))
                 .andExpect(view().name(RESET_PASSWORD_VIEW));
     }
 
@@ -175,8 +175,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     void resetPasswordAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
-                .param(TOKEN, passwordResetToken.getToken())
-                .param(PASSWORD, NEW_PASSWORD)
+                .param(TOKEN_PARAM, passwordResetToken.getToken())
+                .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -205,7 +205,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER2_MAIL)
     void confirmChangeEmail() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
-                .param(TOKEN, changeEmailToken.getToken())
+                .param(TOKEN_PARAM, changeEmailToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
@@ -219,7 +219,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void confirmChangeEmailUnAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
-                .param(TOKEN, changeEmailToken.getToken())
+                .param(TOKEN_PARAM, changeEmailToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
@@ -230,7 +230,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     void confirmChangeEmailTokenNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
-                .param(TOKEN, UUID.randomUUID().toString())
+                .param(TOKEN_PARAM, UUID.randomUUID().toString())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-not-found", null,
                         LocaleContextHolder.getLocale()), NotFoundException.class));
@@ -240,7 +240,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(ADMIN_MAIL)
     void confirmChangeEmailTokenExpired() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
-                .param(TOKEN, expiredChangeEmailToken.getToken())
+                .param(TOKEN_PARAM, expiredChangeEmailToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
@@ -251,7 +251,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithUserDetails(ADMIN_MAIL)
     void confirmChangeEmailTokenNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_CHANGE_EMAIL_URL)
-                .param(TOKEN, changeEmailToken.getToken())
+                .param(TOKEN_PARAM, changeEmailToken.getToken())
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-not-belongs", null,
                         LocaleContextHolder.getLocale()), TokenException.class));

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import ru.javaprojects.projector.common.HasIdAndEmail;
-import ru.javaprojects.projector.users.UserRepository;
+import ru.javaprojects.projector.users.repository.UserRepository;
 
 import java.util.Objects;
 

@@ -8,7 +8,7 @@ import ru.javaprojects.projector.users.model.PasswordResetToken;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-public interface PasswordResetTokenRepository extends BaseRepository<PasswordResetToken> {
+public interface PasswordResetTokenRepository extends TokenRepository<PasswordResetToken> {
 
     @Query("SELECT p FROM PasswordResetToken p LEFT JOIN FETCH p.user WHERE UPPER(p.user.email) = UPPER(:email)")
     Optional<PasswordResetToken> findByUserEmailIgnoreCase(String email);

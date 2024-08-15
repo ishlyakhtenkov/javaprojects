@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.users.AuthUser;
-import ru.javaprojects.projector.users.UserService;
+import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.service.ChangeEmailService;
 import ru.javaprojects.projector.users.service.PasswordResetService;
 

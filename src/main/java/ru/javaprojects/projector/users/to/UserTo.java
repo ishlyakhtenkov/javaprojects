@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.users;
+package ru.javaprojects.projector.users.to;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

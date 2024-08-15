@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.javaprojects.projector.users.model.User;
 
 import static java.util.Objects.requireNonNull;
 

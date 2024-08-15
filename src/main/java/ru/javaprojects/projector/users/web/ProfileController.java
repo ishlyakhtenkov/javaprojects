@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.users.AuthUser;
-import ru.javaprojects.projector.users.PasswordResetTo;
-import ru.javaprojects.projector.users.UserService;
+import ru.javaprojects.projector.users.to.PasswordResetTo;
+import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.service.ChangeEmailService;
 import ru.javaprojects.projector.users.service.PasswordResetService;
 

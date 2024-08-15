@@ -3,11 +3,13 @@ package ru.javaprojects.projector.users;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import java.util.Set;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.Role.USER;
+import static ru.javaprojects.projector.users.model.Role.USER;
 
 @UtilityClass
 public class UserUtil {

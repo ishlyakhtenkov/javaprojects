@@ -13,7 +13,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.users.service.RegisterService;
-import ru.javaprojects.projector.users.to.UserTo;
+import ru.javaprojects.projector.users.to.RegisterTo;
 
 import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
 
@@ -28,7 +28,7 @@ public class RegisterController {
     private final UniqueEmailValidator emailValidator;
     private final MessageSource messageSource;
 
-    @InitBinder("userTo")
+    @InitBinder("registerTo")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(emailValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
@@ -37,18 +37,18 @@ public class RegisterController {
     @GetMapping
     public String showRegisterPage(Model model) {
         log.info("show register page");
-        model.addAttribute("userTo", new UserTo());
+        model.addAttribute("registerTo", new RegisterTo());
         return "users/register";
     }
 
     @PostMapping
-    public String register(@Valid UserTo userTo, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String register(@Valid RegisterTo registerTo, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "users/register";
         }
-        log.info("register {}", userTo);
-        checkNew(userTo);
-        service.register(userTo);
+        log.info("register {}", registerTo);
+        checkNew(registerTo);
+        service.register(registerTo);
         redirectAttributes.addFlashAttribute("action", messageSource.getMessage("register.check-your-email", null,
                 LocaleContextHolder.getLocale()));
         return "redirect:/login";

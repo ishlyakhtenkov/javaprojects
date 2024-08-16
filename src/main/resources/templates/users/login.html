@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--/*@thymesVar id="action" type="java.lang.String"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Sign in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
@@ -61,25 +62,25 @@
                         <p class="mt-1 mb-3">
                             Sign in with social networks
                         </p>
-                        <a href="/oauth2/authorization/google" type="button" class="btn btn-secondary me-3" title="Google">
+                        <a th:href="@{/oauth2/authorization/google}" type="button" class="btn btn-secondary me-3" title="Google">
                             <i class="fa-brands fa-google"></i>
                         </a>
-                        <a href="/oauth2/authorization/vk" type="button" class="btn btn-primary me-3" title="VK"
+                        <a th:href="@{/oauth2/authorization/vk}" type="button" class="btn btn-primary me-3" title="VK"
                            style="padding-left: 13px; padding-right: 13px;">
                             <i class="fa-brands fa-vk"></i>
                         </a>
-                        <a href="/oauth2/authorization/yandex" type="button" class="btn btn-danger me-3" title="Yandex"
+                        <a th:href="@{/oauth2/authorization/yandex}" type="button" class="btn btn-danger me-3" title="Yandex"
                            style="padding-left: 16px; padding-right: 16px;">
                             <i class="fa-brands fa-yandex"></i>
                         </a>
-                        <a href="/oauth2/authorization/github" type="button" class="btn btn-dark me-3" title="GitHub">
+                        <a th:href="@{/oauth2/authorization/github}" type="button" class="btn btn-dark me-3" title="GitHub">
                             <i class="fa-brands fa-github"></i>
                         </a>
-                        <a href="/oauth2/authorization/gitlab" type="button" class="btn btn-warning" title="GitLab">
+                        <a th:href="@{/oauth2/authorization/gitlab}" type="button" class="btn btn-warning" title="GitLab">
                             <i class="fa-brands fa-gitlab"></i>
                         </a>
                         <p class="mt-3 mb-0" style="font-size:0.8em">
-                            New here? <a href="/register">Create an account</a>
+                            New here? <a th:href="@{/register}">Create an account</a>
                         </p>
                     </div>
                 </div>

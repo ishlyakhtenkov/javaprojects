@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.users.model.User;
-import ru.javaprojects.projector.users.to.UserTo;
+import ru.javaprojects.projector.users.to.RegisterTo;
 
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public class UserUtil {
         return user;
     }
 
-    public static User createNewFromTo(UserTo userTo) {
-        return new User(null, userTo.getEmail(), userTo.getName(), userTo.getPassword(), false, Set.of(USER));
+    public static User createNewFromTo(RegisterTo registerTo) {
+        return new User(null, registerTo.getEmail(), registerTo.getName(), registerTo.getPassword(), false, Set.of(USER));
     }
 }

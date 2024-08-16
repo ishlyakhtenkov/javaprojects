@@ -20,6 +20,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.client.RestTemplate;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.users.model.Role;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.sociallogin.CustomOAuth2UserService;
@@ -60,6 +61,7 @@ public class SecurityConfig {
                 .addFilterAfter(userMdcFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
+                                .requestMatchers("/users/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()

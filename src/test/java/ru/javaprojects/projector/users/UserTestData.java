@@ -5,7 +5,7 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.users.model.*;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
-import ru.javaprojects.projector.users.to.UserTo;
+import ru.javaprojects.projector.users.to.RegisterTo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,14 +19,14 @@ public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(User.class, "password", "registered");
 
-    public static final MatcherFactory.Matcher<UserTo> USER_TO_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(UserTo.class);
+    public static final MatcherFactory.Matcher<RegisterTo> USER_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(RegisterTo.class);
 
     public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
 
     public static final String USER_ATTRIBUTE = "user";
-    public static final String USER_TO_ATTRIBUTE = "userTo";
+    public static final String REGISTER_TO_ATTRIBUTE = "registerTo";
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
 
     public static final String PASSWORD_PARAM = "password";
@@ -64,16 +64,16 @@ public class UserTestData {
         return new User(null, "new@gmail.com", "newName", "newPassword", true, Set.of(USER));
     }
 
-    public static UserTo getNewTo() {
-        return new UserTo(null, "new@gmail.com", "newName", "newPassword");
+    public static RegisterTo getNewTo() {
+        return new RegisterTo(null, "new@gmail.com", "newName", "newPassword");
     }
 
     public static MultiValueMap<String, String> getNewToParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        UserTo newUserTo = getNewTo();
-        params.add(EMAIL_PARAM, newUserTo.getEmail());
-        params.add(NAME_PARAM, newUserTo.getName());
-        params.add(PASSWORD_PARAM, newUserTo.getPassword());
+        RegisterTo newRegisterTo = getNewTo();
+        params.add(EMAIL_PARAM, newRegisterTo.getEmail());
+        params.add(NAME_PARAM, newRegisterTo.getName());
+        params.add(PASSWORD_PARAM, newRegisterTo.getPassword());
         return params;
     }
 

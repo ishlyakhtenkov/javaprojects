@@ -1,6 +1,8 @@
 package ru.javaprojects.projector.users.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -36,5 +38,13 @@ public class UserService {
         Assert.notNull(name, "name must not be null");
         User user = get(id);
         user.setName(name);
+    }
+
+    public Page<User> getAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public Page<User> getAll(Pageable pageable, String keyword) {
+        return repository.findAllByKeyword(keyword, pageable);
     }
 }

@@ -14,7 +14,7 @@ import ru.javaprojects.projector.common.util.validation.NoHtml;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class UserTo extends BaseTo implements HasIdAndEmail, HasEmailAndPassword {
+public class RegisterTo extends BaseTo implements HasIdAndEmail, HasEmailAndPassword {
 
     @Email
     @NotBlank
@@ -31,7 +31,7 @@ public class UserTo extends BaseTo implements HasIdAndEmail, HasEmailAndPassword
     @Size(min = 5, max = 32)
     private String password;
 
-    public UserTo(Long id, String email, String name, String password) {
+    public RegisterTo(Long id, String email, String name, String password) {
         super(id);
         this.email = email;
         this.name = name;
@@ -40,6 +40,6 @@ public class UserTo extends BaseTo implements HasIdAndEmail, HasEmailAndPassword
 
     @Override
     public String toString() {
-        return String.format("UserTo[id=%d, email=%s]", id, email);
+        return String.format("RegisterTo[id=%d, email=%s]", id, email);
     }
 }

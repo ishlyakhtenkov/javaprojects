@@ -18,8 +18,8 @@ public class ValidationUtil {
 
     public static void checkNotNew(HasId bean) {
         if (bean.isNew()) {
-            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must be not new (id!=null)",
-                    "has-id.must-be-not-new", new Object[]{bean.getClass().getSimpleName()});
+            throw new IllegalRequestDataException(bean.getClass().getSimpleName() + " must not be new (id!=null)",
+                    "has-id.must-not-be-new", new Object[]{bean.getClass().getSimpleName()});
         }
     }
 

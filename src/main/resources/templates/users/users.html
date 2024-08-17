@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sd="http://www.thymeleaf.org/spring-data"
-      th:with="activeMenuItem='Users'" lang="en">
+      xmlns:sd="http://www.thymeleaf.org/spring-data" lang="en">
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 <!--/*@thymesVar id="users" type="java.util.List"*/-->
@@ -51,8 +50,8 @@
                     <td class="text-center">
                         <div class="form-switch">
                             <input type="checkbox" role="switch" class="form-check-input" style="cursor: pointer;" th:checked="${user.enabled}"
-                                   th:data-name="${user.name}"
-                                   th:onclick="|enableUser(this, '${user.id}')|" th:title="${(user.enabled ? 'Disable' : 'Enable') + ' user'}" />
+                                   th:data-name="${user.name}" th:title="${(user.enabled ? 'Disable' : 'Enable') + ' user'}"
+                                   th:onclick="|enableUser(this, '${user.id}')|" />
                         </div>
                     </td>
                     <td class="text-center" th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
@@ -69,8 +68,9 @@
                         </a>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete user"
                            data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this user?"
+                           th:data-name="${user.name}"
                            th:attr="data-bs-content='<button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                                                                     '<button class=\'btn btn-sm btn-danger\' onclick=\'deleteUser(' + ${user.id} + ')\'>Delete</button>'">
+                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${user.name} + '\' onclick=\'deleteUser(this, ' + ${user.id} + ')\'>Delete</button>'">
                             <i class="fa-solid fa-user-xmark"></i>
                         </a>
                     </td>
@@ -98,24 +98,6 @@
         <div th:if="${!users.isEmpty()}" class="row">
             <div class="col text-center text-md-end">
                 Show <span sd:page-size-selector="javascript"></span> entries
-            </div>
-        </div>
-
-        <!-- Delete modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteModalLabel">Are you sure want to delete user?</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <input type="hidden" name="userId" id="deleteModalUserId" value=""/>
-                    <input type="hidden" name="userName" id="deleteModalUserName" value=""/>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close">Cancel</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -160,6 +142,9 @@
     </appMain>
 
     <ownScript>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+        </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/table-content.js?v=1"></script>
         <script src="/js/users.js?v=1"></script>

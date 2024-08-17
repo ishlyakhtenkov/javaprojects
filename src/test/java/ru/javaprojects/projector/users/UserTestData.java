@@ -6,12 +6,14 @@ import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.users.model.*;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
 import ru.javaprojects.projector.users.to.RegisterTo;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.users.model.Role.USER;
 
@@ -19,8 +21,11 @@ public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(User.class, "password", "registered");
 
-    public static final MatcherFactory.Matcher<RegisterTo> USER_TO_MATCHER =
+    public static final MatcherFactory.Matcher<RegisterTo> REGISTER_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(RegisterTo.class);
+
+    public static final MatcherFactory.Matcher<UserTo> USER_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(UserTo.class);
 
     public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
@@ -28,14 +33,21 @@ public class UserTestData {
     public static final String USER_ATTRIBUTE = "user";
     public static final String REGISTER_TO_ATTRIBUTE = "registerTo";
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
+    public static final String USERS_ATTRIBUTE = "users";
+    public static final String USER_TO_ATTRIBUTE = "userTo";
 
     public static final String PASSWORD_PARAM = "password";
     public static final String NAME_PARAM = "name";
     public static final String EMAIL_PARAM = "email";
     public static final String NEW_EMAIL_PARAM = "newEmail";
     public static final String TOKEN_PARAM = "token";
-    public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
+    public static final String KEYWORD_PARAM = "keyword";
+    public static final String ROLES_PARAM = "roles";
+    public static final String ENABLED_PARAM = "enabled";
+    public static final String ID_PARAM = "id";
 
+    public static final long NOT_EXISTING_ID = 100;
+    public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();
     public static final String NEW_PASSWORD = "newPassword";
     public static final String NEW_EMAIL = "newEmail@gmail.com";
@@ -64,20 +76,24 @@ public class UserTestData {
         return new User(null, "new@gmail.com", "newName", "newPassword", true, Set.of(USER));
     }
 
-    public static RegisterTo getNewTo() {
+    public static User getUpdated() {
+        return new User(USER_ID, "updated@gmail.com", "updatedName", user.getPassword(), user.isEnabled(), Set.of(Role.USER, Role.ADMIN));
+    }
+
+    public static RegisterTo getNewRegisterTo() {
         return new RegisterTo(null, "new@gmail.com", "newName", "newPassword");
     }
 
-    public static MultiValueMap<String, String> getNewToParams() {
+    public static MultiValueMap<String, String> getRegisterToParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        RegisterTo newRegisterTo = getNewTo();
+        RegisterTo newRegisterTo = getNewRegisterTo();
         params.add(EMAIL_PARAM, newRegisterTo.getEmail());
         params.add(NAME_PARAM, newRegisterTo.getName());
         params.add(PASSWORD_PARAM, newRegisterTo.getPassword());
         return params;
     }
 
-    public static MultiValueMap<String, String> getNewToInvalidParams() {
+    public static MultiValueMap<String, String> getRegisterToInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add(EMAIL_PARAM, "1234abc");
         params.add(NAME_PARAM, "<p>html name</p>");
@@ -112,5 +128,52 @@ public class UserTestData {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public static MultiValueMap<String, String> getPageableParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "0");
+        params.add("size", "2");
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getNewUserParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        User newUser = getNew();
+        params.add(NAME_PARAM, newUser.getName());
+        params.add(EMAIL_PARAM, newUser.getEmail());
+        params.add(ROLES_PARAM, newUser.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
+        params.add(PASSWORD_PARAM, newUser.getPassword());
+        params.add(ENABLED_PARAM, String.valueOf(newUser.isEnabled()));
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getNewUserInvalidParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add(NAME_PARAM, INVALID_NAME);
+        params.add(EMAIL_PARAM, INVALID_EMAIL);
+        params.add(ROLES_PARAM, "");
+        params.add(PASSWORD_PARAM, INVALID_PASSWORD);
+        params.add(ENABLED_PARAM, String.valueOf(true));
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getUpdatedUserParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        User updatedUser = getUpdated();
+        params.add(ID_PARAM, String.valueOf(USER_ID));
+        params.add(NAME_PARAM, updatedUser.getName());
+        params.add(EMAIL_PARAM, updatedUser.getEmail());
+        params.add(ROLES_PARAM, updatedUser.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getUpdatedUserInvalidParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add(ID_PARAM, String.valueOf(USER_ID));
+        params.add(NAME_PARAM, INVALID_NAME);
+        params.add(EMAIL_PARAM, INVALID_EMAIL);
+        params.add(ROLES_PARAM, "");
+        return params;
     }
 }

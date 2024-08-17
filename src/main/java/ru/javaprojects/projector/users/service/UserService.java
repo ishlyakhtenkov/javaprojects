@@ -9,8 +9,11 @@ import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.users.UserUtil.prepareToSave;
+import static ru.javaprojects.projector.users.UserUtil.updateFromTo;
 
 @Service
 @AllArgsConstructor
@@ -46,5 +49,27 @@ public class UserService {
 
     public Page<User> getAll(Pageable pageable, String keyword) {
         return repository.findAllByKeyword(keyword, pageable);
+    }
+
+    public void create(User user) {
+        Assert.notNull(user, "user must not be null");
+        repository.save((User) prepareToSave(user));
+    }
+
+    @Transactional
+    public void update(UserTo userTo) {
+        Assert.notNull(userTo, "userTo must not be null");
+        User user = get(userTo.getId());
+        updateFromTo(user, userTo);
+    }
+
+    @Transactional
+    public void enable(long id, boolean enabled) {
+        User user = get(id);
+        user.setEnabled(enabled);
+    }
+
+    public void delete(long id) {
+        repository.deleteExisted(id);
     }
 }

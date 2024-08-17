@@ -4,12 +4,9 @@ import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.users.model.User;
-import ru.javaprojects.projector.users.to.RegisterTo;
-
-import java.util.Set;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.model.Role.USER;
 
 @UtilityClass
 public class UserUtil {
@@ -21,7 +18,14 @@ public class UserUtil {
         return user;
     }
 
-    public static User createNewFromTo(RegisterTo registerTo) {
-        return new User(null, registerTo.getEmail(), registerTo.getName(), registerTo.getPassword(), false, Set.of(USER));
+    public static UserTo asTo(User user) {
+        return new UserTo(user.getId(), user.getEmail(), user.getName(), user.getRoles());
+    }
+
+    public static User updateFromTo(User user, UserTo userTo) {
+        user.setEmail(userTo.getEmail());
+        user.setName(userTo.getName());
+        user.setRoles(userTo.getRoles());
+        return user;
     }
 }

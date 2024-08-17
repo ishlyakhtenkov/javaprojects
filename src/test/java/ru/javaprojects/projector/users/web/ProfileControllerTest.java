@@ -106,7 +106,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
-                .andExpect(flash().attribute(ACTION, messageSource.getMessage("password-reset.success-reset", null,
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("password-reset.success-reset", null,
                         LocaleContextHolder.getLocale())));
         assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.findById(passwordResetToken.getUser().id())
                 .orElseThrow().getPassword()));
@@ -209,7 +209,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
-                .andExpect(flash().attribute(ACTION, messageSource.getMessage("change-email.email-confirmed", null,
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("change-email.email-confirmed", null,
                         LocaleContextHolder.getLocale())));
         assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
         User updated = userRepository.getExisted(USER2_ID);

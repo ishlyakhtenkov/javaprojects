@@ -31,7 +31,7 @@ function successToast(message) {
         showHideTransition: 'slide',
         position: 'bottom-right',
         icon: 'success',
-        hideAfter : 8000
+        hideAfter : 6000
     })
 }
 
@@ -42,7 +42,7 @@ function failToast(message) {
         showHideTransition: 'slide',
         position: 'bottom-right',
         icon: 'error',
-        hideAfter : 8000
+        hideAfter : 6000
     })
 }
 

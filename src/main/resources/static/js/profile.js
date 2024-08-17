@@ -20,7 +20,7 @@ function changePassword() {
             data: "password=" + password
         }).done(function () {
             changePasswordModal.modal('toggle');
-            successToast('Password was changed');
+            successToast('Password has been changed');
         }).fail(function(data) {
             handleError(data, 'Failed to change password');
         });

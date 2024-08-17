@@ -4,10 +4,14 @@
 }
 
 .form-floating>.form-control,
-.form-floating>.form-control-plaintext,
-.form-floating>.form-select {
+.form-floating>.form-control-plaintext {
     height: calc(2.6rem + 2px);
     min-height: calc(2.6rem + 2px);
+    line-height: 1;
+}
+
+.floating-select>.form-control {
+    height: calc(3.2rem + 2px);
     line-height: 1;
 }
 

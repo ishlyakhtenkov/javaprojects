@@ -20,3 +20,50 @@ changePasswordModal.on('show.bs.modal', function(e) {
     $(e.currentTarget).find('#changePasswordModalUserName').val(userName);
     $(e.currentTarget).find('#changePasswordModalLabel').text(`Change password for ${userName}`);
 });
+
+function changePassword() {
+    let id = changePasswordModal.find('#changePasswordModalUserId').val();
+    let name = changePasswordModal.find('#changePasswordModalUserName').val();
+    let password = changePasswordModal.find('#password').val();
+    let repeatPassword = changePasswordModal.find('#repeatPassword').val();
+    if (password.length && repeatPassword.length && password === repeatPassword) {
+        $.ajax({
+            url: `users/change-password/${id}`,
+            type: "PATCH",
+            data: "password=" + password
+        }).done(function () {
+            changePasswordModal.modal('toggle');
+            successToast(`Password for ${name} has been changed`);
+        }).fail(function (data) {
+            handleError(data, `Failed to change password for ${name}`);
+        });
+    }
+}
+
+function enableUser(checkbox, id) {
+    let enabled = checkbox.checked;
+    let name = checkbox.dataset.name;
+    $.ajax({
+        url: `users/${id}`,
+        type: "PATCH",
+        data: "enabled=" + enabled
+    }).done(function() {
+        successToast(`User ${name} has been ${enabled ? 'enabled' : 'disabled'}`);
+        $(checkbox).prop('title', `${enabled ? 'Disable' : 'Enable'} user`);
+    }).fail(function(data) {
+        $(checkbox).prop('checked', !enabled);
+        handleError(data, `Failed to ${enabled ? 'enable' : 'disable'} user ${name}`);
+    });
+}
+
+function deleteUser(delButton, id) {
+    let name = delButton.dataset.name;
+    $.ajax({
+        url: `users/${id}`,
+        type: "DELETE"
+    }).done(function() {
+        deleteTableRow(id, `User ${name} has been deleted`);
+    }).fail(function(data) {
+        handleError(data, `Failed to delete user ${name}`);
+    });
+}

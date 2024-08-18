@@ -21,10 +21,16 @@
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="management">
                 Management
               </a>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu w-50">
                 <li><a class="dropdown-item" th:href="@{/users}" id="users">Users</a></li>
                 <li><a class="dropdown-item" href="#">Projects</a></li>
-                <li><a class="dropdown-item" href="#">References</a></li>
+                <li class="dropend">
+                  <a class="dropdown-item dropdown-toggle" href="#">References</a>
+                  <ul class="dropdown-menu dropdown-submenu">
+                    <li><a class="dropdown-item" href="#">Technologies</a></li>
+                    <li><a class="dropdown-item" href="#">Architectures</a></li>
+                  </ul>
+                </li>
               </ul>
             </li>
             <li class="nav-item dropdown">

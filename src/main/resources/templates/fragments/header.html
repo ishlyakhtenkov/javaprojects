@@ -39,9 +39,6 @@
                 <li><a class="dropdown-item" href="#">Project_5</a></li>
               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About the site</a>
-            </li>
             <li class="nav-item d-lg-none">
               <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/login}">Login</a>
               <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}">Profile</a>

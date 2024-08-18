@@ -70,8 +70,8 @@
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete user"
                            data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this user?"
                            th:data-name="${user.name}"
-                           th:attr="data-bs-content='<button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${user.name} + '\' onclick=\'deleteUser(this, ' + ${user.id} + ')\'>Delete</button>'">
+                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
+                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${user.name} + '\' onclick=\'deleteUser(this, ' + ${user.id} + ')\'>Delete</button></div>'">
                             <i class="fa-solid fa-user-xmark"></i>
                         </a>
                     </td>

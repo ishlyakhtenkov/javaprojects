@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS technologies;
+DROP TABLE IF EXISTS change_email_tokens;
+DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS register_tokens;
 DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS users;
@@ -55,3 +58,13 @@ CREATE TABLE change_email_tokens
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX change_email_tokens_unique_user_idx ON change_email_tokens (user_id);
+
+CREATE TABLE technologies
+(
+    id            BIGINT       DEFAULT nextval('global_seq')  PRIMARY KEY,
+    name          VARCHAR(32)  NOT NULL,
+    href          VARCHAR(512) NOT NULL,
+    img_file_name VARCHAR(128) NOT NULL,
+    img_file_link VARCHAR(512) NOT NULL
+);
+CREATE UNIQUE INDEX technologies_unique_name_idx ON technologies (name);

@@ -8,7 +8,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
       <div class="container-lg container-fluid">
         <a class="navbar-brand" th:href="@{/}">
-          <img src="/images/projector-logo.svg" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
+          <img th:src="@{/images/projector-logo.svg}" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
           <span class="h4 fw-bold">Projector</span>
         </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler"
@@ -25,9 +25,9 @@
                 <li><a class="dropdown-item" th:href="@{/users}" id="users">Users</a></li>
                 <li><a class="dropdown-item" href="#">Projects</a></li>
                 <li class="dropend">
-                  <a class="dropdown-item dropdown-toggle" href="#">References</a>
+                  <a class="dropdown-item dropdown-toggle" id="references">References</a>
                   <ul class="dropdown-menu dropdown-submenu">
-                    <li><a class="dropdown-item" href="#">Technologies</a></li>
+                    <li><a class="dropdown-item" th:href="@{/references/technologies}" id="technologies">Technologies</a></li>
                     <li><a class="dropdown-item" href="#">Architectures</a></li>
                   </ul>
                 </li>

@@ -13,7 +13,7 @@ import ru.javaprojects.projector.users.AuthUser;
 @AllArgsConstructor
 @Slf4j
 public class LoginController {
-    static final String LOGIN_URL = "/login";
+    public static final String LOGIN_URL = "/login";
 
     @GetMapping
     public String showLoginPage(@AuthenticationPrincipal AuthUser authUser) {

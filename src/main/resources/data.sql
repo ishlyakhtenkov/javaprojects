@@ -1,3 +1,6 @@
+DELETE FROM technologies;
+DELETE FROM change_email_tokens;
+DELETE FROM password_reset_tokens;
 DELETE FROM register_tokens;
 DELETE FROM user_roles;
 DELETE FROM users;
@@ -28,3 +31,8 @@ VALUES ('5a99dd09-d23f-44bb-8d41-b6ff44275x97', '2052-02-05 12:10:00', 100000),
 INSERT INTO change_email_tokens(token, expiry_date, new_email, user_id)
 VALUES ('5a49dd09-g23f-44bb-8d41-b6ff44275s56', '2024-08-05 21:49:01', 'some@gmail.com', 100001),
        ('1a43dx02-x23x-42xx-8r42-x6ff44275y67', '2052-01-22 06:17:32', 'someNew@gmail.com', 100002);
+
+INSERT INTO technologies(name, href, img_file_name, img_file_link)
+VALUES ('Java', 'https://www.oracle.com/java', 'java.svg', 'content/technologies/java/java.svg'),
+       ('Spring', 'https://spring.io', 'spring.svg', 'content/technologies/spring/spring.svg'),
+       ('Angular', 'https://angular.dev', 'angular.svg', 'content/technologies/angular/angular.svg');

@@ -2,6 +2,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 logs/
+content/
 
 ### IntelliJ IDEA ###
 .idea

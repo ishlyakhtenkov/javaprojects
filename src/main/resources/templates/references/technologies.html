@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sd="http://www.thymeleaf.org/spring-data" lang="en">
+<!--/*@thymesVar id="action" type="java.lang.String"*/-->
+<!--/*@thymesVar id="technologies" type="java.util.List"*/-->
+
+<th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'references'} })}">
+    <appMain>
+        <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
+        <!-- Search field, Add button -->
+        <div class="row row-cols-1 row-cols-sm-2">
+            <div class="col-sm-5 text-start">
+                <h2 class="text-secondary font-weight-bold"><i class="fa-solid fa-gears me-2"></i>Technologies</h2>
+            </div>
+            <div class="col-sm-7 mb-2">
+                <div class="btn-toolbar justify-content-start justify-content-sm-end">
+                    <form class="d-flex" role="search" th:action="@{/references/technologies}" method="get">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
+                            <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search technologies..." aria-label="Search">
+                        </div>
+                    </form>
+                    <a th:href="@{/references/technologies/add}" type="button" class="btn btn-primary ms-2 d-none d-md-block">Add technology</a>
+                    <a th:href="@{/references/technologies/add}" type="button" class="btn btn-primary ms-2 ms-sm-1 d-md-none">Add</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technologies table -->
+        <span th:if="${technologies.isEmpty()}">
+            <h5 class="alert alert-warning mt-2">No technologies found.</h5>
+        </span>
+
+        <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th class="col-4">Name</th>
+                    <th class="col-3 text-center">Logo</th>
+                    <th class="col-4">Official website</th>
+                    <th class="col-1 text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="technology : ${technologies}" th:id="'row-' + ${technology.id}" class="table-row">
+                    <td th:text="${technology.name}"></td>
+                    <td class="text-center">
+                        <img th:src="@{'/' + ${technology.imgFileLink}}" th:alt="${technology.imgFileName}" width="32" height="32" />
+                    </td>
+                    <td>
+                        <a th:href="@{${technology.href}}"
+                           th:utext="${technology.name + ' website<i class=''fa-solid fa-up-right-from-square ms-1''></i> '}"
+                           target="_blank">Site url</a>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{'/references/technologies/edit/' + ${technology.id}}" type="button" title="Edit technology"
+                           class="btn-link link-underline-opacity-0 link-success">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete technology"
+                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this technology?"
+                           th:data-name="${technology.name}"
+                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
+                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${technology.name} + '\' onclick=\'deleteTechnology(this, ' + ${technology.id} + ')\'>Delete</button></div>'">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${!technologies.isEmpty()}" class="row">
+            <div class="col-12 col-md-6 text-center text-md-start">
+                <div sd:pagination-summary="" id="paginationSummary">info</div>
+            </div>
+
+            <div class="col-12 col-md-6 mt-3 mt-md-0">
+                <nav>
+                    <ul class="pagination justify-content-center justify-content-md-end" sd:pagination-split="7" sd:pagination="full">
+                        <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div th:if="${!technologies.isEmpty()}" class="row">
+            <div class="col text-center text-md-end">
+                Show <span sd:page-size-selector="javascript"></span> entries
+            </div>
+        </div>
+    </appMain>
+
+    <ownScript>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+        </script>
+        <script src="/js/common.js?v=1"></script>
+        <script src="/js/table-content.js?v=1"></script>
+    </ownScript>
+</th:block>

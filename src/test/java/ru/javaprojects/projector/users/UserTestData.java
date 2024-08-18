@@ -130,13 +130,6 @@ public class UserTestData {
         }
     }
 
-    public static MultiValueMap<String, String> getPageableParams() {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("page", "0");
-        params.add("size", "2");
-        return params;
-    }
-
     public static MultiValueMap<String, String> getNewUserParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         User newUser = getNew();

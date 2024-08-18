@@ -1,5 +1,8 @@
 const deleteParam = 'delete';
 
+$(window).on('load', () => setupPopovers());
+
+// override method in common.js
 function checkActionHappened() {
     let actionSpan = $("#actionSpan");
     if (actionSpan.length) {
@@ -19,6 +22,14 @@ function checkDeleteActionHappened() {
         window.history.replaceState(null, null, url);
         fixPaginationLinks();
     }
+}
+
+function setupPopovers() {
+    let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    let popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
+        new bootstrap.Popover(popoverTriggerEl, {html : true, sanitize: false}));
+    document.querySelectorAll('[data-bs-toggle="popover"]')
+        .forEach(e => e.setAttribute('title', e.getAttribute('data-bs-original-title')));
 }
 
 function fixPaginationLinks() {

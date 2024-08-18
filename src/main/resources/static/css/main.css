@@ -10,11 +10,6 @@
     line-height: 1;
 }
 
-.floating-select>.form-control {
-    height: calc(3.2rem + 2px);
-    line-height: 1;
-}
-
 .form-floating>label {
     padding: 0.5rem 0.75rem;
 }

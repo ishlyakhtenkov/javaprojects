@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.references.TechnologyTo;
 import ru.javaprojects.projector.references.UniqueTechnologyNameValidator;
+import ru.javaprojects.projector.references.model.Priority;
 import ru.javaprojects.projector.references.model.Technology;
 import ru.javaprojects.projector.references.model.Usage;
 import ru.javaprojects.projector.references.service.TechnologyService;
@@ -70,6 +71,7 @@ public class TechnologyController {
         log.info("show technology add form");
         model.addAttribute("technologyTo", new TechnologyTo());
         model.addAttribute("usages", Usage.values());
+        model.addAttribute("priorities", Priority.values());
         return "references/technology-form";
     }
 
@@ -78,6 +80,7 @@ public class TechnologyController {
                          RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("usages", Usage.values());
+            model.addAttribute("priorities", Priority.values());
             return "references/technology-form";
         }
         log.info("create {}", technologyTo);

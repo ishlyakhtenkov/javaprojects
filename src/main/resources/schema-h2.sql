@@ -65,6 +65,7 @@ CREATE TABLE technologies
     name      VARCHAR(32)  NOT NULL,
     url       VARCHAR(512) NOT NULL,
     usage     VARCHAR(16)  NOT NULL,
+    priority  SMALLINT     NOT NULL,
     file_name VARCHAR(128) NOT NULL,
     file_link VARCHAR(512) NOT NULL
 );

@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.references.TechnologyTo;
 import ru.javaprojects.projector.references.model.Technology;
 import ru.javaprojects.projector.references.repository.TechnologyRepository;
@@ -134,6 +133,7 @@ class TechnologyControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(TECHNOLOGY_TO_ATTRIBUTE))
                 .andExpect(model().attributeExists(USAGES_ATTRIBUTE))
+                .andExpect(model().attributeExists(PRIORITIES_ATTRIBUTE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
     }
 

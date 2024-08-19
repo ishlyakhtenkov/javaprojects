@@ -46,6 +46,24 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
+                                    <span class="input-group-text">Priority</span>
+                                    <select class="form-control selectpicker border" data-style="btn-white"
+                                            id="selector2" th:field="*{priority}" title="Priority" required>
+                                        <option th:each="priority : ${priorities}"
+                                                th:value="${priority.name}"
+                                                th:text="${priority}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <span th:if="${#fields.hasErrors('priority')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('priority')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
                                     <span class="input-group-text">Usage</span>
                                         <select class="form-control selectpicker border" data-style="btn-white"
                                                 id="selector" th:field="*{usage}" title="Usage" required>

@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.users;
+package ru.javaprojects.projector.users.util;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;

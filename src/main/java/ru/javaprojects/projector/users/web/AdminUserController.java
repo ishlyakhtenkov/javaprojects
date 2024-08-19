@@ -22,7 +22,7 @@ import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
 import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNotNew;
-import static ru.javaprojects.projector.users.UserUtil.asTo;
+import static ru.javaprojects.projector.users.util.UserUtil.asTo;
 
 @Controller
 @RequestMapping(AdminUserController.USERS_URL)

@@ -12,8 +12,8 @@ import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.UserUtil.prepareToSave;
-import static ru.javaprojects.projector.users.UserUtil.updateFromTo;
+import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
+import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
 
 @Service
 @AllArgsConstructor

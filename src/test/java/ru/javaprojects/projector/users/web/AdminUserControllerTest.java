@@ -25,7 +25,7 @@ import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMa
 import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
 import static ru.javaprojects.projector.CommonTestData.getPageableParams;
 import static ru.javaprojects.projector.users.UserTestData.*;
-import static ru.javaprojects.projector.users.UserUtil.asTo;
+import static ru.javaprojects.projector.users.util.UserUtil.asTo;
 import static ru.javaprojects.projector.users.web.AdminUserController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;

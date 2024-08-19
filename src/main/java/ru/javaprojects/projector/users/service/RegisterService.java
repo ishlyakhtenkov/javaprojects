@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-import static ru.javaprojects.projector.users.UserUtil.prepareToSave;
+import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 
 @Service
 public class RegisterService extends TokenService<RegisterToken> {

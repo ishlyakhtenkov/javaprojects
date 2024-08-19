@@ -5,10 +5,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.thymeleaf.dialect.springdata.SpringDataDialect;
 import ru.javaprojects.projector.common.web.JacksonObjectMapper;
 
 @Configuration
+@EnableScheduling
 public class AppConfig {
 
     @Bean

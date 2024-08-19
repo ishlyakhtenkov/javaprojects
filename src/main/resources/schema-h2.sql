@@ -61,10 +61,11 @@ CREATE UNIQUE INDEX change_email_tokens_unique_user_idx ON change_email_tokens (
 
 CREATE TABLE technologies
 (
-    id            BIGINT       DEFAULT nextval('global_seq')  PRIMARY KEY,
-    name          VARCHAR(32)  NOT NULL,
-    href          VARCHAR(512) NOT NULL,
-    img_file_name VARCHAR(128) NOT NULL,
-    img_file_link VARCHAR(512) NOT NULL
+    id        BIGINT       DEFAULT nextval('global_seq')  PRIMARY KEY,
+    name      VARCHAR(32)  NOT NULL,
+    url       VARCHAR(512) NOT NULL,
+    usage     VARCHAR(16)  NOT NULL,
+    file_name VARCHAR(128) NOT NULL,
+    file_link VARCHAR(512) NOT NULL
 );
 CREATE UNIQUE INDEX technologies_unique_name_idx ON technologies (name);

@@ -1,10 +1,9 @@
 package ru.javaprojects.projector.references.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,26 +28,25 @@ public class Technology extends BaseEntity implements HasId {
     @NotBlank
     @NoHtml
     @Size(min = 2, max = 512)
-    @Column(name = "href", nullable = false)
-    private String href;
+    @Column(name = "url", nullable = false)
+    private String url;
 
-    @NotBlank
-    @NoHtml
-    @Size(min = 2, max = 128)
-    @Column(name = "img_file_name")
-    private String imgFileName;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "usage")
+    private Usage usage;
 
-    @NotBlank
-    @Size(min = 2, max = 512)
-    @Column(name = "img_file_link")
-    private String imgFileLink;
+    @NotNull
+    @Embedded
+    @Valid
+    private ImageFile imageFile;
 
-    public Technology(Long id, String name, String href, String imgFileName, String imgFileLink) {
+    public Technology(Long id, String name, String url, Usage usage, ImageFile imageFile) {
         super(id);
         this.name = name;
-        this.href = href;
-        this.imgFileName = imgFileName;
-        this.imgFileLink = imgFileLink;
+        this.url = url;
+        this.usage = usage;
+        this.imageFile = imageFile;
     }
 
     @Override

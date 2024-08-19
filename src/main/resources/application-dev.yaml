@@ -32,3 +32,6 @@ password-reset:
 
 change-email:
   confirm-url: http://localhost:8080/profile/change-email
+
+content-path:
+  technologies: src/main/resources/static/content/technologies/

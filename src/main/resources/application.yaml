@@ -102,6 +102,8 @@ change-email:
   token-expiration-time: 86400000
   confirm-url: https://javaprojects.ru/projector/profile/change-email
 
+content-path:
+  technologies: ./content/technologies/
 
 logging:
   charset:

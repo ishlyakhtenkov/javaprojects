@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.BaseRepository;
 import ru.javaprojects.projector.references.model.Technology;
 
+import java.util.Optional;
+
 @Transactional(readOnly = true)
 public interface TechnologyRepository extends BaseRepository<Technology> {
 
@@ -14,4 +16,6 @@ public interface TechnologyRepository extends BaseRepository<Technology> {
 
     @Query("SELECT t FROM Technology t WHERE UPPER(t.name) LIKE UPPER(CONCAT('%', :keyword, '%')) ORDER BY t.name")
     Page<Technology> findAllByKeyword(String keyword, Pageable pageable);
+
+    Optional<Technology> findByNameIgnoreCase(String name);
 }

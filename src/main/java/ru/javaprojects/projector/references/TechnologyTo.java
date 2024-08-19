@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
@@ -23,6 +24,7 @@ public class TechnologyTo extends BaseTo {
 
     @NotBlank
     @NoHtml
+    @URL
     @Size(min = 2, max = 512)
     private String url;
 
@@ -31,4 +33,12 @@ public class TechnologyTo extends BaseTo {
 
     @NotNull
     private MultipartFile imageFile;
+
+    public TechnologyTo(Long id, String name, String url, Usage usage, MultipartFile imageFile) {
+        super(id);
+        this.name = name;
+        this.url = url;
+        this.usage = usage;
+        this.imageFile = imageFile;
+    }
 }

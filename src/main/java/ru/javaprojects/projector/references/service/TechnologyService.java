@@ -39,9 +39,9 @@ public class TechnologyService {
             throw new IllegalRequestDataException("Technology image file is not present",
                     "technology.image-not-present", null);
         }
-        Technology technology = repository.saveAndFlush(createNewFromTo(technologyTo));
+        Technology technology = repository.saveAndFlush(createNewFromTo(technologyTo, contentPath));
         String fileName = technologyTo.getImageFile().getOriginalFilename();
-        FileUtil.upload(technologyTo.getImageFile(), contentPath + technologyTo.getName().toUpperCase() + "/", fileName);
+        FileUtil.upload(technologyTo.getImageFile(), contentPath + technology.getName().toLowerCase() + "/", fileName);
         return technology;
     }
 }

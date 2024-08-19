@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
@@ -27,6 +28,7 @@ public class Technology extends BaseEntity implements HasId {
 
     @NotBlank
     @NoHtml
+    @URL
     @Size(min = 2, max = 512)
     @Column(name = "url", nullable = false)
     private String url;

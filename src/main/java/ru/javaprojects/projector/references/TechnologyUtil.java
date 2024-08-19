@@ -6,9 +6,9 @@ import ru.javaprojects.projector.references.model.Technology;
 
 @UtilityClass
 public class TechnologyUtil {
-    public static Technology createNewFromTo(TechnologyTo technologyTo) {
+    public static Technology createNewFromTo(TechnologyTo technologyTo, String contentPath) {
         String filename = technologyTo.getImageFile().getOriginalFilename();
         return new Technology(null, technologyTo.getName(), technologyTo.getUrl(), technologyTo.getUsage(),
-                new ImageFile(filename, "content/technologies/" + technologyTo.getName() + "/" + filename));
+                new ImageFile(filename, contentPath + technologyTo.getName().toLowerCase() + "/" + filename));
     }
 }

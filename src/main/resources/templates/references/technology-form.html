@@ -19,12 +19,9 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">Name</i></span>
-<!--                                    <div class="form-floating">-->
                                         <input type="text" id="nameInput" th:field="*{name}"
                                                th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                                required placeholder="Name" />
-<!--                                        <label for="nameInput" class="text-muted">Name</label>-->
-<!--                                    </div>-->
                                 </div>
                                 <span th:if="${#fields.hasErrors('name')}">
                                         <ul>
@@ -36,12 +33,9 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">URL&nbsp;&nbsp;&nbsp;</span>
-<!--                                    <div class="form-floating">-->
                                         <input type="text" id="hrefInput" th:field="*{url}"
                                                th:class="${#fields.hasErrors('url')} ? 'form-control is-invalid' : 'form-control'"
                                                required placeholder="Official website URL" />
-<!--                                        <label for="hrefInput" class="text-muted">Official website URL</label>-->
-<!--                                    </div>-->
                                 </div>
                                 <span th:if="${#fields.hasErrors('url')}">
                                         <ul>
@@ -53,14 +47,6 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text">Usage</span>
-<!--                                    <div class="form-floating">-->
-<!--                                    <select class="form-select" id="usageInput" th:field="*{usage}" required>-->
-<!--                                        <option value="" selected disabled></option>-->
-<!--                                        <option th:each="usage : ${usages}"-->
-<!--                                                th:value="${usage.name}"-->
-<!--                                                th:text="${usage}">-->
-<!--                                        </option>-->
-<!--                                    </select>-->
                                         <select class="form-control selectpicker border" data-style="btn-white"
                                                 id="selector" th:field="*{usage}" title="Usage" required>
                                             <option th:each="usage : ${usages}"
@@ -68,7 +54,6 @@
                                                     th:text="${usage}">
                                             </option>
                                         </select>
-<!--                                    </div>-->
                                 </div>
                                 <span th:if="${#fields.hasErrors('usage')}">
                                     <ul>

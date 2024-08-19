@@ -60,15 +60,18 @@ public class UIExceptionHandler {
     }
 
     private ModelAndView createExceptionModelAndView(Exception e, String message) {
+        ModelAndView mav;
         if (e.getClass() == NoResourceFoundException.class) {
-            return new ModelAndView("error/404").addObject("authUser", AuthUser.safeGet());
+            mav = new ModelAndView("error/404");
+            mav.setStatus(HttpStatus.NOT_FOUND);
+        } else {
+            mav = new ModelAndView("error/exception",
+                    Map.of("status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            "typeMessage", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                            "message", message));
+            mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        ModelAndView mav = new ModelAndView("error/exception",
-                Map.of("status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "typeMessage", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                        "message", message));
         mav.addObject("authUser", AuthUser.safeGet());
-        mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         return mav;
     }
 }

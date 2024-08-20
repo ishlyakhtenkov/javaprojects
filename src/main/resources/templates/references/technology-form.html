@@ -48,7 +48,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Priority</span>
                                     <select class="form-control selectpicker border" data-style="btn-white"
-                                            id="selector2" th:field="*{priority}" title="Priority" required>
+                                            th:field="*{priority}" title="Priority" required>
                                         <option th:each="priority : ${priorities}"
                                                 th:value="${priority.name}"
                                                 th:text="${priority}">
@@ -66,7 +66,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Usage</span>
                                         <select class="form-control selectpicker border" data-style="btn-white"
-                                                id="selector" th:field="*{usage}" title="Usage" required>
+                                                th:field="*{usage}" title="Usage" required>
                                             <option th:each="usage : ${usages}"
                                                     th:value="${usage.name}"
                                                     th:text="${usage}">

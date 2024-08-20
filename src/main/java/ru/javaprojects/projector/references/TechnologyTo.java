@@ -1,8 +1,6 @@
 package ru.javaprojects.projector.references;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,15 +36,23 @@ public class TechnologyTo extends BaseTo {
     @NotNull
     private Priority priority;
 
-    @NotNull
-    private MultipartFile imageFile;
+    @Nullable
+    private MultipartFile logoFile;
 
-    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile imageFile) {
+    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile logoFile) {
         super(id);
         this.name = name;
         this.url = url;
         this.usage = usage;
         this.priority = priority;
-        this.imageFile = imageFile;
+        this.logoFile = logoFile;
+    }
+
+    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority) {
+        super(id);
+        this.name = name;
+        this.url = url;
+        this.usage = usage;
+        this.priority = priority;
     }
 }

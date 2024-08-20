@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="technologyTo" type="ru.javaprojects.projector.references.TechnologyTo"*/-->
+<!--/*@thymesVar id="logoFile" type="ru.javaprojects.projector.references.model.LogoFile"*/-->
+<!--/*@thymesVar id="usage" type="ru.javaprojects.projector.references.model.Usage"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'references'} })}">
     <appMain>
@@ -46,6 +48,24 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
+                                    <span class="input-group-text">Usage</span>
+                                    <select class="form-control selectpicker border" data-style="btn-white"
+                                            th:field="*{usage}" title="Usage" required>
+                                        <option th:each="usage : ${usages}"
+                                                th:value="${usage.name}"
+                                                th:text="${usage}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <span th:if="${#fields.hasErrors('usage')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('usage')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
                                     <span class="input-group-text">Priority</span>
                                     <select class="form-control selectpicker border" data-style="btn-white"
                                             th:field="*{priority}" title="Priority" required>
@@ -62,47 +82,29 @@
                                     </ul>
                                 </span>
                             </div>
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text">Usage</span>
-                                        <select class="form-control selectpicker border" data-style="btn-white"
-                                                th:field="*{usage}" title="Usage" required>
-                                            <option th:each="usage : ${usages}"
-                                                    th:value="${usage.name}"
-                                                    th:text="${usage}">
-                                            </option>
-                                        </select>
-                                </div>
-                                <span th:if="${#fields.hasErrors('usage')}">
-                                    <ul>
-                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('usage')}"
-                                            th:text="${err}"/>
-                                    </ul>
-                                </span>
-                            </div>
 
                             <div id="fileInputDiv">
-                                <div th:if="${imageFile != null}" class="input-group">
-                                    <span class="input-group-text doc-card-field">File</span>
-                                    <div class="form-control" id="editFileInput">
-                                        <a th:href="@{/change-notices/download(fileLink=${file.fileLink})}" th:utext="'<i class=&quot;text-danger fa-solid fa-file-pdf&quot;></i>' + ${file.fileName}" target="_blank" title="Show file">File name</a>
-                                        <a tabindex="0" type="button" class="trash-button float-end me-3"
-                                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete file?"
-                                           data-bs-content="<button class='btn btn-sm btn-secondary ms-3'>Cancel</button>
-                                           <button class='btn btn-sm btn-danger' onclick='deleteFile()'>Delete</button>">
-                                            <i class="fa-solid fa-trash"></i>
+                                <div th:if="${logoFile != null}" class="input-group">
+                                    <span class="input-group-text">Logo</span>
+                                    <div class="form-control py-1 text-start" id="editFileInput">
+                                        <img th:src="@{'/' + ${logoFile.fileLink}}" width="24" height="24" />
+                                        <span th:text="${logoFile.fileName}">File name</span>
+
+                                        <a tabindex="0" type="button" class="float-end text-danger" title="Delete file"
+                                           onclick="deleteFile()">
+                                            <i class="fa-solid fa-xmark"></i>
                                         </a>
                                     </div>
                                 </div>
-                                <div th:if="${imageFile == null}" class="input-group custom-file-button">
-                                    <label class="input-group-text bg-light" for="fileInput">Image</label>
-                                    <input type="file" accept=".svg,.png" th:field="*{imageFile}"
+                                <div th:if="${logoFile == null}" class="input-group custom-file-button">
+                                    <label class="input-group-text bg-light" for="fileInput">Logo</label>
+                                    <input type="file" accept=".svg,.png" th:field="*{logoFile}"
                                            class="form-control text-muted" id="fileInput" required
                                            onchange="$('#fileInput').removeClass('text-muted')" />
-                                    <span th:if="${#fields.hasErrors('imageFile')}">
+                                    <span th:if="${#fields.hasErrors('logoFile')}">
                                         <ul>
                                             <li class="text-danger text-start"
-                                                th:each="err : ${#fields.errors('imageFile')}" th:text="${err}"/>
+                                                th:each="err : ${#fields.errors('logoFile')}" th:text="${err}"/>
                                         </ul>
                                     </span>
                                 </div>
@@ -111,7 +113,8 @@
                         </div>
                         <div class="card-footer text-end pe-4 py-2">
                             <button class="btn btn-secondary" type="button" onclick="cancel()">Cancel</button>
-                            <button class="btn btn-primary ms-1" type="submit">Create</button>
+                            <button class="btn btn-primary ms-1" type="submit"
+                                    th:text="${technologyTo.isNew()} ? 'Create' : '&nbsp;&nbsp;Save&nbsp;&nbsp;'">Create/Save</button>
                         </div>
                     </form>
                 </div>
@@ -122,5 +125,6 @@
     <ownScript>
         <script src="/js/cancel-button.js?v=1"></script>
         <script src="/js/bootstrap-selector-style.js?v=1"></script>
+        <script src="/js/technology-form.js?v=1"></script>
     </ownScript>
 </th:block>

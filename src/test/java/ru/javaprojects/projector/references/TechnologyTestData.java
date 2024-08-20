@@ -5,7 +5,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
-import ru.javaprojects.projector.references.model.ImageFile;
+import ru.javaprojects.projector.references.model.LogoFile;
 import ru.javaprojects.projector.references.model.Technology;
 
 import static ru.javaprojects.projector.references.model.Priority.*;
@@ -34,26 +34,26 @@ public class TechnologyTestData {
     public static final long TECHNOLOGY3_ID = 100013;
 
     public static final Technology technology1 = new Technology(TECHNOLOGY1_ID, "Java",
-            "https://www.oracle.com/java", BACKEND, ULTRA, new ImageFile("java.svg", "content/technologies/java/java.svg"));
+            "https://www.oracle.com/java", BACKEND, ULTRA, new LogoFile("java.svg", "content/technologies/java/java.svg"));
 
     public static final Technology technology2 = new Technology(TECHNOLOGY2_ID, "Spring",
-            "https://spring.io", BACKEND, VERY_HIGH, new ImageFile("spring.svg", "content/technologies/spring/spring.svg"));
+            "https://spring.io", BACKEND, VERY_HIGH, new LogoFile("spring.svg", "content/technologies/spring/spring.svg"));
 
     public static final Technology technology3 = new Technology(TECHNOLOGY3_ID, "Angular",
-            "https://angular.dev", FRONTEND, HIGH, new ImageFile("angular.svg", "content/technologies/angular/angular.svg"));
+            "https://angular.dev", FRONTEND, HIGH, new LogoFile("angular.svg", "content/technologies/angular/angular.svg"));
 
-    public static final MockMultipartFile IMAGE_FILE = new MockMultipartFile("imageFile", "tomcat.png",
-            MediaType.IMAGE_PNG_VALUE, "image content bytes".getBytes());
+    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "tomcat.png",
+            MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());
 
     public static TechnologyTo getNewTo() {
-        return new TechnologyTo(null, "Tomcat", "https://tomcat.com", BACKEND, MEDIUM, IMAGE_FILE);
+        return new TechnologyTo(null, "Tomcat", "https://tomcat.com", BACKEND, MEDIUM, LOGO_FILE);
     }
 
     public static Technology getNew(String contentPath) {
         TechnologyTo newTo = getNewTo();
         return new Technology(null, newTo.getName(), newTo.getUrl(), newTo.getUsage(), newTo.getPriority(),
-                new ImageFile(newTo.getImageFile().getOriginalFilename(),
-                        contentPath + newTo.getName().toLowerCase() + "/" + newTo.getImageFile().getOriginalFilename()));
+                new LogoFile(newTo.getLogoFile().getOriginalFilename(),
+                        contentPath + newTo.getName().toLowerCase() + "/" + newTo.getLogoFile().getOriginalFilename()));
     }
 
     public static MultiValueMap<String, String> getNewToParams() {

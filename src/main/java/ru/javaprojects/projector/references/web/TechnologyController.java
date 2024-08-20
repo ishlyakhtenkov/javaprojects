@@ -23,6 +23,7 @@ import ru.javaprojects.projector.references.model.Usage;
 import ru.javaprojects.projector.references.service.TechnologyService;
 
 import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
+import static ru.javaprojects.projector.references.TechnologyUtil.asTo;
 
 @Controller
 @RequestMapping(TechnologyController.TECHNOLOGIES_URL)
@@ -70,27 +71,45 @@ public class TechnologyController {
     public String showAddForm(Model model) {
         log.info("show technology add form");
         model.addAttribute("technologyTo", new TechnologyTo());
+        addAttributesToModel(model);
+        return "references/technology-form";
+    }
+
+    private void addAttributesToModel(Model model) {
         model.addAttribute("usages", Usage.values());
         model.addAttribute("priorities", Priority.values());
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable long id, Model model) {
+        log.info("show edit form for technology with id={}", id);
+        Technology technology = service.get(id);
+        model.addAttribute("technologyTo", asTo(technology));
+        model.addAttribute("logoFile", technology.getLogoFile());
+        addAttributesToModel(model);
         return "references/technology-form";
     }
 
     @PostMapping
-    public String create(@Valid TechnologyTo technologyTo, BindingResult result, Model model,
+    public String createOrUpdate(@Valid TechnologyTo technologyTo, BindingResult result, Model model,
                          RedirectAttributes redirectAttributes) {
+        boolean isNew = technologyTo.isNew();
         if (result.hasErrors()) {
-            model.addAttribute("usages", Usage.values());
-            model.addAttribute("priorities", Priority.values());
+            addAttributesToModel(model);
+            if (!isNew && technologyTo.getLogoFile() == null) {
+                model.addAttribute("logoFile", service.get(technologyTo.getId()).getLogoFile());
+            }
             return "references/technology-form";
         }
-        log.info("create {}", technologyTo);
-        checkNew(technologyTo);
-        service.create(technologyTo);
-        redirectAttributes.addFlashAttribute("action", messageSource.getMessage("technology.created",
+        log.info((isNew ? "create" : "update") + " {}", technologyTo);
+        if (isNew) {
+            service.create(technologyTo);
+        }  else {
+            service.update(technologyTo);
+        }
+        redirectAttributes.addFlashAttribute("action",
+                messageSource.getMessage((isNew ? "technology.created" : "technology.updated"),
                 new Object[]{technologyTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/references/technologies";
     }
-
-
-
 }

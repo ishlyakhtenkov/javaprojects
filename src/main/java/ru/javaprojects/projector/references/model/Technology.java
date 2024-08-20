@@ -46,15 +46,15 @@ public class Technology extends BaseEntity implements HasId {
     @NotNull
     @Embedded
     @Valid
-    private ImageFile imageFile;
+    private LogoFile logoFile;
 
-    public Technology(Long id, String name, String url, Usage usage, Priority priority, ImageFile imageFile) {
+    public Technology(Long id, String name, String url, Usage usage, Priority priority, LogoFile logoFile) {
         super(id);
         this.name = name;
         this.url = url;
         this.usage = usage;
         this.priority = priority;
-        this.imageFile = imageFile;
+        this.logoFile = logoFile;
     }
 
     @Override

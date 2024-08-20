@@ -158,7 +158,7 @@ class TechnologyControllerTest extends AbstractControllerTest {
         TechnologyTo newTechnologyTo = getNewTo();
         Technology newTechnology = getNew(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .file(IMAGE_FILE)
+                .file(LOGO_FILE)
                 .params((getNewToParams()))
                 .with(csrf()))
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
@@ -169,32 +169,32 @@ class TechnologyControllerTest extends AbstractControllerTest {
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
         assertTrue(Files.exists(Paths.get(contentPath, newTechnology.getName(),
-                newTechnology.getImageFile().getFileName())));
+                newTechnology.getLogoFile().getFileName())));
     }
 
     @Test
     void createUnAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .file(IMAGE_FILE)
+                .file(LOGO_FILE)
                 .params((getNewToParams()))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertTrue(() -> technologyRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
-        assertTrue(Files.notExists(Paths.get(contentPath, getNew(contentPath).getImageFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath, getNew(contentPath).getLogoFile().getFileLink())));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void createForbidden() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .file(IMAGE_FILE)
+                .file(LOGO_FILE)
                 .params((getNewToParams()))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertTrue(() -> technologyRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
-        assertTrue(Files.notExists(Paths.get(contentPath, getNew(contentPath).getImageFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath, getNew(contentPath).getLogoFile().getFileLink())));
     }
 
     @Test
@@ -202,7 +202,7 @@ class TechnologyControllerTest extends AbstractControllerTest {
     void createInvalid() throws Exception {
         MultiValueMap<String, String> newInvalidParams = getNewToInvalidParams();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .file(IMAGE_FILE)
+                .file(LOGO_FILE)
                 .params(newInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -210,7 +210,7 @@ class TechnologyControllerTest extends AbstractControllerTest {
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
         assertTrue(() -> technologyRepository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).isEmpty());
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/" +
-                IMAGE_FILE.getOriginalFilename())));
+                LOGO_FILE.getOriginalFilename())));
     }
 
     @Test
@@ -219,7 +219,7 @@ class TechnologyControllerTest extends AbstractControllerTest {
         MultiValueMap<String, String> newParams = getNewToParams();
         newParams.set(NAME_PARAM, technology1.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .file(IMAGE_FILE)
+                .file(LOGO_FILE)
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isOk())

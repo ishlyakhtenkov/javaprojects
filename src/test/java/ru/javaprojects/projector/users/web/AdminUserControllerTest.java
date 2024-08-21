@@ -124,7 +124,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void create() throws Exception {
-        User newUser = getNew();
+        User newUser = getNewUser();
         perform(MockMvcRequestBuilders.post(USERS_CREATE_URL)
                 .params(getNewUserParams())
                 .with(csrf()))
@@ -145,7 +145,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertThrows(NotFoundException.class, () -> service.getByEmail(getNew().getEmail()));
+        assertThrows(NotFoundException.class, () -> service.getByEmail(getNewUser().getEmail()));
     }
 
     @Test
@@ -155,7 +155,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .params(getNewUserParams())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertThrows(NotFoundException.class, () -> service.getByEmail(getNew().getEmail()));
+        assertThrows(NotFoundException.class, () -> service.getByEmail(getNewUser().getEmail()));
     }
 
     @Test
@@ -182,7 +182,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrorCode(USER_ATTRIBUTE, EMAIL_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(USER_ADD_VIEW));
-        assertNotEquals(getNew().getName(), service.getByEmail(USER_MAIL).getName());
+        assertNotEquals(getNewUser().getName(), service.getByEmail(USER_MAIL).getName());
     }
 
     @Test
@@ -223,7 +223,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void update() throws Exception {
-        User updatedUser = getUpdated();
+        User updatedUser = getUpdatedUser();
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
                 .params(getUpdatedUserParams())
                 .with(csrf()))
@@ -238,7 +238,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateEmailNotChange() throws Exception {
-        User updatedUser = getUpdated();
+        User updatedUser = getUpdatedUser();
         updatedUser.setEmail(USER_MAIL);
         MultiValueMap<String, String> updatedParams = getUpdatedUserParams();
         updatedParams.set(EMAIL_PARAM, USER_MAIL);
@@ -272,7 +272,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertNotEquals(service.get(USER_ID).getEmail(), getUpdated().getEmail());
+        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser().getEmail());
     }
 
     @Test
@@ -282,7 +282,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
                 .params(getUpdatedUserParams())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertNotEquals(service.get(USER_ID).getEmail(), getUpdated().getEmail());
+        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser().getEmail());
     }
 
     @Test

@@ -11,6 +11,7 @@ import ru.javaprojects.projector.references.model.Technology;
 import static ru.javaprojects.projector.references.model.Priority.*;
 import static ru.javaprojects.projector.references.model.Usage.BACKEND;
 import static ru.javaprojects.projector.references.model.Usage.FRONTEND;
+import static ru.javaprojects.projector.users.UserTestData.ID_PARAM;
 import static ru.javaprojects.projector.users.UserTestData.NAME_PARAM;
 
 public class TechnologyTestData {
@@ -45,6 +46,9 @@ public class TechnologyTestData {
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "tomcat.png",
             MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());
 
+    public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logoFile", "updated.png",
+            MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
+
     public static TechnologyTo getNewTo() {
         return new TechnologyTo(null, "Tomcat", "https://tomcat.com", BACKEND, MEDIUM, LOGO_FILE);
     }
@@ -54,6 +58,26 @@ public class TechnologyTestData {
         return new Technology(null, newTo.getName(), newTo.getUrl(), newTo.getUsage(), newTo.getPriority(),
                 new LogoFile(newTo.getLogoFile().getOriginalFilename(),
                         contentPath + newTo.getName().toLowerCase() + "/" + newTo.getLogoFile().getOriginalFilename()));
+    }
+
+    public static Technology getUpdated(String contentPath) {
+        String updatedName = "updatedName";
+        return new Technology(TECHNOLOGY1_ID, updatedName, "https://updatedUrl.com", FRONTEND, HIGH,
+                new LogoFile(UPDATED_LOGO_FILE.getOriginalFilename(), contentPath + updatedName.toLowerCase() + "/" +
+                        UPDATED_LOGO_FILE.getOriginalFilename()));
+    }
+
+    public static Technology getUpdatedWhenLogoNotUpdated(String contentPath) {
+        String updatedName = "updatedName";
+        return new Technology(TECHNOLOGY1_ID, updatedName, "https://updatedUrl.com", FRONTEND, HIGH,
+                new LogoFile(technology1.getLogoFile().getFileName(), contentPath + updatedName.toLowerCase() + "/" +
+                        technology1.getLogoFile().getFileName()));
+    }
+
+    public static Technology getUpdatedWhenNameNotUpdated(String contentPath) {
+        return new Technology(TECHNOLOGY1_ID, technology1.getName(), "https://updatedUrl.com", FRONTEND, HIGH,
+                new LogoFile(UPDATED_LOGO_FILE.getOriginalFilename(), contentPath + technology1.getName().toLowerCase() + "/" +
+                        UPDATED_LOGO_FILE.getOriginalFilename()));
     }
 
     public static MultiValueMap<String, String> getNewToParams() {
@@ -74,4 +98,22 @@ public class TechnologyTestData {
         params.add(PRIORITY_PARAM, MEDIUM.name());
         return params;
     }
+
+    public static MultiValueMap<String, String> getUpdatedToParams(String contentPath) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        Technology updated = getUpdated(contentPath);
+        params.add(ID_PARAM, String.valueOf(updated.getId()));
+        params.add(NAME_PARAM, updated.getName());
+        params.add(URL_PARAM, updated.getUrl());
+        params.add(USAGE_PARAM, updated.getUsage().name());
+        params.add(PRIORITY_PARAM, updated.getPriority().name());
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getUpdatedToInvalidParams(String contentPath) {
+        MultiValueMap<String, String> invalidParams = getNewToInvalidParams();
+        invalidParams.add(ID_PARAM, String.valueOf(TECHNOLOGY1_ID));
+        return invalidParams;
+    }
+
 }

@@ -21,6 +21,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaprojects.projector.CommonTestData.TECHNOLOGIES_TEST_DATA_FILES_PATH;
 import static ru.javaprojects.projector.references.TechnologyTestData.TECHNOLOGY1_ID;
 import static ru.javaprojects.projector.references.TechnologyTestData.technology1;
 import static ru.javaprojects.projector.references.web.TechnologyController.TECHNOLOGIES_URL;
@@ -46,7 +47,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
 
     @Override
     public Path getTestDataFilesPath() {
-        return Paths.get("src/test/test-data-files/technologies");
+        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
     }
 
     @Test

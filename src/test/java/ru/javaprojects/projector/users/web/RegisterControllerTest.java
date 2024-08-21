@@ -171,7 +171,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                         LocaleContextHolder.getLocale())));
         assertTrue(tokenRepository.findByToken(registerToken.getToken()).isEmpty());
         User created = userRepository.findByEmailIgnoreCase(registerToken.getEmail()).orElseThrow();
-        User newUser = getNew();
+        User newUser = getNewUser();
         newUser.setId(created.id());
         USER_MATCHER.assertMatch(created, newUser);
         assertTrue(PASSWORD_ENCODER.matches(newUser.getPassword(), created.getPassword()));

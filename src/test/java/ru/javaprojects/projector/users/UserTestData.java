@@ -72,11 +72,11 @@ public class UserTestData {
     public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER));
     public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password", false, Set.of(Role.USER));
 
-    public static User getNew() {
+    public static User getNewUser() {
         return new User(null, "new@gmail.com", "newName", "newPassword", true, Set.of(USER));
     }
 
-    public static User getUpdated() {
+    public static User getUpdatedUser() {
         return new User(USER_ID, "updated@gmail.com", "updatedName", user.getPassword(), user.isEnabled(), Set.of(Role.USER, Role.ADMIN));
     }
 
@@ -132,7 +132,7 @@ public class UserTestData {
 
     public static MultiValueMap<String, String> getNewUserParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        User newUser = getNew();
+        User newUser = getNewUser();
         params.add(NAME_PARAM, newUser.getName());
         params.add(EMAIL_PARAM, newUser.getEmail());
         params.add(ROLES_PARAM, newUser.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
@@ -153,7 +153,7 @@ public class UserTestData {
 
     public static MultiValueMap<String, String> getUpdatedUserParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        User updatedUser = getUpdated();
+        User updatedUser = getUpdatedUser();
         params.add(ID_PARAM, String.valueOf(USER_ID));
         params.add(NAME_PARAM, updatedUser.getName());
         params.add(EMAIL_PARAM, updatedUser.getEmail());

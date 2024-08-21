@@ -36,9 +36,10 @@
                 <thead class="table-dark">
                 <tr>
                     <th class="col-3">Name</th>
-                    <th class="col-3 text-center">Logo</th>
+                    <th class="col-1 text-center">Logo</th>
                     <th class="col-3">Official website</th>
                     <th class="col-2">Usage</th>
+                    <th class="col-2">Priority</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>
@@ -54,6 +55,7 @@
                            target="_blank">Site url</a>
                     </td>
                     <td th:text="${technology.usage}"></td>
+                    <td th:text="${technology.priority}"></td>
                     <td class="text-center">
                         <a th:href="@{'/references/technologies/edit/' + ${technology.id}}" type="button" title="Edit technology"
                            class="btn-link link-underline-opacity-0 link-success">
@@ -101,5 +103,6 @@
         </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/table-content.js?v=1"></script>
+        <script src="/js/technologies.js?v=1"></script>
     </ownScript>
 </th:block>

@@ -80,7 +80,14 @@ public class FileUtil {
 
     public static void delete(String path) {
         try {
+            boolean isFile = new File(path).isFile();
             Files.delete(Paths.get(path));
+            if (isFile) {
+                File dir = new File(path).getParentFile();
+                if (Objects.requireNonNull(dir.list()).length == 0) {
+                    Files.delete(dir.toPath());
+                }
+            }
         } catch (IOException ex) {
             throw new IllegalRequestDataException("Failed to delete file: " + path, "file.failed-to-delete", null);
         }

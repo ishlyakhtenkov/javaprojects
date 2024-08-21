@@ -10,11 +10,8 @@ import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.TechnologyTo;
-import ru.javaprojects.projector.references.model.LogoFile;
 import ru.javaprojects.projector.references.model.Technology;
 import ru.javaprojects.projector.references.repository.TechnologyRepository;
-
-import java.nio.file.Files;
 
 import static ru.javaprojects.projector.references.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.TechnologyUtil.updateFromTo;
@@ -67,5 +64,12 @@ public class TechnologyService {
         } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldLogoFileLink, contentPath + technologyTo.getName().toLowerCase());
         }
+    }
+
+    @Transactional
+    public void delete(long id) {
+        Technology technology = get(id);
+        repository.delete(technology);
+        FileUtil.delete(technology.getLogoFile().getFileLink());
     }
 }

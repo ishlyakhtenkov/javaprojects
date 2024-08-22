@@ -4,92 +4,100 @@ import lombok.experimental.UtilityClass;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @UtilityClass
 public class FileUtil {
 
-    public static void upload(MultipartFile multipartFile, String directoryPath, String fileName) {
+    public static void upload(MultipartFile multipartFile, String dirPath, String fileName) {
         if (multipartFile.isEmpty()) {
-            throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty", null);
+            throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
+                    new Object[]{fileName});
         }
-        File dir = new File(directoryPath);
-        if (dir.exists() || dir.mkdirs()) {
-            File file = new File(directoryPath + fileName);
-            try (OutputStream outStream = new FileOutputStream(file)) {
-                outStream.write(multipartFile.getBytes());
-            } catch (IOException ex) {
-                throw new IllegalRequestDataException("Failed to upload file: " + multipartFile.getOriginalFilename() +
-                        ": " + ex.getMessage(), "file.failed-to-upload", new Object[]{fileName});
-            }
+        try (OutputStream outStream = Files.newOutputStream(Files.createDirectories(Paths.get(dirPath)).resolve(fileName))) {
+            outStream.write(multipartFile.getBytes());
+        } catch (IOException e) {
+            throw new FileException("Failed to upload file: " + multipartFile.getOriginalFilename() +
+                    ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
         }
     }
 
-    public static void deleteDir(String path) {
-        Path dirPath = Paths.get(path);
-        if (Files.isDirectory(dirPath)) {
-            try {
-                Files.walkFileTree(dirPath, new SimpleFileVisitor<>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        Files.delete(file);
+    public static void deleteDirectory(String dirPath) {
+        Path dir = Paths.get(dirPath);
+        if (Files.notExists(dir)) {
+            throw new IllegalArgumentException("Directory does not exist: " + dirPath);
+        }
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException("Not a directory: " + dirPath);
+        }
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                    if (e == null) {
+                        Files.delete(dir);
                         return FileVisitResult.CONTINUE;
+                    } else {
+                        throw e;
                     }
-
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                        if (exc == null) {
-                            Files.delete(dir);
-                            return FileVisitResult.CONTINUE;
-                        } else {
-                            throw exc;
-                        }
-                    }
-                });
-            } catch (IOException ex) {
-                throw new IllegalRequestDataException("Failed to delete dir: " + path, "file.failed-to-delete-dir", null);
-            }
+                }
+            });
+        } catch (IOException e) {
+            throw new FileException("Failed to delete dir: " + dirPath + ": " + e.getMessage(), "file.failed-to-delete-dir",
+                    new Object[]{dir.getFileName()});
         }
     }
 
-    public static void moveFile(String file, String newDir) {
+    public static void moveFile(String filePath, String dirPath) {
         try {
-            Path filePath = Paths.get(file);
-            Path newDirPath = Paths.get(newDir);
-            if (Files.notExists(newDirPath)) {
-                Files.createDirectories(newDirPath);
-            }
-            Files.move(filePath, newDirPath.resolve(filePath.getFileName()), REPLACE_EXISTING);
-
-            File oldDir = new File(file).getParentFile();
-            if (oldDir.isDirectory() && Objects.requireNonNull(oldDir.list()).length == 0) {
-                delete(oldDir.getPath());
-            }
-        } catch (IOException ex) {
-            throw new IllegalRequestDataException("Failed to move " + file + " to " + newDir, "file.failed-to-move", null);
-        }
-    }
-
-    public static void delete(String path) {
-        try {
-            boolean isFile = new File(path).isFile();
-            Files.delete(Paths.get(path));
-            if (isFile) {
-                File dir = new File(path).getParentFile();
-                if (Objects.requireNonNull(dir.list()).length == 0) {
-                    Files.delete(dir.toPath());
+            Path file = Paths.get(filePath);
+            checkNotExistOrDirectory(file);
+            Path dir = Paths.get(dirPath);
+            Files.createDirectories(dir);
+            Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
+            try (Stream<Path> otherFiles = Files.list(file.getParent())) {
+                if (otherFiles.findAny().isEmpty()) {
+                    deleteDirectory(file.getParent().toString());
                 }
             }
         } catch (IOException ex) {
-            throw new IllegalRequestDataException("Failed to delete file: " + path, "file.failed-to-delete", null);
+            throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
+        }
+    }
+
+    public static void deleteFile(String filePath) {
+        try {
+            Path file = Paths.get(filePath);
+            checkNotExistOrDirectory(file);
+            Files.delete(file);
+            try (Stream<Path> otherFiles = Files.list(file.getParent())) {
+                if (otherFiles.findAny().isEmpty()) {
+                    deleteDirectory(file.getParent().toString());
+                }
+            }
+        } catch (IOException ex) {
+            throw new FileException("Failed to delete file: " + filePath, "file.failed-to-delete", new Object[]{filePath});
+        }
+    }
+
+    private static void checkNotExistOrDirectory(Path file) {
+        if (Files.notExists(file)) {
+            throw new IllegalArgumentException("File does not exist: " + file);
+        }
+        if (Files.isDirectory(file)) {
+            throw new IllegalArgumentException("Not a file: " + file);
         }
     }
 }

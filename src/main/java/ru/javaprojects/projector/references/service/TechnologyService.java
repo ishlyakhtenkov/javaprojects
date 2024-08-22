@@ -57,7 +57,7 @@ public class TechnologyService {
         String oldLogoFileLink = technology.getLogoFile().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
         if (technologyTo.getLogoFile() != null) {
-            FileUtil.deleteDir(contentPath + oldName);
+            FileUtil.deleteFile(oldLogoFileLink);
             String newLogoFileName = technologyTo.getLogoFile().getOriginalFilename();
             FileUtil.upload(technologyTo.getLogoFile(), contentPath + technologyTo.getName().toLowerCase() +
                     "/", newLogoFileName);
@@ -70,6 +70,6 @@ public class TechnologyService {
     public void delete(long id) {
         Technology technology = get(id);
         repository.delete(technology);
-        FileUtil.delete(technology.getLogoFile().getFileLink());
+        FileUtil.deleteFile(technology.getLogoFile().getFileLink());
     }
 }

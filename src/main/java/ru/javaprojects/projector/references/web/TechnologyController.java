@@ -22,7 +22,6 @@ import ru.javaprojects.projector.references.model.Technology;
 import ru.javaprojects.projector.references.model.Usage;
 import ru.javaprojects.projector.references.service.TechnologyService;
 
-import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
 import static ru.javaprojects.projector.references.TechnologyUtil.asTo;
 
 @Controller

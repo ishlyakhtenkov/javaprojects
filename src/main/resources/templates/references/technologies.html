@@ -46,7 +46,7 @@
                 <tbody>
                 <tr th:each="technology : ${technologies}" th:id="'row-' + ${technology.id}" class="table-row">
                     <td th:text="${technology.name}"></td>
-                    <td class="text-center">
+                    <td class="text-center py-1">
                         <img th:src="@{'/' + ${technology.logoFile.fileLink}}" th:alt="${technology.logoFile.fileName}" width="32" height="32" />
                     </td>
                     <td>

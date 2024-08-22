@@ -28,7 +28,7 @@ public class TechnologyTestData {
     public static final String PRIORITY_PARAM = "priority";
 
     public static final String INVALID_NAME = "a";
-    public static final String INVALID_URL = "dsfdsfdfs";
+    public static final String INVALID_URL = "some-invalid-url.com";
 
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;
@@ -67,20 +67,20 @@ public class TechnologyTestData {
                         UPDATED_LOGO_FILE.getOriginalFilename()));
     }
 
-    public static Technology getUpdatedWhenLogoNotUpdated(String contentPath) {
+    public static Technology getUpdatedWhenOldLogo(String contentPath) {
         String updatedName = "updatedName";
         return new Technology(TECHNOLOGY1_ID, updatedName, "https://updatedUrl.com", FRONTEND, HIGH,
                 new LogoFile(technology1.getLogoFile().getFileName(), contentPath + updatedName.toLowerCase() + "/" +
                         technology1.getLogoFile().getFileName()));
     }
 
-    public static Technology getUpdatedWhenNameNotUpdated(String contentPath) {
+    public static Technology getUpdatedWhenOldName(String contentPath) {
         return new Technology(TECHNOLOGY1_ID, technology1.getName(), "https://updatedUrl.com", FRONTEND, HIGH,
                 new LogoFile(UPDATED_LOGO_FILE.getOriginalFilename(), contentPath + technology1.getName().toLowerCase() + "/" +
                         UPDATED_LOGO_FILE.getOriginalFilename()));
     }
 
-    public static MultiValueMap<String, String> getNewToParams() {
+    public static MultiValueMap<String, String> getNewParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         TechnologyTo newTo = getNewTo();
         params.add(NAME_PARAM, newTo.getName());
@@ -90,7 +90,7 @@ public class TechnologyTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getNewToInvalidParams() {
+    public static MultiValueMap<String, String> getNewInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add(NAME_PARAM, INVALID_NAME);
         params.add(URL_PARAM, INVALID_URL);
@@ -99,7 +99,7 @@ public class TechnologyTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getUpdatedToParams(String contentPath) {
+    public static MultiValueMap<String, String> getUpdatedParams(String contentPath) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         Technology updated = getUpdated(contentPath);
         params.add(ID_PARAM, String.valueOf(updated.getId()));
@@ -110,10 +110,9 @@ public class TechnologyTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getUpdatedToInvalidParams(String contentPath) {
-        MultiValueMap<String, String> invalidParams = getNewToInvalidParams();
+    public static MultiValueMap<String, String> getUpdatedInvalidParams(String contentPath) {
+        MultiValueMap<String, String> invalidParams = getNewInvalidParams();
         invalidParams.add(ID_PARAM, String.valueOf(TECHNOLOGY1_ID));
         return invalidParams;
     }
-
 }

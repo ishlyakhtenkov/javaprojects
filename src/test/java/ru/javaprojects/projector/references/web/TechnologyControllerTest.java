@@ -146,7 +146,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         Technology newTechnology = getNew(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
-                .params((getNewToParams()))
+                .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
@@ -162,7 +162,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void createUnAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
-                .params((getNewToParams()))
+                .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
@@ -176,7 +176,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void createForbidden() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
-                .params((getNewToParams()))
+                .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertTrue(() -> technologyRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
@@ -186,7 +186,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void createInvalid() throws Exception {
-        MultiValueMap<String, String> newInvalidParams = getNewToInvalidParams();
+        MultiValueMap<String, String> newInvalidParams = getNewInvalidParams();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
                 .params(newInvalidParams)
@@ -202,7 +202,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void createDuplicateName() throws Exception {
-        MultiValueMap<String, String> newParams = getNewToParams();
+        MultiValueMap<String, String> newParams = getNewParams();
         newParams.set(NAME_PARAM, technology1.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
@@ -255,7 +255,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         Technology updatedTechnology = getUpdated(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(getUpdatedToParams(contentPath))
+                .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
@@ -270,9 +270,9 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateWhenLogoNotUpdated() throws Exception {
-        Technology updatedTechnology = getUpdatedWhenLogoNotUpdated(contentPath);
+        Technology updatedTechnology = getUpdatedWhenOldLogo(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
-                .params(getUpdatedToParams(contentPath))
+                .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
@@ -287,8 +287,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateWhenNameNotUpdated() throws Exception {
-        Technology updatedTechnology = getUpdatedWhenNameNotUpdated(contentPath);
-        MultiValueMap<String, String> updatedToParams = getUpdatedToParams(contentPath);
+        Technology updatedTechnology = getUpdatedWhenOldName(contentPath);
+        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
         updatedToParams.set(NAME_PARAM, technology1.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
@@ -307,7 +307,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateNotFound() throws Exception {
-        MultiValueMap<String, String> updatedToParams = getUpdatedToParams(contentPath);
+        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
         updatedToParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
@@ -321,7 +321,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void updateUnAuthorize() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(getUpdatedToParams(contentPath))
+                .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
@@ -334,7 +334,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void updateForbidden() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(getUpdatedToParams(contentPath))
+                .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
@@ -343,7 +343,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        MultiValueMap<String, String> updatedInvalidParams = getUpdatedToInvalidParams(contentPath);
+        MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
                 .params(updatedInvalidParams)
@@ -357,7 +357,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateDuplicateName() throws Exception {
-        MultiValueMap<String, String> updatedToParams = getUpdatedToParams(contentPath);
+        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
         updatedToParams.set(NAME_PARAM, technology2.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
@@ -368,5 +368,4 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), technology2.getName());
     }
-
 }

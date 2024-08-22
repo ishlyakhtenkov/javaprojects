@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references;
+package ru.javaprojects.projector.references.technologies;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
-import ru.javaprojects.projector.common.to.BaseTo;
+import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
-import ru.javaprojects.projector.references.model.Priority;
-import ru.javaprojects.projector.references.model.Usage;
+import ru.javaprojects.projector.references.technologies.model.Priority;
+import ru.javaprojects.projector.references.technologies.model.Usage;
 
 @Getter
 @Setter

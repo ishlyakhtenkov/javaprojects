@@ -1,16 +1,17 @@
-package ru.javaprojects.projector.references;
+package ru.javaprojects.projector.references.technologies;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
-import ru.javaprojects.projector.references.model.LogoFile;
-import ru.javaprojects.projector.references.model.Technology;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
+import ru.javaprojects.projector.references.technologies.model.LogoFile;
+import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import static ru.javaprojects.projector.references.model.Priority.*;
-import static ru.javaprojects.projector.references.model.Usage.BACKEND;
-import static ru.javaprojects.projector.references.model.Usage.FRONTEND;
+import static ru.javaprojects.projector.references.technologies.model.Priority.*;
+import static ru.javaprojects.projector.references.technologies.model.Usage.BACKEND;
+import static ru.javaprojects.projector.references.technologies.model.Usage.FRONTEND;
 import static ru.javaprojects.projector.users.UserTestData.ID_PARAM;
 import static ru.javaprojects.projector.users.UserTestData.NAME_PARAM;
 

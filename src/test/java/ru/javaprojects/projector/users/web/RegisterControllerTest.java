@@ -17,7 +17,7 @@ import ru.javaprojects.projector.users.mail.MailSender;
 import ru.javaprojects.projector.users.model.RegisterToken;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
-import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.RegisterTo;
 
 import java.util.Date;
@@ -25,13 +25,11 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
-import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
@@ -53,7 +51,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     private RegisterTokenRepository tokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Value("${register.confirm-url}")
     private String confirmRegisterUrl;
@@ -170,7 +168,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.email-confirmed", null,
                         LocaleContextHolder.getLocale())));
         assertTrue(tokenRepository.findByToken(registerToken.getToken()).isEmpty());
-        User created = userRepository.findByEmailIgnoreCase(registerToken.getEmail()).orElseThrow();
+        User created = userService.getByEmail(registerToken.getEmail());
         User newUser = getNewUser();
         newUser.setId(created.id());
         USER_MATCHER.assertMatch(created, newUser);
@@ -202,6 +200,6 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("register.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
-        assertTrue(userRepository.findByEmailIgnoreCase(expiredRegisterToken.getEmail()).isEmpty());
+        assertThrows(NotFoundException.class, () -> userService.getByEmail(expiredRegisterToken.getEmail()));
     }
 }

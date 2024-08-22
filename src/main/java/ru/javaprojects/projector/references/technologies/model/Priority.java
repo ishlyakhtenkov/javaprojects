@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references.model;
+package ru.javaprojects.projector.references.technologies.model;
 
 import org.springframework.util.StringUtils;
 

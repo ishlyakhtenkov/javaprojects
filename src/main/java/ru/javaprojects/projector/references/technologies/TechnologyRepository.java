@@ -1,11 +1,11 @@
-package ru.javaprojects.projector.references.repository;
+package ru.javaprojects.projector.references.technologies;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.BaseRepository;
-import ru.javaprojects.projector.references.model.Technology;
+import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.util.Optional;
 

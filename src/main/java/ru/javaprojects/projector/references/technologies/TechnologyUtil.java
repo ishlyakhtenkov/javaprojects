@@ -1,8 +1,9 @@
-package ru.javaprojects.projector.references;
+package ru.javaprojects.projector.references.technologies;
 
 import lombok.experimental.UtilityClass;
-import ru.javaprojects.projector.references.model.LogoFile;
-import ru.javaprojects.projector.references.model.Technology;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
+import ru.javaprojects.projector.references.technologies.model.LogoFile;
+import ru.javaprojects.projector.references.technologies.model.Technology;
 
 @UtilityClass
 public class TechnologyUtil {

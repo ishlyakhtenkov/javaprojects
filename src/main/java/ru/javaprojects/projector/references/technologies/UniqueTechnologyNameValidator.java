@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references;
+package ru.javaprojects.projector.references.technologies;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -7,7 +7,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
-import ru.javaprojects.projector.references.repository.TechnologyRepository;
 
 import java.util.Objects;
 

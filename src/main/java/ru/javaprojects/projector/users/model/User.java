@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.common.HasIdAndEmail;
-import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.BaseEntity;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 import java.util.Date;

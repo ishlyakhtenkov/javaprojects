@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references.web;
+package ru.javaprojects.projector.references.technologies.web;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,14 +15,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.references.TechnologyTo;
-import ru.javaprojects.projector.references.UniqueTechnologyNameValidator;
-import ru.javaprojects.projector.references.model.Priority;
-import ru.javaprojects.projector.references.model.Technology;
-import ru.javaprojects.projector.references.model.Usage;
-import ru.javaprojects.projector.references.service.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
+import ru.javaprojects.projector.references.technologies.UniqueTechnologyNameValidator;
+import ru.javaprojects.projector.references.technologies.model.Priority;
+import ru.javaprojects.projector.references.technologies.model.Technology;
+import ru.javaprojects.projector.references.technologies.model.Usage;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
 
-import static ru.javaprojects.projector.references.TechnologyUtil.asTo;
+import static ru.javaprojects.projector.references.technologies.TechnologyUtil.asTo;
 
 @Controller
 @RequestMapping(TechnologyController.TECHNOLOGIES_URL)

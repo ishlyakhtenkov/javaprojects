@@ -1,11 +1,11 @@
-package ru.javaprojects.projector.references.web;
+package ru.javaprojects.projector.references.technologies.web;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.javaprojects.projector.references.service.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
 
 @RestController
 @RequestMapping(value = TechnologyController.TECHNOLOGIES_URL, produces = MediaType.APPLICATION_JSON_VALUE)

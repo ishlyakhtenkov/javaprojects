@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.common.util;
+package ru.javaprojects.projector.common.error;
 
 import ru.javaprojects.projector.common.error.LocalizedException;
 

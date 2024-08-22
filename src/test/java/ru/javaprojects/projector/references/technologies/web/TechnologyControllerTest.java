@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references.web;
+package ru.javaprojects.projector.references.technologies.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,9 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.references.TechnologyTo;
-import ru.javaprojects.projector.references.model.Technology;
-import ru.javaprojects.projector.references.repository.TechnologyRepository;
-import ru.javaprojects.projector.references.service.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
+import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,9 +29,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.*;
-import static ru.javaprojects.projector.references.TechnologyTestData.*;
-import static ru.javaprojects.projector.references.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
-import static ru.javaprojects.projector.references.web.TechnologyController.TECHNOLOGIES_URL;
+import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
+import static ru.javaprojects.projector.references.technologies.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
+import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
@@ -47,9 +46,6 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
 
     @Autowired
     private MessageSource messageSource;
-
-    @Autowired
-    private TechnologyRepository technologyRepository;
 
     @Autowired
     private TechnologyService technologyService;
@@ -152,7 +148,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
                         new Object[]{newTechnologyTo.getName()}, LocaleContextHolder.getLocale())));
 
-        Technology created = technologyRepository.findByNameIgnoreCase(newTechnologyTo.getName()).orElseThrow();
+        Technology created = technologyService.getByName(newTechnologyTo.getName());
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
         assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
@@ -167,7 +163,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertTrue(() -> technologyRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
+        assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
     }
 
@@ -179,7 +175,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertTrue(() -> technologyRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
+        assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
     }
 
@@ -194,7 +190,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
-        assertTrue(() -> technologyRepository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).isEmpty());
+        assertThrows(NotFoundException.class, () -> technologyService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/" +
                 LOGO_FILE.getOriginalFilename())));
     }
@@ -211,8 +207,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrorCode(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
-        assertNotEquals(getNew(contentPath).getUrl(),
-                technologyRepository.findByNameIgnoreCase(technology1.getName()).orElseThrow().getUrl());
+        assertNotEquals(getNew(contentPath).getUrl(), technologyService.getByName(technology1.getName()).getUrl());
     }
 
     @Test

@@ -2,6 +2,7 @@ package ru.javaprojects.projector.common.util;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.web.multipart.MultipartFile;
+import ru.javaprojects.projector.common.error.FileException;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 
 import java.io.IOException;

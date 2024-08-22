@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references.web;
+package ru.javaprojects.projector.references.technologies.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.references.service.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.CommonTestData.TECHNOLOGIES_TEST_DATA_FILES_PATH;
-import static ru.javaprojects.projector.references.TechnologyTestData.TECHNOLOGY1_ID;
-import static ru.javaprojects.projector.references.TechnologyTestData.technology1;
-import static ru.javaprojects.projector.references.web.TechnologyController.TECHNOLOGIES_URL;
+import static ru.javaprojects.projector.references.technologies.TechnologyTestData.TECHNOLOGY1_ID;
+import static ru.javaprojects.projector.references.technologies.TechnologyTestData.technology1;
+import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 

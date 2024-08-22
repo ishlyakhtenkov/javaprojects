@@ -21,7 +21,7 @@ import ru.javaprojects.projector.users.model.PasswordResetToken;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
-import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.service.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,7 +53,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     private ChangeEmailTokenRepository changeEmailTokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @MockBean
     private MailSender mailSender;
@@ -156,7 +156,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.getExisted(USER_ID).getPassword()));
+        assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(USER_ID).getPassword()));
     }
 
     @Test
@@ -183,7 +183,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
                 .andExpect(problemDetail("changePassword.password: size must be between 5 and 32"))
                 .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
-        assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userRepository.getExisted(USER_ID).getPassword()));
+        assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userService.get(USER_ID).getPassword()));
     }
 
     @Test
@@ -195,7 +195,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         User updated = new User(user);
         updated.setName(UPDATED_NAME);
-        USER_MATCHER.assertMatch(userRepository.getExisted(USER_ID), updated);
+        USER_MATCHER.assertMatch(userService.get(USER_ID), updated);
     }
 
     @Test
@@ -222,7 +222,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
                 .andExpect(problemDetail("update.name: Should not be html"))
                 .andExpect(problemInstance(PROFILE_UPDATE_URL));
-        assertNotEquals(INVALID_NAME, userRepository.getExisted(USER_ID).getName());
+        assertNotEquals(INVALID_NAME, userService.get(USER_ID).getName());
     }
 
     @Test

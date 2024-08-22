@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.references.model;
+package ru.javaprojects.projector.references.technologies.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasId;
-import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.BaseEntity;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity

@@ -8,13 +8,13 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.to.PasswordResetTo;
 import ru.javaprojects.projector.users.error.TokenException;
+import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.users.model.User;
-import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
-import ru.javaprojects.projector.users.error.UserDisabledException;
+import ru.javaprojects.projector.users.service.UserService;
+import ru.javaprojects.projector.users.to.PasswordResetTo;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
-import static ru.javaprojects.projector.CommonTestData.*;
+import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
@@ -39,7 +39,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     private MessageSource messageSource;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
@@ -108,8 +108,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(redirectedUrl(LOGIN_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("password-reset.success-reset", null,
                         LocaleContextHolder.getLocale())));
-        assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.findById(passwordResetToken.getUser().id())
-                .orElseThrow().getPassword()));
+        assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(passwordResetToken.getUser().id()).getPassword()));
         assertTrue(passwordResetTokenRepository.findByToken(passwordResetToken.getToken()).isEmpty());
     }
 
@@ -131,8 +130,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
-        assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.
-                findById(expiredPasswordResetToken.getUser().id()).orElseThrow().getPassword()));
+        assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(expiredPasswordResetToken.getUser().id()).getPassword()));
     }
 
     @Test
@@ -144,8 +142,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(exception().message(messageSource.getMessage("user.disabled",
                         new Object[]{disabledUserPasswordResetToken.getUser().getEmail()},
                         LocaleContextHolder.getLocale()), UserDisabledException.class));
-        assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userRepository.
-                findById(disabledUserPasswordResetToken.getUser().id()).orElseThrow().getPassword()));
+        assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(disabledUserPasswordResetToken.getUser().id()).getPassword()));
     }
 
     @Test
@@ -157,8 +154,8 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(PASSWORD_RESET_TO_ATTRIBUTE, PASSWORD_PARAM))
                 .andExpect(view().name(RESET_PASSWORD_VIEW));
-        assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userRepository.findById(passwordResetToken.getUser().id())
-                .orElseThrow().getPassword()));
+        assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userService.get(passwordResetToken.getUser().id()).getPassword()));
+
     }
 
     @Test
@@ -212,7 +209,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("change-email.email-confirmed", null,
                         LocaleContextHolder.getLocale())));
         assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
-        User updated = userRepository.getExisted(USER2_ID);
+        User updated = userService.get(USER2_ID);
         assertEquals(changeEmailToken.getNewEmail(), updated.getEmail());
     }
 
@@ -244,7 +241,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-expired", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
-        assertNotEquals(expiredChangeEmailToken.getNewEmail(), userRepository.getExisted(ADMIN_ID).getEmail());
+        assertNotEquals(expiredChangeEmailToken.getNewEmail(), userService.get(ADMIN_ID).getEmail());
     }
 
     @Test
@@ -255,6 +252,6 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-not-belongs", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
-        assertNotEquals(changeEmailToken.getNewEmail(), userRepository.getExisted(ADMIN_ID).getEmail());
+        assertNotEquals(changeEmailToken.getNewEmail(), userService.get(ADMIN_ID).getEmail());
     }
 }

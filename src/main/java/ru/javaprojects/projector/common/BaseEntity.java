@@ -1,10 +1,9 @@
-package ru.javaprojects.projector.common.model;
+package ru.javaprojects.projector.common;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
-import ru.javaprojects.projector.common.HasId;
 
 @MappedSuperclass
 @Access(AccessType.FIELD)

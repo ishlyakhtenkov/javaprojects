@@ -20,8 +20,9 @@
                             <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search technologies..." aria-label="Search">
                         </div>
                     </form>
-                    <a th:href="@{/references/technologies/add}" type="button" class="btn btn-primary ms-2 d-none d-md-block">Add technology</a>
-                    <a th:href="@{/references/technologies/add}" type="button" class="btn btn-primary ms-2 ms-sm-1 d-md-none">Add</a>
+                    <a th:href="@{/references/technologies/add}" type="button"
+                       class="btn btn-primary ms-2"><i class="fa-solid fa-plus"></i> Add</a>
+<!--                    <a th:href="@{/references/technologies/add}" type="button" class="btn btn-primary ms-2 ms-sm-1 d-md-none">Add</a>-->
                 </div>
             </div>
         </div>
@@ -33,7 +34,7 @@
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-dark">
+                <thead class="table-info">
                 <tr>
                     <th class="col-3">Name</th>
                     <th class="col-1 text-center">Logo</th>

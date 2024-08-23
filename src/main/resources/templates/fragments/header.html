@@ -25,7 +25,7 @@
                 <li><a class="dropdown-item" th:href="@{/users}" id="users">Users</a></li>
                 <li><a class="dropdown-item" href="#">Projects</a></li>
                 <li class="dropend">
-                  <a class="dropdown-item dropdown-toggle" id="references">References</a>
+                  <a class="dropdown-item dropdown-toggle" id="references" style="cursor: pointer;">References</a>
                   <ul class="dropdown-menu dropdown-submenu">
                     <li><a class="dropdown-item" th:href="@{/references/technologies}" id="technologies">Technologies</a></li>
                     <li><a class="dropdown-item" th:href="@{/references/architectures}" id="architectures">Architectures</a></li>
@@ -51,7 +51,7 @@
             </li>
           </ul>
           <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button" class="btn btn-sm btn-outline-warning d-none d-lg-block px-3 ">Login</a>
-          <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" class="btn btn-primary btn-circle d-none d-lg-block fw-bold"
+          <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" class="btn btn-success btn-circle d-none d-lg-block fw-bold"
              th:title="${authUser != null ? authUser.user.name : ''}"
              th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></a>
         </div>

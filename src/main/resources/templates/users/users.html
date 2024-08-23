@@ -21,7 +21,7 @@
                             <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
                         </div>
                     </form>
-                    <a th:href="@{/users/add}" type="button" class="btn btn-primary ms-2">Add user</a>
+                    <a th:href="@{/users/add}" type="button" class="btn btn-primary ms-2"><i class="fa-solid fa-plus"></i> Add</a>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
 
         <div th:if="${!users.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-dark">
+                <thead class="table-info">
                 <tr>
                     <th class="col-3">Name</th>
                     <th class="col-3">Email</th>

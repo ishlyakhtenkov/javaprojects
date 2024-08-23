@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
-import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.BaseEntity;
+import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity
@@ -18,7 +18,7 @@ import ru.javaprojects.projector.common.util.validation.NoHtml;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Technology extends BaseEntity implements HasId {
+public class Technology extends BaseEntity implements HasIdAndName {
 
     @NotBlank
     @NoHtml

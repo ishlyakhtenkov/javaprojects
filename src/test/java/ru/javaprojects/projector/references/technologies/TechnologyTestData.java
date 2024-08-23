@@ -5,15 +5,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
-import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.references.technologies.model.LogoFile;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
+import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.references.technologies.model.Priority.*;
 import static ru.javaprojects.projector.references.technologies.model.Usage.BACKEND;
 import static ru.javaprojects.projector.references.technologies.model.Usage.FRONTEND;
-import static ru.javaprojects.projector.users.UserTestData.ID_PARAM;
-import static ru.javaprojects.projector.users.UserTestData.NAME_PARAM;
 
 public class TechnologyTestData {
     public static final MatcherFactory.Matcher<Technology> TECHNOLOGY_MATCHER =
@@ -28,7 +26,6 @@ public class TechnologyTestData {
     public static final String USAGE_PARAM = "usage";
     public static final String PRIORITY_PARAM = "priority";
 
-    public static final String INVALID_NAME = "a";
     public static final String INVALID_URL = "some-invalid-url.com";
 
     public static final long TECHNOLOGY1_ID = 100011;

@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
+import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.references.technologies.model.Priority;
 import ru.javaprojects.projector.references.technologies.model.Usage;
@@ -17,7 +19,7 @@ import ru.javaprojects.projector.references.technologies.model.Usage;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TechnologyTo extends BaseTo {
+public class TechnologyTo extends BaseTo implements HasIdAndName {
 
     @NotBlank
     @NoHtml
@@ -37,6 +39,7 @@ public class TechnologyTo extends BaseTo {
     private Priority priority;
 
     @Nullable
+    @ImageFile
     private MultipartFile logoFile;
 
     public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile logoFile) {

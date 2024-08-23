@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.users.model.Role.USER;
 
 public class UserTestData {
@@ -37,16 +38,13 @@ public class UserTestData {
     public static final String USER_TO_ATTRIBUTE = "userTo";
 
     public static final String PASSWORD_PARAM = "password";
-    public static final String NAME_PARAM = "name";
     public static final String EMAIL_PARAM = "email";
     public static final String NEW_EMAIL_PARAM = "newEmail";
     public static final String TOKEN_PARAM = "token";
     public static final String KEYWORD_PARAM = "keyword";
     public static final String ROLES_PARAM = "roles";
     public static final String ENABLED_PARAM = "enabled";
-    public static final String ID_PARAM = "id";
 
-    public static final long NOT_EXISTING_ID = 100;
     public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();
     public static final String NEW_PASSWORD = "newPassword";
@@ -54,7 +52,6 @@ public class UserTestData {
     public static final String NEW_EMAIL_SOMEONE_HAS_TOKEN = "someNew@gmail.com";
     public static final String UPDATED_NAME = "someNewName";
     public static final String INVALID_PASSWORD = "pass";
-    public static final String INVALID_NAME = "<h1>name</h1>";
     public static final String INVALID_EMAIL = "invEmail.gmail.ru";
 
     public static final String USER_MAIL = "user@gmail.com";

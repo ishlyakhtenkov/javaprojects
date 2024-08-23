@@ -30,8 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
-import static ru.javaprojects.projector.references.technologies.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
+import static ru.javaprojects.projector.references.technologies.web.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
@@ -40,6 +40,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     private static final String TECHNOLOGIES_ADD_FORM_URL = TECHNOLOGIES_URL + "/add";
     private static final String TECHNOLOGY_FORM_VIEW = "references/technology-form";
     private static final String TECHNOLOGIES_EDIT_FORM_URL = TECHNOLOGIES_URL + "/edit/";
+
+    static final String TECHNOLOGIES_TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";
 
     @Value("${content-path.technologies}")
     private String contentPath;

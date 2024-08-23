@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.projector.common.BaseRepository;
+import ru.javaprojects.projector.common.repository.BaseRepository;
 import ru.javaprojects.projector.users.model.Token;
 
 import java.util.Optional;

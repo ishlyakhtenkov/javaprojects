@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.javaprojects.projector.CommonTestData.TECHNOLOGIES_TEST_DATA_FILES_PATH;
 
 @SpringBootTest
 @ActiveProfiles({"dev", "test"})
@@ -27,6 +26,7 @@ class FileUtilTest implements TestContentFilesManager {
     private static final String NOT_EXISTING_FILE_NAME = "notExistFile.svg";
     private static final String NOT_EXISTING_FILE_PATH = NOT_EXISTING_DIR_NAME + "/" + NOT_EXISTING_FILE_NAME;
 
+    private static final String TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";
 
     @Value("${content-path.technologies}")
     private String contentPath;
@@ -38,7 +38,7 @@ class FileUtilTest implements TestContentFilesManager {
 
     @Override
     public Path getTestDataFilesPath() {
-        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
+        return Paths.get(TEST_DATA_FILES_PATH);
     }
 
     @Test

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS architectures;
 DROP TABLE IF EXISTS technologies;
 DROP TABLE IF EXISTS change_email_tokens;
 DROP TABLE IF EXISTS password_reset_tokens;
@@ -70,3 +71,11 @@ CREATE TABLE technologies
     file_link VARCHAR(512) NOT NULL
 );
 CREATE UNIQUE INDEX technologies_unique_name_idx ON technologies (name);
+
+CREATE TABLE architectures
+(
+    id          BIGINT        DEFAULT nextval('global_seq')  PRIMARY KEY,
+    name        VARCHAR(32)   NOT NULL,
+    description VARCHAR(400) NOT NULL
+);
+CREATE UNIQUE INDEX architectures_unique_name_idx ON architectures (name);

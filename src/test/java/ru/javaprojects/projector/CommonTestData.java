@@ -7,7 +7,12 @@ public class CommonTestData {
     public static final String HOME_URL = "/";
     public static final String ACTION_ATTRIBUTE = "action";
 
-    public static final String TECHNOLOGIES_TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";
+    public static final String ID_PARAM = "id";
+    public static final String NAME_PARAM = "name";
+
+    public static final String INVALID_NAME = "<h1>name</h1>";
+
+    public static final long NOT_EXISTING_ID = 100;
 
     public static MultiValueMap<String, String> getPageableParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();

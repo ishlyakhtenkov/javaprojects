@@ -10,19 +10,21 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="row row-cols-1 row-cols-sm-2">
-            <div class="col-sm-4 text-start">
-                <h2 class="text-secondary font-weight-bold"><i class="fas fa-people-group me-2"></i>Users</h2>
-            </div>
-            <div class="col-sm-8 mb-2">
-                <div class="btn-toolbar justify-content-start justify-content-sm-end">
-                    <form class="d-flex" role="search" th:action="@{/users}" method="get">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
-                            <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
-                        </div>
-                    </form>
-                    <a th:href="@{/users/add}" type="button" class="btn btn-primary ms-2"><i class="fa-solid fa-plus"></i> Add</a>
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-dark-subtle">
+            <div class="row row-cols-1 row-cols-sm-2 py-1 align-items-center">
+                <div class="col-sm-4 text-start">
+                    <span class="h3 text-secondary font-weight-bold"><i class="fas fa-people-group me-2"></i>Users</span>
+                </div>
+                <div class="col-sm-8 mt-1 mt-sm-0">
+                    <div class="btn-toolbar justify-content-start justify-content-sm-end">
+                        <form class="d-flex" role="search" th:action="@{/users}" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
+                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
+                            </div>
+                        </form>
+                        <a th:href="@{/users/add}" type="button" class="btn btn-primary ms-2"><i class="fa-solid fa-plus"></i> Add</a>
+                    </div>
                 </div>
             </div>
         </div>

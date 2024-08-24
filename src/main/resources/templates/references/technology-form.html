@@ -6,8 +6,12 @@
 
 <th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'references'} })}">
     <appMain>
-        <h2 class="text-secondary font-weight-bold"
-            th:utext="${'<i class=''fa-solid fa-gears me-2''></i>Technologies / ' + (technologyTo.isNew() ? 'Create' : 'Edit')}">Technologies / Create Edit</h2>
+        <div class="bg-info-subtle px-2 py-2 mb-10px rounded-2">
+            <span class="h3 text-secondary font-weight-bold"
+                  th:utext="${'<i class=''fa-solid fa-gears me-2''></i>Technologies / ' + (technologyTo.isNew() ? 'Create' : 'Edit')}">
+                Technologies / Create Edit
+            </span>
+        </div>
         <!-- Create/Edit technology card -->
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">

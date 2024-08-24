@@ -4,8 +4,12 @@
 
 <th:block th:replace="~{fragments/main::page(title='Architectures',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'references'} })}">
     <appMain>
-        <h2 class="text-secondary font-weight-bold"
-            th:utext="${'<i class=''fa-solid fa-cubes me-2''></i>Architectures / ' + (architecture.isNew() ? 'Create' : 'Edit')}">Architectures / Create Edit</h2>
+        <div class="bg-info-subtle px-2 py-2 mb-10px rounded-2">
+            <span class="h3 text-secondary font-weight-bold"
+                  th:utext="${'<i class=''fa-solid fa-cubes me-2''></i>Architectures / ' + (architecture.isNew() ? 'Create' : 'Edit')}">
+                Architectures / Create Edit
+            </span>
+        </div>
         <!-- Create/Edit architecture card -->
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-sm-9 col-md-7 col-xl-6 col-xxl-5">

@@ -3,13 +3,18 @@ package ru.javaprojects.projector.users.service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.UserTo;
+
+import java.util.Optional;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
@@ -19,6 +24,7 @@ import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository repository;
+    private final SessionRegistry sessionRegistry;
 
     public User getByEmail(String email) {
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->
@@ -67,6 +73,13 @@ public class UserService {
     public void enable(long id, boolean enabled) {
         User user = get(id);
         user.setEnabled(enabled);
+        if (!enabled) {
+            sessionRegistry.getAllPrincipals().stream()
+                    .filter(principal -> ((AuthUser) principal).id() == id)
+                    .findFirst().
+                    ifPresent(o -> sessionRegistry.getAllSessions(o, false)
+                            .forEach(SessionInformation::expireNow));
+        }
     }
 
     public void delete(long id) {

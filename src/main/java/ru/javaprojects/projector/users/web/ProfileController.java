@@ -25,7 +25,7 @@ import ru.javaprojects.projector.users.service.PasswordResetService;
 @AllArgsConstructor
 @Slf4j
 public class ProfileController {
-    static final String PROFILE_URL = "/profile";
+    public static final String PROFILE_URL = "/profile";
 
     private final UserService userService;
     private final PasswordResetService passwordResetService;

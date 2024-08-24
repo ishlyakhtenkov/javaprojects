@@ -1,15 +1,19 @@
 package ru.javaprojects.projector.users.web;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
 
 import java.util.Locale;
@@ -17,12 +21,22 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.UserTestData.*;
+import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.ENABLED_PARAM;
+import static ru.javaprojects.projector.users.UserTestData.INVALID_PASSWORD;
+import static ru.javaprojects.projector.users.UserTestData.NEW_PASSWORD;
+import static ru.javaprojects.projector.users.UserTestData.PASSWORD_PARAM;
+import static ru.javaprojects.projector.users.UserTestData.USER_ID;
+import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.admin;
+import static ru.javaprojects.projector.users.UserTestData.user;
 import static ru.javaprojects.projector.users.web.AdminUserController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
+import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
 class AdminUserRestControllerTest extends AbstractControllerTest {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
@@ -33,6 +47,9 @@ class AdminUserRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
@@ -48,6 +65,20 @@ class AdminUserRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertTrue(service.get(USER_ID).isEnabled());
+    }
+
+    @Test
+    void instantBan() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROFILE_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession = actions.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID).with(user(new AuthUser(admin)))
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertTrue(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
     }
 
     @Test

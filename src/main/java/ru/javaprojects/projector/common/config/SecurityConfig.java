@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorH
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.client.RestTemplate;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.AuthUser;
@@ -35,6 +37,7 @@ public class SecurityConfig {
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private final UserService userService;
+    private final SessionRegistry sessionRegistry;
     private final UserMdcFilter userMdcFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
 
@@ -53,6 +56,11 @@ public class SecurityConfig {
                 throw new UsernameNotFoundException(ex.getMessage());
             }
         };
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
     @Bean
@@ -88,10 +96,15 @@ public class SecurityConfig {
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
                                 .deleteCookies("JSESSIONID")
-                ).rememberMe((rememberMe) ->
+                )
+                .rememberMe((rememberMe) ->
                         rememberMe
                                 .key("remember-me-key")
-                                .rememberMeCookieName("projector-remember-me"));
+                                .rememberMeCookieName("projector-remember-me"))
+                .sessionManagement((sessionManagement) ->
+                        sessionManagement
+                                .maximumSessions(1)
+                                .sessionRegistry(sessionRegistry));
         return http.build();
     }
 

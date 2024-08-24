@@ -51,7 +51,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         ResultActions actions = perform(MockMvcRequestBuilders.get(USERS_URL)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists(USERS_ATTRIBUTE))
+                .andExpect(model().attributeExists(USERS_ATTRIBUTE, ONLINE_USERS_IDS_ATTRIBUTE))
                 .andExpect(view().name(USERS_VIEW));
         Page<User> users = (Page<User>) Objects.requireNonNull(actions.andReturn().getModelAndView())
                 .getModel().get(USERS_ATTRIBUTE);
@@ -67,7 +67,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         ResultActions actions = perform(MockMvcRequestBuilders.get(USERS_URL)
                 .param(KEYWORD_PARAM, admin.getName()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists(USERS_ATTRIBUTE))
+                .andExpect(model().attributeExists(USERS_ATTRIBUTE, ONLINE_USERS_IDS_ATTRIBUTE))
                 .andExpect(view().name(USERS_VIEW));
         Page<User> users = (Page<User>) Objects.requireNonNull(actions.andReturn().getModelAndView())
                 .getModel().get(USERS_ATTRIBUTE);

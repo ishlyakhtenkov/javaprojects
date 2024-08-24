@@ -14,7 +14,8 @@ import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.UserTo;
 
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
@@ -84,5 +85,12 @@ public class UserService {
 
     public void delete(long id) {
         repository.deleteExisted(id);
+    }
+
+    public Set<Long> getOnlineUsersIds() {
+        return sessionRegistry.getAllPrincipals().stream()
+                .filter(principal -> !sessionRegistry.getAllSessions(principal, false).isEmpty())
+                .map(principal -> ((AuthUser) principal).id())
+                .collect(Collectors.toSet());
     }
 }

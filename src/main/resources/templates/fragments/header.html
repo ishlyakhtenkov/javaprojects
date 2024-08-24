@@ -50,7 +50,7 @@
               <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}">Profile</a>
             </li>
           </ul>
-          <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button" class="btn btn-sm btn-outline-warning d-none d-lg-block px-3 ">Login</a>
+          <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button" class="btn btn-outline-warning d-none d-lg-block px-3 ">Login</a>
           <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" class="btn btn-success btn-circle d-none d-lg-block fw-bold"
              th:title="${authUser != null ? authUser.user.name : ''}"
              th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></a>

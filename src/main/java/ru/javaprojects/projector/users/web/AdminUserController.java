@@ -63,6 +63,7 @@ public class AdminUserController {
             return "redirect:/users";
         }
         model.addAttribute("users", users);
+        model.addAttribute("onlineUsersIds", service.getOnlineUsersIds());
         return "users/users";
     }
 

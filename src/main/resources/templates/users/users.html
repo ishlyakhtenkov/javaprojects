@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 <!--/*@thymesVar id="users" type="java.util.List"*/-->
+<!--/*@thymesVar id="onlineUsersIds" type="java.util.Set"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Users',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
     <appMain>
@@ -37,9 +38,10 @@
                 <tr>
                     <th class="col-3">Name</th>
                     <th class="col-3">Email</th>
+                    <th class="col-1 text-center">Online</th>
                     <th class="col-1 text-center">Enabled</th>
                     <th class="col-2 text-center">Registered</th>
-                    <th class="col-2">Roles</th>
+                    <th class="col-1">Roles</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>
@@ -47,6 +49,10 @@
                 <tr th:each="user : ${users}" th:id="'row-' + ${user.id}" class="table-row">
                     <td th:text="${user.name}"></td>
                     <td class="text-truncate" th:text="${user.email}"></td>
+                    <td class="text-center online-circle"
+                        th:classappend="${onlineUsersIds.contains(user.id) ? 'text-success' : 'text-danger'}">
+                        <span><i class="fa-solid fa-circle-dot"></i></span>
+                    </td>
                     <td class="text-center">
                         <div class="form-switch">
                             <input type="checkbox" role="switch" class="form-check-input" style="cursor: pointer;" th:checked="${user.enabled}"

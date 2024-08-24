@@ -51,7 +51,7 @@
                 <tr th:each="user : ${users}" th:id="'row-' + ${user.id}" class="table-row">
                     <td th:text="${user.name}"></td>
                     <td class="text-truncate" th:text="${user.email}"></td>
-                    <td class="text-center online-circle"
+                    <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id) ? 'online' : 'offline'}"
                         th:classappend="${onlineUsersIds.contains(user.id) ? 'text-success' : 'text-danger'}">
                         <span><i class="fa-solid fa-circle-dot"></i></span>
                     </td>

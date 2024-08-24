@@ -41,7 +41,7 @@ function enableUser(checkbox, id) {
         successToast(`User ${name} has been ${enabled ? 'enabled' : 'disabled'}`);
         $(checkbox).prop('title', `${enabled ? 'Disable' : 'Enable'} user`);
         if (!enabled) {
-            $(`#row-${id}`).find('.online-circle').removeClass('text-success').addClass('text-danger');
+            $(`#row-${id}`).find('.online-circle').removeClass('text-success').addClass('text-danger').prop('title', 'offline');
         }
     }).fail(function(data) {
         $(checkbox).prop('checked', !enabled);

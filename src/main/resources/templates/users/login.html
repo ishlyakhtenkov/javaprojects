@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
+<!--/*@thymesVar id="error" type="java.lang.String"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Sign in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
@@ -11,8 +12,8 @@
                 <div class="card shadow-sm" style="border-radius: 1rem;">
                     <div class="card-body p-4 pt-3 text-center">
                         <h3>Sign in</h3>
-                        <div th:if="${param.error}">
-                            <p class="alert alert-danger col-12 p-2 text-center">
+                        <div th:if="${error != null}">
+                            <p th:text="${error}" class="alert alert-danger col-12 p-2 text-center">
                                 Bad credentials
                             </p>
                         </div>

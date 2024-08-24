@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorH
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.client.RestTemplate;
 import ru.javaprojects.projector.common.error.NotFoundException;
@@ -64,13 +65,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthFailureHandler();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .addFilterAfter(userMdcFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers("/users/**", "/references/**").hasRole(Role.ADMIN.name())
-                                .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password").anonymous()
+                                .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password", "/login").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -79,6 +85,7 @@ public class SecurityConfig {
                                 .permitAll()
                                 .loginPage("/login")
                                 .defaultSuccessUrl("/", true)
+                                .failureHandler(authenticationFailureHandler())
                 )
                 .oauth2Login((oauth2Login) ->
                         oauth2Login
@@ -88,6 +95,7 @@ public class SecurityConfig {
                                         tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
                                 .userInfoEndpoint((userInfoEndpoint) ->
                                         userInfoEndpoint.userService(customOAuth2UserService))
+                                .failureHandler(authenticationFailureHandler())
                 )
                 .logout((logout) ->
                         logout

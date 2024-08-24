@@ -36,7 +36,9 @@ public class UserTestData {
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
     public static final String USERS_ATTRIBUTE = "users";
     public static final String USER_TO_ATTRIBUTE = "userTo";
+    public static final String ERROR_ATTRIBUTE = "error";
 
+    public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
     public static final String EMAIL_PARAM = "email";
     public static final String NEW_EMAIL_PARAM = "newEmail";

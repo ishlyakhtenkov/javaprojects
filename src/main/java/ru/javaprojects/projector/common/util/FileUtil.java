@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.common.util;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.FileException;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
@@ -100,5 +101,10 @@ public class FileUtil {
         if (Files.isDirectory(file)) {
             throw new IllegalArgumentException("Not a file: " + file);
         }
+    }
+
+    public static String normalizeFileName(String name) {
+        Assert.notNull(name, "name must not be null");
+        return name.toLowerCase().replace(' ', '_');
     }
 }

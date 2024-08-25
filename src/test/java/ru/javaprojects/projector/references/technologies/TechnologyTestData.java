@@ -43,21 +43,20 @@ public class TechnologyTestData {
     public static final Technology technology3 = new Technology(TECHNOLOGY3_ID, "Angular",
             "https://angular.dev", FRONTEND, HIGH, new LogoFile("angular.svg", "content/technologies/angular/angular.svg"));
 
-    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "tomcat.png",
+    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "Apache Tomcat.png",
             MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());
 
     public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logoFile", "updated.png",
             MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
 
     public static TechnologyTo getNewTo() {
-        return new TechnologyTo(null, "Tomcat", "https://tomcat.com", BACKEND, MEDIUM, LOGO_FILE);
+        return new TechnologyTo(null, "Apache Tomcat", "https://tomcat.com", BACKEND, MEDIUM, LOGO_FILE);
     }
 
     public static Technology getNew(String contentPath) {
         TechnologyTo newTo = getNewTo();
         return new Technology(null, newTo.getName(), newTo.getUrl(), newTo.getUsage(), newTo.getPriority(),
-                new LogoFile(newTo.getLogoFile().getOriginalFilename(),
-                        contentPath + newTo.getName().toLowerCase() + "/" + newTo.getLogoFile().getOriginalFilename()));
+                new LogoFile("apache_tomcat.png", contentPath + "apache_tomcat" + "/" + "apache_tomcat.png"));
     }
 
     public static Technology getUpdated(String contentPath) {

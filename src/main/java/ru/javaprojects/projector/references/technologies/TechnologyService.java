@@ -10,9 +10,7 @@ import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.references.technologies.model.Technology;
-import ru.javaprojects.projector.references.technologies.TechnologyRepository;
 
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.updateFromTo;
@@ -51,8 +49,9 @@ public class TechnologyService {
                     "technology.logo-not-present", null);
         }
         Technology technology = repository.saveAndFlush(createNewFromTo(technologyTo, contentPath));
-        String fileName = technologyTo.getLogoFile().getOriginalFilename();
-        FileUtil.upload(technologyTo.getLogoFile(), contentPath + technology.getName().toLowerCase() + "/", fileName);
+        String fileName = FileUtil.normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
+        FileUtil.upload(technologyTo.getLogoFile(), contentPath +
+                FileUtil.normalizeFileName(technology.getName()) + "/", fileName);
         return technology;
     }
 
@@ -65,11 +64,11 @@ public class TechnologyService {
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
         if (technologyTo.getLogoFile() != null) {
             FileUtil.deleteFile(oldLogoFileLink);
-            String newLogoFileName = technologyTo.getLogoFile().getOriginalFilename();
-            FileUtil.upload(technologyTo.getLogoFile(), contentPath + technologyTo.getName().toLowerCase() +
+            String newLogoFileName =  FileUtil.normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
+            FileUtil.upload(technologyTo.getLogoFile(), contentPath + FileUtil.normalizeFileName(technologyTo.getName()) +
                     "/", newLogoFileName);
         } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + technologyTo.getName().toLowerCase());
+            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizeFileName(technologyTo.getName()));
         }
     }
 

@@ -51,7 +51,7 @@ public class TechnologyService {
     @Transactional
     public Technology create(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
-        if (technologyTo.getLogoFile() == null) {
+        if (technologyTo.getLogoFile() == null || technologyTo.getLogoFile().isEmpty()) {
             throw new IllegalRequestDataException("Technology logo file is not present",
                     "technology.logo-not-present", null);
         }
@@ -69,7 +69,7 @@ public class TechnologyService {
         String oldName = technology.getName();
         String oldLogoFileLink = technology.getLogoFile().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
-        if (technologyTo.getLogoFile() != null) {
+        if (technologyTo.getLogoFile() != null && !technologyTo.getLogoFile().isEmpty()) {
             FileUtil.deleteFile(oldLogoFileLink);
             String newLogoFileName =  FileUtil.normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
             FileUtil.upload(technologyTo.getLogoFile(), contentPath + FileUtil.normalizeFileName(technologyTo.getName()) +

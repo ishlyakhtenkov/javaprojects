@@ -40,19 +40,19 @@ public class ProjectUtil {
         project.setFrontendSrcUrl(projectTo.getFrontendSrcUrl());
         project.setOpenApiUrl(projectTo.getOpenApiUrl());
         project.setTechnologies(new TreeSet<>(projectTo.getTechnologies()));
-        if (projectTo.getLogoFile() != null) {
+        if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
             project.setLogoFile(createLogoFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
             project.getLogoFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/logo/" +
                     project.getLogoFile().getFileName());
         }
-        if (projectTo.getCardImageFile() != null) {
+        if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
             project.setCardImageFile(createCardImageFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
             project.getCardImageFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/card_img/" +
                     project.getCardImageFile().getFileName());
         }
-        if (projectTo.getDockerComposeFile() != null) {
+        if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
             project.setDockerComposeFile(createDockerComposeFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName()) && project.getDockerComposeFile() != null) {
             project.getDockerComposeFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/docker/" +

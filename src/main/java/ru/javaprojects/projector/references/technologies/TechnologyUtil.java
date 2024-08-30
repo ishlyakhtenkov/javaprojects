@@ -22,7 +22,7 @@ public class TechnologyUtil {
         technology.setUrl(technologyTo.getUrl());
         technology.setUsage(technologyTo.getUsage());
         technology.setPriority(technologyTo.getPriority());
-        if (technologyTo.getLogoFile() != null) {
+        if (technologyTo.getLogoFile() != null && !technologyTo.getLogoFile().isEmpty()) {
             technology.setLogoFile(createLogoFile(technologyTo, contentPath));
         } else if (!technologyTo.getName().equalsIgnoreCase(technology.getName())) {
             technology.getLogoFile().setFileLink(contentPath + normalizeFileName(technologyTo.getName()) + "/" +

@@ -8,12 +8,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
-import ru.javaprojects.projector.references.technologies.TechnologyTo;
-import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.util.List;
 
@@ -64,11 +61,11 @@ public class ProjectService {
     @Transactional
     public Project create(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        if (projectTo.getLogoFile().isEmpty()) {
+        if (projectTo.getLogoFile() == null || projectTo.getLogoFile().isEmpty()) {
             throw new IllegalRequestDataException("Project logo file is not present",
                     "project.logo-not-present", null);
         }
-        if (projectTo.getCardImageFile().isEmpty()) {
+        if (projectTo.getCardImageFile() == null || projectTo.getCardImageFile().isEmpty()) {
             throw new IllegalRequestDataException("Project card image file is not present",
                     "project.card-image-not-present", null);
         }
@@ -91,7 +88,7 @@ public class ProjectService {
         String oldDockerComposeFileLink =
                 project.getDockerComposeFile() != null ? project.getDockerComposeFile().getFileLink() : null;
         repository.saveAndFlush(updateFromTo(project, projectTo, contentPath));
-        if (projectTo.getLogoFile() != null) {
+        if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
             FileUtil.deleteFile(oldLogoFileLink);
             String newLogoFileName =  FileUtil.normalizeFileName(projectTo.getLogoFile().getOriginalFilename());
             FileUtil.upload(projectTo.getLogoFile(), contentPath + FileUtil.normalizeFileName(projectTo.getName()) +
@@ -99,7 +96,7 @@ public class ProjectService {
         } else if (!projectTo.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName()));
         }
-        if (projectTo.getCardImageFile() != null) {
+        if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
             FileUtil.deleteFile(oldCardImageFileLink);
             String newCardImageFileName =  FileUtil.normalizeFileName(projectTo.getCardImageFile().getOriginalFilename());
             FileUtil.upload(projectTo.getCardImageFile(), contentPath + FileUtil.normalizeFileName(projectTo.getName()) +
@@ -107,7 +104,7 @@ public class ProjectService {
         } else if (!projectTo.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldCardImageFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName()));
         }
-        if (projectTo.getDockerComposeFile() != null) {
+        if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
             if (oldDockerComposeFileLink != null) {
                 FileUtil.deleteFile(oldDockerComposeFileLink);
             }

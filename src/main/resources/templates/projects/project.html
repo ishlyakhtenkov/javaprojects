@@ -4,6 +4,7 @@
 
 <th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
+        <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
             <div class="row align-items-center" style="height: 46px">
                 <div class="col text-start text-truncate">
@@ -142,6 +143,10 @@
     </appMain>
 
     <ownScript>
+        <script src="/js/common.js?v=1"></script>
         <script src="/js/cancel-button.js?v=1"></script>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+        </script>
     </ownScript>
 </th:block>

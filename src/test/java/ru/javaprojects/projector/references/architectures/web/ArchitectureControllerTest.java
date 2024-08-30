@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
@@ -44,13 +43,12 @@ class ArchitectureControllerTest extends AbstractControllerTest {
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
     void getAll() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(ARCHITECTURES_URL))
+        perform(MockMvcRequestBuilders.get(ARCHITECTURES_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(ARCHITECTURES_ATTRIBUTE))
-                .andExpect(view().name(ARCHITECTURES_VIEW));
-        List<Architecture> architectures = (List<Architecture>) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                .getModel().get(ARCHITECTURES_ATTRIBUTE);
-        ARCHITECTURE_MATCHER.assertMatch(architectures, List.of(architecture2, architecture1));
+                .andExpect(view().name(ARCHITECTURES_VIEW))
+                .andExpect(result -> ARCHITECTURE_MATCHER.assertMatch((List<Architecture>) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(ARCHITECTURES_ATTRIBUTE), List.of(architecture2, architecture1)));
     }
 
     @Test

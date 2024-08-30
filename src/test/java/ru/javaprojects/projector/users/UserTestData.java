@@ -38,6 +38,7 @@ public class UserTestData {
     public static final String USER_TO_ATTRIBUTE = "userTo";
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String ONLINE_USERS_IDS_ATTRIBUTE = "onlineUsersIds";
+    public static final String ROLES_ATTRIBUTE = "roles";
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
@@ -46,7 +47,6 @@ public class UserTestData {
     public static final String TOKEN_PARAM = "token";
     public static final String KEYWORD_PARAM = "keyword";
     public static final String ROLES_PARAM = "roles";
-    public static final String ENABLED_PARAM = "enabled";
 
     public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();

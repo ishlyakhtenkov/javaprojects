@@ -4,11 +4,12 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="technologies" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'references'} })}">
+<th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-dark-subtle">
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${technologies.isEmpty() ? 'rounded-2 border-bottom' : ''}">
             <div class="row row-cols-1 row-cols-sm-2 py-1 align-items-center">
                 <div class="col-sm-5 text-start">
                     <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-gears me-2"></i>Technologies</span>
@@ -35,13 +36,13 @@
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-info">
+                <thead class="table-info thead-border-top-none">
                 <tr>
-                    <th class="col-3">Name</th>
-                    <th class="col-1 text-center">Logo</th>
-                    <th class="col-3">Official website</th>
-                    <th class="col-2">Usage</th>
-                    <th class="col-2">Priority</th>
+                    <th class="col-3 border-right-none">Name</th>
+                    <th class="col-1 text-center border-right-none">Logo</th>
+                    <th class="col-3 border-right-none">Official website</th>
+                    <th class="col-2 border-right-none">Usage</th>
+                    <th class="col-2 border-right-none">Priority</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>

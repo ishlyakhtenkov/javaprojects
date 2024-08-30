@@ -11,9 +11,9 @@ import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
-import ru.javaprojects.projector.references.technologies.model.Priority;
 import ru.javaprojects.projector.references.technologies.model.Usage;
 
 @Getter
@@ -57,5 +57,10 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
         this.url = url;
         this.usage = usage;
         this.priority = priority;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("TechnologyTo[id=%d, name=%s]", id, name);
     }
 }

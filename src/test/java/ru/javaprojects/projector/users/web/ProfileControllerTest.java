@@ -184,7 +184,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(PROFILE_URL))
                 .andExpect(status().isOk())
                 .andExpect(view().name(PROFILE_VIEW))
-                .andExpect(model().attributeExists(USER_ATTRIBUTE))
+                .andExpect(model().attribute(USER_ATTRIBUTE, user))
                 .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(USER_ATTRIBUTE), user));
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -11,6 +12,8 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.technologies.model.Technology;
+
+import java.util.List;
 
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.updateFromTo;
@@ -25,6 +28,10 @@ public class TechnologyService {
 
     public Technology get(long id) {
         return repository.getExisted(id);
+    }
+
+    public List<Technology> getAll() {
+        return repository.findAll(Sort.by("name"));
     }
 
     public Page<Technology> getAll(Pageable pageable) {
@@ -76,6 +83,11 @@ public class TechnologyService {
     public void delete(long id) {
         Technology technology = get(id);
         repository.delete(technology);
+        repository.flush();
         FileUtil.deleteFile(technology.getLogoFile().getFileLink());
+    }
+
+    public List<Technology> getAllByIds(List<Long> ids) {
+        return repository.findAllById(ids);
     }
 }

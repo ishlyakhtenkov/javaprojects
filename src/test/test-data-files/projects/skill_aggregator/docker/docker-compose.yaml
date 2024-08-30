@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  skillaggregator:
+    image: javaprojects/skillaggregator
+    networks:
+      - skillaggregator-network
+    ports:
+      - 80:8080
+    depends_on:
+      - skillaggregator-database
+
+  skillaggregator-database:
+    image: javaprojects/skillaggregator-database
+    volumes:
+      - "skillaggregatordata:/var/lib/postgresql/data"
+    networks:
+      - skillaggregator-network
+    ports:
+      - 5555:5432
+
+networks:
+  skillaggregator-network:
+
+volumes:
+  skillaggregatordata:

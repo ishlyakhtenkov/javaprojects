@@ -10,7 +10,8 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-dark-subtle">
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${users.isEmpty() ? 'rounded-2 border-bottom' : ''}">
             <div class="row row-cols-1 row-cols-sm-2 py-1 align-items-center">
                 <div class="col-sm-4 text-start">
                     <span class="h3 text-secondary font-weight-bold"><i class="fas fa-people-group me-2"></i>Users</span>
@@ -36,14 +37,14 @@
 
         <div th:if="${!users.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-info">
+                <thead class="table-info thead-border-top-none">
                 <tr>
-                    <th class="col-3">Name</th>
-                    <th class="col-3">Email</th>
-                    <th class="col-1 text-center">Online</th>
-                    <th class="col-1 text-center">Enabled</th>
-                    <th class="col-2 text-center">Registered</th>
-                    <th class="col-1">Roles</th>
+                    <th class="col-3 border-right-none">Name</th>
+                    <th class="col-3 border-right-none">Email</th>
+                    <th class="col-1 border-right-none">Roles</th>
+                    <th class="col-2 border-right-none">Registered</th>
+                    <th class="col-1 text-center border-right-none">Online</th>
+                    <th class="col-1 text-center border-right-none">Enabled</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>
@@ -51,6 +52,8 @@
                 <tr th:each="user : ${users}" th:id="'row-' + ${user.id}" class="table-row">
                     <td th:text="${user.name}"></td>
                     <td class="text-truncate" th:text="${user.email}"></td>
+                    <td th:text="${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}"></td>
+                    <td  th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
                     <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id) ? 'online' : 'offline'}"
                         th:classappend="${onlineUsersIds.contains(user.id) ? 'text-success' : 'text-danger'}">
                         <span><i class="fa-solid fa-circle-dot"></i></span>
@@ -62,8 +65,6 @@
                                    th:onclick="|enableUser(this, '${user.id}')|" />
                         </div>
                     </td>
-                    <td class="text-center" th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
-                    <td th:text="${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}"></td>
                     <td class="text-center">
                         <a th:href="@{'/users/edit/' + ${user.id}}" type="button" title="Edit user"
                            class="btn-link link-underline-opacity-0 link-success">

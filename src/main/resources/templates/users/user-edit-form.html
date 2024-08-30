@@ -4,9 +4,14 @@
 
 <th:block th:replace="~{fragments/main::page(title='Users',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
     <appMain>
-        <div class="bg-info-subtle px-2 py-2 mb-10px rounded-2">
-            <span class="h3 text-secondary font-weight-bold"><i class="fas fa-people-group"></i>Users / Edit</span>
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
+            <div class="row align-items-center" style="height: 46px">
+                <div class="col text-start">
+                    <span class="h3 text-secondary font-weight-bold"><i class="fas fa-people-group me-2"></i>Users / Edit</span>
+                </div>
+            </div>
         </div>
+
         <!-- Edit user card -->
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">

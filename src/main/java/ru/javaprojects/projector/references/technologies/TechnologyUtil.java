@@ -1,7 +1,7 @@
 package ru.javaprojects.projector.references.technologies;
 
 import lombok.experimental.UtilityClass;
-import ru.javaprojects.projector.references.technologies.model.LogoFile;
+import ru.javaprojects.projector.common.model.LogoFile;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizeFileName;

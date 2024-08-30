@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaprojects.projector.common.BaseEntity;
+import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 

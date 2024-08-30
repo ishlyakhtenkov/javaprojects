@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
+
+<th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
+    <appMain>
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
+            <div class="row align-items-center" style="height: 46px">
+                <div class="col text-start text-truncate">
+                    <span class="h3 text-secondary font-weight-bold"
+                          th:utext="${'<i class=''fa-solid fa-layer-group me-2''></i>Projects / ' + (project.name)}">Projects / Project</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project card -->
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-xxl-10">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h3 class="text-center" th:text="${project.name}">Name</h3>
+                    </div>
+                    <div class="card-body text-start">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text project-card-label">Name</span>
+                            <span class="form-control" th:text="${project.name}"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Architecture</span>
+                                    <span class="form-control" th:text="${project.architecture.name}"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Dev period</span>
+                                    <span class="form-control" th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Priority</span>
+                                    <span class="form-control" th:text="${project.priority}"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Visibility</span>
+                                    <span class="form-control"
+                                          th:utext="${project.enabled ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> Visible to users' :
+                                          '<i class=&quot;text-danger me-1 fa-solid fa-eye-slash&quot;></i> Not visible to users'}">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Logo file</span>
+                                    <span class="form-control">
+                                        <img th:src="@{${project.logoFile != null ? ('/' + project.logoFile.fileLink) : ''}}"
+                                             width="24" height="24" id="filePreview"/>
+                                        <span th:text="${project.logoFile?.fileName}" id="fileName">File name</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text project-card-label">Docker file</span>
+                                    <span class="form-control">
+                                        <a th:if="${project.dockerComposeFile != null}" th:href="@{${'/' + project.dockerComposeFile.fileLink}}"
+                                           th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' + ${project.dockerComposeFile.fileName}"
+                                           target="_blank" title="Download file">File name</a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text project-card-label">Deployment URL</span>
+                            <span class="form-control">
+                                <a th:href="@{${project.deploymentUrl}}" th:text="${project.deploymentUrl}" target="_blank">Deployment url</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text project-card-label">Open API URL</span>
+                            <span class="form-control">
+                                <a th:href="@{${project.openApiUrl}}" th:text="${project.openApiUrl}" target="_blank">Open API url</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text project-card-label">Backend src URL</span>
+                            <span class="form-control">
+                                <a th:href="@{${project.backendSrcUrl}}" th:text="${project.backendSrcUrl}" target="_blank">Backend src url</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text project-card-label">Frontend src URL</span>
+                            <span class="form-control">
+                                <a th:href="@{${project.frontendSrcUrl}}" th:text="${project.frontendSrcUrl}" target="_blank">Frontend src url</a>
+                            </span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="border rounded-2 px-3 pb-3 text-center h-100">
+                                    <div class="text-start text-muted small">Card image</div>
+                                    <img th:src="@{${project.cardImageFile != null ? ('/' + project.cardImageFile.fileLink) : ''}}"
+                                         height="150px" class="rounded-2 mt-2" />
+                                </div>
+                            </div>
+                            <div class="col-lg-8 mb-3">
+                                <div class="border rounded-2 px-3 pb-3 h-100">
+                                    <div class="text-start text-muted small">Technologies</div>
+                                    <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2">
+                                        <img th:src="@{${technology.logoFile != null ? ('/' + technology.logoFile.fileLink) : ''}}"
+                                            width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-2 px-3 pb-3">
+                            <div class="text-start text-muted small">Short description</div>
+                            <div th:text="${project.shortDescription}" style="white-space: pre-wrap;"></div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer text-end">
+                        <button class="btn btn-secondary px-3" type="button" onclick="cancel()">Close</button>
+                        <a th:href="@{'/projects/edit/' + ${project.id}}" class="btn btn-warning px-4 ms-1" type="button">Edit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </appMain>
+
+    <ownScript>
+        <script src="/js/cancel-button.js?v=1"></script>
+    </ownScript>
+</th:block>

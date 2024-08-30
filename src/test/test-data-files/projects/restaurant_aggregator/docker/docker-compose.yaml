@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  votingsystem:
+    image: javaprojects/votingsystem
+    networks:
+      - votingsystem-network
+    ports:
+      - 80:8080
+    depends_on:
+      - votingsystem-database
+    healthcheck:
+      test: curl -sS http://localhost:8080/votingsystem/rest/restaurants/1 || echo 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  votingsystem-database:
+    image: javaprojects/votingsystem-database
+    volumes:
+      - "votingsystemdata:/var/lib/postgresql/data"
+    networks:
+      - votingsystem-network
+    ports:
+      - 5555:5432
+
+networks:
+  votingsystem-network:
+
+volumes:
+  votingsystemdata:

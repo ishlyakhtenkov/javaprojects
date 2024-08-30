@@ -6,9 +6,13 @@ import org.springframework.util.MultiValueMap;
 public class CommonTestData {
     public static final String HOME_URL = "/";
     public static final String ACTION_ATTRIBUTE = "action";
+    public static final String PRIORITIES_ATTRIBUTE = "priorities";
+    public static final String TECHNOLOGIES_ATTRIBUTE = "technologies";
+    public static final String ARCHITECTURES_ATTRIBUTE = "architectures";
 
     public static final String ID_PARAM = "id";
     public static final String NAME_PARAM = "name";
+    public static final String ENABLED_PARAM = "enabled";
 
     public static final String INVALID_NAME = "<h1>name</h1>";
 

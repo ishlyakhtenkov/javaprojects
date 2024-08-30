@@ -66,3 +66,19 @@
 .mb-10px {
     margin-bottom: 10px;
 }
+
+.thead-border-top-none {
+    border-top: hidden;
+}
+
+.thead-border-top-none>tr>th {
+    padding-top: 0;
+}
+
+.border-right-none {
+    border-right: hidden;
+}
+
+.project-card-label {
+    width: 145px;
+}

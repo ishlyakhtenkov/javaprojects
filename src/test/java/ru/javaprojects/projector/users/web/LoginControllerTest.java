@@ -65,7 +65,6 @@ class LoginControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(LOGIN_URL + ERROR_PARAM_BAD_CREDENTIALS))
                 .andExpect(status().isOk())
                 .andExpect(view().name(LOGIN_PAGE_VIEW))
-                .andExpect(model().attributeExists(ERROR_ATTRIBUTE))
                 .andExpect(model().attribute(ERROR_ATTRIBUTE, messageSource.getMessage("bad-credentials", null,
                         LocaleContextHolder.getLocale())));
     }
@@ -76,7 +75,6 @@ class LoginControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(LOGIN_URL + ERROR_PARAM_DISABLED_CREDENTIALS))
                 .andExpect(status().isOk())
                 .andExpect(view().name(LOGIN_PAGE_VIEW))
-                .andExpect(model().attributeExists(ERROR_ATTRIBUTE))
                 .andExpect(model().attribute(ERROR_ATTRIBUTE, messageSource.getMessage("disabled-credentials", null,
                         LocaleContextHolder.getLocale())));
     }

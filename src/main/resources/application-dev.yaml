@@ -35,3 +35,4 @@ change-email:
 
 content-path:
   technologies: ./content/technologies/
+  projects: ./content/projects/

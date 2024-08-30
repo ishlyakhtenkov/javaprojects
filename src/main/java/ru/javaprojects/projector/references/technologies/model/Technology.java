@@ -9,8 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
-import ru.javaprojects.projector.common.BaseEntity;
 import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity
@@ -18,7 +20,7 @@ import ru.javaprojects.projector.common.util.validation.NoHtml;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Technology extends BaseEntity implements HasIdAndName {
+public class Technology extends BaseEntity implements HasIdAndName, Comparable<Technology> {
 
     @NotBlank
     @NoHtml
@@ -39,7 +41,7 @@ public class Technology extends BaseEntity implements HasIdAndName {
     private Usage usage;
 
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "priority")
     private Priority priority;
 
@@ -55,6 +57,11 @@ public class Technology extends BaseEntity implements HasIdAndName {
         this.usage = usage;
         this.priority = priority;
         this.logoFile = logoFile;
+    }
+
+    @Override
+    public int compareTo(Technology o) {
+        return Integer.compare(this.priority.ordinal(), o.priority.ordinal());
     }
 
     @Override

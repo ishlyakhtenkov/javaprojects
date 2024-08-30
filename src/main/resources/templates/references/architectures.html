@@ -3,11 +3,12 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="architectures" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Architectures',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'references'} })}">
+<th:block th:replace="~{fragments/main::page(title='Architectures',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!--Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-dark-subtle">
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${architectures.isEmpty() ? 'rounded-2 border-bottom' : ''}">
             <div class="row py-1 align-items-center">
                 <div class="col-7 text-start">
                     <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-cubes me-2"></i>Architectures</span>
@@ -28,10 +29,10 @@
 
         <div th:if="${!architectures.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-info">
+                <thead class="table-info thead-border-top-none">
                 <tr>
-                    <th class="col-2">Name</th>
-                    <th class="col-10">Description</th>
+                    <th class="col-2 border-right-none">Name</th>
+                    <th class="col-10 border-right-none">Description</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>

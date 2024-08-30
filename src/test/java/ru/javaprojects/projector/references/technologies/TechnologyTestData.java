@@ -5,12 +5,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
-import ru.javaprojects.projector.references.technologies.model.LogoFile;
+import ru.javaprojects.projector.common.model.LogoFile;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import static ru.javaprojects.projector.CommonTestData.ID_PARAM;
 import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
-import static ru.javaprojects.projector.references.technologies.model.Priority.*;
+import static ru.javaprojects.projector.common.model.Priority.*;
 import static ru.javaprojects.projector.references.technologies.model.Usage.BACKEND;
 import static ru.javaprojects.projector.references.technologies.model.Usage.FRONTEND;
 
@@ -18,10 +18,8 @@ public class TechnologyTestData {
     public static final MatcherFactory.Matcher<Technology> TECHNOLOGY_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Technology.class);
 
-    public static final String TECHNOLOGIES_ATTRIBUTE = "technologies";
     public static final String TECHNOLOGY_TO_ATTRIBUTE = "technologyTo";
     public static final String USAGES_ATTRIBUTE = "usages";
-    public static final String PRIORITIES_ATTRIBUTE = "priorities";
 
     public static final String URL_PARAM = "url";
     public static final String USAGE_PARAM = "usage";
@@ -33,6 +31,7 @@ public class TechnologyTestData {
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;
     public static final long TECHNOLOGY3_ID = 100013;
+    public static final long TECHNOLOGY4_ID = 100014;
 
     public static final Technology technology1 = new Technology(TECHNOLOGY1_ID, "Java",
             "https://www.oracle.com/java", BACKEND, ULTRA, new LogoFile("java.svg", "content/technologies/java/java.svg"));
@@ -42,6 +41,10 @@ public class TechnologyTestData {
 
     public static final Technology technology3 = new Technology(TECHNOLOGY3_ID, "Angular",
             "https://angular.dev", FRONTEND, HIGH, new LogoFile("angular.svg", "content/technologies/angular/angular.svg"));
+
+    public static final Technology technology4 = new Technology(TECHNOLOGY4_ID, "Thymeleaf",
+            "https://www.thymeleaf.org", BACKEND, MEDIUM, new LogoFile("thymeleaf.png", "content/technologies/thymeleaf/thymeleaf.png"));
+
 
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "Apache Tomcat.png",
             MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());

@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaprojects.projector.common.BaseEntity;
+import ru.javaprojects.projector.common.model.BaseEntity;
 
 import java.util.Date;
 

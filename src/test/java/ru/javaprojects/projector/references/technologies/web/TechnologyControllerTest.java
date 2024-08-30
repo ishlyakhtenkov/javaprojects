@@ -14,9 +14,12 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
 import ru.javaprojects.projector.references.technologies.TechnologyTo;
+import ru.javaprojects.projector.references.technologies.TechnologyUtil;
 import ru.javaprojects.projector.references.technologies.model.Technology;
+import ru.javaprojects.projector.references.technologies.model.Usage;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +32,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.*;
+import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
+import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
 import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
 import static ru.javaprojects.projector.references.technologies.web.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
@@ -73,7 +78,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(view().name(TECHNOLOGIES_VIEW));
         Page<Technology> technologies = (Page<Technology>) Objects.requireNonNull(actions.andReturn().getModelAndView())
                 .getModel().get(TECHNOLOGIES_ATTRIBUTE);
-        assertEquals(3, technologies.getTotalElements());
+        assertEquals(4, technologies.getTotalElements());
         assertEquals(2, technologies.getTotalPages());
         TECHNOLOGY_MATCHER.assertMatch(technologies.getContent(), List.of(technology3, technology1));
     }
@@ -117,8 +122,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         perform(MockMvcRequestBuilders.get(TECHNOLOGIES_ADD_FORM_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(TECHNOLOGY_TO_ATTRIBUTE))
-                .andExpect(model().attributeExists(USAGES_ATTRIBUTE))
-                .andExpect(model().attributeExists(PRIORITIES_ATTRIBUTE))
+                .andExpect(model().attribute(USAGES_ATTRIBUTE, Usage.values()))
+                .andExpect(model().attribute(PRIORITIES_ATTRIBUTE, Priority.values()))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
     }
 
@@ -217,9 +222,9 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void showEditForm() throws Exception {
         perform(MockMvcRequestBuilders.get(TECHNOLOGIES_EDIT_FORM_URL + TECHNOLOGY1_ID))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists(TECHNOLOGY_TO_ATTRIBUTE))
-                .andExpect(model().attributeExists(USAGES_ATTRIBUTE))
-                .andExpect(model().attributeExists(PRIORITIES_ATTRIBUTE))
+                .andExpect(model().attribute(TECHNOLOGY_TO_ATTRIBUTE, TechnologyUtil.asTo(technology1)))
+                .andExpect(model().attribute(USAGES_ATTRIBUTE, Usage.values()))
+                .andExpect(model().attribute(PRIORITIES_ATTRIBUTE, Priority.values()))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
     }
 

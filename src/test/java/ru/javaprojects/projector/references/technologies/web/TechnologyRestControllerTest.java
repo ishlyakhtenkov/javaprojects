@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
-import static ru.javaprojects.projector.references.technologies.TechnologyTestData.TECHNOLOGY1_ID;
-import static ru.javaprojects.projector.references.technologies.TechnologyTestData.technology1;
+import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
 import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
 import static ru.javaprojects.projector.references.technologies.web.TechnologyControllerTest.TECHNOLOGIES_TEST_DATA_FILES_PATH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
@@ -55,11 +55,29 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
+        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY4_ID)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> technologyService.get(TECHNOLOGY1_ID));
-        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertThrows(NotFoundException.class, () -> technologyService.get(TECHNOLOGY4_ID));
+        assertTrue(Files.notExists(Paths.get(technology4.getLogoFile().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void deleteWhenReferenced() throws Exception {
+        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
+                .with(csrf()))
+                .andExpect(status().isConflict())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        DataIntegrityViolationException.class))
+                .andExpect(problemTitle(HttpStatus.CONFLICT.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.CONFLICT.value()))
+                .andExpect(problemDetail(messageSource.getMessage("technology.is-referenced", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID));
+
+        assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY1_ID));
+        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
     }
 
     @Test
@@ -79,22 +97,22 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
 
     @Test
     void deleteUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
+        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY4_ID)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY1_ID));
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY4_ID));
+        assertTrue(Files.exists(Paths.get(technology4.getLogoFile().getFileLink())));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void deleteForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
+        perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY4_ID)
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY1_ID));
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY4_ID));
+        assertTrue(Files.exists(Paths.get(technology4.getLogoFile().getFileLink())));
     }
 }

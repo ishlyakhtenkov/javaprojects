@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--/*@thymesVar id="action" type="java.lang.String"*/-->
+<!--/*@thymesVar id="projects" type="java.util.List"*/-->
+<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
+
+<th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
+    <appMain>
+        <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
+        <!--Add button -->
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${projects.isEmpty() ? 'rounded-2 border-bottom' : ''}">
+            <div class="row py-1 align-items-center">
+                <div class="col-7 text-start">
+                    <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-layer-group me-2"></i>Projects</span>
+                </div>
+                <div class="col-5">
+                    <div class="btn-toolbar justify-content-end">
+                        <a th:href="@{/projects/add}" type="button"
+                           class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects table -->
+        <span th:if="${projects.isEmpty()}">
+            <h5 class="alert alert-warning mt-2">No projects found.</h5>
+        </span>
+
+        <div th:if="${!projects.isEmpty()}" class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+                <thead class="table-info thead-border-top-none">
+                <tr>
+                    <th class="col-3 border-right-none">Name</th>
+                    <th class="col-1 text-center border-right-none">Logo</th>
+                    <th class="col-2 border-right-none">Dev period</th>
+                    <th class="col-2 border-right-none">Architecture</th>
+                    <th class="col-2 border-right-none">Priority</th>
+                    <th class="col-1 text-center border-right-none">Enabled</th>
+                    <th class="col-1 text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projects}" th:id="'row-' + ${project.id}" class="align-middle table-row">
+                    <td th:text="${project.name}"></td>
+                    <td class="text-center py-1">
+                        <img th:src="@{'/' + ${project.logoFile.fileLink}}" th:alt="${project.logoFile.fileName}" width="32" height="32" />
+                    </td>
+                    <td th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></td>
+                    <td th:text="${project.architecture.name}"></td>
+                    <td th:text="${project.priority}"></td>
+                    <td class="text-center">
+                        <div class="form-switch">
+                            <input type="checkbox" role="switch" class="form-check-input" style="cursor: pointer;" th:checked="${project.enabled}"
+                                   th:data-name="${project.name}" th:title="${(project.enabled ? 'Disable' : 'Enable') + ' project'}"
+                                   th:onclick="|enableProject(this, '${project.id}')|" />
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{'/projects/' + ${project.id}}" type="button" title="Show project"
+                           class="btn-link link-underline-opacity-0 link-secondary">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </a>
+                        <a th:href="@{'/projects/edit/' + ${project.id}}" type="button" title="Edit project"
+                           class="btn-link link-underline-opacity-0 link-success ms-3">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete project"
+                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this project?"
+                           th:data-name="${project.name}"
+                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
+                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${project.name} + '\' onclick=\'deleteProject(this, ' + ${project.id} + ')\'>Delete</button></div>'">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </appMain>
+
+    <ownScript>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+        </script>
+        <script src="/js/common.js?v=1"></script>
+        <script src="/js/table-content.js?v=1"></script>
+        <script src="/js/projects.js?v=1"></script>
+    </ownScript>
+</th:block>

@@ -10,15 +10,15 @@ public class ArchitectureTestData {
     public static final MatcherFactory.Matcher<Architecture> ARCHITECTURE_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Architecture.class);
 
-    public static final String ARCHITECTURES_ATTRIBUTE = "architectures";
+
     public static final String ARCHITECTURE_ATTRIBUTE = "architecture";
 
     public static final String DESCRIPTION_PARAM = "description";
 
     public static final String INVALID_DESCRIPTION = "";
 
-    public static final long ARCHITECTURE1_ID = 100014;
-    public static final long ARCHITECTURE2_ID = 100015;
+    public static final long ARCHITECTURE1_ID = 100015;
+    public static final long ARCHITECTURE2_ID = 100016;
 
     public static final Architecture architecture1 = new Architecture(ARCHITECTURE1_ID, "Modular Monolith", "A modular monolith is an architectural pattern that structures the application into independent modules or components with well-defined boundaries.");
     public static final Architecture architecture2 = new Architecture(ARCHITECTURE2_ID, "Microservices", "Microservices architecture allow a large application to be separated into smaller independent parts, with each part having its own realm of responsibility.");

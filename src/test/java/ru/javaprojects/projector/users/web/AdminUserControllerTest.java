@@ -11,9 +11,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.users.model.Role;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.UserTo;
+import ru.javaprojects.projector.users.util.UserUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -99,6 +101,7 @@ class AdminUserControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(USERS_ADD_FORM_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(USER_ATTRIBUTE))
+                .andExpect(model().attribute(ROLES_ATTRIBUTE, Role.values()))
                 .andExpect(view().name(USER_ADD_VIEW))
                 .andExpect(result ->
                         USER_MATCHER.assertMatch((User) Objects.requireNonNull(result.getModelAndView())
@@ -189,7 +192,8 @@ class AdminUserControllerTest extends AbstractControllerTest {
     void showEditForm() throws Exception {
         perform(MockMvcRequestBuilders.get(USERS_EDIT_FORM_URL + USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists(USER_TO_ATTRIBUTE))
+                .andExpect(model().attribute(USER_TO_ATTRIBUTE, UserUtil.asTo(user)))
+                .andExpect(model().attribute(ROLES_ATTRIBUTE, Role.values()))
                 .andExpect(view().name(USER_EDIT_VIEW))
                 .andExpect(result ->
                         USER_TO_MATCHER.assertMatch((UserTo)Objects.requireNonNull(result.getModelAndView())

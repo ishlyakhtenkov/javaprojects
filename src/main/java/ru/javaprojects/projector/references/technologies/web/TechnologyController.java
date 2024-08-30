@@ -16,7 +16,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.references.technologies.TechnologyTo;
-import ru.javaprojects.projector.references.technologies.model.Priority;
+import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 import ru.javaprojects.projector.references.technologies.model.Usage;
 import ru.javaprojects.projector.references.technologies.TechnologyService;

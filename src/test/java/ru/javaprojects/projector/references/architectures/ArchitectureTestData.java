@@ -42,7 +42,7 @@ public class ArchitectureTestData {
 
     public static MultiValueMap<String, String> getNewInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add(NAME_PARAM, INVALID_NAME);
+        params.add(NAME_PARAM, INVALID_NAME_WITH_HTML);
         params.add(DESCRIPTION_PARAM, INVALID_DESCRIPTION);
         return params;
     }

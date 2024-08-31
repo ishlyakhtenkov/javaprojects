@@ -31,7 +31,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.INVALID_NAME;
+import static ru.javaprojects.projector.CommonTestData.INVALID_NAME_WITH_HTML;
 import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
@@ -215,7 +215,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void updateProfileInvalid() throws Exception {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.patch(PROFILE_UPDATE_URL)
-                .param(NAME_PARAM, INVALID_NAME)
+                .param(NAME_PARAM, INVALID_NAME_WITH_HTML)
                 .with(csrf()))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
@@ -224,7 +224,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
                 .andExpect(problemDetail("update.name: Should not be html"))
                 .andExpect(problemInstance(PROFILE_UPDATE_URL));
-        assertNotEquals(INVALID_NAME, userService.get(USER_ID).getName());
+        assertNotEquals(INVALID_NAME_WITH_HTML, userService.get(USER_ID).getName());
     }
 
     @Test

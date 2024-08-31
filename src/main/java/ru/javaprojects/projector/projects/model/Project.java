@@ -108,7 +108,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     private String openApiUrl;
 
     @NotEmpty
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "project_technology",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "technology_id")
@@ -144,6 +144,10 @@ public class Project extends BaseEntity implements HasIdAndName {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
                 cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
         this.technologies = technologies;
+    }
+
+    public void addTechnology(Technology technology) {
+        technologies.add(technology);
     }
 
     @Override

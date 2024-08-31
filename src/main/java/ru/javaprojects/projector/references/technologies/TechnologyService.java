@@ -13,7 +13,9 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.updateFromTo;
@@ -87,7 +89,7 @@ public class TechnologyService {
         FileUtil.deleteFile(technology.getLogoFile().getFileLink());
     }
 
-    public List<Technology> getAllByIds(List<Long> ids) {
-        return repository.findAllById(ids);
+    public Set<Technology> getAllByIds(Set<Long> ids) {
+        return new HashSet<>(repository.findAllById(ids));
     }
 }

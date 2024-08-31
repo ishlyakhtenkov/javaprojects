@@ -88,11 +88,11 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     private String openApiUrl;
 
     @NotEmpty
-    private Set<Technology> technologies;
+    private Set<Long> technologiesIds;
 
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                      LocalDate endDate, Architecture architecture, String deploymentUrl, String backendSrcUrl,
-                     String frontendSrcUrl, String openApiUrl, Set<Technology> technologies) {
+                     String frontendSrcUrl, String openApiUrl, Set<Long> technologiesIds) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -105,7 +105,18 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
         this.openApiUrl = openApiUrl;
-        this.technologies = technologies;
+        this.technologiesIds = technologiesIds;
+    }
+
+    public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
+                     LocalDate endDate, Architecture architecture, MultipartFile logoFile, MultipartFile dockerComposeFile,
+                     MultipartFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+                     String openApiUrl, Set<Long> technologiesIds) {
+        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, deploymentUrl, backendSrcUrl,
+                frontendSrcUrl, openApiUrl, technologiesIds);
+        this.logoFile = logoFile;
+        this.dockerComposeFile = dockerComposeFile;
+        this.cardImageFile = cardImageFile;
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
@@ -32,8 +33,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.*;
-import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
-import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
 import static ru.javaprojects.projector.references.technologies.web.TechnologyController.TECHNOLOGIES_URL;
 import static ru.javaprojects.projector.references.technologies.web.UniqueTechnologyNameValidator.DUPLICATE_ERROR_CODE;
@@ -204,6 +203,18 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
+    void createWithoutLogoFile() throws Exception {
+        MultiValueMap<String, String> newParams = getNewParams();
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+                .params(newParams)
+                .with(csrf()))
+                .andExpect(exception().message(messageSource.getMessage("technology.logo-not-present",
+                        null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
+        assertThrows(NotFoundException.class, () -> technologyService.getByName(newParams.get(NAME_PARAM).get(0)));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
     void createDuplicateName() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.set(NAME_PARAM, technology1.getName());
@@ -267,6 +278,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
     }
 
     @Test
@@ -284,17 +296,18 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateWhenNameNotUpdated() throws Exception {
         Technology updatedTechnology = getUpdatedWhenOldName(contentPath);
-        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
-        updatedToParams.set(NAME_PARAM, technology1.getName());
+        MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
+        updatedParams.set(NAME_PARAM, technology1.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(updatedToParams)
+                .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
@@ -309,11 +322,11 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateNotFound() throws Exception {
-        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
-        updatedToParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
+        MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
+        updatedParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(updatedToParams)
+                .params(updatedParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("notfound.entity",
                         new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
@@ -329,6 +342,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
+        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
     }
 
     @Test
@@ -340,6 +355,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
+        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
     }
 
     @Test
@@ -354,20 +371,24 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
+        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateDuplicateName() throws Exception {
-        MultiValueMap<String, String> updatedToParams = getUpdatedParams(contentPath);
-        updatedToParams.set(NAME_PARAM, technology2.getName());
+        MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
+        updatedParams.set(NAME_PARAM, technology2.getName());
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
-                .params(updatedToParams)
+                .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrorCode(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), technology2.getName());
+        assertTrue(Files.exists(Paths.get(technology2.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + technology2.getName() + "/" + UPDATED_LOGO_FILE.getOriginalFilename().toLowerCase())));
     }
 }

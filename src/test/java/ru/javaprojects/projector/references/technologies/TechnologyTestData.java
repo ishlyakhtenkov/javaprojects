@@ -8,8 +8,7 @@ import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.LogoFile;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import static ru.javaprojects.projector.CommonTestData.ID_PARAM;
-import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
+import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.model.Priority.*;
 import static ru.javaprojects.projector.references.technologies.model.Usage.BACKEND;
 import static ru.javaprojects.projector.references.technologies.model.Usage.FRONTEND;
@@ -24,9 +23,6 @@ public class TechnologyTestData {
     public static final String URL_PARAM = "url";
     public static final String USAGE_PARAM = "usage";
     public static final String PRIORITY_PARAM = "priority";
-
-    public static final String INVALID_URL = "some-invalid-url.com";
-    public static final String INVALID_NAME = "a";
 
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;

@@ -265,13 +265,13 @@
                                     <div class="input-group">
                                         <span class="input-group-text project-card-label">Technologies</span>
                                         <select class="form-control selectpicker border" data-style="btn-white" id="technologiesSelector"
-                                                name="technologies" multiple data-selected-text-format="count > 3" title="Technologies" required>
+                                                name="technologiesIds" multiple data-selected-text-format="count > 3" title="Technologies" required>
                                             <option th:each="technology : ${technologies}"
                                                     th:value="${technology.id}"
                                                     th:text="${technology.name}"
                                                     th:data-name="${technology.name}"
                                                     th:data-filelink="${technology.logoFile.fileLink}"
-                                                    th:selected="${projectTo.technologies != null && projectTo.technologies.contains(technology)}">
+                                                    th:selected="${projectTo.technologiesIds != null && projectTo.technologiesIds.contains(technology.id)}">
                                             </option>
                                         </select>
                                     </div>
@@ -294,7 +294,7 @@
                                             Technologies
                                         </div>
                                         <div id="technologiesPreviewDiv">
-                                            <span th:each="technology : ${projectTo.technologies}" class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
+                                            <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}" class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
                                                 <img th:src="@{${technology.logoFile != null ? ('/' + technology.logoFile.fileLink) : ''}}"
                                                      width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                             </span>

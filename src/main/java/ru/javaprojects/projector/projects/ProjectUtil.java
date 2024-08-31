@@ -1,34 +1,43 @@
 package ru.javaprojects.projector.projects;
 
-import lombok.experimental.UtilityClass;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.LogoFile;
 import ru.javaprojects.projector.projects.model.CardImageFile;
 import ru.javaprojects.projector.projects.model.DockerComposeFile;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
+import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import java.util.TreeSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizeFileName;
 
-@UtilityClass
+@Component
+@AllArgsConstructor
 public class ProjectUtil {
+    private final TechnologyService technologyService;
 
-    public static ProjectTo asTo(Project project) {
+    public ProjectTo asTo(Project project) {
         return new ProjectTo(project.getId(), project.getName(), project.getShortDescription(), project.isEnabled(),
                 project.getPriority(), project.getStartDate(), project.getEndDate(), project.getArchitecture(),
                 project.getDeploymentUrl(), project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(),
-                project.getTechnologies());
+                project.getTechnologies().stream().map(BaseEntity::getId).collect(Collectors.toSet()));
     }
 
-    public static Project createNewFromTo(ProjectTo projectTo, String contentPath) {
-        return new Project(null, projectTo.getName(), projectTo.getShortDescription(), projectTo.isEnabled(),
+    public Project createNewFromTo(ProjectTo projectTo, String contentPath) {
+        Project project = new Project(null, projectTo.getName(), projectTo.getShortDescription(), projectTo.isEnabled(),
                 projectTo.getPriority(), projectTo.getStartDate(), projectTo.getEndDate(), projectTo.getArchitecture(),
                 createLogoFile(projectTo, contentPath), createDockerComposeFile(projectTo, contentPath),
                 createCardImageFile(projectTo, contentPath), projectTo.getDeploymentUrl(), projectTo.getBackendSrcUrl(),
-                projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), new TreeSet<>(projectTo.getTechnologies()));
+                projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl());
+        technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
+        return project;
     }
 
-    public static Project updateFromTo(Project project, ProjectTo projectTo, String contentPath) {
+    public Project updateFromTo(Project project, ProjectTo projectTo, String contentPath) {
         project.setShortDescription(projectTo.getShortDescription());
         project.setEnabled(projectTo.isEnabled());
         project.setPriority(projectTo.getPriority());
@@ -39,7 +48,13 @@ public class ProjectUtil {
         project.setBackendSrcUrl(projectTo.getBackendSrcUrl());
         project.setFrontendSrcUrl(projectTo.getFrontendSrcUrl());
         project.setOpenApiUrl(projectTo.getOpenApiUrl());
-        project.setTechnologies(new TreeSet<>(projectTo.getTechnologies()));
+
+        Set<Technology> technologies = technologyService.getAllByIds(projectTo.getTechnologiesIds());
+        technologies.stream()
+                .filter(technology -> !project.getTechnologies().contains(technology))
+                .forEach(project::addTechnology);
+        project.getTechnologies().removeIf(technology -> !technologies.contains(technology));
+
         if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
             project.setLogoFile(createLogoFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
@@ -74,7 +89,7 @@ public class ProjectUtil {
     }
 
     private DockerComposeFile createDockerComposeFile(ProjectTo projectTo, String contentPath) {
-        if (projectTo.getDockerComposeFile().isEmpty()) {
+        if (projectTo.getDockerComposeFile() == null || projectTo.getDockerComposeFile().isEmpty()) {
             return null;
         }
         String filename = normalizeFileName(projectTo.getDockerComposeFile().getOriginalFilename());

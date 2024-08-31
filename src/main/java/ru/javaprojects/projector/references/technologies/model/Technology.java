@@ -61,7 +61,7 @@ public class Technology extends BaseEntity implements HasIdAndName, Comparable<T
 
     @Override
     public int compareTo(Technology o) {
-        return Integer.compare(this.priority.ordinal(), o.priority.ordinal());
+        return this.getName().compareToIgnoreCase(o.getName());
     }
 
     @Override

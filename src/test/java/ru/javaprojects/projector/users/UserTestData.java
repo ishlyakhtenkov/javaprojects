@@ -143,7 +143,7 @@ public class UserTestData {
 
     public static MultiValueMap<String, String> getNewUserInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add(NAME_PARAM, INVALID_NAME);
+        params.add(NAME_PARAM, INVALID_NAME_WITH_HTML);
         params.add(EMAIL_PARAM, INVALID_EMAIL);
         params.add(ROLES_PARAM, "");
         params.add(PASSWORD_PARAM, INVALID_PASSWORD);
@@ -164,7 +164,7 @@ public class UserTestData {
     public static MultiValueMap<String, String> getUpdatedUserInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add(ID_PARAM, String.valueOf(USER_ID));
-        params.add(NAME_PARAM, INVALID_NAME);
+        params.add(NAME_PARAM, INVALID_NAME_WITH_HTML);
         params.add(EMAIL_PARAM, INVALID_EMAIL);
         params.add(ROLES_PARAM, "");
         return params;

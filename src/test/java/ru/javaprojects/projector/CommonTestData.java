@@ -14,7 +14,9 @@ public class CommonTestData {
     public static final String NAME_PARAM = "name";
     public static final String ENABLED_PARAM = "enabled";
 
-    public static final String INVALID_NAME = "<h1>name</h1>";
+    public static final String INVALID_NAME_WITH_HTML = "<h1>name</h1>";
+    public static final String INVALID_NAME = "a";
+    public static final String INVALID_URL = "some-invalid-url.com";
 
     public static final long NOT_EXISTING_ID = 100;
 

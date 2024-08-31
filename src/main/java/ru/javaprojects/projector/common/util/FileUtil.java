@@ -69,11 +69,7 @@ public class FileUtil {
             Path dir = Paths.get(dirPath);
             Files.createDirectories(dir);
             Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
-            try (Stream<Path> otherFiles = Files.list(file.getParent())) {
-                if (otherFiles.findAny().isEmpty()) {
-                    deleteDirectory(file.getParent().toString());
-                }
-            }
+            deleteEmptyParentDirs(file);
         } catch (IOException ex) {
             throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
         }
@@ -84,13 +80,23 @@ public class FileUtil {
             Path file = Paths.get(filePath);
             checkNotExistOrDirectory(file);
             Files.delete(file);
-            try (Stream<Path> otherFiles = Files.list(file.getParent())) {
-                if (otherFiles.findAny().isEmpty()) {
-                    deleteDirectory(file.getParent().toString());
-                }
-            }
+            deleteEmptyParentDirs(file);
         } catch (IOException ex) {
             throw new FileException("Failed to delete file: " + filePath, "file.failed-to-delete", new Object[]{filePath});
+        }
+    }
+
+    private static void deleteEmptyParentDirs(Path file) throws IOException {
+        Path parentDir = file.getParent();
+        while (parentDir != null) {
+            try (Stream<Path> otherFiles = Files.list(parentDir)) {
+                if (otherFiles.findAny().isEmpty()) {
+                    deleteDirectory(parentDir.toString());
+                    parentDir = parentDir.getParent();
+                } else {
+                    parentDir = null;
+                }
+            }
         }
     }
 

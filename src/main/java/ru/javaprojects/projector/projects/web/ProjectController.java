@@ -15,11 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectTo;
+import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.references.architectures.ArchitectureService;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
 
-import static ru.javaprojects.projector.projects.ProjectUtil.asTo;
 
 @Controller
 @RequestMapping(ProjectController.PROJECTS_URL)
@@ -33,6 +33,7 @@ public class ProjectController {
     private final TechnologyService technologyService;
     private final UniqueProjectNameValidator nameValidator;
     private final MessageSource messageSource;
+    private final ProjectUtil projectUtil;
 
     @InitBinder("projectTo")
     protected void initBinder(WebDataBinder binder) {
@@ -72,7 +73,7 @@ public class ProjectController {
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
         Project project = projectService.getWithTechnologies(id);
-        model.addAttribute("projectTo", asTo(project));
+        model.addAttribute("projectTo", projectUtil.asTo(project));
         model.addAttribute("logoFile", project.getLogoFile());
         model.addAttribute("dockerComposeFile", project.getDockerComposeFile());
         model.addAttribute("cardImageFile", project.getCardImageFile());

@@ -131,6 +131,21 @@
                             <div th:text="${project.shortDescription}" style="white-space: pre-wrap;"></div>
                         </div>
 
+                        <div class="fw-bold text-info-emphasis my-2 ms-2">Description</div>
+
+                        <div class="border rounded-2" style="min-height: 60px">
+                            <div th:each="element : ${project.descriptionElements}" class="border rounded-2 m-1 px-3 pb-1">
+                                <div class="text-start text-muted small" th:text="${element.type}">Type</div>
+                                <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"
+                                      th:text="${element.text}" class="h6"></span>
+                                <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"
+                                      th:text="${element.text}" style="white-space: pre-wrap;"></span>
+                                <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
+                                     th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+                                     height="150px" class="image-pop rounded-2 mt-1 border" style="cursor: zoom-in" />
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
                         <button class="btn btn-secondary px-3" type="button" onclick="cancel()">Close</button>
@@ -140,11 +155,25 @@
             </div>
         </div>
 
+        <!-- Image modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="" id="imagePreview" class="border" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </appMain>
 
     <ownScript>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/cancel-button.js?v=1"></script>
+        <script src="/js/project.js?v=1"></script>
         <script>
             sessionStorage.removeItem('prevUrl');
         </script>

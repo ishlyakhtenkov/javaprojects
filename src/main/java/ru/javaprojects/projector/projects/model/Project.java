@@ -48,7 +48,7 @@ public class Project extends BaseEntity implements HasIdAndName {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "priority")
+    @Column(name = "priority", nullable = false)
     private Priority priority;
 
     @NotNull
@@ -116,6 +116,11 @@ public class Project extends BaseEntity implements HasIdAndName {
     @SortNatural
     private SortedSet<Technology> technologies = new TreeSet<>();
 
+    @Valid
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @SortNatural
+    private SortedSet<DescriptionElement> descriptionElements = new TreeSet<>();
+
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
                    CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
@@ -148,6 +153,16 @@ public class Project extends BaseEntity implements HasIdAndName {
 
     public void addTechnology(Technology technology) {
         technologies.add(technology);
+    }
+
+    public void addDescriptionElement(DescriptionElement element) {
+        descriptionElements.add(element);
+        element.setProject(this);
+    }
+
+    public void removeDescriptionElement(DescriptionElement element) {
+        descriptionElements.remove(element);
+        element.setProject(null);
     }
 
     @Override

@@ -1,3 +1,4 @@
+DELETE FROM description_elements;
 DELETE FROM project_technology;
 DELETE FROM projects;
 DELETE FROM architectures;
@@ -75,3 +76,11 @@ VALUES (100017, 100011),
        (100018, 100013),
        (100019, 100011),
        (100019, 100012);
+
+INSERT INTO description_elements (index, type, text, file_name, file_link, project_id)
+VALUES (0, 'TITLE', 'App description', null, null, 100017),
+       (1, 'PARAGRAPH', 'This application allows users to receive information about restaurants and their daily lunch menus, as well as vote for their favorite restaurant once a day.', null, null, 100017),
+       (2, 'IMAGE', null, 'restaurant_aggregator_schema.png','content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png', 100017),
+       (3, 'TITLE', 'Registration, profile', null, null, 100017),
+       (4, 'PARAGRAPH', 'Users can register for the app by filling in their account details on the registration page.', null, null, 100017),
+       (5, 'IMAGE', null, 'registration_and_profile.png','content/projects/restaurant_aggregator/description/images/registration_and_profile.png', 100017);

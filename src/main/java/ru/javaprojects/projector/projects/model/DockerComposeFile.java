@@ -23,6 +23,7 @@ public class DockerComposeFile implements File {
     private String fileName;
 
     @NotBlank
+    @NoHtml
     @Size(min = 2, max = 512)
     @Column(name = "docker_compose_file_link")
     private String fileLink;

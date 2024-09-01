@@ -51,7 +51,7 @@ public class ProjectController {
     @GetMapping("/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
-        model.addAttribute("project", projectService.getWithTechnologies(id));
+        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id));
         return "projects/project";
     }
 

@@ -22,6 +22,7 @@ public class LogoFile implements File {
     private String fileName;
 
     @NotBlank
+    @NoHtml
     @Size(min = 2, max = 512)
     @Column(name = "logo_file_link")
     private String fileLink;

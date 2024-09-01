@@ -1,9 +1,9 @@
-package ru.javaprojects.projector.common.model;
+package ru.javaprojects.projector.projects.model;
 
 import org.springframework.util.StringUtils;
 
-public enum Priority {
-    ULTRA, VERY_HIGH, HIGH, MEDIUM, LOW, VERY_LOW;
+public enum ElementType {
+    TITLE, PARAGRAPH, IMAGE;
 
     @Override
     public String toString() {

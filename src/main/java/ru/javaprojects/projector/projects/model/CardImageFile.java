@@ -23,6 +23,7 @@ public class CardImageFile implements File {
     private String fileName;
 
     @NotBlank
+    @NoHtml
     @Size(min = 2, max = 512)
     @Column(name = "card_image_file_link")
     private String fileLink;

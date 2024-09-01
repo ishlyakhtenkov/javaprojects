@@ -10,7 +10,6 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.Project;
-import ru.javaprojects.projector.references.technologies.TechnologyService;
 
 import java.util.List;
 
@@ -20,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository repository;
-    private final TechnologyService technologyService;
     private final ProjectUtil projectUtil;
 
     @Value("${content-path.projects}")
@@ -32,6 +30,11 @@ public class ProjectService {
 
     public Project getWithTechnologies(long id) {
         return repository.findWithTechnologiesById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
+    }
+
+    public Project getWithTechnologiesAndDescription(long id) {
+        return repository.findWithTechnologiesAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
     }
 

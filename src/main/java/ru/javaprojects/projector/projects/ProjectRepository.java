@@ -16,4 +16,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     @EntityGraph(attributePaths = {"architecture", "technologies"})
     Optional<Project> findWithTechnologiesById(long id);
+
+    @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements"})
+    Optional<Project> findWithTechnologiesAndDescriptionById(long id);
 }

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS description_elements;
 DROP TABLE IF EXISTS project_technology;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS architectures;
@@ -110,7 +111,20 @@ CREATE TABLE project_technology
 (
     project_id    BIGINT       NOT NULL,
     technology_id BIGINT       NOT NULL,
-    FOREIGN KEY (project_id) REFERENCES projects (id),
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
     FOREIGN KEY (technology_id) REFERENCES technologies (id)
 );
 CREATE UNIQUE INDEX project_technology_unique_project_technology_idx ON project_technology (project_id, technology_id);
+
+CREATE TABLE description_elements
+(
+    id           BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    index        SMALLINT     NOT NULL,
+    type         VARCHAR(16)  NOT NULL,
+    text         VARCHAR(1024),
+    file_name    VARCHAR(128),
+    file_link    VARCHAR(512),
+    project_id   BIGINT       NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX description_elements_unique_project_index_idx ON description_elements (project_id, index);

@@ -18,6 +18,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+    public static final String LOGO_DIR = "/logo/";
+    public static final String DOCKER_DIR = "/docker/";
+    public static final String CARD_IMG_DIR = "/card_img/";
+
     private final ProjectRepository repository;
     private final ProjectUtil projectUtil;
 
@@ -78,10 +82,10 @@ public class ProjectService {
                     "project.card-image-not-present", null);
         }
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo, contentPath));
-        uploadFile(projectTo.getLogoFile(), project, "logo");
-        uploadFile(projectTo.getCardImageFile(), project, "card_img");
+        uploadFile(projectTo.getLogoFile(), project, LOGO_DIR);
+        uploadFile(projectTo.getCardImageFile(), project, CARD_IMG_DIR);
         if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
-            uploadFile(projectTo.getDockerComposeFile(), project, "docker");
+            uploadFile(projectTo.getDockerComposeFile(), project, DOCKER_DIR);
         }
         return project;
     }
@@ -101,17 +105,17 @@ public class ProjectService {
             FileUtil.deleteFile(oldLogoFileLink);
             String newLogoFileName =  FileUtil.normalizeFileName(projectTo.getLogoFile().getOriginalFilename());
             FileUtil.upload(projectTo.getLogoFile(), contentPath + FileUtil.normalizeFileName(projectTo.getName()) +
-                    "/logo/", newLogoFileName);
+                    LOGO_DIR, newLogoFileName);
         } else if (!projectTo.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + "/logo/"));
+            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + LOGO_DIR));
         }
         if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
             FileUtil.deleteFile(oldCardImageFileLink);
             String newCardImageFileName =  FileUtil.normalizeFileName(projectTo.getCardImageFile().getOriginalFilename());
             FileUtil.upload(projectTo.getCardImageFile(), contentPath + FileUtil.normalizeFileName(projectTo.getName()) +
-                    "/card_img/", newCardImageFileName);
+                    CARD_IMG_DIR, newCardImageFileName);
         } else if (!projectTo.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldCardImageFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + "/card_img/"));
+            FileUtil.moveFile(oldCardImageFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + CARD_IMG_DIR));
         }
         if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
             if (oldDockerComposeFileLink != null) {
@@ -119,9 +123,9 @@ public class ProjectService {
             }
             String newDockerComposeFileName =  FileUtil.normalizeFileName(projectTo.getDockerComposeFile().getOriginalFilename());
             FileUtil.upload(projectTo.getDockerComposeFile(), contentPath + FileUtil.normalizeFileName(projectTo.getName()) +
-                    "/docker/", newDockerComposeFileName);
+                    DOCKER_DIR, newDockerComposeFileName);
         } else if (!projectTo.getName().equalsIgnoreCase(oldName) && oldDockerComposeFileLink != null) {
-            FileUtil.moveFile(oldDockerComposeFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + "/docker/"));
+            FileUtil.moveFile(oldDockerComposeFileLink, contentPath + FileUtil.normalizeFileName(projectTo.getName() + DOCKER_DIR));
         }
         return project;
     }

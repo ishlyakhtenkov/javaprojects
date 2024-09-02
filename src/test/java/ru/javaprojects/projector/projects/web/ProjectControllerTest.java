@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.util.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
+import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.web.ProjectController.PROJECTS_URL;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
@@ -264,11 +265,11 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
-        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/logo/" +
+        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
                 LOGO_FILE.getOriginalFilename())));
-        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/docker/" +
+        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + DOCKER_DIR +
                 DOCKER_COMPOSE_FILE.getOriginalFilename())));
-        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/card_img/" +
+        assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + CARD_IMG_DIR +
                 CARD_IMAGE_FILE.getOriginalFilename())));
     }
 
@@ -461,7 +462,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams(contentPath);
+        MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
@@ -501,11 +502,11 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.exists(Paths.get(project2.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project2.getCardImageFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project2.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + "/logo/" +
+        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + LOGO_DIR +
                 UPDATED_LOGO_FILE.getOriginalFilename().toLowerCase().replace(' ', '_'))));
-        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + "/card_img/" +
+        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + CARD_IMG_DIR +
                 UPDATED_CARD_IMAGE_FILE.getOriginalFilename().toLowerCase().replace(' ', '_'))));
-        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + "/docker/" +
+        assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + DOCKER_DIR +
                 UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename().toLowerCase().replace(' ', '_'))));
     }
 

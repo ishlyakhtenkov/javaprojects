@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import static java.time.Month.*;
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.model.Priority.*;
+import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.model.ElementType.*;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
@@ -134,9 +135,9 @@ public class ProjectTestData {
         ProjectTo newTo = getNewTo();
         return new Project(null, newTo.getName(), newTo.getShortDescription(), newTo.isEnabled(), newTo.getPriority(),
                 newTo.getStartDate(), newTo.getEndDate(), newTo.getArchitecture(),
-                new LogoFile("new_project_logo.png", contentPath + "new_project_name/logo/" + "new_project_logo.png"),
-                new DockerComposeFile("docker-compose.yaml", contentPath + "new_project_name/docker/" + "docker-compose.yaml"),
-                new CardImageFile("new_project_card_image.png", contentPath + "new_project_name/card_img/" + "new_project_card_image.png"),
+                new LogoFile("new_project_logo.png", contentPath + "new_project_name" + LOGO_DIR + "new_project_logo.png"),
+                new DockerComposeFile("docker-compose.yaml", contentPath + "new_project_name" + DOCKER_DIR + "docker-compose.yaml"),
+                new CardImageFile("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
                 new TreeSet<>(Set.of(technology1, technology2, technology3)));
     }
@@ -184,21 +185,20 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile("updated_project_logo.png", contentPath + updatedName.toLowerCase() + "/logo/" + "updated_project_logo.png"),
-                new DockerComposeFile("docker-compose-updated.yaml", contentPath + updatedName.toLowerCase() + "/docker/" + "docker-compose-updated.yaml"),
-                new CardImageFile("updated_project_card_image.png", contentPath + updatedName.toLowerCase() + "/card_img/" + "updated_project_card_image.png"),
+                new LogoFile("updated_project_logo.png", contentPath + updatedName.toLowerCase() + LOGO_DIR + "updated_project_logo.png"),
+                new DockerComposeFile("docker-compose-updated.yaml", contentPath + updatedName.toLowerCase() + DOCKER_DIR + "docker-compose-updated.yaml"),
+                new CardImageFile("updated_project_card_image.png", contentPath + updatedName.toLowerCase() + CARD_IMG_DIR + "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)));
     }
 
     public static Project getUpdatedWhenOldName(String contentPath) {
-        String updatedName = "updatedProjectName";
         return new Project(PROJECT1_ID, project1.getName(), "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile("updated_project_logo.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + "/logo/" + "updated_project_logo.png"),
-                new DockerComposeFile("docker-compose-updated.yaml", contentPath + project1.getName().toLowerCase().replace(' ', '_') + "/docker/" + "docker-compose-updated.yaml"),
-                new CardImageFile("updated_project_card_image.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + "/card_img/" + "updated_project_card_image.png"),
+                new LogoFile("updated_project_logo.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + LOGO_DIR + "updated_project_logo.png"),
+                new DockerComposeFile("docker-compose-updated.yaml", contentPath + project1.getName().toLowerCase().replace(' ', '_') + DOCKER_DIR + "docker-compose-updated.yaml"),
+                new CardImageFile("updated_project_card_image.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + CARD_IMG_DIR + "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)));
@@ -208,9 +208,9 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile(project1.getLogoFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + "/logo/" + project1.getLogoFile().getFileName()),
-                new DockerComposeFile(project1.getDockerComposeFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + "/docker/" + project1.getDockerComposeFile().getFileName()),
-                new CardImageFile(project1.getCardImageFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + "/card_img/" + project1.getCardImageFile().getFileName()),
+                new LogoFile(project1.getLogoFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + LOGO_DIR + project1.getLogoFile().getFileName()),
+                new DockerComposeFile(project1.getDockerComposeFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + DOCKER_DIR + project1.getDockerComposeFile().getFileName()),
+                new CardImageFile(project1.getCardImageFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + CARD_IMG_DIR + project1.getCardImageFile().getFileName()),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)));
@@ -235,7 +235,7 @@ public class ProjectTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getUpdatedInvalidParams(String contentPath) {
+    public static MultiValueMap<String, String> getUpdatedInvalidParams() {
         MultiValueMap<String, String> invalidParams = getNewInvalidParams();
         invalidParams.add(ID_PARAM, String.valueOf(PROJECT1_ID));
         return invalidParams;

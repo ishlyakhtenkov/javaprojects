@@ -6,9 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.LogoFile;
-import ru.javaprojects.projector.projects.model.CardImageFile;
-import ru.javaprojects.projector.projects.model.DockerComposeFile;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.*;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -17,6 +15,7 @@ import java.util.TreeSet;
 import static java.time.Month.*;
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.model.Priority.*;
+import static ru.javaprojects.projector.projects.model.ElementType.*;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
@@ -45,6 +44,12 @@ public class ProjectTestData {
 
     public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
 
+    public static final long DESCRIPTION_ELEMENT1_ID = 100020;
+    public static final long DESCRIPTION_ELEMENT2_ID = 100021;
+    public static final long DESCRIPTION_ELEMENT3_ID = 100022;
+    public static final long DESCRIPTION_ELEMENT4_ID = 100023;
+    public static final long DESCRIPTION_ELEMENT5_ID = 100024;
+    public static final long DESCRIPTION_ELEMENT6_ID = 100025;
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,
@@ -55,8 +60,32 @@ public class ProjectTestData {
             "https://projector.ru/restaurant-aggregator", "https://github.com/ishlyakhtenkov/votingsystem",
             "https://github.com/ishlyakhtenkov/angular-votingsystem", "https://projector.ru/restaurant-aggregator/swagger-ui.html");
 
+    public static final DescriptionElement descriptionElement1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
+            (byte) 0, "App description", null, null, project1);
+
+    public static final DescriptionElement descriptionElement2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
+            (byte) 1, "This application allows users to receive information about restaurants and their daily lunch menus, " +
+            "as well as vote for their favorite restaurant once a day.", null, null, project1);
+
+    public static final DescriptionElement descriptionElement3 = new DescriptionElement(DESCRIPTION_ELEMENT3_ID, IMAGE,
+            (byte) 2, null, "restaurant_aggregator_schema.png",
+            "content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png", project1);
+
+    public static final DescriptionElement descriptionElement4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
+            (byte) 3, "Registration, profile", null, null, project1);
+
+    public static final DescriptionElement descriptionElement5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
+            (byte) 4, "Users can register for the app by filling in their account details on the registration page.",
+            null, null, project1);
+
+    public static final DescriptionElement descriptionElement6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
+            (byte) 5, null, "registration_and_profile.png",
+            "content/projects/restaurant_aggregator/description/images/registration_and_profile.png", project1);
+
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
+        project1.getDescriptionElements().addAll(Set.of(descriptionElement1, descriptionElement2, descriptionElement3,
+                descriptionElement4, descriptionElement5, descriptionElement6));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",

@@ -52,6 +52,17 @@ public class DescriptionElement extends BaseEntity implements HasId, Comparable<
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+    public DescriptionElement(Long id, ElementType type, Byte index, String text, String fileName, String fileLink,
+                              Project project) {
+        super(id);
+        this.type = type;
+        this.index = index;
+        this.text = text;
+        this.fileName = fileName;
+        this.fileLink = fileLink;
+        this.project = project;
+    }
+
     @Override
     public int compareTo(DescriptionElement o) {
         return Integer.compare(this.index, o.index);

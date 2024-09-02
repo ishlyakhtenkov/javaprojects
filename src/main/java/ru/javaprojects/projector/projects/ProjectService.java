@@ -88,6 +88,7 @@ public class ProjectService {
 
     @Transactional
     public Project update(ProjectTo projectTo) {
+        //TODO move description files when name changed
         Assert.notNull(projectTo, "projectTo must not be null");
         Project project = getWithTechnologies(projectTo.getId());
         String oldName = project.getName();

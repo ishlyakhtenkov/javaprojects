@@ -40,7 +40,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
@@ -58,7 +57,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
@@ -81,7 +79,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="input-group mb-3">
                             <span class="input-group-text project-card-label">Deployment URL</span>
                             <span class="form-control">
@@ -106,7 +103,6 @@
                                 <a th:href="@{${project.frontendSrcUrl}}" th:text="${project.frontendSrcUrl}" target="_blank">Frontend src url</a>
                             </span>
                         </div>
-
                         <div class="row">
                             <div class="col-lg-4 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
@@ -125,27 +121,23 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="border rounded-2 px-3 pb-3">
                             <div class="text-start text-muted small">Short description</div>
                             <div th:text="${project.shortDescription}" style="white-space: pre-wrap;"></div>
                         </div>
 
-                        <div class="fw-bold text-info-emphasis my-2 ms-2">Description</div>
-
-                        <div class="border rounded-2" style="min-height: 60px">
-                            <div th:each="element : ${project.descriptionElements}" class="border rounded-2 m-1 px-3 pb-1">
-                                <div class="text-start text-muted small" th:text="${element.type}">Type</div>
-                                <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"
-                                      th:text="${element.text}" class="h6"></span>
-                                <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"
-                                      th:text="${element.text}" style="white-space: pre-wrap;"></span>
-                                <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
-                                     th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                     height="150px" class="image-pop rounded-2 mt-1 border" style="cursor: zoom-in" />
-                            </div>
+                        <!-- Description block -->
+                        <div class="fw-bold text-info-emphasis my-2">Description elements</div>
+                        <div th:each="element : ${project.descriptionElements}" class="border rounded-2 mb-1 px-3 pb-1">
+                            <div class="text-start text-muted small" th:text="${element.type}">Type</div>
+                            <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"
+                                  th:text="${element.text}" class="h6"></span>
+                            <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"
+                                  th:text="${element.text}" style="white-space: pre-wrap;"></span>
+                            <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
+                                 th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+                                 height="150px" class="image-pop rounded-2 my-1 border" style="cursor: zoom-in" />
                         </div>
-
                     </div>
                     <div class="card-footer text-end">
                         <button class="btn btn-secondary px-3" type="button" onclick="cancel()">Close</button>

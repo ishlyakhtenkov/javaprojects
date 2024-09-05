@@ -10,10 +10,14 @@ import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizeFileName;
+import static ru.javaprojects.projector.projects.ProjectService.*;
 
 @Component
 @AllArgsConstructor
@@ -21,10 +25,15 @@ public class ProjectUtil {
     private final TechnologyService technologyService;
 
     public ProjectTo asTo(Project project) {
+        List<DescriptionElementTo> descriptionElementTos = project.getDescriptionElements().stream()
+                .map(de -> new DescriptionElementTo(de.getId(), de.getType(), de.getIndex(), de.getText(),
+                        de.getFileName(), de.getFileLink()))
+                .toList();
+
         return new ProjectTo(project.getId(), project.getName(), project.getShortDescription(), project.isEnabled(),
                 project.getPriority(), project.getStartDate(), project.getEndDate(), project.getArchitecture(),
                 project.getDeploymentUrl(), project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(),
-                project.getTechnologies().stream().map(BaseEntity::getId).collect(Collectors.toSet()));
+                project.getTechnologies().stream().map(BaseEntity::getId).collect(Collectors.toSet()), descriptionElementTos);
     }
 
     public Project createNewFromTo(ProjectTo projectTo, String contentPath) {
@@ -58,19 +67,19 @@ public class ProjectUtil {
         if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
             project.setLogoFile(createLogoFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
-            project.getLogoFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/logo/" +
+            project.getLogoFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + LOGO_DIR +
                     project.getLogoFile().getFileName());
         }
         if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
             project.setCardImageFile(createCardImageFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
-            project.getCardImageFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/card_img/" +
+            project.getCardImageFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + CARD_IMG_DIR +
                     project.getCardImageFile().getFileName());
         }
         if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
             project.setDockerComposeFile(createDockerComposeFile(projectTo, contentPath));
         } else if (!projectTo.getName().equalsIgnoreCase(project.getName()) && project.getDockerComposeFile() != null) {
-            project.getDockerComposeFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + "/docker/" +
+            project.getDockerComposeFile().setFileLink(contentPath + normalizeFileName(projectTo.getName()) + DOCKER_DIR +
                     project.getDockerComposeFile().getFileName());
         }
         project.setName(projectTo.getName());
@@ -80,12 +89,12 @@ public class ProjectUtil {
 
     private LogoFile createLogoFile(ProjectTo projectTo, String contentPath) {
         String filename = normalizeFileName(projectTo.getLogoFile().getOriginalFilename());
-        return new LogoFile(filename, contentPath + normalizeFileName(projectTo.getName()) + "/logo/" + filename);
+        return new LogoFile(filename, contentPath + normalizeFileName(projectTo.getName()) + LOGO_DIR + filename);
     }
 
     private CardImageFile createCardImageFile(ProjectTo projectTo, String contentPath) {
         String filename = normalizeFileName(projectTo.getCardImageFile().getOriginalFilename());
-        return new CardImageFile(filename, contentPath + normalizeFileName(projectTo.getName()) + "/card_img/" + filename);
+        return new CardImageFile(filename, contentPath + normalizeFileName(projectTo.getName()) + CARD_IMG_DIR + filename);
     }
 
     private DockerComposeFile createDockerComposeFile(ProjectTo projectTo, String contentPath) {
@@ -93,6 +102,6 @@ public class ProjectUtil {
             return null;
         }
         String filename = normalizeFileName(projectTo.getDockerComposeFile().getOriginalFilename());
-        return new DockerComposeFile(filename, contentPath + normalizeFileName(projectTo.getName()) + "/docker/" + filename);
+        return new DockerComposeFile(filename, contentPath + normalizeFileName(projectTo.getName()) + DOCKER_DIR + filename);
     }
 }

@@ -94,7 +94,7 @@ public class ProjectService {
     public Project update(ProjectTo projectTo) {
         //TODO move description files when name changed
         Assert.notNull(projectTo, "projectTo must not be null");
-        Project project = getWithTechnologies(projectTo.getId());
+        Project project = getWithTechnologiesAndDescription(projectTo.getId());
         String oldName = project.getName();
         String oldLogoFileLink = project.getLogoFile().getFileLink();
         String oldCardImageFileLink = project.getCardImageFile().getFileLink();

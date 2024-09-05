@@ -72,7 +72,7 @@ public class ProjectController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
-        Project project = projectService.getWithTechnologies(id);
+        Project project = projectService.getWithTechnologiesAndDescription(id);
         model.addAttribute("projectTo", projectUtil.asTo(project));
         model.addAttribute("logoFile", project.getLogoFile());
         model.addAttribute("dockerComposeFile", project.getDockerComposeFile());

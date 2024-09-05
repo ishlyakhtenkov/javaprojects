@@ -94,7 +94,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
                                     <div th:hidden="${logoFile == null}" class="input-group" id="logoFilePreviewDiv">
@@ -152,7 +151,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row mb-3 align-items-center">
                                 <div class="col-11">
                                     <div class="input-group">
@@ -281,7 +279,7 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="border rounded-2 px-3 pb-3 text-center h-100">
-                                        <div class="text-start text-muted">
+                                        <div class="text-start text-muted small">
                                             Card image
                                         </div>
                                         <img th:src="@{${cardImageFile != null ? ('/' + cardImageFile.fileLink) : ''}}"
@@ -290,7 +288,7 @@
                                 </div>
                                 <div class="col-lg-8 mb-3">
                                     <div class="border rounded-2 px-3 pb-3 h-100">
-                                        <div class="text-start text-muted">
+                                        <div class="text-start text-muted small">
                                             Technologies
                                         </div>
                                         <div id="technologiesPreviewDiv">
@@ -302,17 +300,16 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <div class="form-floating">
+                                    <small class="position-absolute text-muted " style="right: 10px;" id="characterCounter"
+                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length())) + ' characters left'}">Characters left</small>
                                     <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
                                               th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Short description" style="height: 90px; white-space: pre-wrap;"
                                               maxlength="128" required></textarea>
                                     <label for="shortDescriptionInput" class="text-muted">Short description</label>
                                 </div>
-                                <small class="float-end text-muted" id="characterCounter"
-                                       th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length())) + ' characters left'}">Characters left</small>
                                 <span th:if="${#fields.hasErrors('shortDescription')}">
                                     <ul>
                                         <li class="text-danger text-start" th:each="err : ${#fields.errors('shortDescription')}"
@@ -321,6 +318,145 @@
                                 </span>
                             </div>
 
+                            <!-- Description block -->
+                            <div class="fw-bold text-info-emphasis mb-2">Description elements</div>
+                            <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
+                                 th:id="${'elementDiv-' + itemStat.index}">
+                                <input type="hidden" th:id="${'elementId-' + itemStat.index}"
+                                       th:name="${'descriptionElementTos[' + itemStat.index + '].id'}"
+                                       th:value="${element.id}"/>
+                                <input type="hidden" th:id="${'elementType-' + itemStat.index}"
+                                       th:name="${'descriptionElementTos[' + itemStat.index + '].type'}"
+                                       th:value="${element.type.name}"/>
+                                <input type="hidden" th:id="${'elementIndex-' + itemStat.index}"
+                                       th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
+                                       th:value="${element.index}"/>
+
+                                <div class="input-group mb-1"
+                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
+                                    <div class="form-floating">
+                                    <textarea th:value="${element.text}"
+                                              th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
+                                              th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
+                                              th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
+                                              'form-control lh-base fw-medium is-invalid rounded-2' : 'form-control lh-base fw-medium rounded-2'"
+                                              placeholder="Title" style="height: 65px; white-space: pre-wrap;"
+                                              required></textarea>
+                                        <label class="text-muted" th:text="${element.type}"></label>
+                                    </div>
+                                    <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
+                                        <ul>
+                                            <li class="text-danger text-start"
+                                                th:each="err : ${#fields.errors('descriptionElementTos[__${itemStat.index}__].text')}"
+                                                th:text="${err}"/>
+                                        </ul>
+                                    </span>
+                                    <button style="right: 10px;" type="button"
+                                            class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                            title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="input-group mb-1"
+                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
+                                    <div class="form-floating">
+                                    <textarea th:value="${element.text}"
+                                              th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
+                                              th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
+                                              th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
+                                              'form-control lh-base is-invalid rounded-2' : 'form-control lh-base rounded-2'"
+                                              placeholder="Title" style="height: 120px; white-space: pre-wrap;"
+                                              required></textarea>
+                                        <label class="text-muted" th:text="${element.type}"></label>
+                                    </div>
+                                    <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
+                                        <ul>
+                                            <li class="text-danger text-start"
+                                                th:each="err : ${#fields.errors('descriptionElementTos[__${itemStat.index}__].text')}"
+                                                th:text="${err}"/>
+                                        </ul>
+                                    </span>
+                                    <button style="right: 10px; " type="button"
+                                            class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                            title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="border rounded-2 my-1 ps-3 pe-2 pb-1"
+                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
+                                    <button  type="button"
+                                             class="float-end btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                             title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <div class="text-start text-muted small" th:text="${element.type}">Type</div>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item">
+                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="d-flex align-items-start">
+                                        <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+                                             height="150px" class="image-pop rounded-2 mt-2 mb-1 border"
+                                             style="cursor: zoom-in"/>
+                                        <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
+                                               th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
+                                               hidden class="description-image-input"/>
+                                        <button type="button" class="btn btn-link link-underline-opacity-0 link-success"
+                                                title="Change image"
+                                                onclick="$('#elementImage-2').click()"><i class="fa-solid fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer text-end">
                             <button class="btn btn-secondary" type="button" onclick="cancel()">Cancel</button>
@@ -331,11 +467,45 @@
                 </div>
             </div>
         </div>
+
+        <!-- Image modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="" id="imagePreview" class="border" style="width: 100%;" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </appMain>
 
     <ownScript>
         <script src="/js/cancel-button.js?v=1"></script>
         <script src="/js/bootstrap-selector-style.js?v=1"></script>
         <script src="/js/project-form.js?v=1"></script>
+
+        <script>
+            $('.image-pop').on('click', (event) => {
+                $('#imagePreview').attr('src', $(event.target).attr('src'));
+                $('#imageModal').modal('show');
+            });
+
+            $('.description-image-input').on('change', (event) => {
+                let input = $(event.target);
+                let file = input.prop('files');
+                if (file) {
+                    let fileReader = new FileReader();
+                    fileReader.onload = function (event) {
+                        input.parent().find('.image-pop').attr('src', event.target.result);
+                    }
+                    fileReader.readAsDataURL(file[0]);
+                }
+            });
+
+        </script>
     </ownScript>
 </th:block>

@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.projects;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,10 +18,11 @@ import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.common.util.validation.YamlFile;
 import ru.javaprojects.projector.references.architectures.Architecture;
-import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 @Getter
 @Setter
@@ -90,9 +92,13 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @NotEmpty
     private Set<Long> technologiesIds;
 
+    @Valid
+    private List<DescriptionElementTo> descriptionElementTos;
+
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                      LocalDate endDate, Architecture architecture, String deploymentUrl, String backendSrcUrl,
-                     String frontendSrcUrl, String openApiUrl, Set<Long> technologiesIds) {
+                     String frontendSrcUrl, String openApiUrl, Set<Long> technologiesIds,
+                     List<DescriptionElementTo> descriptionElementTos) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -106,14 +112,15 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.frontendSrcUrl = frontendSrcUrl;
         this.openApiUrl = openApiUrl;
         this.technologiesIds = technologiesIds;
+        this.descriptionElementTos = descriptionElementTos;
     }
 
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                      LocalDate endDate, Architecture architecture, MultipartFile logoFile, MultipartFile dockerComposeFile,
                      MultipartFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                     String openApiUrl, Set<Long> technologiesIds) {
+                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, deploymentUrl, backendSrcUrl,
-                frontendSrcUrl, openApiUrl, technologiesIds);
+                frontendSrcUrl, openApiUrl, technologiesIds, descriptionElementTos);
         this.logoFile = logoFile;
         this.dockerComposeFile = dockerComposeFile;
         this.cardImageFile = cardImageFile;

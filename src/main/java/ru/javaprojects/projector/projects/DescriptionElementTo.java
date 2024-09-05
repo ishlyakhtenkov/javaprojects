@@ -27,22 +27,22 @@ public class DescriptionElementTo extends BaseTo implements HasId, Comparable<De
     @PositiveOrZero
     private Byte index;
 
-    @Nullable
+    @Nullable //TODO validate not empty when not image
     @NoHtml
     @Size(max = 1024)
     private String text;
 
-    @Null
+    @Nullable
     @NoHtml
     @Size(max = 128)
     private String fileName;
 
-    @Null
+    @Nullable
     @NoHtml
     @Size(max = 512)
     private String fileLink;
 
-    @Nullable
+    @Nullable //TODO validate not empty when image and new
     @ImageFile
     private MultipartFile imageFile;
 

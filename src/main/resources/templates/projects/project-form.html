@@ -302,7 +302,7 @@
                             </div>
                             <div class="mb-2">
                                 <div class="form-floating">
-                                    <small class="position-absolute text-muted " style="right: 10px;" id="characterCounter"
+                                    <small class="position-absolute text-muted " style="right: 30px;" id="characterCounter"
                                            th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length())) + ' characters left'}">Characters left</small>
                                     <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
                                               th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
@@ -319,9 +319,10 @@
                             </div>
 
                             <!-- Description block -->
+
                             <div class="fw-bold text-info-emphasis mb-2">Description elements</div>
                             <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
-                                 th:id="${'elementDiv-' + itemStat.index}">
+                                 th:id="${'elementContainer-' + itemStat.index}" class="element-container">
                                 <input type="hidden" th:id="${'elementId-' + itemStat.index}"
                                        th:name="${'descriptionElementTos[' + itemStat.index + '].id'}"
                                        th:value="${element.id}"/>
@@ -331,10 +332,38 @@
                                 <input type="hidden" th:id="${'elementIndex-' + itemStat.index}"
                                        th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
                                        th:value="${element.index}"/>
+                                <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
+                                       th:name="${'descriptionElementTos[' + itemStat.index + '].fileName'}"
+                                       th:value="${element.fileName}"/>
+                                <input type="hidden" th:id="${'elementFileLink-' + itemStat.index}"
+                                       th:name="${'descriptionElementTos[' + itemStat.index + '].fileLink'}"
+                                       th:value="${element.fileLink}"/>
 
-                                <div class="input-group mb-1"
+                                <div class="mb-1"
                                      th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
                                     <div class="form-floating">
+                                        <button style="right: 10px;" type="button"
+                                                class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                                title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                                                    <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                                    <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                                    <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                                </button>
+                                            </li>
+                                        </ul>
                                     <textarea th:value="${element.text}"
                                               th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
                                               th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
@@ -351,33 +380,33 @@
                                                 th:text="${err}"/>
                                         </ul>
                                     </span>
-                                    <button style="right: 10px;" type="button"
-                                            class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
-                                            title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
-                                            </button>
-                                        </li>
-                                    </ul>
                                 </div>
 
-                                <div class="input-group mb-1"
+                                <div class="mb-1"
                                      th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
                                     <div class="form-floating">
+                                        <button style="right: 10px;" type="button"
+                                                class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                                title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                                                    <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                                    <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                                    <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                                </button>
+                                            </li>
+                                        </ul>
                                     <textarea th:value="${element.text}"
                                               th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
                                               th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
@@ -394,28 +423,6 @@
                                                 th:text="${err}"/>
                                         </ul>
                                     </span>
-                                    <button style="right: 10px; " type="button"
-                                            class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
-                                            title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item">
-                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
-                                            </button>
-                                        </li>
-                                    </ul>
                                 </div>
 
                                 <div class="border rounded-2 my-1 ps-3 pe-2 pb-1"
@@ -428,17 +435,17 @@
                                     <div class="text-start text-muted small" th:text="${element.type}">Type</div>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <button class="dropdown-item">
+                                            <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
                                                 <i class="fa-solid fa-up-long text-warning"></i> Move up
                                             </button>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item">
+                                            <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
                                                 <i class="fa-solid fa-down-long text-warning"></i> Move down
                                             </button>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item">
+                                            <button type="button" class="dropdown-item" onclick="deleteElement(this)">
                                                 <i class="fa-solid fa-xmark text-danger"></i> Delete
                                             </button>
                                         </li>
@@ -452,7 +459,7 @@
                                                hidden class="description-image-input"/>
                                         <button type="button" class="btn btn-link link-underline-opacity-0 link-success"
                                                 title="Change image"
-                                                onclick="$('#elementImage-2').click()"><i class="fa-solid fa-edit"></i>
+                                                onclick="TODO()"><i class="fa-solid fa-edit"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -505,6 +512,67 @@
                     fileReader.readAsDataURL(file[0]);
                 }
             });
+
+            function moveElementUp(moveUpBtn) {
+                let elementContainer = $(moveUpBtn).closest('.element-container');
+                let elementContainerId = elementContainer.attr('id');
+                let elementContainerIndex = + elementContainerId.replace('elementContainer-', '');
+                if (elementContainerIndex !== 0) {
+                    let higherElementContainer = $(`#elementContainer-${elementContainerIndex - 1}`);
+                    let higherElementContainerId = higherElementContainer.attr('id');
+                    let higherElementContainerIndex = + higherElementContainerId.replace('elementContainer-', '');
+
+                    let elementId = $(`#elementId-${elementContainerIndex}`);
+                    let elementType = $(`#elementType-${elementContainerIndex}`);
+                    let elementIndex = $(`#elementIndex-${elementContainerIndex}`);
+                    let elementFileName = $(`#elementFileName-${elementContainerIndex}`);
+                    let elementFileLink = $(`#elementFileLink-${elementContainerIndex}`);
+                    let elementText = $(`#elementText-${elementContainerIndex}`);
+                    let elementImage = $(`#elementImage-${elementContainerIndex}`);
+
+                    let higherElementId = $(`#elementId-${higherElementContainerIndex}`);
+                    let higherElementType = $(`#elementType-${higherElementContainerIndex}`);
+                    let higherElementIndex = $(`#elementIndex-${higherElementContainerIndex}`);
+                    let higherElementFileName = $(`#elementFileName-${higherElementContainerIndex}`);
+                    let higherElementFileLink = $(`#elementFileLink-${higherElementContainerIndex}`);
+                    let higherElementText = $(`#elementText-${higherElementContainerIndex}`);
+                    let higherElementImage = $(`#elementImage-${higherElementContainerIndex}`);
+
+                    elementId.attr('id', `elementId-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].id`);
+                    elementType.attr('id', `elementType-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].type`);
+                    elementIndex.attr('id', `elementIndex-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].index`);
+                    elementFileName.attr('id', `elementFileName-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].fileName`);
+                    elementFileLink.attr('id', `elementFileLink-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].fileLink`);
+                    if (elementText !== null) {
+                        elementText.attr('id', `elementText-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].text`);
+                    }
+                    if (elementImage !== null) {
+                        elementImage.attr('id', `elementImage-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].imageFile`);
+                    }
+
+                    higherElementId.attr('id', `elementId-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].id`);
+                    higherElementType.attr('id', `elementType-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].type`);
+                    higherElementIndex.attr('id', `elementIndex-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].index`);
+                    higherElementFileName.attr('id', `elementFileName-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileName`);
+                    higherElementFileLink.attr('id', `elementFileLink-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileLink`);
+                    if (higherElementText !== null) {
+                        higherElementText.attr('id', `elementText-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].text`);
+                    }
+                    if (higherElementImage !== null) {
+                        higherElementImage.attr('id', `elementImage-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].imageFile`);
+                    }
+
+                    let elementIndexValue = elementIndex.val();
+                    elementIndex.val(higherElementIndex.val());
+                    higherElementIndex.val(elementIndexValue);
+
+                    elementContainer.insertBefore(higherElementContainer);
+                    elementContainer.attr('id', higherElementContainerId);
+                    higherElementContainer.attr('id', elementContainerId);
+                }
+            }
+
+
 
         </script>
     </ownScript>

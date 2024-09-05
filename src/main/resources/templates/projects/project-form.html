@@ -279,7 +279,7 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="border rounded-2 px-3 pb-3 text-center h-100">
-                                        <div class="text-start text-muted small">
+                                        <div class="text-start text-muted tiny">
                                             Card image
                                         </div>
                                         <img th:src="@{${cardImageFile != null ? ('/' + cardImageFile.fileLink) : ''}}"
@@ -288,7 +288,7 @@
                                 </div>
                                 <div class="col-lg-8 mb-3">
                                     <div class="border rounded-2 px-3 pb-3 h-100">
-                                        <div class="text-start text-muted small">
+                                        <div class="text-start text-muted tiny">
                                             Technologies
                                         </div>
                                         <div id="technologiesPreviewDiv">
@@ -322,7 +322,7 @@
 
                             <div class="fw-bold text-info-emphasis mb-2">Description elements</div>
                             <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
-                                 th:id="${'elementContainer-' + itemStat.index}" class="element-container">
+                                 th:id="${'elementContainer-' + itemStat.index}" class="element-container mb-1">
                                 <input type="hidden" th:id="${'elementId-' + itemStat.index}"
                                        th:name="${'descriptionElementTos[' + itemStat.index + '].id'}"
                                        th:value="${element.id}"/>
@@ -339,11 +339,10 @@
                                        th:name="${'descriptionElementTos[' + itemStat.index + '].fileLink'}"
                                        th:value="${element.fileLink}"/>
 
-                                <div class="mb-1"
-                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
+                                <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
                                     <div class="form-floating">
                                         <button style="right: 10px;" type="button"
-                                                class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                                class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
                                                 title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
@@ -382,11 +381,10 @@
                                     </span>
                                 </div>
 
-                                <div class="mb-1"
-                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
+                                <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
                                     <div class="form-floating">
                                         <button style="right: 10px;" type="button"
-                                                class="position-absolute btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                                class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
                                                 title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
@@ -425,14 +423,14 @@
                                     </span>
                                 </div>
 
-                                <div class="border rounded-2 my-1 ps-3 pe-2 pb-1"
+                                <div class="border rounded-2 ps-3 pe-2 pb-1"
                                      th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
                                     <button  type="button"
-                                             class="float-end btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                                             class="float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
                                              title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
-                                    <div class="text-start text-muted small" th:text="${element.type}">Type</div>
+                                    <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
                                     <ul class="dropdown-menu">
                                         <li>
                                             <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
@@ -457,9 +455,9 @@
                                         <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
                                                th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
                                                hidden class="description-image-input"/>
-                                        <button type="button" class="btn btn-link link-underline-opacity-0 link-success"
+                                        <button type="button" class="btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
                                                 title="Change image"
-                                                onclick="TODO()"><i class="fa-solid fa-edit"></i>
+                                                onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -571,6 +569,8 @@
                     higherElementContainer.attr('id', elementContainerId);
                 }
             }
+
+
 
 
 

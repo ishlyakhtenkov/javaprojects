@@ -106,14 +106,14 @@
                         <div class="row">
                             <div class="col-lg-4 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
-                                    <div class="text-start text-muted small">Card image</div>
+                                    <div class="text-start text-muted tiny">Card image</div>
                                     <img th:src="@{${project.cardImageFile != null ? ('/' + project.cardImageFile.fileLink) : ''}}"
                                          height="150px" class="rounded-2 mt-2" />
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 h-100">
-                                    <div class="text-start text-muted small">Technologies</div>
+                                    <div class="text-start text-muted tiny">Technologies</div>
                                     <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2">
                                         <img th:src="@{${technology.logoFile != null ? ('/' + technology.logoFile.fileLink) : ''}}"
                                             width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
@@ -122,14 +122,14 @@
                             </div>
                         </div>
                         <div class="border rounded-2 px-3 pb-3">
-                            <div class="text-start text-muted small">Short description</div>
+                            <div class="text-start text-muted tiny">Short description</div>
                             <div th:text="${project.shortDescription}" style="white-space: pre-wrap;"></div>
                         </div>
 
                         <!-- Description block -->
                         <div class="fw-bold text-info-emphasis my-2">Description elements</div>
                         <div th:each="element : ${project.descriptionElements}" class="border rounded-2 mb-1 px-3 pb-1">
-                            <div class="text-start text-muted small" th:text="${element.type}">Type</div>
+                            <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"
                                   th:text="${element.text}" class="h6"></span>
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"

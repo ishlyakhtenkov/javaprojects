@@ -82,3 +82,7 @@
 .project-card-label {
     width: 145px;
 }
+
+.tiny {
+    font-size:0.8em;
+}

@@ -321,71 +321,114 @@
                             <!-- Description block -->
 
                             <div class="fw-bold text-info-emphasis mb-2">Description elements</div>
-                            <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
-                                 th:id="${'elementContainer-' + itemStat.index}" class="element-container mb-1">
-                                <input type="hidden" th:id="${'elementId-' + itemStat.index}"
-                                       th:name="${'descriptionElementTos[' + itemStat.index + '].id'}"
-                                       th:value="${element.id}"/>
-                                <input type="hidden" th:id="${'elementType-' + itemStat.index}"
-                                       th:name="${'descriptionElementTos[' + itemStat.index + '].type'}"
-                                       th:value="${element.type.name}"/>
-                                <input type="hidden" th:id="${'elementIndex-' + itemStat.index}"
-                                       th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
-                                       th:value="${element.index}"/>
-                                <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
-                                       th:name="${'descriptionElementTos[' + itemStat.index + '].fileName'}"
-                                       th:value="${element.fileName}"/>
-                                <input type="hidden" th:id="${'elementFileLink-' + itemStat.index}"
-                                       th:name="${'descriptionElementTos[' + itemStat.index + '].fileLink'}"
-                                       th:value="${element.fileLink}"/>
+                            <div id="elementsBlock">
+                                <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
+                                     th:id="${'elementContainer-' + itemStat.index}" class="element-container mb-1">
+                                    <input type="hidden" th:id="${'elementId-' + itemStat.index}"
+                                           th:name="${'descriptionElementTos[' + itemStat.index + '].id'}"
+                                           th:value="${element.id}"/>
+                                    <input type="hidden" th:id="${'elementType-' + itemStat.index}"
+                                           th:name="${'descriptionElementTos[' + itemStat.index + '].type'}"
+                                           th:value="${element.type.name}"/>
+                                    <input type="hidden" th:id="${'elementIndex-' + itemStat.index}"
+                                           th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
+                                           th:value="${element.index}"/>
+                                    <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
+                                           th:name="${'descriptionElementTos[' + itemStat.index + '].fileName'}"
+                                           th:value="${element.fileName}"/>
+                                    <input type="hidden" th:id="${'elementFileLink-' + itemStat.index}"
+                                           th:name="${'descriptionElementTos[' + itemStat.index + '].fileLink'}"
+                                           th:value="${element.fileLink}"/>
 
-                                <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
-                                    <div class="form-floating">
-                                        <button style="right: 10px;" type="button"
-                                                class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
-                                                title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
-                                                    <i class="fa-solid fa-up-long text-warning"></i> Move up
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
-                                                    <i class="fa-solid fa-down-long text-warning"></i> Move down
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" class="dropdown-item" onclick="deleteElement(this)">
-                                                    <i class="fa-solid fa-xmark text-danger"></i> Delete
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    <textarea th:value="${element.text}"
-                                              th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
-                                              th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
-                                              th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
+                                    <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
+                                        <div class="form-floating">
+                                            <button style="right: 10px;" type="button"
+                                                    class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+                                                    title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                                                        <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                                        <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                                        <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                            <textarea th:value="${element.text}"
+                                                      th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
+                                                      th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
+                                                      th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
                                               'form-control lh-base fw-medium is-invalid rounded-2' : 'form-control lh-base fw-medium rounded-2'"
-                                              placeholder="Title" style="height: 65px; white-space: pre-wrap;"
-                                              required></textarea>
-                                        <label class="text-muted" th:text="${element.type}"></label>
+                                                      placeholder="Title" style="height: 65px; white-space: pre-wrap;"
+                                                      required></textarea>
+                                            <label class="text-muted" th:text="${element.type}"></label>
+                                        </div>
+                                        <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
+                                            <ul>
+                                                <li class="text-danger text-start"
+                                                    th:each="err : ${#fields.errors('descriptionElementTos[__${itemStat.index}__].text')}"
+                                                    th:text="${err}"/>
+                                            </ul>
+                                        </span>
                                     </div>
-                                    <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
+
+                                    <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
+                                        <div class="form-floating">
+                                            <button style="right: 10px;" type="button"
+                                                    class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+                                                    title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                                                        <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                                        <i class="fa-solid fa-down-long text-warning"></i> Move down
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                                        <i class="fa-solid fa-xmark text-danger"></i> Delete
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                            <textarea th:value="${element.text}"
+                                                      th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
+                                                      th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
+                                                      th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
+                                              'form-control lh-base is-invalid rounded-2' : 'form-control lh-base rounded-2'"
+                                                      placeholder="Paragraph" style="height: 120px; white-space: pre-wrap;"
+                                                      required></textarea>
+                                            <label class="text-muted" th:text="${element.type}"></label>
+                                        </div>
+                                        <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
                                         <ul>
                                             <li class="text-danger text-start"
                                                 th:each="err : ${#fields.errors('descriptionElementTos[__${itemStat.index}__].text')}"
                                                 th:text="${err}"/>
                                         </ul>
                                     </span>
-                                </div>
+                                    </div>
 
-                                <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
-                                    <div class="form-floating">
-                                        <button style="right: 10px;" type="button"
-                                                class="position-absolute btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
-                                                title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="border rounded-2 ps-3 pe-2 pb-1"
+                                         th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
+                                        <button  type="button"
+                                                 class="float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+                                                 title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
                                         <ul class="dropdown-menu">
@@ -405,63 +448,46 @@
                                                 </button>
                                             </li>
                                         </ul>
-                                    <textarea th:value="${element.text}"
-                                              th:name="${'descriptionElementTos[' + itemStat.index + '].text'}"
-                                              th:text="${element.text}" th:id="${'elementText-' + itemStat.index}"
-                                              th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
-                                              'form-control lh-base is-invalid rounded-2' : 'form-control lh-base rounded-2'"
-                                              placeholder="Title" style="height: 120px; white-space: pre-wrap;"
-                                              required></textarea>
-                                        <label class="text-muted" th:text="${element.type}"></label>
-                                    </div>
-                                    <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
-                                        <ul>
-                                            <li class="text-danger text-start"
-                                                th:each="err : ${#fields.errors('descriptionElementTos[__${itemStat.index}__].text')}"
-                                                th:text="${err}"/>
-                                        </ul>
-                                    </span>
-                                </div>
-
-                                <div class="border rounded-2 ps-3 pe-2 pb-1"
-                                     th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
-                                    <button  type="button"
-                                             class="float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
-                                             title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
-                                    <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
-                                                <i class="fa-solid fa-up-long text-warning"></i> Move up
+                                        <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
+                                        <div class="d-flex align-items-start">
+                                            <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+                                                 height="150px" class="image-pop rounded-2 mt-2 mb-1 border"
+                                                 style="cursor: zoom-in"/>
+                                            <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
+                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
+                                                   hidden class="description-image-input"/>
+                                            <button type="button" class="btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
+                                                    title="Change image"
+                                                    onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
                                             </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
-                                                <i class="fa-solid fa-down-long text-warning"></i> Move down
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="dropdown-item" onclick="deleteElement(this)">
-                                                <i class="fa-solid fa-xmark text-danger"></i> Delete
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <div class="d-flex align-items-start">
-                                        <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                             height="150px" class="image-pop rounded-2 mt-2 mb-1 border"
-                                             style="cursor: zoom-in"/>
-                                        <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
-                                               th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
-                                               hidden class="description-image-input"/>
-                                        <button type="button" class="btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
-                                                title="Change image"
-                                                onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <button  type="button" class="btn btn-sm btn-success dropdown-toggle"
+                                         data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-plus"></i> Add
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Title')">
+                                            Title
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Paragraph')">
+                                            Paragraph
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Image')">
+                                            Image
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
                         <div class="card-footer text-end">
                             <button class="btn btn-secondary" type="button" onclick="cancel()">Cancel</button>
@@ -472,6 +498,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Image modal -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -541,10 +568,10 @@
                     elementIndex.attr('id', `elementIndex-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].index`);
                     elementFileName.attr('id', `elementFileName-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].fileName`);
                     elementFileLink.attr('id', `elementFileLink-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].fileLink`);
-                    if (elementText !== null) {
+                    if (elementText.length) {
                         elementText.attr('id', `elementText-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].text`);
                     }
-                    if (elementImage !== null) {
+                    if (elementImage.length) {
                         elementImage.attr('id', `elementImage-${higherElementContainerIndex}`).attr('name', `descriptionElementTos[${higherElementContainerIndex}].imageFile`);
                     }
 
@@ -553,10 +580,10 @@
                     higherElementIndex.attr('id', `elementIndex-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].index`);
                     higherElementFileName.attr('id', `elementFileName-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileName`);
                     higherElementFileLink.attr('id', `elementFileLink-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileLink`);
-                    if (higherElementText !== null) {
+                    if (higherElementText.length) {
                         higherElementText.attr('id', `elementText-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].text`);
                     }
-                    if (higherElementImage !== null) {
+                    if (higherElementImage.length) {
                         higherElementImage.attr('id', `elementImage-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].imageFile`);
                     }
 
@@ -568,6 +595,267 @@
                     elementContainer.attr('id', higherElementContainerId);
                     higherElementContainer.attr('id', elementContainerId);
                 }
+            }
+
+            function moveElementDown(moveDownBtn) {
+                let elementContainer = $(moveDownBtn).closest('.element-container');
+                let elementContainerId = elementContainer.attr('id');
+                let elementContainerIndex = + elementContainerId.replace('elementContainer-', '');
+                let lowerElementContainer = $(`#elementContainer-${elementContainerIndex + 1}`);
+                if (lowerElementContainer.length) {
+                    let lowerElementContainerId = lowerElementContainer.attr('id');
+                    let lowerElementContainerIndex = + lowerElementContainerId.replace('elementContainer-', '');
+
+                    let elementId = $(`#elementId-${elementContainerIndex}`);
+                    let elementType = $(`#elementType-${elementContainerIndex}`);
+                    let elementIndex = $(`#elementIndex-${elementContainerIndex}`);
+                    let elementFileName = $(`#elementFileName-${elementContainerIndex}`);
+                    let elementFileLink = $(`#elementFileLink-${elementContainerIndex}`);
+                    let elementText = $(`#elementText-${elementContainerIndex}`);
+                    let elementImage = $(`#elementImage-${elementContainerIndex}`);
+
+                    let lowerElementId = $(`#elementId-${lowerElementContainerIndex}`);
+                    let lowerElementType = $(`#elementType-${lowerElementContainerIndex}`);
+                    let lowerElementIndex = $(`#elementIndex-${lowerElementContainerIndex}`);
+                    let lowerElementFileName = $(`#elementFileName-${lowerElementContainerIndex}`);
+                    let lowerElementFileLink = $(`#elementFileLink-${lowerElementContainerIndex}`);
+                    let lowerElementText = $(`#elementText-${lowerElementContainerIndex}`);
+                    let lowerElementImage = $(`#elementImage-${lowerElementContainerIndex}`);
+
+                    elementId.attr('id', `elementId-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].id`);
+                    elementType.attr('id', `elementType-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].type`);
+                    elementIndex.attr('id', `elementIndex-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].index`);
+                    elementFileName.attr('id', `elementFileName-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].fileName`);
+                    elementFileLink.attr('id', `elementFileLink-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].fileLink`);
+                    if (elementText.length) {
+                        elementText.attr('id', `elementText-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].text`);
+                    }
+                    if (elementImage.length) {
+                        elementImage.attr('id', `elementImage-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].imageFile`);
+                    }
+
+                    lowerElementId.attr('id', `elementId-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].id`);
+                    lowerElementType.attr('id', `elementType-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].type`);
+                    lowerElementIndex.attr('id', `elementIndex-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].index`);
+                    lowerElementFileName.attr('id', `elementFileName-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileName`);
+                    lowerElementFileLink.attr('id', `elementFileLink-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].fileLink`);
+                    if (lowerElementText.length) {
+                        lowerElementText.attr('id', `elementText-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].text`);
+                    }
+                    if (lowerElementImage.length) {
+                        lowerElementImage.attr('id', `elementImage-${elementContainerIndex}`).attr('name', `descriptionElementTos[${elementContainerIndex}].imageFile`);
+                    }
+
+                    let elementIndexValue = elementIndex.val();
+                    elementIndex.val(lowerElementIndex.val());
+                    lowerElementIndex.val(elementIndexValue);
+
+                    elementContainer.insertAfter(lowerElementContainer);
+                    elementContainer.attr('id', lowerElementContainerId);
+                    lowerElementContainer.attr('id', elementContainerId);
+                }
+            }
+
+            function deleteElement(deleteElementBtn) {
+                let elementContainer = $(deleteElementBtn).closest('.element-container');
+                let elementContainerId = elementContainer.attr('id');
+                let elementContainerIndex = + elementContainerId.replace('elementContainer-', '');
+
+                let elementIndexValue = $(`#elementIndex-${elementContainerIndex}`).val();
+                let elementContainerAmount = $('.element-container').length;
+                elementContainer.remove();
+                for (let i = elementContainerIndex + 1; i < elementContainerAmount; i++) {
+                    let lowerElementContainer = $(`#elementContainer-${i}`);
+                    if (lowerElementContainer.length) {
+                        let lowerElementId = $(`#elementId-${i}`);
+                        let lowerElementType = $(`#elementType-${i}`);
+                        let lowerElementIndex = $(`#elementIndex-${i}`);
+                        let lowerElementFileName = $(`#elementFileName-${i}`);
+                        let lowerElementFileLink = $(`#elementFileLink-${i}`);
+                        let lowerElementText = $(`#elementText-${i}`);
+                        let lowerElementImage = $(`#elementImage-${i}`);
+
+                        lowerElementId.attr('id', `elementId-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].id`);
+                        lowerElementType.attr('id', `elementType-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].type`);
+                        lowerElementIndex.attr('id', `elementIndex-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].index`);
+                        lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileName`);
+                        lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileLink`);
+                        if (lowerElementText.length) {
+                            lowerElementText.attr('id', `elementText-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].text`);
+                        }
+                        if (lowerElementImage.length) {
+                            lowerElementImage.attr('id', `elementImage-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].imageFile`);
+                        }
+
+                        let lowerElementIndexValue = lowerElementIndex.val();
+                        lowerElementIndex.val(elementIndexValue);
+                        elementIndexValue = lowerElementIndexValue;
+
+                        lowerElementContainer.attr('id', `elementContainer-${i - 1}`);
+                    }
+                }
+            }
+
+
+
+            // elementId.attr('id', `elementId-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].id`);
+            // elementType.attr('id', `elementType-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].type`);
+            // elementIndex.attr('id', `elementIndex-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].index`);
+            // elementFileName.attr('id', `elementFileName-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].fileName`);
+            // elementFileLink.attr('id', `elementFileLink-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].fileLink`);
+            // if (elementText.length) {
+            //     elementText.attr('id', `elementText-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].text`);
+            // }
+            // if (elementImage.length) {
+            //     elementImage.attr('id', `elementImage-${lowerElementContainerIndex}`).attr('name', `descriptionElementTos[${lowerElementContainerIndex}].imageFile`);
+            // }
+
+            // <div className="border rounded-2 ps-3 pe-2 pb-1"
+            //      th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
+            //     <button type="button"
+            //             className="float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+            //             title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+            //         <i className="fa-solid fa-ellipsis-vertical"></i>
+            //     </button>
+            //     <ul className="dropdown-menu">
+            //         <li>
+            //             <button type="button" className="dropdown-item" onClick="moveElementUp(this)">
+            //                 <i className="fa-solid fa-up-long text-warning"></i> Move up
+            //             </button>
+            //         </li>
+            //         <li>
+            //             <button type="button" className="dropdown-item" onClick="moveElementDown(this)">
+            //                 <i className="fa-solid fa-down-long text-warning"></i> Move down
+            //             </button>
+            //         </li>
+            //         <li>
+            //             <button type="button" className="dropdown-item" onClick="deleteElement(this)">
+            //                 <i className="fa-solid fa-xmark text-danger"></i> Delete
+            //             </button>
+            //         </li>
+            //     </ul>
+
+
+            //     <div className="text-start text-muted tiny" th:text="${element.type}">Type</div>
+            //     <div className="d-flex align-items-start">
+            //         <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+            //              height="150px" className="image-pop rounded-2 mt-2 mb-1 border"
+            //              style="cursor: zoom-in"/>
+            //         <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
+            //                th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
+            //                hidden className="description-image-input"/>
+            //         <button type="button"
+            //                 className="btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
+            //                 title="Change image"
+            //                 onClick="$(this).siblings('input').click()"><i className="fa-solid fa-pencil"></i>
+            //         </button>
+            //     </div>
+            // </div>
+
+            // <div className="border rounded-2 mt-2 mb-1 d-flex align-items-center" style="height: 150px; width: 300px;">
+            //     <button type="button" className="btn btn-outline-secondary d-block mx-auto"
+            //             onClick="$('#imageFileInput').click()">Choose image
+            //     </button>
+            // </div>
+            // <input type="file" accept="image/*" hidden
+            //        id="imageFileInput2" required onChange="previewImageFile()"/>
+
+
+            function addNewElement(type) {
+                let newElementContainerIndex = $('.element-container').length;
+                let newElementContainer = $('<div></div>').attr('id', `elementContainer-${newElementContainerIndex}`)
+                    .addClass('element-container mb-1');
+
+                let newElementId = $('<input type="hidden"/>').attr('id', `elementId-${newElementContainerIndex}`)
+                    .attr('name', `descriptionElementTos[${newElementContainerIndex}].id`);
+                let newElementType = $('<input type="hidden"/>').attr('id', `elementType-${newElementContainerIndex}`)
+                    .attr('name', `descriptionElementTos[${newElementContainerIndex}].type`).val(type.toUpperCase());
+                let newElementIndex = $('<input type="hidden"/>').attr('id', `elementIndex-${newElementContainerIndex}`)
+                    .attr('name', `descriptionElementTos[${newElementContainerIndex}].index`)
+                    .val($(`#elementIndex-${newElementContainerIndex - 1}`).val() + 1);
+                let newElementFileName = $('<input type="hidden"/>').attr('id', `elementFileName-${newElementContainerIndex}`)
+                    .attr('name', `descriptionElementTos[${newElementContainerIndex}].fileName`);
+                let newElementFileLink = $('<input type="hidden"/>').attr('id', `elementFileLink-${newElementContainerIndex}`)
+                    .attr('name', `descriptionElementTos[${newElementContainerIndex}].fileLink`);
+
+                let newElementInputContentDiv = $('<div></div>');
+                if (type === 'Title' || type === 'Paragraph') {
+                    let formDiv = $('<div></div>').addClass('form-floating');
+                    let newElementText = $('<textarea></textarea>').attr('id', `elementText-${newElementContainerIndex}`)
+                        .attr('name', `descriptionElementTos[${newElementContainerIndex}].text`).attr('required', true)
+                        .attr('placeholder', `${type}`).addClass('form-control lh-base fw-medium')
+                        .css('white-space', 'pre-wrap').css('height', `${type === 'Title' ? '65px' : '120px'}`);
+                    let label = $('<label></label>').addClass('text-muted').html(type);
+                    formDiv.append(getElementActionsBtnHtml(type));
+                    formDiv.append(newElementText);
+                    formDiv.append(label);
+                    newElementInputContentDiv.append(formDiv);
+                } else if (type === 'Image') {
+                    //TODO setup image window
+                    newElementInputContentDiv.addClass('border rounded-2 ps-3 pe-2 pb-1');
+                    let label = $('<div></div>').addClass('text-start text-muted tiny').html(type);
+                    let imgDiv = $('<div></div>').addClass('border rounded-2 mt-2 mb-1 d-flex align-items-center')
+                        .css('height', '150px').css('width', '300px');
+                    let img = $('<img />').addClass('image-pop rounded-2 mt-2 mb-1 border').css('height', '150px')
+                        .css('cursor', 'zoom-in').on('click', (event) => {
+                            $('#imagePreview').attr('src', $(event.target).attr('src'));
+                            $('#imageModal').modal('show');
+                        });
+                    let newElementImageInput = $('<input type="file"/>').attr('accept', 'image/*')
+                        .attr('id', `elementImage-${newElementContainerIndex}`)
+                        .attr('name', `descriptionElementTos[${newElementContainerIndex}].imageFile`).attr('hidden', true)
+                        .addClass('description-image-input').on('change', (event) => {
+                            let input = $(event.target);
+                            let file = input.prop('files');
+                            if (file) {
+                                let fileReader = new FileReader();
+                                fileReader.onload = function (event) {
+                                    input.parent().find('.image-pop').attr('src', event.target.result);
+                                }
+                                fileReader.readAsDataURL(file[0]);
+                            }
+                        });
+                    let chooseImgBtn = $('<button></button>').attr('type', 'button')
+                        .addClass('btn btn-outline-secondary d-block mx-auto').html('Choose file').on('click', (event) => {
+                            $(event.target).siblings('input').click();
+                        });
+                    imgDiv.append(img).append(newElementImageInput).append(chooseImgBtn);
+                    newElementInputContentDiv.append(getElementActionsBtnHtml(type)).append(label).append(imgDiv);
+                }
+
+                newElementContainer.append(newElementId);
+                newElementContainer.append(newElementType);
+                newElementContainer.append(newElementIndex);
+                newElementContainer.append(newElementFileName);
+                newElementContainer.append(newElementFileLink);
+                newElementContainer.append(newElementInputContentDiv);
+
+                $('#elementsBlock').append(newElementContainer);
+            }
+
+            function getElementActionsBtnHtml(type) {
+                return `<button type="button"
+                          class="${type !== 'Image' ? 'position-absolute': ''} float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+                          title="Edit" data-bs-toggle="dropdown" aria-expanded="false" style="right: 10px;">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                               <i class="fa-solid fa-up-long text-warning"></i> Move up
+                            </button>
+                          </li>
+                          <li>
+                             <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                <i class="fa-solid fa-down-long text-warning"></i> Move down
+                             </button>
+                          </li>
+                          <li>
+                             <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                <i class="fa-solid fa-xmark text-danger"></i> Delete
+                             </button>
+                          </li>
+                        </ul>`
             }
 
 

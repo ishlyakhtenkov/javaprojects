@@ -2,7 +2,6 @@ package ru.javaprojects.projector.projects;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -45,6 +44,9 @@ public class DescriptionElementTo extends BaseTo implements HasId, Comparable<De
     @Nullable //TODO validate not empty when image and new
     @ImageFile
     private MultipartFile imageFile;
+
+    @Nullable
+    private String imageFileString;
 
     public DescriptionElementTo(Long id, ElementType type, Byte index, String text, String fileName, String fileLink) {
         super(id);

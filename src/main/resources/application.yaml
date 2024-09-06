@@ -28,8 +28,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
 
   security:
     oauth2:
@@ -84,11 +84,14 @@ spring:
             user-info-uri: https://gitlab.com/api/v4/user
             user-name-attribute: email
 
-server.servlet:
-  encoding:
-    charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly
-    enabled: true # Enable http encoding support
-    force: true
+server:
+  tomcat:
+    max-http-form-post-size: 50MB
+  servlet:
+    encoding:
+      charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly
+      enabled: true # Enable http encoding support
+      force: true
 
 register:
   token-expiration-time: 86400000

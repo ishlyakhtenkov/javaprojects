@@ -12,13 +12,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.projects.DescriptionElementTo;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectTo;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.references.architectures.ArchitectureService;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
+
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Objects;
 
 
 @Controller
@@ -99,6 +105,9 @@ public class ProjectController {
                     model.addAttribute("dockerComposeFile", project.getDockerComposeFile());
                 }
             }
+            projectTo.getDescriptionElementTos().stream()
+                    .filter(de -> de.getImageFile() != null && !de.getImageFile().isEmpty())
+                    .forEach(this::setImageFileString);
             return "projects/project-form";
         }
         log.info((isNew ? "create" : "update") + " {}", projectTo);
@@ -107,5 +116,14 @@ public class ProjectController {
                 messageSource.getMessage((isNew ? "project.created" : "project.updated"),
                         new Object[]{projectTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/projects/" + project.getId();
+    }
+
+    private void setImageFileString(DescriptionElementTo descriptionElementTo) {
+        try {
+            descriptionElementTo.setImageFileString(Base64.getEncoder().encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));
+            descriptionElementTo.setFileName(descriptionElementTo.getImageFile().getOriginalFilename());
+        } catch (IOException e) {
+            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload", new Object[]{descriptionElementTo.getImageFile().getOriginalFilename()});
+        }
     }
 }

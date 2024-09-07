@@ -107,10 +107,10 @@ public class ProjectController {
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> de.getImageFile() != null && !de.getImageFile().isEmpty())
-                    .forEach(this::setImageFileString);
+                    .forEach(this::calcImageFileString);
             return "projects/project-form";
         }
-        log.info((isNew ? "create" : "update") + " {}", projectTo);
+        log.info("{} {}", isNew ? "create" : "update", projectTo);
         Project project = isNew ? projectService.create(projectTo) : projectService.update(projectTo);
         redirectAttributes.addFlashAttribute("action",
                 messageSource.getMessage((isNew ? "project.created" : "project.updated"),
@@ -118,10 +118,11 @@ public class ProjectController {
         return "redirect:/projects/" + project.getId();
     }
 
-    private void setImageFileString(DescriptionElementTo descriptionElementTo) {
+    private void calcImageFileString(DescriptionElementTo descriptionElementTo) {
         try {
             descriptionElementTo.setImageFileString(Base64.getEncoder().encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));
             descriptionElementTo.setFileName(descriptionElementTo.getImageFile().getOriginalFilename());
+            descriptionElementTo.setFileLink(null);
         } catch (IOException e) {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload", new Object[]{descriptionElementTo.getImageFile().getOriginalFilename()});
         }

@@ -18,7 +18,8 @@
         <div class="collapse navbar-collapse" id="navbarToggler">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="management">
+              <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                 aria-expanded="false" id="management">
                 Management
               </a>
               <ul class="dropdown-menu w-50">
@@ -38,11 +39,7 @@
                 Projects
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Project_1</a></li>
-                <li><a class="dropdown-item" href="#">Project_2</a></li>
-                <li><a class="dropdown-item" href="#">Project_3</a></li>
-                <li><a class="dropdown-item" href="#">Project_4</a></li>
-                <li><a class="dropdown-item" href="#">Project_5</a></li>
+                <li th:each="project : ${headerProjects}"><a class="dropdown-item" href="#" th:text="${project.name}">Project_name</a></li>
               </ul>
             </li>
             <li class="nav-item d-lg-none">

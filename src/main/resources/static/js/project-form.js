@@ -25,8 +25,8 @@ $(technologiesSelector).on('changed.bs.select', (event, clickedIndex, isSelected
 });
 
 $('.url').on('keyup', (event) => {
-    $(event.target).parent().parent().parent().find('.url-check').attr('href', $(event.target).val());
-    $(event.target).parent().parent().parent().find('.url-check').attr('hidden', $(event.target).val().length === 0);
+    $(event.target).siblings('.url-check').attr('href', $(event.target).val());
+    $(event.target).siblings('.url-check').attr('hidden', $(event.target).val().length === 0);
 });
 
 $('.date-input').on('change', (event) => {

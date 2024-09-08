@@ -151,85 +151,69 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-11">
-                                    <div class="input-group">
-                                        <span class="input-group-text project-card-label">Deployment URL</span>
-                                        <input type="url" id="deploymentUrlInput" th:field="*{deploymentUrl}" class="url"
-                                               th:classappend="${#fields.hasErrors('deploymentUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                               placeholder="Deployment URL" />
-                                    </div>
-                                    <span th:if="${#fields.hasErrors('deploymentUrl')}">
-                                        <ul>
-                                            <li class="text-danger text-start" th:each="err : ${#fields.errors('deploymentUrl')}"
-                                                th:text="${err}"/>
-                                        </ul>
-                                    </span>
-                                </div>
-                                <div class="col-1">
-                                    <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}" class="url-check"
+                            <div class="mb-3 align-items-center">
+                                <div class="input-group">
+                                    <span class="input-group-text project-card-label">Deployment URL</span>
+                                    <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        title="Check deployment URL" id="deploymentUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    <input type="url" id="deploymentUrlInput" th:field="*{deploymentUrl}" class="url"
+                                           th:classappend="${#fields.hasErrors('deploymentUrl')} ? 'form-control is-invalid' : 'form-control'"
+                                           placeholder="Deployment URL" />
                                 </div>
+                                <span th:if="${#fields.hasErrors('deploymentUrl')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('deploymentUrl')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-11">
-                                    <div class="input-group">
-                                        <span class="input-group-text project-card-label">Open API URL</span>
-                                        <input type="url" id="openApiUrlInput" th:field="*{openApiUrl}" class="url"
-                                               th:classappend="${#fields.hasErrors('openApiUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                               placeholder="Open API URL" />
-                                    </div>
-                                    <span th:if="${#fields.hasErrors('openApiUrl')}">
-                                        <ul>
-                                            <li class="text-danger text-start" th:each="err : ${#fields.errors('openApiUrl')}"
-                                                th:text="${err}"/>
-                                        </ul>
-                                    </span>
-                                </div>
-                                <div class="col-1">
-                                    <a th:hidden="${projectTo.openApiUrl == null}" th:href="${projectTo.openApiUrl}" class="url-check"
+                            <div class="mb-3 align-items-center">
+                                <div class="input-group">
+                                    <span class="input-group-text project-card-label">Open API URL</span>
+                                    <a th:hidden="${projectTo.openApiUrl == null}" th:href="${projectTo.openApiUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        title="Check Open API URL" id="openApiUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    <input type="url" id="openApiUrlInput" th:field="*{openApiUrl}" class="url"
+                                           th:classappend="${#fields.hasErrors('openApiUrl')} ? 'form-control is-invalid' : 'form-control'"
+                                           placeholder="Open API URL" />
                                 </div>
+                                <span th:if="${#fields.hasErrors('openApiUrl')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('openApiUrl')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-11">
-                                    <div class="input-group">
-                                        <span class="input-group-text project-card-label">Backend src URL</span>
-                                        <input type="url" id="backendSrcUrlInput" th:field="*{backendSrcUrl}" class="url"
-                                               th:classappend="${#fields.hasErrors('backendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                               required placeholder="Backend src URL" />
-                                    </div>
-                                    <span th:if="${#fields.hasErrors('backendSrcUrl')}">
-                                        <ul>
-                                            <li class="text-danger text-start" th:each="err : ${#fields.errors('backendSrcUrl')}"
-                                                th:text="${err}"/>
-                                        </ul>
-                                    </span>
-                                </div>
-                                <div class="col-1">
-                                    <a th:hidden="${projectTo.backendSrcUrl == null}" th:href="${projectTo.backendSrcUrl}" class="url-check"
+                            <div class="mb-3 align-items-center">
+                                <div class="input-group">
+                                    <span class="input-group-text project-card-label">Backend src URL</span>
+                                    <a th:hidden="${projectTo.backendSrcUrl == null}" th:href="${projectTo.backendSrcUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        title="Check backend src URL" id="backendSrcUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    <input type="url" id="backendSrcUrlInput" th:field="*{backendSrcUrl}" class="url"
+                                           th:classappend="${#fields.hasErrors('backendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
+                                           placeholder="Backend src URL" />
                                 </div>
+                                <span th:if="${#fields.hasErrors('backendSrcUrl')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('backendSrcUrl')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-11">
-                                    <div class="input-group">
-                                        <span class="input-group-text project-card-label">Frontend src URL</span>
-                                        <input type="url" id="frontendSrcUrlInput" th:field="*{frontendSrcUrl}" class="url"
-                                               th:classappend="${#fields.hasErrors('frontendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                               placeholder="Frontend src URL" />
-                                    </div>
-                                    <span th:if="${#fields.hasErrors('frontendSrcUrl')}">
-                                        <ul>
-                                            <li class="text-danger text-start" th:each="err : ${#fields.errors('frontendSrcUrl')}"
-                                                th:text="${err}"/>
-                                        </ul>
-                                    </span>
-                                </div>
-                                <div class="col-1">
-                                    <a th:hidden="${projectTo.frontendSrcUrl == null}" th:href="${projectTo.frontendSrcUrl}" class="url-check"
+                            <div class="mb-3 align-items-center">
+                                <div class="input-group">
+                                    <span class="input-group-text project-card-label">Frontend src URL</span>
+                                    <a th:hidden="${projectTo.frontendSrcUrl == null}" th:href="${projectTo.frontendSrcUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        title="Check frontend src URL" id="frontendSrcUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    <input type="url" id="frontendSrcUrlInput" th:field="*{frontendSrcUrl}" class="url"
+                                           th:classappend="${#fields.hasErrors('frontendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
+                                           placeholder="Frontend src URL" />
                                 </div>
+                                <span th:if="${#fields.hasErrors('frontendSrcUrl')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('frontendSrcUrl')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
@@ -302,8 +286,8 @@
                             </div>
                             <div class="mb-2">
                                 <div class="form-floating">
-                                    <small class="position-absolute text-muted " style="right: 30px;" id="characterCounter"
-                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length())) + ' characters left'}">Characters left</small>
+                                    <span class="position-absolute text-muted tiny" style="right: 10px;" id="characterCounter"
+                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length())) + ' characters left'}">Characters left</span>
                                     <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
                                               th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Short description" style="height: 90px; white-space: pre-wrap;"

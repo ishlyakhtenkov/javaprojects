@@ -20,6 +20,7 @@ import ru.javaprojects.projector.common.util.validation.YamlFile;
 import ru.javaprojects.projector.references.architectures.Architecture;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -93,7 +94,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     private Set<Long> technologiesIds;
 
     @Valid
-    private List<DescriptionElementTo> descriptionElementTos;
+    private List<DescriptionElementTo> descriptionElementTos = new ArrayList<>();
 
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                      LocalDate endDate, Architecture architecture, String deploymentUrl, String backendSrcUrl,

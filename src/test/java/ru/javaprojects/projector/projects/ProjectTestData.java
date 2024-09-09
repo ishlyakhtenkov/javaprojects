@@ -6,11 +6,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.LogoFile;
-import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.model.CardImageFile;
+import ru.javaprojects.projector.projects.model.DescriptionElement;
+import ru.javaprojects.projector.projects.model.DockerComposeFile;
+import ru.javaprojects.projector.projects.model.Project;
 
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.time.Month.*;
 import static ru.javaprojects.projector.CommonTestData.*;
@@ -123,12 +125,43 @@ public class ProjectTestData {
     public static final MockMultipartFile UPDATED_DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerComposeFile", "docker-compose-updated.yaml",
             MediaType.TEXT_PLAIN_VALUE, "updated project docker compose file content bytes".getBytes());
 
+
+    public static DescriptionElementTo getNewDeTo1() {
+        return new DescriptionElementTo(null, TITLE, (byte) 0, "Some title", null, null);
+    }
+
+    public static DescriptionElementTo getNewDeTo2() {
+        return new DescriptionElementTo(null, PARAGRAPH, (byte) 1, "Some paragraph", null, null);
+    }
+
+    public static DescriptionElementTo getNewDeTo3() {
+        return new DescriptionElementTo(null, IMAGE, (byte) 2,
+                new MockMultipartFile("descriptionElementTos[2].imageFile", "deImage.png", MediaType.IMAGE_PNG_VALUE,
+                        "description element image file content bytes".getBytes()));
+    }
+
+    public static DescriptionElement getNewDe1() {
+        return new DescriptionElement(null, TITLE, (byte) 0, "Some title", null, null);
+    }
+
+    public static DescriptionElement getNewDe2() {
+        return new DescriptionElement(null, PARAGRAPH, (byte) 1, "Some paragraph", null, null);
+    }
+
+    public static final String PREPARED_UUID_STRING = "51bd80d0-d529-421e-a6fa-ae4f55d20d7b";
+
+    public static DescriptionElement getNewDe3() {
+        return new DescriptionElement(null, IMAGE, (byte) 2, null, "deImage.png",
+                "./content/projects/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png");
+    }
+
     public static ProjectTo getNewTo() {
         return new ProjectTo(null, "New project name", "New project short description", true, HIGH,
                 LocalDate.of(2022, MARCH, 11), LocalDate.of(2022, DECEMBER, 25), architecture1,
                 LOGO_FILE, DOCKER_COMPOSE_FILE, CARD_IMAGE_FILE, "https://newprojectname.ru",
                 "https://github.com/ishlyakhtenkov/newprojectname", null,
-                "https://newprojectname.ru/swagger-ui.html", Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID), new TreeSet<>());
+                "https://newprojectname.ru/swagger-ui.html", Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID),
+                new ArrayList<>(List.of(getNewDeTo1(), getNewDeTo2(), getNewDeTo3())));
     }
 
     public static Project getNew(String contentPath) {
@@ -139,12 +172,17 @@ public class ProjectTestData {
                 new DockerComposeFile("docker-compose.yaml", contentPath + "new_project_name" + DOCKER_DIR + "docker-compose.yaml"),
                 new CardImageFile("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
-                new TreeSet<>(Set.of(technology1, technology2, technology3)));
+                new TreeSet<>(Set.of(technology1, technology2, technology3)),
+                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())));
     }
 
     public static MultiValueMap<String, String> getNewParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         ProjectTo newTo = getNewTo();
+        DescriptionElementTo newDeTo1 = getNewDeTo1();
+        DescriptionElementTo newDeTo2 = getNewDeTo2();
+        DescriptionElementTo newDeTo3 = getNewDeTo3();
+
         params.add(NAME_PARAM, newTo.getName());
         params.add(SHORT_DESCRIPTION_PARAM, newTo.getShortDescription());
         params.add(ENABLED_PARAM, String.valueOf(newTo.isEnabled()));
@@ -159,11 +197,23 @@ public class ProjectTestData {
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY1_ID));
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY2_ID));
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY3_ID));
+        params.add("descriptionElementTos[0].type", newDeTo1.getType().name());
+        params.add("descriptionElementTos[0].index", newDeTo1.getIndex().toString());
+        params.add("descriptionElementTos[0].text", newDeTo1.getText());
+        params.add("descriptionElementTos[1].type", newDeTo2.getType().name());
+        params.add("descriptionElementTos[1].index", newDeTo2.getIndex().toString());
+        params.add("descriptionElementTos[1].text", newDeTo2.getText());
+        params.add("descriptionElementTos[2].type", newDeTo3.getType().name());
+        params.add("descriptionElementTos[2].index", newDeTo3.getIndex().toString());
         return params;
     }
 
     public static MultiValueMap<String, String> getNewInvalidParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        DescriptionElementTo newDeTo1 = getNewDeTo1();
+        DescriptionElementTo newDeTo2 = getNewDeTo2();
+        DescriptionElementTo newDeTo3 = getNewDeTo3();
+
         params.add(NAME_PARAM, INVALID_NAME);
         params.add(SHORT_DESCRIPTION_PARAM, INVALID_SHORT_DESCRIPTION);
         params.add(ENABLED_PARAM, String.valueOf(true));
@@ -178,6 +228,14 @@ public class ProjectTestData {
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY1_ID));
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY2_ID));
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY3_ID));
+        params.add("descriptionElementTos[0].type", newDeTo1.getType().name());
+        params.add("descriptionElementTos[0].index", newDeTo1.getIndex().toString());
+        params.add("descriptionElementTos[0].text", INVALID_SHORT_DESCRIPTION);
+        params.add("descriptionElementTos[1].type", newDeTo2.getType().name());
+        params.add("descriptionElementTos[1].index", newDeTo2.getIndex().toString());
+        params.add("descriptionElementTos[1].text", INVALID_SHORT_DESCRIPTION);
+        params.add("descriptionElementTos[2].type", newDeTo3.getType().name());
+        params.add("descriptionElementTos[2].index", newDeTo3.getIndex().toString());
         return params;
     }
 

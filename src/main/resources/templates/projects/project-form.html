@@ -642,9 +642,13 @@
 
                 let newElementType = $('<input type="hidden"/>').attr('id', `elementType-${newElementContainerIndex}`)
                     .attr('name', `descriptionElementTos[${newElementContainerIndex}].type`).val(type.toUpperCase());
+
+                let newElementIndexValue = newElementContainerIndex === 0 ? 0 :
+                    (+($(`#elementIndex-${newElementContainerIndex - 1}`).val()) + 1);
+
                 let newElementIndex = $('<input type="hidden"/>').attr('id', `elementIndex-${newElementContainerIndex}`)
                     .attr('name', `descriptionElementTos[${newElementContainerIndex}].index`)
-                    .val(+($(`#elementIndex-${newElementContainerIndex - 1}`).val()) + 1);
+                    .val(newElementIndexValue);
 
                 let newElementInputContentDiv = $('<div></div>');
 

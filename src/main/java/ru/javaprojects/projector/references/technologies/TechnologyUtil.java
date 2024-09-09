@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.javaprojects.projector.common.model.LogoFile;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import static ru.javaprojects.projector.common.util.FileUtil.normalizeFileName;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
 public class TechnologyUtil {
@@ -25,7 +25,7 @@ public class TechnologyUtil {
         if (technologyTo.getLogoFile() != null && !technologyTo.getLogoFile().isEmpty()) {
             technology.setLogoFile(createLogoFile(technologyTo, contentPath));
         } else if (!technologyTo.getName().equalsIgnoreCase(technology.getName())) {
-            technology.getLogoFile().setFileLink(contentPath + normalizeFileName(technologyTo.getName()) + "/" +
+            technology.getLogoFile().setFileLink(contentPath + normalizePath(technologyTo.getName()) + "/" +
                     technology.getLogoFile().getFileName());
         }
         technology.setName(technologyTo.getName());
@@ -33,7 +33,7 @@ public class TechnologyUtil {
     }
 
     private LogoFile createLogoFile(TechnologyTo technologyTo, String contentPath) {
-        String filename = normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
-        return new LogoFile(filename, contentPath + normalizeFileName(technologyTo.getName()) + "/" + filename);
+        String filename = normalizePath(technologyTo.getLogoFile().getOriginalFilename());
+        return new LogoFile(filename, contentPath + normalizePath(technologyTo.getName()) + "/" + filename);
     }
 }

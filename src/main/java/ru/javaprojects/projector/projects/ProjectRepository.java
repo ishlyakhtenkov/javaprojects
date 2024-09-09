@@ -3,6 +3,7 @@ package ru.javaprojects.projector.projects;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.repository.NamedRepository;
+import ru.javaprojects.projector.projects.model.ElementType;
 import ru.javaprojects.projector.projects.model.Project;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements"})
     Optional<Project> findWithTechnologiesAndDescriptionById(long id);
+
+    @EntityGraph(attributePaths = {"descriptionElements"})
+    Optional<Project> findWithDescriptionByIdAndDescriptionElements_Type(long id, ElementType type);
 }

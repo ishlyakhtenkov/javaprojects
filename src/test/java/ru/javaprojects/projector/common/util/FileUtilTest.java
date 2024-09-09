@@ -161,9 +161,9 @@ class FileUtilTest implements TestContentFilesManager {
 
     @Test
     void normalizeFileName() {
-        assertEquals("apache_tomcat.svg", FileUtil.normalizeFileName("Apache Tomcat.svg"));
-        assertEquals("spring.svg", FileUtil.normalizeFileName("Spring.svg"));
-        assertEquals("apache__tomcat_file.svg", FileUtil.normalizeFileName("Apache  Tomcat File.svg"));
-        assertEquals("apache_tomcat_file.svg", FileUtil.normalizeFileName("Apache_Tomcat_File.svg"));
+        assertEquals("apache_tomcat.svg", FileUtil.normalizePath("Apache Tomcat.svg"));
+        assertEquals("spring.svg", FileUtil.normalizePath("Spring.svg"));
+        assertEquals("apache__tomcat_file.svg", FileUtil.normalizePath("Apache  Tomcat File.svg"));
+        assertEquals("apache_tomcat_file.svg", FileUtil.normalizePath("Apache_Tomcat_File.svg"));
     }
 }

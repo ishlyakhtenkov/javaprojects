@@ -23,8 +23,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
-import static ru.javaprojects.projector.projects.ProjectTestData.PROJECT1_ID;
-import static ru.javaprojects.projector.projects.ProjectTestData.project1;
+import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_TEST_DATA_FILES_PATH;
 import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_URL_SLASH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
@@ -62,6 +61,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(descriptionElement3.getFileLink())));
+        assertTrue(Files.notExists(Paths.get(descriptionElement6.getFileLink())));
     }
 
     @Test
@@ -90,6 +91,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(descriptionElement3.getFileLink())));
+        assertTrue(Files.exists(Paths.get(descriptionElement6.getFileLink())));
     }
 
     @Test
@@ -102,6 +105,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(descriptionElement3.getFileLink())));
+        assertTrue(Files.exists(Paths.get(descriptionElement6.getFileLink())));
     }
 
     @Test

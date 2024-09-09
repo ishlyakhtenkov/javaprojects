@@ -1,20 +1,26 @@
 package ru.javaprojects.projector.projects.web;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.projects.DescriptionElementTo;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectTo;
 import ru.javaprojects.projector.projects.ProjectUtil;
@@ -24,8 +30,11 @@ import ru.javaprojects.projector.references.technologies.TechnologyTestData;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -35,6 +44,8 @@ import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.util.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
+import static ru.javaprojects.projector.projects.ProjectTestData.getNewParams;
+import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 import static ru.javaprojects.projector.projects.web.ProjectController.PROJECTS_URL;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
@@ -195,25 +206,104 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void create() throws Exception {
+        UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
+        try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
+            uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
+            ProjectTo newProjectTo = getNewTo();
+            Project newProject = getNew(contentPath);
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+                    .file(LOGO_FILE)
+                    .file(DOCKER_COMPOSE_FILE)
+                    .file(CARD_IMAGE_FILE)
+                    .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                    .params(getNewParams())
+                    .with(csrf()))
+                    .andExpect(status().isFound())
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+            Project created = projectService.getByName(newProjectTo.getName());
+            newProject.setId(created.getId());
+            created = projectService.getWithTechnologiesAndDescription(created.id());
+            PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project");
+            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
+        }
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void createWhenDescriptionImageIsString() throws Exception {
+        UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
+        MultiValueMap<String, String> newParams = getNewParams();
+        MultipartFile imageFile = getNewDeTo3().getImageFile();
+        newParams.add("descriptionElementTos[2].imageFileString",
+                Base64.getEncoder().encodeToString(imageFile.getBytes()));
+        newParams.add("descriptionElementTos[2].fileName", imageFile.getOriginalFilename());
+        try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
+            uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
+            ProjectTo newProjectTo = getNewTo();
+            Project newProject = getNew(contentPath);
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+                    .file(LOGO_FILE)
+                    .file(DOCKER_COMPOSE_FILE)
+                    .file(CARD_IMAGE_FILE)
+                    .params(newParams)
+                    .with(csrf()))
+                    .andExpect(status().isFound())
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+            Project created = projectService.getByName(newProjectTo.getName());
+            newProject.setId(created.getId());
+            created = projectService.getWithTechnologiesAndDescription(created.id());
+            PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project");
+            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
+        }
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void createWithSameDescriptionImages() throws Exception {
+        MultiValueMap<String, String> newParams = getNewParams();
+        newParams.add("descriptionElementTos[3].type", IMAGE.name());
+        newParams.add("descriptionElementTos[3].index", String.valueOf(4));
+        MultipartFile newDeTo3ImageFile = getNewDeTo3().getImageFile();
         ProjectTo newProjectTo = getNewTo();
         Project newProject = getNew(contentPath);
+
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .params(getNewParams())
+                .file((MockMultipartFile) newDeTo3ImageFile)
+                .file(new MockMultipartFile("descriptionElementTos[3].imageFile", newDeTo3ImageFile.getOriginalFilename(),
+                        MediaType.IMAGE_PNG_VALUE, newDeTo3ImageFile.getBytes()))
+                .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
                         new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
         Project created = projectService.getByName(newProjectTo.getName());
         newProject.setId(created.getId());
-        created = projectService.getWithTechnologies(created.id());
-        PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements"); //TODO dont ignore
+        created = projectService.getWithTechnologiesAndDescription(created.id());
+        PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements");
         actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
         assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+        try (Stream<Path> pathStream = Files.list(Paths.get(contentPath + "new_project_name/description/images"))) {
+            long fileCounter = pathStream
+                    .peek(path ->
+                            assertTrue(path.toString().endsWith(newDeTo3ImageFile.getOriginalFilename().toLowerCase())))
+                    .count();
+            assertEquals(2, fileCounter);
+        }
     }
 
     @Test
@@ -222,6 +312,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(getNewParams())
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -231,6 +322,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
     @Test
@@ -240,6 +332,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(getNewParams())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
@@ -247,23 +340,31 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void createInvalid() throws Exception {
         MultiValueMap<String, String> newInvalidParams = getNewInvalidParams();
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(newInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, SHORT_DESCRIPTION_PARAM,
                         START_DATE_PARAM, END_DATE_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
-                        FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM))
-                .andExpect(view().name(PROJECT_FORM_VIEW));
+                        FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
+                        "descriptionElementTos[1].text"));
+        assertEquals(Base64.getEncoder().encodeToString(getNewDeTo3().getImageFile().getBytes()),
+                ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getImageFileString());
+        assertEquals(getNewDeTo3().getImageFile().getOriginalFilename(),
+                ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getFileName());
         assertThrows(NotFoundException.class, () -> projectService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
                 LOGO_FILE.getOriginalFilename())));
@@ -271,6 +372,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 DOCKER_COMPOSE_FILE.getOriginalFilename())));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + CARD_IMG_DIR +
                 CARD_IMAGE_FILE.getOriginalFilename())));
+        assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
     @Test
@@ -280,11 +382,15 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("project.logo-not-present",
                         null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
     @Test
@@ -294,34 +400,45 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("project.card-image-not-present",
                         null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
+
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void createWithoutDockerComposeFile() throws Exception {
-        ProjectTo newProjectTo = getNewTo();
-        Project newProject = getNew(contentPath);
-        newProject.setDockerComposeFile(null);
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
-                .file(LOGO_FILE)
-                .file(CARD_IMAGE_FILE)
-                .params(getNewParams())
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                        new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
-        Project created = projectService.getByName(newProjectTo.getName());
-        newProject.setId(created.getId());
-        created = projectService.getWithTechnologies(created.id());
-        PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements"); //TODO dont ignore
-        actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
-        assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+        UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
+        try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
+            uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
+            ProjectTo newProjectTo = getNewTo();
+            Project newProject = getNew(contentPath);
+            newProject.setDockerComposeFile(null);
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+                    .file(LOGO_FILE)
+                    .file(CARD_IMAGE_FILE)
+                    .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                    .params(getNewParams())
+                    .with(csrf()))
+                    .andExpect(status().isFound())
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+            Project created = projectService.getByName(newProjectTo.getName());
+            newProject.setId(created.getId());
+            created = projectService.getWithTechnologies(created.id());
+            PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements"); //TODO dont ignore
+            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
+        }
     }
 
     @Test
@@ -333,6 +450,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
+                .file((MockMultipartFile) getNewDeTo3().getImageFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isOk())

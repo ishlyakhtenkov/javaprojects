@@ -57,6 +57,13 @@ public class DescriptionElementTo extends BaseTo implements HasId, Comparable<De
         this.fileLink = fileLink;
     }
 
+    public DescriptionElementTo(Long id, ElementType type, Byte index, MultipartFile imageFile) {
+        super(id);
+        this.type = type;
+        this.index = index;
+        this.imageFile = imageFile;
+    }
+
     @Override
     public int compareTo(DescriptionElementTo o) {
         return Integer.compare(this.index, o.index);

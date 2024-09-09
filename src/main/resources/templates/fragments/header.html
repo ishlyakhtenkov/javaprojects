@@ -39,7 +39,9 @@
                 Projects
               </a>
               <ul class="dropdown-menu">
-                <li th:each="project : ${headerProjects}"><a class="dropdown-item" href="#" th:text="${project.name}">Project_name</a></li>
+                <li th:each="project : ${headerProjects}">
+                  <a class="dropdown-item" th:href="@{${'/projects/' + project.id}}" th:text="${project.name}">Project_name</a>
+                </li>
               </ul>
             </li>
             <li class="nav-item d-lg-none">

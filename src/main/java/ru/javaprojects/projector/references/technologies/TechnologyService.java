@@ -58,9 +58,9 @@ public class TechnologyService {
                     "technology.logo-not-present", null);
         }
         Technology technology = repository.saveAndFlush(createNewFromTo(technologyTo, contentPath));
-        String fileName = FileUtil.normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
+        String fileName = FileUtil.normalizePath(technologyTo.getLogoFile().getOriginalFilename());
         FileUtil.upload(technologyTo.getLogoFile(), contentPath +
-                FileUtil.normalizeFileName(technology.getName()) + "/", fileName);
+                FileUtil.normalizePath(technology.getName()) + "/", fileName);
         return technology;
     }
 
@@ -73,11 +73,11 @@ public class TechnologyService {
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
         if (technologyTo.getLogoFile() != null && !technologyTo.getLogoFile().isEmpty()) {
             FileUtil.deleteFile(oldLogoFileLink);
-            String newLogoFileName =  FileUtil.normalizeFileName(technologyTo.getLogoFile().getOriginalFilename());
-            FileUtil.upload(technologyTo.getLogoFile(), contentPath + FileUtil.normalizeFileName(technologyTo.getName()) +
+            String newLogoFileName =  FileUtil.normalizePath(technologyTo.getLogoFile().getOriginalFilename());
+            FileUtil.upload(technologyTo.getLogoFile(), contentPath + FileUtil.normalizePath(technologyTo.getName()) +
                     "/", newLogoFileName);
         } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizeFileName(technologyTo.getName()));
+            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(technologyTo.getName()));
         }
     }
 

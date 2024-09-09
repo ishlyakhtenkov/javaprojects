@@ -107,7 +107,7 @@ public class ProjectController {
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> de.getImageFile() != null && !de.getImageFile().isEmpty())
-                    .forEach(this::calcImageFileString);
+                    .forEach(this::convertFileToString);
             return "projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -118,7 +118,7 @@ public class ProjectController {
         return "redirect:/projects/" + project.getId();
     }
 
-    private void calcImageFileString(DescriptionElementTo descriptionElementTo) {
+    private void convertFileToString(DescriptionElementTo descriptionElementTo) {
         try {
             descriptionElementTo.setImageFileString(Base64.getEncoder().encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));
             descriptionElementTo.setFileName(descriptionElementTo.getImageFile().getOriginalFilename());

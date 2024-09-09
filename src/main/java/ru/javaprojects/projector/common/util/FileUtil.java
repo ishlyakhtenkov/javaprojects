@@ -16,16 +16,24 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @UtilityClass
 public class FileUtil {
-
     public static void upload(MultipartFile multipartFile, String dirPath, String fileName) {
-        if (multipartFile.isEmpty()) {
+        try {
+            upload(multipartFile.getBytes(), dirPath, fileName);
+        } catch (IOException e) {
+            throw new FileException("Failed to upload file: " + fileName +
+                    ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
+        }
+    }
+
+    public static void upload(byte[] fileBytes, String dirPath, String fileName) {
+        if (fileBytes.length == 0) {
             throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
                     new Object[]{fileName});
         }
         try (OutputStream outStream = Files.newOutputStream(Files.createDirectories(Paths.get(dirPath)).resolve(fileName))) {
-            outStream.write(multipartFile.getBytes());
+            outStream.write(fileBytes);
         } catch (IOException e) {
-            throw new FileException("Failed to upload file: " + multipartFile.getOriginalFilename() +
+            throw new FileException("Failed to upload file: " + fileName +
                     ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
         }
     }
@@ -109,8 +117,8 @@ public class FileUtil {
         }
     }
 
-    public static String normalizeFileName(String name) {
-        Assert.notNull(name, "name must not be null");
-        return name.toLowerCase().replace(' ', '_');
+    public static String normalizePath(String path) {
+        Assert.notNull(path, "path must not be null");
+        return path.toLowerCase().replace(' ', '_');
     }
 }

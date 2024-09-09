@@ -117,7 +117,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     private SortedSet<Technology> technologies = new TreeSet<>();
 
     @Valid
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @SortNatural
     private SortedSet<DescriptionElement> descriptionElements = new TreeSet<>();
 
@@ -149,6 +149,15 @@ public class Project extends BaseEntity implements HasIdAndName {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
                 cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
         this.technologies = technologies;
+    }
+
+    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
+                   LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
+                   CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+                   String openApiUrl, SortedSet<Technology> technologies, SortedSet<DescriptionElement> descriptionElements) {
+        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
+                cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies);
+        this.descriptionElements = descriptionElements;
     }
 
     public void addTechnology(Technology technology) {

@@ -13,7 +13,7 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity
-@Table(name = "description_elements", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "index"}, name = "description_elements_unique_project_index_idx"))
+@Table(name = "description_elements")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,6 +51,10 @@ public class DescriptionElement extends BaseEntity implements HasId, Comparable<
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+
+    public DescriptionElement(DescriptionElement de) {
+        this(de.getId(), de.getType(), de.getIndex(), de.getText(), de.getFileName(), de.getFileLink());
+    }
 
     public DescriptionElement(Long id, ElementType type, Byte index, String text, String fileName, String fileLink) {
         super(id);

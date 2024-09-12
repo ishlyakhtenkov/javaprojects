@@ -75,9 +75,11 @@ public class FileUtil {
             Path file = Paths.get(filePath);
             checkNotExistOrDirectory(file);
             Path dir = Paths.get(dirPath);
-            Files.createDirectories(dir);
-            Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
-            deleteEmptyParentDirs(file);
+            if (!file.equals(dir.resolve(file.getFileName()))) {
+                Files.createDirectories(dir);
+                Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
+                deleteEmptyParentDirs(file);
+            }
         } catch (IOException ex) {
             throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
         }

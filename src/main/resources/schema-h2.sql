@@ -127,4 +127,3 @@ CREATE TABLE description_elements
     project_id   BIGINT       NOT NULL,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX description_elements_unique_project_index_idx ON description_elements (project_id, index);

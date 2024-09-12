@@ -3,6 +3,8 @@ package ru.javaprojects.projector.projects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.javaprojects.projector.common.BaseTo;
+import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.LogoFile;
@@ -11,8 +13,10 @@ import ru.javaprojects.projector.references.technologies.TechnologyService;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
@@ -78,6 +82,9 @@ public class ProjectUtil {
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
+        String projectOldName = project.getName();
+
+        project.setName(projectTo.getName());
         project.setShortDescription(projectTo.getShortDescription());
         project.setEnabled(projectTo.isEnabled());
         project.setPriority(projectTo.getPriority());
@@ -95,25 +102,75 @@ public class ProjectUtil {
                 .forEach(project::addTechnology);
         project.getTechnologies().removeIf(technology -> !technologies.contains(technology));
 
+
+        Map<Long, DescriptionElementTo> notNewDeTos = projectTo.getDescriptionElementTos().stream()
+                .filter(de -> !de.isNew())
+                .collect(Collectors.toMap(BaseTo::getId, Function.identity()));
+
+        project.getDescriptionElements().removeIf(de -> !notNewDeTos.containsKey(de.getId()));
+
+        project.getDescriptionElements().forEach(de -> {
+            DescriptionElementTo deTo = notNewDeTos.get(de.getId());
+            de.setIndex(deTo.getIndex());
+            if (deTo.getType() == ElementType.IMAGE) {
+                String fileName = null;
+                if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
+                    fileName = deTo.getImageFile().getOriginalFilename();
+                } else if (deTo.getImageFileString() != null && !deTo.getImageFileString().isEmpty()) {
+                    if (deTo.getFileName() == null || deTo.getFileName().isEmpty()) {
+                        throw new IllegalRequestDataException("Description element image file name is not present",
+                                "description-element.image-name-not-present", null);
+                    }
+                    fileName = deTo.getFileName();
+                }
+                if (fileName != null) {
+                    String uniquePrefix = UUID.randomUUID().toString();
+                    String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
+                            fileName);
+                    deTo.setFileName(fileName);
+                    deTo.setFileLink(fileLink);
+                    de.setFileName(fileName);
+                    de.setFileLink(fileLink);
+                }
+            } else {
+                de.setText(deTo.getText());
+            }
+        });
+
+        projectTo.getDescriptionElementTos().stream()
+                .filter(HasId::isNew)
+                .map(deTo -> createNewFromTo(deTo, project))
+                .forEach(project::addDescriptionElement);
+
+        if (!project.getName().equalsIgnoreCase(projectOldName)) {
+            project.getDescriptionElements().stream()
+                    .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew())
+                    .forEach(de -> {
+                        String uniquePrefixFileName = de.getFileLink().substring(de.getFileLink().lastIndexOf('/') + 1);
+                        String newFileLink =
+                                contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefixFileName);
+                        de.setFileLink(newFileLink);
+                    });
+        }
+
         if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
             project.setLogoFile(createLogoFile(projectTo));
-        } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
+        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
             project.getLogoFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + LOGO_DIR +
                     project.getLogoFile().getFileName());
         }
         if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
             project.setCardImageFile(createCardImageFile(projectTo));
-        } else if (!projectTo.getName().equalsIgnoreCase(project.getName())) {
+        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
             project.getCardImageFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR +
                     project.getCardImageFile().getFileName());
         }
         if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
             project.setDockerComposeFile(createDockerComposeFile(projectTo));
-        } else if (!projectTo.getName().equalsIgnoreCase(project.getName()) && project.getDockerComposeFile() != null) {
+        } else if (!project.getName().equalsIgnoreCase(projectOldName) && project.getDockerComposeFile() != null) {
             project.getDockerComposeFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR +
                     project.getDockerComposeFile().getFileName());
         }
-        project.setName(projectTo.getName());
         return project;
     }
 

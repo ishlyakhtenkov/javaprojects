@@ -136,7 +136,8 @@
                                   th:text="${element.text}" style="white-space: pre-wrap;"></span>
                             <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
                                  th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                 height="150px" class="image-pop rounded-2 my-1 border" style="cursor: zoom-in" />
+                                 height="150px" class="image-pop rounded-2 my-1 border"
+                                 style="cursor: zoom-in; max-width: 95%;" />
                         </div>
                     </div>
                     <div class="card-footer text-end">

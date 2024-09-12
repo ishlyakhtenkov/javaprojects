@@ -37,10 +37,10 @@ VALUES ('5a49dd09-g23f-44bb-8d41-b6ff44275s56', '2024-08-05 21:49:01', 'some@gma
        ('1a43dx02-x23x-42xx-8r42-x6ff44275y67', '2052-01-22 06:17:32', 'someNew@gmail.com', 100002);
 
 INSERT INTO technologies (name, url, usage, priority, logo_file_name, logo_file_link)
-VALUES ('Java', 'https://www.oracle.com/java', 'BACKEND', 'ULTRA', 'java.svg', 'content/technologies/java/java.svg'),
-       ('Spring', 'https://spring.io', 'BACKEND', 'VERY_HIGH', 'spring.svg', 'content/technologies/spring/spring.svg'),
-       ('Angular', 'https://angular.dev', 'FRONTEND', 'HIGH', 'angular.svg', 'content/technologies/angular/angular.svg'),
-       ('Thymeleaf', 'https://www.thymeleaf.org', 'BACKEND', 'MEDIUM', 'thymeleaf.png', 'content/technologies/thymeleaf/thymeleaf.png');
+VALUES ('Java', 'https://www.oracle.com/java', 'BACKEND', 'ULTRA', 'java.svg', './content/technologies/java/java.svg'),
+       ('Spring', 'https://spring.io', 'BACKEND', 'VERY_HIGH', 'spring.svg', './content/technologies/spring/spring.svg'),
+       ('Angular', 'https://angular.dev', 'FRONTEND', 'HIGH', 'angular.svg', './content/technologies/angular/angular.svg'),
+       ('Thymeleaf', 'https://www.thymeleaf.org', 'BACKEND', 'MEDIUM', 'thymeleaf.png', './content/technologies/thymeleaf/thymeleaf.png');
 
 INSERT INTO architectures (name, description)
 VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that structures the application into independent modules or components with well-defined boundaries.'),
@@ -50,21 +50,21 @@ INSERT INTO projects (name, short_description, enabled, priority, start_date, en
                       docker_compose_file_name, docker_compose_file_link, card_image_file_name, card_image_file_link,
                       deployment_url, backend_src_url, frontend_src_url, open_api_url)
 VALUES ('Restaurant aggregator', 'The app offers users to get information about restaurants and vote for their favorite one.',
-        true, 'ULTRA', '2021-03-24', '2021-05-02', 100015, 'restaurant_aggregator_logo.png', 'content/projects/restaurant_aggregator/logo/restaurant_aggregator_logo.png',
-        'docker-compose.yaml', 'content/projects/restaurant_aggregator/docker/docker-compose.yaml',
-        'restaurant_aggregator_card_img.png','content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png',
+        true, 'ULTRA', '2021-03-24', '2021-05-02', 100015, 'restaurant_aggregator_logo.png', './content/projects/restaurant_aggregator/logo/restaurant_aggregator_logo.png',
+        'docker-compose.yaml', './content/projects/restaurant_aggregator/docker/docker-compose.yaml',
+        'restaurant_aggregator_card_img.png','./content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png',
         'https://projector.ru/restaurant-aggregator', 'https://github.com/ishlyakhtenkov/votingsystem',
         'https://github.com/ishlyakhtenkov/angular-votingsystem', 'https://projector.ru/restaurant-aggregator/swagger-ui.html'),
 
        ('Skill aggregator', 'The app creates a list of required key skills for a user-specified profession.', true, 'VERY_HIGH', '2022-07-17', '2022-09-23',
-        100015, 'skill_aggregator_logo.png', 'content/projects/skill_aggregator/logo/skill_aggregator_logo.png', 'docker-compose.yaml',
-        'content/projects/skill_aggregator/docker/docker-compose.yaml', 'skill_aggregator_card_img.png',
-        'content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png', 'https://projector.ru/skill-aggregator',
+        100015, 'skill_aggregator_logo.png', './content/projects/skill_aggregator/logo/skill_aggregator_logo.png', 'docker-compose.yaml',
+        './content/projects/skill_aggregator/docker/docker-compose.yaml', 'skill_aggregator_card_img.png',
+        './content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png', 'https://projector.ru/skill-aggregator',
         'https://github.com/ishlyakhtenkov/skillaggregator', null, null),
 
        ('Copy maker', 'The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.',
-        false, 'MEDIUM', '2022-10-11', '2022-12-29', 100015, 'copy_maker_logo.png', 'content/projects/copy_maker/logo/copy_maker_logo.png', null,
-        null, 'copy_maker_card_img.png', 'content/projects/copy_maker/card_img/copy_maker_card_img.png', null,
+        false, 'MEDIUM', '2022-10-11', '2022-12-29', 100015, 'copy_maker_logo.png', './content/projects/copy_maker/logo/copy_maker_logo.png', null,
+        null, 'copy_maker_card_img.png', './content/projects/copy_maker/card_img/copy_maker_card_img.png', null,
         'https://github.com/ishlyakhtenkov/doccopymaker', null, null);
 
 INSERT INTO project_technology (project_id, technology_id)
@@ -80,7 +80,7 @@ VALUES (100017, 100011),
 INSERT INTO description_elements (index, type, text, file_name, file_link, project_id)
 VALUES (0, 'TITLE', 'App description', null, null, 100017),
        (1, 'PARAGRAPH', 'This application allows users to receive information about restaurants and their daily lunch menus, as well as vote for their favorite restaurant once a day.', null, null, 100017),
-       (2, 'IMAGE', null, 'restaurant_aggregator_schema.png','content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png', 100017),
+       (2, 'IMAGE', null, 'restaurant_aggregator_schema.png','./content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png', 100017),
        (3, 'TITLE', 'Registration, profile', null, null, 100017),
        (4, 'PARAGRAPH', 'Users can register for the app by filling in their account details on the registration page.', null, null, 100017),
-       (5, 'IMAGE', null, 'registration_and_profile.png','content/projects/restaurant_aggregator/description/images/registration_and_profile.png', 100017);
+       (5, 'IMAGE', null, 'registration_and_profile.png','./content/projects/restaurant_aggregator/description/images/registration_and_profile.png', 100017);

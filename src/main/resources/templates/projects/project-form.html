@@ -358,7 +358,8 @@
                                         <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
                                         <div class="d-flex align-items-start">
                                             <img th:if="${element.fileLink != null}" th:src="@{${'/' + element.fileLink}}"
-                                                 height="150px" class="element-image rounded-2 mt-2 mb-1 border" style="cursor: zoom-in"
+                                                 height="150px" class="element-image rounded-2 mt-2 mb-1 border"
+                                                 style="cursor: zoom-in; max-width: 95%;"
                                                  onclick="showLargerImage($(this))" />
 
                                             <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
@@ -368,7 +369,7 @@
                                             <img th:if="${element.imageFileString != null}"
                                                  th:src="@{'data:image/png;base64,'+${element.imageFileString}}"
                                                  height="150px" class="rounded-2 mt-2 mb-1 border"
-                                                 style="cursor: zoom-in" onclick="showLargerImage($(this))" />
+                                                 style="cursor: zoom-in; max-width: 95%;" onclick="showLargerImage($(this))" />
 
                                             <input type="hidden" th:id="${'elementImageString-' + itemStat.index}"
                                                    th:name="${'descriptionElementTos[' + itemStat.index + '].imageFileString'}"
@@ -673,7 +674,7 @@
                     let flexDiv = $('<div></div>').addClass('d-flex align-items-start');
 
                     let inputtedImage = $('<img />').addClass('element-image rounded-2 mt-2 mb-1 border')
-                        .attr('hidden', true).css('height', '150px').css('cursor', 'zoom-in')
+                        .attr('hidden', true).css('height', '150px').css('cursor', 'zoom-in').css('max-width', '95%')
                         .click(function () {showLargerImage($(this))});
 
                     let imageInput = $('<input type="file"/>').attr('accept', 'image/*')

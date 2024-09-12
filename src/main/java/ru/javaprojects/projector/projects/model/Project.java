@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SortNatural;
 import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
@@ -21,8 +20,8 @@ import ru.javaprojects.projector.references.architectures.Architecture;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
 import java.time.LocalDate;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "projects", uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "projects_unique_name_idx"))
@@ -113,13 +112,11 @@ public class Project extends BaseEntity implements HasIdAndName {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "technology_id")
     )
-    @SortNatural
-    private SortedSet<Technology> technologies = new TreeSet<>();
+    private Set<Technology> technologies = new HashSet<>();
 
     @Valid
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @SortNatural
-    private SortedSet<DescriptionElement> descriptionElements = new TreeSet<>();
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private Set<DescriptionElement> descriptionElements = new HashSet<>();
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
@@ -145,7 +142,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
                    CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                   String openApiUrl, SortedSet<Technology> technologies) {
+                   String openApiUrl, Set<Technology> technologies) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
                 cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
         this.technologies = technologies;
@@ -154,7 +151,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
                    CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                   String openApiUrl, SortedSet<Technology> technologies, SortedSet<DescriptionElement> descriptionElements) {
+                   String openApiUrl, Set<Technology> technologies, Set<DescriptionElement> descriptionElements) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
                 cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies);
         this.descriptionElements = descriptionElements;

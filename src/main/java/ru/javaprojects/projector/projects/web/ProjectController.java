@@ -57,7 +57,7 @@ public class ProjectController {
     @GetMapping("/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
-        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id));
+        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id, true));
         return "projects/project";
     }
 
@@ -78,7 +78,7 @@ public class ProjectController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
-        Project project = projectService.getWithTechnologiesAndDescription(id);
+        Project project = projectService.getWithTechnologiesAndDescription(id, true);
         model.addAttribute("projectTo", projectUtil.asTo(project));
         model.addAttribute("logoFile", project.getLogoFile());
         model.addAttribute("dockerComposeFile", project.getDockerComposeFile());

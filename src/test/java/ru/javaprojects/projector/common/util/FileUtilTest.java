@@ -45,8 +45,8 @@ class FileUtilTest implements TestContentFilesManager {
     void upload() throws IOException {
         MockMultipartFile file = new MockMultipartFile("fileName", new byte[] {1, 2, 3, 4, 5});
         FileUtil.upload(file, contentPath + NEW_DIR_NAME, file.getName());
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
         assertEquals(file.getSize(), Files.size(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
+        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
     }
 
     @Test
@@ -68,8 +68,8 @@ class FileUtilTest implements TestContentFilesManager {
     @Test
     void deleteDirectory() {
         FileUtil.deleteDirectory(contentPath + EXISTING_DIR_NAME);
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
         assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
     }
 
     @Test
@@ -90,6 +90,12 @@ class FileUtilTest implements TestContentFilesManager {
         assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
         assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
         assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+    }
+
+    @Test
+    void moveFileToSameDir() {
+        FileUtil.moveFile(contentPath + EXISTING_FILE_PATH, contentPath + EXISTING_DIR_NAME);
+        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
     }
 
     @Test
@@ -128,7 +134,6 @@ class FileUtilTest implements TestContentFilesManager {
         assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
         assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
         assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName)));
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME)));
     }
 
     @Test
@@ -156,7 +161,6 @@ class FileUtilTest implements TestContentFilesManager {
         FileUtil.deleteFile(contentPath + EXISTING_FILE_PATH);
         assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
         assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName)));
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME)));
     }
 
     @Test

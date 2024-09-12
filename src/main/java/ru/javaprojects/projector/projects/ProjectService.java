@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static ru.javaprojects.projector.projects.ProjectUtil.deToHasImageFileString;
+import static ru.javaprojects.projector.projects.ProjectUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -81,7 +83,9 @@ public class ProjectService {
         if (project.getDockerComposeFile() != null) {
             FileUtil.deleteFile(project.getDockerComposeFile().getFileLink());
         }
-        project.getDescriptionElements().forEach(de -> FileUtil.deleteFile(de.getFileLink()));
+        project.getDescriptionElements().stream()
+                .filter(de -> de.getType() == IMAGE)
+                .forEach(de -> FileUtil.deleteFile(de.getFileLink()));
     }
 
 
@@ -94,45 +98,43 @@ public class ProjectService {
     @Transactional
     public Project create(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        if (projectTo.getLogoFile() == null || projectTo.getLogoFile().isEmpty()) {
+        if (isMultipartFileEmpty( projectTo.getLogoFile())) {
             throw new IllegalRequestDataException("Project logo file is not present",
                     "project.logo-not-present", null);
         }
-        if (projectTo.getCardImageFile() == null || projectTo.getCardImageFile().isEmpty()) {
+        if (isMultipartFileEmpty(projectTo.getCardImageFile())) {
             throw new IllegalRequestDataException("Project card image file is not present",
                     "project.card-image-not-present", null);
         }
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo));
-        uploadFile(projectTo.getLogoFile(), project, LOGO_DIR, projectTo.getLogoFile().getOriginalFilename());
-        uploadFile(projectTo.getCardImageFile(), project, CARD_IMG_DIR, projectTo.getCardImageFile().getOriginalFilename());
-        if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
-            uploadFile(projectTo.getDockerComposeFile(), project, DOCKER_DIR,
+
+        uploadFile(projectTo.getLogoFile(), project.getName(), LOGO_DIR, projectTo.getLogoFile().getOriginalFilename());
+        uploadFile(projectTo.getCardImageFile(), project.getName(), CARD_IMG_DIR,
+                projectTo.getCardImageFile().getOriginalFilename());
+        if (!isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
+            uploadFile(projectTo.getDockerComposeFile(), project.getName(), DOCKER_DIR,
                     projectTo.getDockerComposeFile().getOriginalFilename());
         }
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE)
-                .forEach(deTo -> {
-                    String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
-                    if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
-                        uploadFile(deTo.getImageFile(), project, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-                    } else if (descriptionElementToHasImageFileString(deTo)) {
-                        uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), project, DESCRIPTION_IMG_DIR,
-                                uniquePrefixFileName);
-                    }
-                });
+                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
         return project;
     }
 
-    private boolean descriptionElementToHasImageFileString(DescriptionElementTo deTo) {
-        return deTo.getImageFileString() != null && !deTo.getImageFileString().isEmpty() && deTo.getFileName() != null
-                && !deTo.getFileName().isEmpty();
+    private void uploadDeImage(DescriptionElementTo deTo, String projectName) {
+        String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
+        if (!isMultipartFileEmpty(deTo.getImageFile())) {
+            uploadFile(deTo.getImageFile(), projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
+        } else if (deToHasImageFileString(deTo)) {
+            uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), projectName, DESCRIPTION_IMG_DIR,
+                    uniquePrefixFileName);
+        }
     }
 
     @Transactional
     public Project update(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
         Project project = getWithTechnologiesAndDescription(projectTo.getId(), false);
-
         String projectOldName = project.getName();
         String oldLogoFileLink = project.getLogoFile().getFileLink();
         String oldCardImageFileLink = project.getCardImageFile().getFileLink();
@@ -145,45 +147,17 @@ public class ProjectService {
 
         repository.saveAndFlush(projectUtil.updateFromTo(project, projectTo));
 
-        //TODO create de images for new des
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.isNew())
-                .forEach(deTo -> {
-                    String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
-                    if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
-                        uploadFile(deTo.getImageFile(), project, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-                    } else if (descriptionElementToHasImageFileString(deTo)) {
-                        uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), project, DESCRIPTION_IMG_DIR,
-                                uniquePrefixFileName);
-                    }
-                });
-
-        //TODO delete de images for deleted des
+                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
         oldDeImages.values().stream()
-                .filter(oldDe -> !project.getDescriptionElements().contains(oldDe))
+                .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
                 .forEach(oldDe -> FileUtil.deleteFile(oldDe.getFileLink()));
-
-//        for (DescriptionElement oldDe : oldDeImages.values()) {
-//            if (!project.getDescriptionElements().contains(oldDe)) {
-//                FileUtil.deleteFile(oldDe.getFileLink());
-//            }
-//        }
-
-        //TODO add new de images for updated des
-        //TODO delete old de images for updated des
-        //TODO move old de images when project name changed
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
-                    if (descriptionElementToHasImage(deTo)) {
-                        String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
-                        if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
-                            uploadFile(deTo.getImageFile(), project, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-                        } else if (descriptionElementToHasImageFileString(deTo)) {
-                            uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), project, DESCRIPTION_IMG_DIR,
-                                    uniquePrefixFileName);
-                        }
-
+                    if (!isMultipartFileEmpty(deTo.getImageFile()) || deToHasImageFileString(deTo)) {
+                        uploadDeImage(deTo, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
                         FileUtil.moveFile(oldDeImages.get(deTo.getId()).getFileLink(), contentPath +
@@ -191,47 +165,35 @@ public class ProjectService {
                     }
                 });
 
-        if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
-            FileUtil.deleteFile(oldLogoFileLink);
-            String newLogoFileName =  FileUtil.normalizePath(projectTo.getLogoFile().getOriginalFilename());
-            FileUtil.upload(projectTo.getLogoFile(), contentPath + FileUtil.normalizePath(project.getName()) +
-                    LOGO_DIR, newLogoFileName);
-        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(project.getName() + LOGO_DIR));
-        }
-        if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
-            FileUtil.deleteFile(oldCardImageFileLink);
-            String newCardImageFileName =  FileUtil.normalizePath(projectTo.getCardImageFile().getOriginalFilename());
-            FileUtil.upload(projectTo.getCardImageFile(), contentPath + FileUtil.normalizePath(project.getName()) +
-                    CARD_IMG_DIR, newCardImageFileName);
-        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            FileUtil.moveFile(oldCardImageFileLink, contentPath + FileUtil.normalizePath(project.getName() + CARD_IMG_DIR));
-        }
-        if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
-            if (oldDockerComposeFileLink != null) {
-                FileUtil.deleteFile(oldDockerComposeFileLink);
-            }
-            String newDockerComposeFileName =  FileUtil.normalizePath(projectTo.getDockerComposeFile().getOriginalFilename());
-            FileUtil.upload(projectTo.getDockerComposeFile(), contentPath + FileUtil.normalizePath(project.getName()) +
-                    DOCKER_DIR, newDockerComposeFileName);
-        } else if (!project.getName().equalsIgnoreCase(projectOldName) && oldDockerComposeFileLink != null) {
-            FileUtil.moveFile(oldDockerComposeFileLink, contentPath + FileUtil.normalizePath(project.getName() + DOCKER_DIR));
-        }
+        updateProjectFileIfNecessary(projectTo.getLogoFile(), oldLogoFileLink, project.getName(),
+                projectOldName, LOGO_DIR);
+        updateProjectFileIfNecessary(projectTo.getCardImageFile(), oldCardImageFileLink, project.getName(),
+                projectOldName, CARD_IMG_DIR);
+        updateProjectFileIfNecessary(projectTo.getDockerComposeFile(), oldDockerComposeFileLink, project.getName(),
+                projectOldName, DOCKER_DIR);
         return project;
     }
 
-    private boolean descriptionElementToHasImage(DescriptionElementTo deTo) {
-        return (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) ||
-                descriptionElementToHasImageFileString(deTo);
+    private void updateProjectFileIfNecessary(MultipartFile file, String oldFileFileLink, String projectName,
+                                              String projectOldName, String dirName) {
+        if (!isMultipartFileEmpty(file)) {
+            if (oldFileFileLink != null) {
+                FileUtil.deleteFile(oldFileFileLink);
+            }
+            String newFileName =  FileUtil.normalizePath(file.getOriginalFilename());
+            FileUtil.upload(file, contentPath + FileUtil.normalizePath(projectName) + dirName, newFileName);
+        } else if (!projectName.equalsIgnoreCase(projectOldName)) {
+            FileUtil.moveFile(oldFileFileLink, contentPath + FileUtil.normalizePath(projectName + dirName));
+        }
     }
 
-    private void uploadFile(MultipartFile file, Project project, String dirName, String fileName) {
-        FileUtil.upload(file, contentPath + FileUtil.normalizePath(project.getName() + "/" + dirName + "/"),
+    private void uploadFile(MultipartFile file, String projectName, String dirName, String fileName) {
+        FileUtil.upload(file, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
                 FileUtil.normalizePath(fileName));
     }
 
-    private void uploadFile(byte[] fileBytes, Project project, String dirName, String fileName) {
-        FileUtil.upload(fileBytes, contentPath + FileUtil.normalizePath(project.getName() + "/" + dirName + "/"),
+    private void uploadFile(byte[] fileBytes, String projectName, String dirName, String fileName) {
+        FileUtil.upload(fileBytes, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
                 FileUtil.normalizePath(fileName));
     }
 }

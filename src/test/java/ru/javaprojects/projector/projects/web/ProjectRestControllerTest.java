@@ -61,8 +61,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(descriptionElement3.getFileLink())));
-        assertTrue(Files.notExists(Paths.get(descriptionElement6.getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
     }
 
     @Test
@@ -91,8 +91,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(descriptionElement3.getFileLink())));
-        assertTrue(Files.exists(Paths.get(descriptionElement6.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getFileLink())));
     }
 
     @Test
@@ -105,8 +105,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(descriptionElement3.getFileLink())));
-        assertTrue(Files.exists(Paths.get(descriptionElement6.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getFileLink())));
     }
 
     @Test

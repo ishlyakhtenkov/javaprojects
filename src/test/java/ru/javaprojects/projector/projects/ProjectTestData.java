@@ -12,7 +12,10 @@ import ru.javaprojects.projector.projects.model.DockerComposeFile;
 import ru.javaprojects.projector.projects.model.Project;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.time.Month.*;
 import static ru.javaprojects.projector.CommonTestData.*;
@@ -45,14 +48,14 @@ public class ProjectTestData {
     public static final String OPEN_API_URL_PARAM = "openApiUrl";
     public static final String TECHNOLOGIES_IDS_PARAM = "technologiesIds";
 
-    public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
-
     public static final long DESCRIPTION_ELEMENT1_ID = 100020;
     public static final long DESCRIPTION_ELEMENT2_ID = 100021;
     public static final long DESCRIPTION_ELEMENT3_ID = 100022;
     public static final long DESCRIPTION_ELEMENT4_ID = 100023;
     public static final long DESCRIPTION_ELEMENT5_ID = 100024;
     public static final long DESCRIPTION_ELEMENT6_ID = 100025;
+
+    public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,
@@ -63,32 +66,31 @@ public class ProjectTestData {
             "https://projector.ru/restaurant-aggregator", "https://github.com/ishlyakhtenkov/votingsystem",
             "https://github.com/ishlyakhtenkov/angular-votingsystem", "https://projector.ru/restaurant-aggregator/swagger-ui.html");
 
-    public static final DescriptionElement descriptionElement1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
+    public static final DescriptionElement de1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
             (byte) 0, "App description", null, null, project1);
 
-    public static final DescriptionElement descriptionElement2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
+    public static final DescriptionElement de2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
             (byte) 1, "This application allows users to receive information about restaurants and their daily lunch menus, " +
             "as well as vote for their favorite restaurant once a day.", null, null, project1);
 
-    public static final DescriptionElement descriptionElement3 = new DescriptionElement(DESCRIPTION_ELEMENT3_ID, IMAGE,
+    public static final DescriptionElement de3 = new DescriptionElement(DESCRIPTION_ELEMENT3_ID, IMAGE,
             (byte) 2, null, "restaurant_aggregator_schema.png",
             "./content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png", project1);
 
-    public static final DescriptionElement descriptionElement4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
+    public static final DescriptionElement de4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
             (byte) 3, "Registration, profile", null, null, project1);
 
-    public static final DescriptionElement descriptionElement5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
+    public static final DescriptionElement de5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
             (byte) 4, "Users can register for the app by filling in their account details on the registration page.",
             null, null, project1);
 
-    public static final DescriptionElement descriptionElement6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
+    public static final DescriptionElement de6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
             (byte) 5, null, "registration_and_profile.png",
             "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png", project1);
 
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
-        project1.getDescriptionElements().addAll(Set.of(descriptionElement1, descriptionElement2, descriptionElement3,
-                descriptionElement4, descriptionElement5, descriptionElement6));
+        project1.getDescriptionElements().addAll(Set.of(de1, de2, de3, de4, de5, de6));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
@@ -248,8 +250,8 @@ public class ProjectTestData {
                 new CardImageFile("updated_project_card_image.png", contentPath + updatedName.toLowerCase() + CARD_IMG_DIR + "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
-                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDescriptionElement2, updatedDescriptionElement1,
-                updatedDescriptionElement4, updatedDescriptionElement6, updatedDescriptionElement5, updatedDescriptionElementNew)));
+                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
+                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)));
     }
 
     public static Project getUpdatedWhenOldName(String contentPath) {
@@ -260,9 +262,9 @@ public class ProjectTestData {
                 new CardImageFile("updated_project_card_image.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + CARD_IMG_DIR + "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
-                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDescriptionElement2, updatedDescriptionElement1,
-                updatedDescriptionElement4, updatedDescriptionElement6WhenOldName, updatedDescriptionElement5,
-                updatedDescriptionElementNewWhenOldName)));
+                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
+                updatedDe4, updatedDe6WhenProjectHasOldName, updatedDe5,
+                newDeForProjectUpdateWithOldName)));
     }
 
     public static Project getUpdatedWhenOldFiles(String contentPath) {
@@ -274,43 +276,43 @@ public class ProjectTestData {
                 new CardImageFile(project1.getCardImageFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + CARD_IMG_DIR + project1.getCardImageFile().getFileName()),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
-                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDescriptionElement2, updatedDescriptionElement1,
-                updatedDescriptionElement4, updatedDescriptionElement6, updatedDescriptionElement5)));
+                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
+                updatedDe4, updatedDe6, updatedDe5)));
     }
 
-    public static final DescriptionElement updatedDescriptionElement1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
+    public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
             (byte) 1, "Updated App description", null, null, project1);
 
-    public static final DescriptionElement updatedDescriptionElement2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
+    public static final DescriptionElement updatedDe2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
             (byte) 0, "Updated This application allows users to receive information about restaurants and their daily lunch menus, " +
             "as well as vote for their favorite restaurant once a day.", null, null, project1);
 
-    public static final DescriptionElement updatedDescriptionElement4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
+    public static final DescriptionElement updatedDe4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
             (byte) 2, "Registration, profile", null, null, project1);
 
-    public static final DescriptionElement updatedDescriptionElement5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
+    public static final DescriptionElement updatedDe5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
             (byte) 4, "Users can register for the app by filling in their account details on the registration page.",
             null, null, project1);
 
-    public static final DescriptionElement updatedDescriptionElement6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
+    public static final DescriptionElement updatedDe6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
             (byte) 3, null, "registration_and_profile.png",
             "./content/projects/updatedprojectname/description/images/registration_and_profile.png", project1);
 
-    public static final DescriptionElement updatedDescriptionElement6WhenOldName = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
-            (byte) 3, null, "registration_and_profile.png",
+    public static final DescriptionElement updatedDe6WhenProjectHasOldName = new DescriptionElement(DESCRIPTION_ELEMENT6_ID,
+            IMAGE, (byte) 3, null, "registration_and_profile.png",
             "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png", project1);
 
-    public static final DescriptionElement updatedDescriptionElementNew = new DescriptionElement(null, IMAGE,
+    public static final DescriptionElement newDeForProjectUpdate = new DescriptionElement(null, IMAGE,
             (byte) 5, null, "updatedDeNewImage.png",
             "./content/projects/updatedprojectname/description/images/" + PREPARED_UUID_STRING +
                     "_updateddenewimage.png", project1);
 
-    public static final DescriptionElement updatedDescriptionElementNewWhenOldName = new DescriptionElement(null, IMAGE,
+    public static final DescriptionElement newDeForProjectUpdateWithOldName = new DescriptionElement(null, IMAGE,
             (byte) 5, null, "updatedDeNewImage.png",
             "./content/projects/restaurant_aggregator/description/images/" + PREPARED_UUID_STRING +
                     "_updateddenewimage.png", project1);
 
-    public static DescriptionElementTo getUpdatedDeToNew() {
+    public static DescriptionElementTo getNewDeForProjectUpdate() {
         return new DescriptionElementTo(null, IMAGE, (byte) 5,
                 new MockMultipartFile("descriptionElementTos[5].imageFile", "updatedDeNewImage.png", MediaType.IMAGE_PNG_VALUE,
                         "description element image file content bytes".getBytes()));
@@ -332,27 +334,27 @@ public class ProjectTestData {
         params.add(FRONTEND_SRC_URL_PARAM, updated.getFrontendSrcUrl());
         params.add(OPEN_API_URL_PARAM, updated.getOpenApiUrl());
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY1_ID));
-        params.add("descriptionElementTos[0].id", String.valueOf(updatedDescriptionElement2.getId()));
-        params.add("descriptionElementTos[0].type", updatedDescriptionElement2.getType().name());
-        params.add("descriptionElementTos[0].index", updatedDescriptionElement2.getIndex().toString());
-        params.add("descriptionElementTos[0].text", updatedDescriptionElement2.getText());
-        params.add("descriptionElementTos[1].id", String.valueOf(updatedDescriptionElement1.getId()));
-        params.add("descriptionElementTos[1].type", updatedDescriptionElement1.getType().name());
-        params.add("descriptionElementTos[1].index", updatedDescriptionElement1.getIndex().toString());
-        params.add("descriptionElementTos[1].text", updatedDescriptionElement1.getText());
-        params.add("descriptionElementTos[2].id", String.valueOf(updatedDescriptionElement4.getId()));
-        params.add("descriptionElementTos[2].type", updatedDescriptionElement4.getType().name());
-        params.add("descriptionElementTos[2].index", updatedDescriptionElement4.getIndex().toString());
-        params.add("descriptionElementTos[2].text", updatedDescriptionElement4.getText());
-        params.add("descriptionElementTos[3].id", String.valueOf(updatedDescriptionElement6.getId()));
-        params.add("descriptionElementTos[3].type", updatedDescriptionElement6.getType().name());
-        params.add("descriptionElementTos[3].index", updatedDescriptionElement6.getIndex().toString());
-        params.add("descriptionElementTos[4].id", String.valueOf(updatedDescriptionElement5.getId()));
-        params.add("descriptionElementTos[4].type", updatedDescriptionElement5.getType().name());
-        params.add("descriptionElementTos[4].index", updatedDescriptionElement5.getIndex().toString());
-        params.add("descriptionElementTos[4].text", updatedDescriptionElement5.getText());
-        params.add("descriptionElementTos[5].type", getUpdatedDeToNew().getType().name());
-        params.add("descriptionElementTos[5].index", String.valueOf(getUpdatedDeToNew().getIndex()));
+        params.add("descriptionElementTos[0].id", String.valueOf(updatedDe2.getId()));
+        params.add("descriptionElementTos[0].type", updatedDe2.getType().name());
+        params.add("descriptionElementTos[0].index", updatedDe2.getIndex().toString());
+        params.add("descriptionElementTos[0].text", updatedDe2.getText());
+        params.add("descriptionElementTos[1].id", String.valueOf(updatedDe1.getId()));
+        params.add("descriptionElementTos[1].type", updatedDe1.getType().name());
+        params.add("descriptionElementTos[1].index", updatedDe1.getIndex().toString());
+        params.add("descriptionElementTos[1].text", updatedDe1.getText());
+        params.add("descriptionElementTos[2].id", String.valueOf(updatedDe4.getId()));
+        params.add("descriptionElementTos[2].type", updatedDe4.getType().name());
+        params.add("descriptionElementTos[2].index", updatedDe4.getIndex().toString());
+        params.add("descriptionElementTos[2].text", updatedDe4.getText());
+        params.add("descriptionElementTos[3].id", String.valueOf(updatedDe6.getId()));
+        params.add("descriptionElementTos[3].type", updatedDe6.getType().name());
+        params.add("descriptionElementTos[3].index", updatedDe6.getIndex().toString());
+        params.add("descriptionElementTos[4].id", String.valueOf(updatedDe5.getId()));
+        params.add("descriptionElementTos[4].type", updatedDe5.getType().name());
+        params.add("descriptionElementTos[4].index", updatedDe5.getIndex().toString());
+        params.add("descriptionElementTos[4].text", updatedDe5.getText());
+        params.add("descriptionElementTos[5].type", getNewDeForProjectUpdate().getType().name());
+        params.add("descriptionElementTos[5].index", String.valueOf(getNewDeForProjectUpdate().getIndex()));
         return params;
     }
 

@@ -113,3 +113,271 @@ function previewCardImageFile() {
     cardImageFilePreviewDiv.attr('hidden', false);
     cardImageFileInputDiv.attr('hidden', true);
 }
+
+function showLargerImage(image) {
+    $('#largerImage').attr('src', image.attr('src'));
+    $('#largerImageModal').modal('show');
+}
+
+function previewImage(imageInput) {
+    let files = imageInput.prop('files');
+    if (files.length) {
+        let fileReader = new FileReader();
+        fileReader.onload = function (event) {
+            imageInput.siblings('img').attr('src', event.target.result).attr('hidden', false);
+            imageInput.siblings('.change-img-btn').attr('hidden', false);
+            imageInput.siblings('.empty-image-div').attr('style', 'display: none !important;');
+        }
+        fileReader.readAsDataURL(files[0]);
+    } else {
+        imageInput.siblings('.empty-image-div').removeClass('bg-danger-subtle border-2 border-danger')
+            .attr('style', 'display: inline !important; height: 150px; width: 300px;');
+        imageInput.siblings('img').attr('hidden', true);
+        imageInput.siblings('.change-img-btn').attr('hidden', true);
+        imageInput.attr('required', true);
+    }
+}
+
+function moveElementUp(moveUpBtn) {
+    let elementContainer = $(moveUpBtn).closest('.element-container');
+    let elementContainerId = elementContainer.attr('id');
+    let elementContainerIndex = +elementContainerId.replace('elementContainer-', '');
+    if (elementContainerIndex !== 0) {
+        let higherElementContainer = $(`#elementContainer-${elementContainerIndex - 1}`);
+        let higherElementContainerId = higherElementContainer.attr('id');
+        let higherElementContainerIndex = +higherElementContainerId.replace('elementContainer-', '');
+
+        swapElements(elementContainerIndex, higherElementContainerIndex);
+    }
+}
+
+function moveElementDown(moveDownBtn) {
+    let elementContainer = $(moveDownBtn).closest('.element-container');
+    let elementContainerId = elementContainer.attr('id');
+    let elementContainerIndex = +elementContainerId.replace('elementContainer-', '');
+    let lowerElementContainer = $(`#elementContainer-${elementContainerIndex + 1}`);
+    if (lowerElementContainer.length) {
+        let lowerElementContainerId = lowerElementContainer.attr('id');
+        let lowerElementContainerIndex = +lowerElementContainerId.replace('elementContainer-', '');
+
+        swapElements(elementContainerIndex, lowerElementContainerIndex);
+    }
+}
+
+function swapElements(firstElemIndex, secondElemIndex) {
+    let firstElementId = $(`#elementId-${firstElemIndex}`);
+    let firstElementType = $(`#elementType-${firstElemIndex}`);
+    let firstElementIndex = $(`#elementIndex-${firstElemIndex}`);
+    let firstElementFileName = $(`#elementFileName-${firstElemIndex}`);
+    let firstElementFileLink = $(`#elementFileLink-${firstElemIndex}`);
+    let firstElementText = $(`#elementText-${firstElemIndex}`);
+    let firstElementImage = $(`#elementImage-${firstElemIndex}`);
+    let firstElementImageString = $(`#elementImageString-${firstElemIndex}`);
+
+    let secondElementId = $(`#elementId-${secondElemIndex}`);
+    let secondElementType = $(`#elementType-${secondElemIndex}`);
+    let secondElementIndex = $(`#elementIndex-${secondElemIndex}`);
+    let secondElementFileName = $(`#elementFileName-${secondElemIndex}`);
+    let secondElementFileLink = $(`#elementFileLink-${secondElemIndex}`);
+    let secondElementText = $(`#elementText-${secondElemIndex}`);
+    let secondElementImage = $(`#elementImage-${secondElemIndex}`);
+    let secondElementImageString = $(`#elementImageString-${secondElemIndex}`);
+
+    firstElementId.attr('id', `elementId-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].id`);
+    firstElementType.attr('id', `elementType-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].type`);
+    firstElementIndex.attr('id', `elementIndex-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].index`);
+    firstElementFileName.attr('id', `elementFileName-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].fileName`);
+    firstElementFileLink.attr('id', `elementFileLink-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].fileLink`);
+    if (firstElementText.length) {
+        firstElementText.attr('id', `elementText-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].text`);
+    }
+    if (firstElementImage.length) {
+        firstElementImage.attr('id', `elementImage-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].imageFile`);
+    }
+    if (firstElementImageString.length) {
+        firstElementImageString.attr('id', `elementImageString-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].imageFileString`);
+    }
+
+    secondElementId.attr('id', `elementId-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].id`);
+    secondElementType.attr('id', `elementType-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].type`);
+    secondElementIndex.attr('id', `elementIndex-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].index`);
+    secondElementFileName.attr('id', `elementFileName-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].fileName`);
+    secondElementFileLink.attr('id', `elementFileLink-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].fileLink`);
+    if (secondElementText.length) {
+        secondElementText.attr('id', `elementText-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].text`);
+    }
+    if (secondElementImage.length) {
+        secondElementImage.attr('id', `elementImage-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].imageFile`);
+    }
+    if (secondElementImageString.length) {
+        secondElementImageString.attr('id', `elementImageString-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].imageFileString`);
+    }
+
+    let firstElementIndexValue = firstElementIndex.val();
+    firstElementIndex.val(secondElementIndex.val());
+    secondElementIndex.val(firstElementIndexValue);
+
+    let firstElementContainer = $(`#elementContainer-${firstElemIndex}`);
+    let secondElementContainer = $(`#elementContainer-${secondElemIndex}`);
+    if (firstElemIndex > secondElemIndex) {
+        firstElementContainer.insertBefore(secondElementContainer);
+    } else {
+        firstElementContainer.insertAfter(secondElementContainer);
+    }
+    firstElementContainer.attr('id', `elementContainer-${secondElemIndex}`);
+    secondElementContainer.attr('id', `elementContainer-${firstElemIndex}`);
+}
+
+function deleteElement(deleteElementBtn) {
+    let elementContainer = $(deleteElementBtn).closest('.element-container');
+    let elementContainerId = elementContainer.attr('id');
+    let elementContainerIndex = +elementContainerId.replace('elementContainer-', '');
+
+    let elementIndexValue = $(`#elementIndex-${elementContainerIndex}`).val();
+    let elementContainerAmount = $('.element-container').length;
+    elementContainer.remove();
+    for (let i = elementContainerIndex + 1; i < elementContainerAmount; i++) {
+        let lowerElementContainer = $(`#elementContainer-${i}`);
+        if (lowerElementContainer.length) {
+            let lowerElementId = $(`#elementId-${i}`);
+            let lowerElementType = $(`#elementType-${i}`);
+            let lowerElementIndex = $(`#elementIndex-${i}`);
+            let lowerElementFileName = $(`#elementFileName-${i}`);
+            let lowerElementFileLink = $(`#elementFileLink-${i}`);
+            let lowerElementText = $(`#elementText-${i}`);
+            let lowerElementImage = $(`#elementImage-${i}`);
+            let lowerElementImageString = $(`#elementImageString-${i}`);
+
+            lowerElementId.attr('id', `elementId-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].id`);
+            lowerElementType.attr('id', `elementType-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].type`);
+            lowerElementIndex.attr('id', `elementIndex-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].index`);
+            lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileName`);
+            lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileLink`);
+            if (lowerElementText.length) {
+                lowerElementText.attr('id', `elementText-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].text`);
+            }
+            if (lowerElementImage.length) {
+                lowerElementImage.attr('id', `elementImage-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].imageFile`);
+            }
+            if (lowerElementImageString.length) {
+                lowerElementImageString.attr('id', `elementImageString-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].imageFileString`);
+            }
+
+            let lowerElementIndexValue = lowerElementIndex.val();
+            lowerElementIndex.val(elementIndexValue);
+            elementIndexValue = lowerElementIndexValue;
+
+            lowerElementContainer.attr('id', `elementContainer-${i - 1}`);
+        }
+    }
+}
+
+function addNewElement(type) {
+    let newElementContainerIndex = $('.element-container').length;
+    let newElementContainer = $('<div></div>').attr('id', `elementContainer-${newElementContainerIndex}`)
+        .addClass('element-container mb-1');
+
+    let newElementType = $('<input type="hidden"/>').attr('id', `elementType-${newElementContainerIndex}`)
+        .attr('name', `descriptionElementTos[${newElementContainerIndex}].type`).val(type.toUpperCase());
+
+    let newElementIndexValue = newElementContainerIndex === 0 ? 0 :
+        (+($(`#elementIndex-${newElementContainerIndex - 1}`).val()) + 1);
+
+    let newElementIndex = $('<input type="hidden"/>').attr('id', `elementIndex-${newElementContainerIndex}`)
+        .attr('name', `descriptionElementTos[${newElementContainerIndex}].index`)
+        .val(newElementIndexValue);
+
+    let newElementInputContentDiv = $('<div></div>');
+
+    if (type === 'Title' || type === 'Paragraph') {
+        let formDiv = $('<div></div>').addClass('form-floating');
+        let newElementText = $('<textarea></textarea>').attr('id', `elementText-${newElementContainerIndex}`)
+            .attr('name', `descriptionElementTos[${newElementContainerIndex}].text`).attr('required', true)
+            .attr('placeholder', `${type}`).addClass('form-control lh-base')
+            .addClass(`${type === 'Title' ? 'fw-medium' : ''}`)
+            .css('white-space', 'pre-wrap').css('height', `${type === 'Title' ? '65px' : '120px'}`);
+        let label = $('<label></label>').addClass('text-muted').html(type);
+        formDiv.append(getElementActionsBtnHtml(type));
+        formDiv.append(newElementText);
+        formDiv.append(label);
+        newElementInputContentDiv.append(formDiv);
+
+    } else if (type === 'Image') {
+        newElementInputContentDiv.addClass('border rounded-2 ps-3 pe-2 pb-1');
+
+        let label = $('<div></div>').addClass('text-start text-muted tiny').html(type);
+
+        let flexDiv = $('<div></div>').addClass('d-flex align-items-start');
+
+        let inputtedImage = $('<img />').addClass('element-image rounded-2 mt-2 mb-1 border')
+            .attr('hidden', true).css('height', '150px').css('cursor', 'zoom-in').css('max-width', '95%')
+            .click(function () {showLargerImage($(this))});
+
+        let imageInput = $('<input type="file"/>').attr('accept', 'image/*')
+            .attr('id', `elementImage-${newElementContainerIndex}`).attr('required', true)
+            .attr('name', `descriptionElementTos[${newElementContainerIndex}].imageFile`)
+            .attr('hidden', true).addClass('element-image-input').change(function () {previewImage($(this))});
+
+        let changeImageBtn = $('<button></button>').attr('type', 'button').attr('title', 'Change image')
+            .attr('hidden', true)
+            .addClass('change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1')
+            .html(`<i class="fa-solid fa-pencil"></i>`).click(function () {$(this).siblings('input').click()});
+
+        let emptyImageDiv = $('<div></div>')
+            .addClass('empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center')
+            .css('height', '150px').css('width', '300px');
+
+        let chooseImageBtn = $('<button></button>').attr('type', 'button')
+            .addClass('btn btn-outline-secondary').html('Choose image')
+            .click(function () {$(this).parent().siblings('input').click()});
+
+        emptyImageDiv.append(chooseImageBtn);
+
+        flexDiv.append(inputtedImage).append(imageInput).append(changeImageBtn).append(emptyImageDiv);
+
+        newElementInputContentDiv.append(getElementActionsBtnHtml(type)).append(label).append(flexDiv);
+    }
+
+    newElementContainer.append(newElementType);
+    newElementContainer.append(newElementIndex);
+    newElementContainer.append(newElementInputContentDiv);
+
+    $('#elementsBlock').append(newElementContainer);
+}
+
+function getElementActionsBtnHtml(type) {
+    return `<button type="button"
+                          class="${type !== 'Image' ? 'position-absolute' : ''}
+                          float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
+                          title="Edit" data-bs-toggle="dropdown" aria-expanded="false" style="right: 10px;">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
+                               <i class="fa-solid fa-up-long text-warning"></i> Move up
+                            </button>
+                          </li>
+                          <li>
+                             <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
+                                <i class="fa-solid fa-down-long text-warning"></i> Move down
+                             </button>
+                          </li>
+                          <li>
+                             <button type="button" class="dropdown-item" onclick="deleteElement(this)">
+                                <i class="fa-solid fa-xmark text-danger"></i> Delete
+                             </button>
+                          </li>
+                        </ul>`
+}
+
+function checkImageElementsNotEmpty() {
+    $('.element-image-input').each(function() {
+        if ($(this).attr('required') && !$(this).val().length) {
+            console.log($(this).siblings('.empty-image-div'));
+            $(this).siblings('.empty-image-div').addClass('bg-danger-subtle border-2 border-danger');
+            failToast('You have empty image elements');
+        }
+
+    })
+}

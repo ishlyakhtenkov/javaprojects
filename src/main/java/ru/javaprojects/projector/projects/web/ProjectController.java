@@ -107,7 +107,7 @@ public class ProjectController {
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> de.getImageFile() != null && !de.getImageFile().isEmpty())
-                    .forEach(this::convertFileToString);
+                    .forEach(this::convertImageFileToString);
             return "projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -118,13 +118,15 @@ public class ProjectController {
         return "redirect:/projects/" + project.getId();
     }
 
-    private void convertFileToString(DescriptionElementTo descriptionElementTo) {
+    private void convertImageFileToString(DescriptionElementTo descriptionElementTo) {
         try {
-            descriptionElementTo.setImageFileString(Base64.getEncoder().encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));
+            descriptionElementTo.setImageFileString(Base64.getEncoder()
+                    .encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));
             descriptionElementTo.setFileName(descriptionElementTo.getImageFile().getOriginalFilename());
             descriptionElementTo.setFileLink(null);
         } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload", new Object[]{descriptionElementTo.getImageFile().getOriginalFilename()});
+            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                    new Object[]{descriptionElementTo.getImageFile().getOriginalFilename()});
         }
     }
 }

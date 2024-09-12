@@ -3,6 +3,7 @@ package ru.javaprojects.projector.projects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
@@ -49,25 +50,21 @@ public class ProjectUtil {
                 createCardImageFile(projectTo), projectTo.getDeploymentUrl(), projectTo.getBackendSrcUrl(),
                 projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl());
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
-        projectTo.getDescriptionElementTos().forEach(deTo -> createNewFromTo(deTo, project));
+        projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));
         return project;
     }
 
     private DescriptionElement createNewFromTo(DescriptionElementTo deTo, Project project) {
         if (deTo.getType() == ElementType.IMAGE) {
-            if ((deTo.getImageFile() == null || deTo.getImageFile().isEmpty()) &&
-                    (deTo.getImageFileString() == null || deTo.getImageFileString().isEmpty())) {
+            if (isMultipartFileEmpty(deTo.getImageFile()) && !deToHasImageFileString(deTo)) {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "description-element.image-not-present", null);
             }
             String fileName;
-            if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
+            if (!isMultipartFileEmpty(deTo.getImageFile())) {
                 fileName = deTo.getImageFile().getOriginalFilename();
-            } else if (deTo.getFileName() != null) {
-                fileName = deTo.getFileName();
             } else {
-                throw new IllegalRequestDataException("Description element image file name is not present",
-                        "description-element.image-name-not-present", null);
+                fileName = deTo.getFileName();
             }
             String uniquePrefix = UUID.randomUUID().toString();
             String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
@@ -75,10 +72,17 @@ public class ProjectUtil {
             deTo.setFileName(fileName);
             deTo.setFileLink(fileLink);
         }
-        DescriptionElement descriptionElement = new DescriptionElement(null, deTo.getType(),
-                deTo.getIndex(), deTo.getText(), deTo.getFileName(), deTo.getFileLink());
-        project.addDescriptionElement(descriptionElement);
-        return descriptionElement;
+        return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(), deTo.getFileName(),
+                deTo.getFileLink());
+    }
+
+    public static boolean isMultipartFileEmpty(MultipartFile file) {
+        return file == null || file.isEmpty();
+    }
+
+    public static boolean deToHasImageFileString(DescriptionElementTo deTo) {
+        return deTo.getImageFileString() != null && !deTo.getImageFileString().isEmpty() && deTo.getFileName() != null
+                && !deTo.getFileName().isEmpty();
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -102,78 +106,72 @@ public class ProjectUtil {
                 .forEach(project::addTechnology);
         project.getTechnologies().removeIf(technology -> !technologies.contains(technology));
 
-
         Map<Long, DescriptionElementTo> notNewDeTos = projectTo.getDescriptionElementTos().stream()
                 .filter(de -> !de.isNew())
                 .collect(Collectors.toMap(BaseTo::getId, Function.identity()));
-
         project.getDescriptionElements().removeIf(de -> !notNewDeTos.containsKey(de.getId()));
-
         project.getDescriptionElements().forEach(de -> {
             DescriptionElementTo deTo = notNewDeTos.get(de.getId());
-            de.setIndex(deTo.getIndex());
-            if (deTo.getType() == ElementType.IMAGE) {
-                String fileName = null;
-                if (deTo.getImageFile() != null && !deTo.getImageFile().isEmpty()) {
-                    fileName = deTo.getImageFile().getOriginalFilename();
-                } else if (deTo.getImageFileString() != null && !deTo.getImageFileString().isEmpty()) {
-                    if (deTo.getFileName() == null || deTo.getFileName().isEmpty()) {
-                        throw new IllegalRequestDataException("Description element image file name is not present",
-                                "description-element.image-name-not-present", null);
-                    }
-                    fileName = deTo.getFileName();
-                }
-                if (fileName != null) {
-                    String uniquePrefix = UUID.randomUUID().toString();
-                    String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
-                            fileName);
-                    deTo.setFileName(fileName);
-                    deTo.setFileLink(fileLink);
-                    de.setFileName(fileName);
-                    de.setFileLink(fileLink);
-                }
-            } else {
-                de.setText(deTo.getText());
-            }
+            updateFromTo(de, deTo, project);
         });
-
         projectTo.getDescriptionElementTos().stream()
                 .filter(HasId::isNew)
                 .map(deTo -> createNewFromTo(deTo, project))
                 .forEach(project::addDescriptionElement);
 
+        if (!isMultipartFileEmpty(projectTo.getLogoFile())) {
+            project.setLogoFile(createLogoFile(projectTo));
+        }
+        if (!isMultipartFileEmpty(projectTo.getCardImageFile())) {
+            project.setCardImageFile(createCardImageFile(projectTo));
+        }
+        if (!isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
+            project.setDockerComposeFile(createDockerComposeFile(projectTo));
+        }
+
         if (!project.getName().equalsIgnoreCase(projectOldName)) {
+            project.getLogoFile().setFileLink(contentPath + normalizePath(project.getName()) + LOGO_DIR +
+                    project.getLogoFile().getFileName());
+            project.getCardImageFile().setFileLink(contentPath + normalizePath(project.getName()) + CARD_IMG_DIR +
+                    project.getCardImageFile().getFileName());
+            if (project.getDockerComposeFile() != null) {
+                project.getDockerComposeFile().setFileLink(contentPath + normalizePath(project.getName()) + DOCKER_DIR +
+                        project.getDockerComposeFile().getFileName());
+            }
             project.getDescriptionElements().stream()
                     .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew())
                     .forEach(de -> {
-                        String uniquePrefixFileName = de.getFileLink().substring(de.getFileLink().lastIndexOf('/') + 1);
+                        String fileNameWithPrefix = de.getFileLink().substring(de.getFileLink().lastIndexOf('/') + 1);
                         String newFileLink =
-                                contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefixFileName);
+                                contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + fileNameWithPrefix);
                         de.setFileLink(newFileLink);
                     });
-        }
-
-        if (projectTo.getLogoFile() != null && !projectTo.getLogoFile().isEmpty()) {
-            project.setLogoFile(createLogoFile(projectTo));
-        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            project.getLogoFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + LOGO_DIR +
-                    project.getLogoFile().getFileName());
-        }
-        if (projectTo.getCardImageFile() != null && !projectTo.getCardImageFile().isEmpty()) {
-            project.setCardImageFile(createCardImageFile(projectTo));
-        } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            project.getCardImageFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR +
-                    project.getCardImageFile().getFileName());
-        }
-        if (projectTo.getDockerComposeFile() != null && !projectTo.getDockerComposeFile().isEmpty()) {
-            project.setDockerComposeFile(createDockerComposeFile(projectTo));
-        } else if (!project.getName().equalsIgnoreCase(projectOldName) && project.getDockerComposeFile() != null) {
-            project.getDockerComposeFile().setFileLink(contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR +
-                    project.getDockerComposeFile().getFileName());
         }
         return project;
     }
 
+    private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
+        de.setIndex(deTo.getIndex());
+        if (deTo.getType() == ElementType.IMAGE) {
+            String fileName = null;
+            if (!isMultipartFileEmpty(deTo.getImageFile())) {
+                fileName = deTo.getImageFile().getOriginalFilename();
+            } else if (deToHasImageFileString(deTo)) {
+                fileName = deTo.getFileName();
+            }
+            if (fileName != null) {
+                String uniquePrefix = UUID.randomUUID().toString();
+                String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
+                        fileName);
+                deTo.setFileName(fileName);
+                deTo.setFileLink(fileLink);
+                de.setFileName(fileName);
+                de.setFileLink(fileLink);
+            }
+        } else {
+            de.setText(deTo.getText());
+        }
+    }
 
     private LogoFile createLogoFile(ProjectTo projectTo) {
         String filename = normalizePath(projectTo.getLogoFile().getOriginalFilename());
@@ -186,7 +184,7 @@ public class ProjectUtil {
     }
 
     private DockerComposeFile createDockerComposeFile(ProjectTo projectTo) {
-        if (projectTo.getDockerComposeFile() == null || projectTo.getDockerComposeFile().isEmpty()) {
+        if (isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
             return null;
         }
         String filename = normalizePath(projectTo.getDockerComposeFile().getOriginalFilename());

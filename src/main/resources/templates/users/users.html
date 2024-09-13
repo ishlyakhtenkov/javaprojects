@@ -24,7 +24,8 @@
                                 <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
                             </div>
                         </form>
-                        <a th:href="@{/users/add}" type="button" class="btn btn-primary ms-2"><i class="fa-solid fa-plus"></i> Add</a>
+                        <a th:href="@{/users/add}" type="button" title="Add user"
+                           class="btn btn-outline-primary ms-2"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
             </div>

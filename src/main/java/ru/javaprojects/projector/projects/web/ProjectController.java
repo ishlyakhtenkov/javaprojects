@@ -105,6 +105,7 @@ public class ProjectController {
                 if (projectTo.getDockerComposeFile() == null) {
                     model.addAttribute("dockerComposeFile", project.getDockerComposeFile());
                 }
+                model.addAttribute("projectName", project.getName());
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> !FileUtil.isMultipartFileEmpty(de.getImageFile()))

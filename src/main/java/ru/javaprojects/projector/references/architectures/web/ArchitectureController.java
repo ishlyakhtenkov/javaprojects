@@ -59,9 +59,12 @@ public class ArchitectureController {
                                  RedirectAttributes redirectAttributes) {
         boolean isNew = architecture.isNew();
         if (result.hasErrors()) {
+            if (!isNew) {
+                model.addAttribute("architectureName", service.get(architecture.id()).getName());
+            }
             return "references/architecture-form";
         }
-        log.info((isNew ? "create" : "update") + " {}", architecture);
+        log.info("{} {}", isNew ? "create" : "update", architecture);
         if (isNew) {
             service.create(architecture);
         }  else {

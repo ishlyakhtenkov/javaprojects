@@ -101,6 +101,9 @@ public class AdminUserController {
     public String update(@Valid UserTo userTo, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
+            if (!userTo.isNew()) {
+                model.addAttribute("userName", service.get(userTo.getId()).getName());
+            }
             return "users/user-edit-form";
         }
         log.info("update {}", userTo);

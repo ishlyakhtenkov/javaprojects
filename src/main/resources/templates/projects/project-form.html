@@ -18,7 +18,8 @@
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${projectTo.isNew()} ? 'New project' : 'Edit: ' + ${projectTo.name}">Create/Edit project</h3>
+                        <h3 class="text-center" th:text="${projectTo.isNew()} ? 'New project' :
+                            ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h3>
                     </div>
                     <form th:action="@{/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
                         <div class="card-body text-start">

@@ -103,6 +103,9 @@ public class TechnologyController {
             if (!FileUtil.isMultipartFileEmpty(technologyTo.getLogoFile())) {
                 keepImageFile(technologyTo);
             }
+            if (!isNew) {
+                model.addAttribute("technologyName", service.get(technologyTo.getId()).getName());
+            }
             return "references/technology-form";
         }
         log.info((isNew ? "create" : "update") + " {}", technologyTo);

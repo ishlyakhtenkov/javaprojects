@@ -22,7 +22,8 @@
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${technologyTo.isNew()} ? 'New technology' : 'Edit: ' + ${technologyTo.name}">Create/Edit technology</h3>
+                        <h3 class="text-center" th:text="${technologyTo.isNew()} ? 'New technology' :
+                            ${technologyName == null ? technologyTo.name : technologyName}">Create/Edit technology</h3>
                     </div>
                     <form th:action="@{/references/technologies}" method="post" th:object="${technologyTo}" enctype="multipart/form-data">
                         <div class="card-body p-4 pt-4 pb-3 text-center">

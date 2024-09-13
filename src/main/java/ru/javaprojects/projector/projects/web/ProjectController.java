@@ -108,7 +108,7 @@ public class ProjectController {
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> !FileUtil.isMultipartFileEmpty(de.getImageFile()))
-                    .forEach(this::saveImageFile);
+                    .forEach(this::keepImageFile);
             return "projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -119,7 +119,7 @@ public class ProjectController {
         return "redirect:/projects/" + project.getId();
     }
 
-    private void saveImageFile(DescriptionElementTo descriptionElementTo) {
+    private void keepImageFile(DescriptionElementTo descriptionElementTo) {
         try {
             descriptionElementTo.setImageFileString(Base64.getEncoder()
                     .encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));

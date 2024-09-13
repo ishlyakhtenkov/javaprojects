@@ -19,8 +19,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
-import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
+import static ru.javaprojects.projector.common.util.FileUtil.*;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
 @Component
@@ -56,7 +55,7 @@ public class ProjectUtil {
 
     private DescriptionElement createNewFromTo(DescriptionElementTo deTo, Project project) {
         if (deTo.getType() == ElementType.IMAGE) {
-            if (isMultipartFileEmpty(deTo.getImageFile()) && !deToHasImageFileString(deTo)) {
+            if (isMultipartFileEmpty(deTo.getImageFile()) && !hasImageFileString(deTo)) {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "description-element.image-not-present", null);
             }
@@ -74,11 +73,6 @@ public class ProjectUtil {
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(), deTo.getFileName(),
                 deTo.getFileLink());
-    }
-
-    public static boolean deToHasImageFileString(DescriptionElementTo deTo) {
-        return deTo.getImageFileString() != null && !deTo.getImageFileString().isEmpty() && deTo.getFileName() != null
-                && !deTo.getFileName().isEmpty();
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -152,7 +146,7 @@ public class ProjectUtil {
             String fileName = null;
             if (!isMultipartFileEmpty(deTo.getImageFile())) {
                 fileName = deTo.getImageFile().getOriginalFilename();
-            } else if (deToHasImageFileString(deTo)) {
+            } else if (hasImageFileString(deTo)) {
                 fileName = deTo.getFileName();
             }
             if (fileName != null) {

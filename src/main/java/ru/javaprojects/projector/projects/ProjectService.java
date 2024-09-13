@@ -20,8 +20,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static ru.javaprojects.projector.common.util.FileUtil.hasImageFileString;
 import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
-import static ru.javaprojects.projector.projects.ProjectUtil.deToHasImageFileString;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -125,7 +125,7 @@ public class ProjectService {
         String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
         if (!isMultipartFileEmpty(deTo.getImageFile())) {
             uploadFile(deTo.getImageFile(), projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-        } else if (deToHasImageFileString(deTo)) {
+        } else if (hasImageFileString(deTo)) {
             uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), projectName, DESCRIPTION_IMG_DIR,
                     uniquePrefixFileName);
         }
@@ -156,7 +156,7 @@ public class ProjectService {
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
-                    if (!isMultipartFileEmpty(deTo.getImageFile()) || deToHasImageFileString(deTo)) {
+                    if (!isMultipartFileEmpty(deTo.getImageFile()) || hasImageFileString(deTo)) {
                         uploadDeImage(deTo, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {

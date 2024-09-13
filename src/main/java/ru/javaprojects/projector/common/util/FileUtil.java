@@ -3,8 +3,10 @@ package ru.javaprojects.projector.common.util;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
+import ru.javaprojects.projector.common.HasImageFileString;
 import ru.javaprojects.projector.common.error.FileException;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
+import ru.javaprojects.projector.projects.DescriptionElementTo;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -126,5 +128,10 @@ public class FileUtil {
 
     public static boolean isMultipartFileEmpty(MultipartFile file) {
         return file == null || file.isEmpty();
+    }
+
+    public static boolean hasImageFileString(HasImageFileString bean) {
+        return bean.getImageFileString() != null && !bean.getImageFileString().isEmpty() && bean.getFileName() != null
+                && !bean.getFileName().isEmpty();
     }
 }

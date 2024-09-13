@@ -23,6 +23,9 @@ public class TechnologyTestData {
     public static final String URL_PARAM = "url";
     public static final String USAGE_PARAM = "usage";
     public static final String PRIORITY_PARAM = "priority";
+    public static final String LOGO_FILE_NAME_PARAM = "logoFileName";
+    public static final String LOGO_FILE_LINK_PARAM = "logoFileLink";
+    public static final String LOGO_FILE_AS_STRING_PARAM = "logoFileAsString";
 
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;
@@ -105,12 +108,17 @@ public class TechnologyTestData {
         params.add(URL_PARAM, updated.getUrl());
         params.add(USAGE_PARAM, updated.getUsage().name());
         params.add(PRIORITY_PARAM, updated.getPriority().name());
+        params.add(LOGO_FILE_NAME_PARAM, updated.getLogoFile().getFileName());
+        params.add(LOGO_FILE_LINK_PARAM, updated.getLogoFile().getFileLink());
         return params;
     }
 
     public static MultiValueMap<String, String> getUpdatedInvalidParams(String contentPath) {
         MultiValueMap<String, String> invalidParams = getNewInvalidParams();
+        Technology updated = getUpdated(contentPath);
         invalidParams.add(ID_PARAM, String.valueOf(TECHNOLOGY1_ID));
+        invalidParams.add(LOGO_FILE_NAME_PARAM, updated.getLogoFile().getFileName());
+        invalidParams.add(LOGO_FILE_LINK_PARAM, updated.getLogoFile().getFileLink());
         return invalidParams;
     }
 }

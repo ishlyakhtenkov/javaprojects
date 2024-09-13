@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.projects.DescriptionElementTo;
 import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.references.technologies.model.Technology;
@@ -100,15 +101,7 @@ public class TechnologyController {
         if (result.hasErrors()) {
             addAttributesToModel(model);
             if (!FileUtil.isMultipartFileEmpty(technologyTo.getLogoFile())) {
-                try {
-                    technologyTo.setLogoFileAsString(Base64.getEncoder()
-                            .encodeToString(Objects.requireNonNull(technologyTo.getLogoFile()).getBytes()));
-                    technologyTo.setLogoFileName(technologyTo.getLogoFile().getOriginalFilename());
-                    technologyTo.setLogoFileLink(null);
-                } catch (IOException e) {
-                    throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                            new Object[]{technologyTo.getLogoFile().getOriginalFilename()});
-                }
+                keepImageFile(technologyTo);
             }
             return "references/technology-form";
         }
@@ -122,5 +115,17 @@ public class TechnologyController {
                 messageSource.getMessage((isNew ? "technology.created" : "technology.updated"),
                 new Object[]{technologyTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/references/technologies";
+    }
+
+    private void keepImageFile(TechnologyTo technologyTo) {
+        try {
+            technologyTo.setLogoFileAsString(Base64.getEncoder()
+                    .encodeToString(Objects.requireNonNull(technologyTo.getLogoFile()).getBytes()));
+            technologyTo.setLogoFileName(technologyTo.getLogoFile().getOriginalFilename());
+            technologyTo.setLogoFileLink(null);
+        } catch (IOException e) {
+            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                    new Object[]{technologyTo.getLogoFile().getOriginalFilename()});
+        }
     }
 }

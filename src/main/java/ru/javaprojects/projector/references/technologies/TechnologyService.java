@@ -13,10 +13,12 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ru.javaprojects.projector.common.util.FileUtil.*;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.updateFromTo;
 
@@ -53,14 +55,12 @@ public class TechnologyService {
     @Transactional
     public Technology create(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
-        if (technologyTo.getLogoFile() == null || technologyTo.getLogoFile().isEmpty()) {
+        if (isMultipartFileEmpty(technologyTo.getLogoFile()) && !hasImageFileString(technologyTo)) {
             throw new IllegalRequestDataException("Technology logo file is not present",
                     "technology.logo-not-present", null);
         }
         Technology technology = repository.saveAndFlush(createNewFromTo(technologyTo, contentPath));
-        String fileName = FileUtil.normalizePath(technologyTo.getLogoFile().getOriginalFilename());
-        FileUtil.upload(technologyTo.getLogoFile(), contentPath +
-                FileUtil.normalizePath(technology.getName()) + "/", fileName);
+        uploadImage(technologyTo, technology.getName());
         return technology;
     }
 
@@ -71,13 +71,23 @@ public class TechnologyService {
         String oldName = technology.getName();
         String oldLogoFileLink = technology.getLogoFile().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
-        if (technologyTo.getLogoFile() != null && !technologyTo.getLogoFile().isEmpty()) {
+        if (!isMultipartFileEmpty(technologyTo.getLogoFile()) || hasImageFileString(technologyTo)) {
+            uploadImage(technologyTo, technology.getName());
             FileUtil.deleteFile(oldLogoFileLink);
-            String newLogoFileName =  FileUtil.normalizePath(technologyTo.getLogoFile().getOriginalFilename());
-            FileUtil.upload(technologyTo.getLogoFile(), contentPath + FileUtil.normalizePath(technologyTo.getName()) +
-                    "/", newLogoFileName);
         } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(technologyTo.getName()));
+        }
+    }
+
+    private void uploadImage(TechnologyTo technologyTo, String technologyName) {
+        String fileName = normalizePath(technologyTo.getLogoFile() != null ? technologyTo.getLogoFile().getOriginalFilename() :
+                technologyTo.getLogoFileName());
+        if (!isMultipartFileEmpty(technologyTo.getLogoFile())) {
+            FileUtil.upload(technologyTo.getLogoFile(), contentPath +
+                    FileUtil.normalizePath(technologyName) + "/", fileName);
+        } else if (hasImageFileString(technologyTo)) {
+            FileUtil.upload(Base64.getDecoder().decode(technologyTo.getImageFileString()), contentPath +
+                    FileUtil.normalizePath(technologyName) + "/", fileName);
         }
     }
 

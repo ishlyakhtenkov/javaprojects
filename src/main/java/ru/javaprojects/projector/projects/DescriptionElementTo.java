@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasId;
+import ru.javaprojects.projector.common.HasImageFileString;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.projects.model.ElementType;
@@ -17,7 +18,7 @@ import ru.javaprojects.projector.projects.model.ElementType;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DescriptionElementTo extends BaseTo implements HasId, Comparable<DescriptionElementTo> {
+public class DescriptionElementTo extends BaseTo implements HasId, HasImageFileString, Comparable<DescriptionElementTo> {
 
     @NotNull
     private ElementType type;

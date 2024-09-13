@@ -366,6 +366,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertEquals(getNewDeTo3().getImageFile().getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
                         .getDescriptionElementTos().get(2).getFileName());
+        assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getFileLink());
+
         assertThrows(NotFoundException.class, () -> projectService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
                 LOGO_FILE.getOriginalFilename())));
@@ -700,7 +703,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     @WithUserDetails(ADMIN_MAIL)
     void updateInvalid() throws Exception {
         MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams();
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -713,6 +716,16 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
                         "descriptionElementTos[1].text"))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
+
+        assertEquals(Base64.getEncoder().encodeToString(getNewDeTo3().getImageFile().getBytes()),
+                ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getImageFileString());
+        assertEquals(getNewDeTo3().getImageFile().getOriginalFilename(),
+                ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getFileName());
+        assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
+                        .getDescriptionElementTos().get(2).getFileLink());
+
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(contentPath).getName());
 
         assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));

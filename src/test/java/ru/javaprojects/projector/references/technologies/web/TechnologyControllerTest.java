@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
@@ -25,6 +26,7 @@ import ru.javaprojects.projector.references.technologies.model.Usage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -161,6 +163,27 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     }
 
     @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void createWhenLogoFileIsBase64String() throws Exception {
+        MultipartFile logoFile = getNewTo().getLogoFile();
+        Technology newTechnology = getNew(contentPath);
+        MultiValueMap<String, String> newParams = getNewParams();
+        newParams.add(LOGO_FILE_NAME_PARAM, logoFile.getOriginalFilename());
+        newParams.add(LOGO_FILE_AS_STRING_PARAM,  Base64.getEncoder().encodeToString(logoFile.getBytes()));
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+                .params((newParams))
+                .with(csrf()))
+                .andExpect(redirectedUrl(TECHNOLOGIES_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
+                        new Object[]{newTechnology.getName()}, LocaleContextHolder.getLocale())));
+
+        Technology created = technologyService.getByName(newTechnology.getName());
+        newTechnology.setId(created.getId());
+        TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
+        assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+    }
+
+    @Test
     void createUnAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
@@ -189,13 +212,21 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @WithUserDetails(ADMIN_MAIL)
     void createInvalid() throws Exception {
         MultiValueMap<String, String> newInvalidParams = getNewInvalidParams();
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
                 .params(newInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
+        assertEquals(Base64.getEncoder().encodeToString(getNewTo().getLogoFile().getBytes()),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getImageFileString());
+        assertEquals(getNewTo().getLogoFile().getOriginalFilename(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogoFileName());
+        assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                .getLogoFileLink());
         assertThrows(NotFoundException.class, () -> technologyService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/" +
                 LOGO_FILE.getOriginalFilename())));
@@ -269,6 +300,26 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
                 .params(getUpdatedParams(contentPath))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(TECHNOLOGIES_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
+                        new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
+
+        TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
+        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void updateWhenLogoFileIsBase64String() throws Exception {
+        Technology updatedTechnology = getUpdated(contentPath);
+        MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
+        updatedParams.add(LOGO_FILE_AS_STRING_PARAM,  Base64.getEncoder().encodeToString(UPDATED_LOGO_FILE.getBytes()));
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+                .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
@@ -363,13 +414,22 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @WithUserDetails(ADMIN_MAIL)
     void updateInvalid() throws Exception {
         MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams(contentPath);
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
                 .params(updatedInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
+
+        assertEquals(Base64.getEncoder().encodeToString(UPDATED_LOGO_FILE.getBytes()),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getImageFileString());
+        assertEquals(UPDATED_LOGO_FILE.getOriginalFilename(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogoFileName());
+        assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogoFileLink());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
         assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));

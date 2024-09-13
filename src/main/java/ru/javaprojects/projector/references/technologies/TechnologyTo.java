@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.HasImageFileString;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
@@ -19,7 +20,7 @@ import ru.javaprojects.projector.references.technologies.model.Usage;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TechnologyTo extends BaseTo implements HasIdAndName {
+public class TechnologyTo extends BaseTo implements HasIdAndName, HasImageFileString {
 
     @NotBlank
     @NoHtml
@@ -73,6 +74,25 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
         this.priority = priority;
         this.logoFileName = logoFileName;
         this.logoFileLink = logoFileLink;
+    }
+
+    public String getLogoFileAsStringSrc() {
+        if (logoFileAsString == null || logoFileName == null) {
+            return null;
+        }
+        String srcType = logoFileName.endsWith(".svg") ?
+                "data:image/svg+xml;base64," : "data:image/*;base64,";
+        return srcType + logoFileAsString;
+    }
+
+    @Override
+    public String getImageFileString() {
+        return logoFileAsString;
+    }
+
+    @Override
+    public String getFileName() {
+        return logoFileName;
     }
 
     @Override

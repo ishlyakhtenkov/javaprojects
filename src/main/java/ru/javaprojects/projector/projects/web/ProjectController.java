@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.DescriptionElementTo;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectTo;
@@ -106,8 +107,8 @@ public class ProjectController {
                 }
             }
             projectTo.getDescriptionElementTos().stream()
-                    .filter(de -> de.getImageFile() != null && !de.getImageFile().isEmpty())
-                    .forEach(this::convertImageFileToString);
+                    .filter(de -> !FileUtil.isMultipartFileEmpty(de.getImageFile()))
+                    .forEach(this::saveImageFile);
             return "projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -118,7 +119,7 @@ public class ProjectController {
         return "redirect:/projects/" + project.getId();
     }
 
-    private void convertImageFileToString(DescriptionElementTo descriptionElementTo) {
+    private void saveImageFile(DescriptionElementTo descriptionElementTo) {
         try {
             descriptionElementTo.setImageFileString(Base64.getEncoder()
                     .encodeToString(Objects.requireNonNull(descriptionElementTo.getImageFile()).getBytes()));

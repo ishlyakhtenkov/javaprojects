@@ -20,8 +20,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.projects.ProjectUtil.deToHasImageFileString;
-import static ru.javaprojects.projector.projects.ProjectUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 

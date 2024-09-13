@@ -27,6 +27,9 @@
                     <form th:action="@{/references/technologies}" method="post" th:object="${technologyTo}" enctype="multipart/form-data">
                         <div class="card-body p-4 pt-4 pb-3 text-center">
                             <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{logoFileName}">
+                            <input type="hidden" th:field="*{logoFileLink}">
+
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text w-25">Name</span>
@@ -92,20 +95,26 @@
                                 </span>
                             </div>
 
-                            <div th:hidden="${logoFile == null}" class="input-group" id="filePreviewDiv">
+                            <div th:hidden="${technologyTo.logoFileLink == null && technologyTo.logoFileAsString == null}"
+                                 class="input-group" id="filePreviewDiv">
                                 <span class="input-group-text w-25">Logo</span>
                                 <div class="form-control py-1 text-start">
-                                    <img th:src="@{${logoFile != null ? ('/' + logoFile.fileLink) : ''}}"
-                                          width="24" height="24" id="filePreview"/>
-                                    <span th:text="${logoFile?.fileName}" id="fileName">File name</span>
+                                    <img th:if="${technologyTo.logoFileLink != null}"
+                                         th:src="@{'/' + ${technologyTo.logoFileLink}}" width="24" height="24"/>
+                                    <img th:if="${technologyTo.logoFileAsString != null || technologyTo.isNew()}"
+                                         th:src="@{'data:image/png;base64,'+${technologyTo.logoFileAsString}}" width="24" height="24"/>
+
+                                    <span th:text="${technologyTo?.logoFileName}" id="fileName">File name</span>
                                     <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
                                        onclick="deleteFile()">
                                         <i class="fa-solid fa-xmark"></i>
                                     </a>
                                 </div>
                             </div>
+
                             <div id="fileInputDiv">
-                                <div th:if="${logoFile == null}" class="input-group custom-file-button">
+                                <div th:if="${technologyTo.logoFileLink == null && technologyTo.logoFileAsString == null}"
+                                     class="input-group custom-file-button">
                                     <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logoFile}" class="form-control text-muted"
                                            id="fileInput" required onchange="previewFile()"/>
@@ -117,6 +126,35 @@
                                     </ul>
                                 </span>
                             </div>
+
+
+
+
+<!--                            <div th:hidden="${logoFile == null}" class="input-group" id="filePreviewDiv">-->
+<!--                                <span class="input-group-text w-25">Logo</span>-->
+<!--                                <div class="form-control py-1 text-start">-->
+<!--                                    <img th:src="@{${logoFile != null ? ('/' + logoFile.fileLink) : ''}}"-->
+<!--                                          width="24" height="24" id="filePreview"/>-->
+<!--                                    <span th:text="${logoFile?.fileName}" id="fileName">File name</span>-->
+<!--                                    <a tabindex="0" type="button" class="float-end text-danger" title="Delete"-->
+<!--                                       onclick="deleteFile()">-->
+<!--                                        <i class="fa-solid fa-xmark"></i>-->
+<!--                                    </a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div id="fileInputDiv">-->
+<!--                                <div th:if="${logoFile == null}" class="input-group custom-file-button">-->
+<!--                                    <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>-->
+<!--                                    <input type="file" accept="image/*" th:field="*{logoFile}" class="form-control text-muted"-->
+<!--                                           id="fileInput" required onchange="previewFile()"/>-->
+<!--                                </div>-->
+<!--                                <span th:if="${#fields.hasErrors('logoFile')}">-->
+<!--                                    <ul>-->
+<!--                                        <li class="text-danger text-start"-->
+<!--                                            th:each="err : ${#fields.errors('logoFile')}" th:text="${err}"/>-->
+<!--                                    </ul>-->
+<!--                                </span>-->
+<!--                            </div>-->
                         </div>
                         <div class="card-footer text-end pe-4 py-2">
                             <button class="btn btn-secondary" type="button" onclick="cancel()">Cancel</button>

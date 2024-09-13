@@ -3,7 +3,6 @@ package ru.javaprojects.projector.projects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
@@ -20,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
@@ -74,10 +74,6 @@ public class ProjectUtil {
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(), deTo.getFileName(),
                 deTo.getFileLink());
-    }
-
-    public static boolean isMultipartFileEmpty(MultipartFile file) {
-        return file == null || file.isEmpty();
     }
 
     public static boolean deToHasImageFileString(DescriptionElementTo deTo) {

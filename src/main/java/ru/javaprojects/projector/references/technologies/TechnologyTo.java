@@ -39,8 +39,21 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
     private Priority priority;
 
     @Nullable
+    @NoHtml
+    @Size(max = 128)
+    private String logoFileName;
+
+    @Nullable
+    @NoHtml
+    @Size(max = 512)
+    private String logoFileLink;
+
+    @Nullable
     @ImageFile
     private MultipartFile logoFile;
+
+    @Nullable
+    private String logoFileAsString;
 
     public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile logoFile) {
         super(id);
@@ -51,12 +64,15 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
         this.logoFile = logoFile;
     }
 
-    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority) {
+    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, String logoFileName,
+                        String logoFileLink) {
         super(id);
         this.name = name;
         this.url = url;
         this.usage = usage;
         this.priority = priority;
+        this.logoFileName = logoFileName;
+        this.logoFileLink = logoFileLink;
     }
 
     @Override

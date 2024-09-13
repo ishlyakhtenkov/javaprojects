@@ -15,7 +15,7 @@ public class TechnologyUtil {
 
     public static TechnologyTo asTo(Technology technology) {
         return new TechnologyTo(technology.getId(), technology.getName(), technology.getUrl(), technology.getUsage(),
-                technology.getPriority());
+                technology.getPriority(), technology.getLogoFile().getFileName(), technology.getLogoFile().getFileLink());
     }
 
     public static Technology updateFromTo(Technology technology, TechnologyTo technologyTo, String contentPath) {

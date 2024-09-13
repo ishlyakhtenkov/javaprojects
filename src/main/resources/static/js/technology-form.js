@@ -6,7 +6,7 @@ function previewFile() {
     if (file) {
         let fileReader = new FileReader();
         fileReader.onload = function (event) {
-            $('#filePreview').attr('src', event.target.result);
+            $(filePreviewDiv).find('img').attr('src', event.target.result);
         }
         fileReader.readAsDataURL(file[0]);
         $('#fileName').text(file[0].name);

@@ -123,4 +123,8 @@ public class FileUtil {
         Assert.notNull(path, "path must not be null");
         return path.toLowerCase().replace(' ', '_');
     }
+
+    public static boolean isMultipartFileEmpty(MultipartFile file) {
+        return file == null || file.isEmpty();
+    }
 }

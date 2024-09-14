@@ -361,24 +361,20 @@
                                                    th:name="${'descriptionElementTos[' + itemStat.index + '].image.fileLink'}"
                                                    th:value="${element.image.fileLink}"/>
 
-                                            <img th:if="${element.image?.fileLink != null}" th:src="@{${'/' + element.image.fileLink}}"
-                                                 height="150px" class="element-image rounded-2 mt-2 mb-1 border"
-                                                 style="cursor: zoom-in; max-width: 95%;"
-                                                 onclick="showLargerImage($(this))" />
-
                                             <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
                                                    th:name="${'descriptionElementTos[' + itemStat.index + '].image.inputtedFile'}"
                                                    hidden class="element-image-input" onchange="previewImage($(this))" />
-
-                                            <img th:if="${element.image?.inputtedFileBytes != null}"
-                                                 th:src="@{${element.image.getImageSrc()}}"
-                                                 height="150px" class="rounded-2 mt-2 mb-1 border"
-                                                 style="cursor: zoom-in; max-width: 95%;" onclick="showLargerImage($(this))" />
 
                                             <input type="hidden" th:if="${element.image?.inputtedFileBytes != null}"
                                                    th:id="${'elementImageBytes-' + itemStat.index}"
                                                    th:name="${'descriptionElementTos[' + itemStat.index + '].image.inputtedFileBytes'}"
                                                    th:field="*{descriptionElementTos[__${itemStat.index}__].image.inputtedFileBytes}"/>
+
+                                            <img th:if="${element.image != null}"
+                                                 th:src="@{${element.image.getImageSrc()}}"
+                                                 height="150px" class="element-image rounded-2 mt-2 mb-1 border"
+                                                 style="cursor: zoom-in; max-width: 95%;"
+                                                 onclick="showLargerImage($(this))" />
 
                                             <button type="button" class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
                                                     title="Change image"

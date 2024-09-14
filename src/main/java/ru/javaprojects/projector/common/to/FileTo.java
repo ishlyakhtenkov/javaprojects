@@ -34,7 +34,7 @@ public class FileTo {
 
     public String getImageSrc() {
         if (fileLink != null) {
-            return fileLink;
+            return "/" + fileLink;
         }
         if (inputtedFileBytes == null || fileName == null) {
             return null;

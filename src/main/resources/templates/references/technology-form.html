@@ -102,8 +102,7 @@
                                  class="input-group" id="filePreviewDiv">
                                 <span class="input-group-text w-25">Logo</span>
                                 <div class="form-control py-1 text-start">
-                                    <img th:src="@{${technologyTo.logo.fileLink != null ?
-                                         ('/' + technologyTo.logo.fileLink) : (technologyTo.logo.getImageSrc())}}"
+                                    <img th:src="@{${technologyTo.logo.getImageSrc()}}"
                                          width="24" height="24" alt="" />
 
                                     <span th:text="${technologyTo?.logo?.fileName}" id="fileName">File name</span>

@@ -16,17 +16,15 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
-import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.projects.DescriptionElementTo;
-import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.common.to.FileTo;
+import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.references.technologies.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 import ru.javaprojects.projector.references.technologies.model.Usage;
-import ru.javaprojects.projector.references.technologies.TechnologyService;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Objects;
 
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.asTo;
 
@@ -100,8 +98,8 @@ public class TechnologyController {
         boolean isNew = technologyTo.isNew();
         if (result.hasErrors()) {
             addAttributesToModel(model);
-            if (!FileUtil.isMultipartFileEmpty(technologyTo.getLogoFile())) {
-                keepImageFile(technologyTo);
+            if (!FileUtil.isMultipartFileEmpty(technologyTo.getLogo().getInputtedFile())) {
+                keepInputtedFile(technologyTo);
             }
             if (!isNew) {
                 model.addAttribute("technologyName", service.get(technologyTo.getId()).getName());
@@ -120,15 +118,15 @@ public class TechnologyController {
         return "redirect:/references/technologies";
     }
 
-    private void keepImageFile(TechnologyTo technologyTo) {
+    private void keepInputtedFile(TechnologyTo technologyTo) {
         try {
-            technologyTo.setLogoFileAsString(Base64.getEncoder()
-                    .encodeToString(Objects.requireNonNull(technologyTo.getLogoFile()).getBytes()));
-            technologyTo.setLogoFileName(technologyTo.getLogoFile().getOriginalFilename());
-            technologyTo.setLogoFileLink(null);
+            FileTo logo = technologyTo.getLogo();
+            logo.setInputtedFileBytes(logo.getInputtedFile().getBytes());
+            logo.setFileName(logo.getInputtedFile().getOriginalFilename());
+            logo.setFileLink(null);
         } catch (IOException e) {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{technologyTo.getLogoFile().getOriginalFilename()});
+                    new Object[]{technologyTo.getLogo().getInputtedFile().getOriginalFilename()});
         }
     }
 }

@@ -1,10 +1,13 @@
 package ru.javaprojects.projector.references.technologies;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import static ru.javaprojects.projector.common.util.FileUtil.*;
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
 public class TechnologyUtil {
@@ -24,7 +27,7 @@ public class TechnologyUtil {
         technology.setUrl(technologyTo.getUrl());
         technology.setUsage(technologyTo.getUsage());
         technology.setPriority(technologyTo.getPriority());
-        if (!isMultipartFileEmpty(technologyTo.getLogoFile()) || hasImageFileString(technologyTo)) {
+        if (!isFileToEmpty(technologyTo.getLogo())) {
             technology.setLogoFile(createLogoFile(technologyTo, contentPath));
         } else if (!technology.getName().equalsIgnoreCase(technologyOldName)) {
             technology.getLogoFile().setFileLink(contentPath + normalizePath(technology.getName() + "/" +
@@ -34,7 +37,10 @@ public class TechnologyUtil {
     }
 
     private LogoFile createLogoFile(TechnologyTo technologyTo, String contentPath) {
-        String filename = normalizePath(technologyTo.getLogoFile() != null ? technologyTo.getLogoFile().getOriginalFilename() : technologyTo.getLogoFileName());
+        FileTo logo = technologyTo.getLogo();
+        Assert.notNull(logo, "logo must not be null");
+        String filename = normalizePath(logo.getInputtedFile() != null ?
+                logo.getInputtedFile().getOriginalFilename() : logo.getFileName());
         return new LogoFile(filename, contentPath + normalizePath(technologyTo.getName() + "/" + filename));
     }
 }

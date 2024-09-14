@@ -10,6 +10,8 @@ import ru.javaprojects.projector.projects.model.CardImageFile;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.DockerComposeFile;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectTo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -138,7 +140,7 @@ public class ProjectTestData {
 
     public static DescriptionElementTo getNewDeTo3() {
         return new DescriptionElementTo(null, IMAGE, (byte) 2,
-                new MockMultipartFile("descriptionElementTos[2].imageFile", "deImage.png", MediaType.IMAGE_PNG_VALUE,
+                new MockMultipartFile("descriptionElementTos[2].image.inputtedFile", "deImage.png", MediaType.IMAGE_PNG_VALUE,
                         "description element image file content bytes".getBytes()));
     }
 
@@ -314,7 +316,7 @@ public class ProjectTestData {
 
     public static DescriptionElementTo getNewDeForProjectUpdate() {
         return new DescriptionElementTo(null, IMAGE, (byte) 5,
-                new MockMultipartFile("descriptionElementTos[5].imageFile", "updatedDeNewImage.png", MediaType.IMAGE_PNG_VALUE,
+                new MockMultipartFile("descriptionElementTos[5].image.inputtedFile", "updatedDeNewImage.png", MediaType.IMAGE_PNG_VALUE,
                         "description element image file content bytes".getBytes()));
     }
 

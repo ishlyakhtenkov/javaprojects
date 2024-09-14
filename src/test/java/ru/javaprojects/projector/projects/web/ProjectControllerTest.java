@@ -20,12 +20,12 @@ import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.Priority;
-import ru.javaprojects.projector.projects.DescriptionElementTo;
 import ru.javaprojects.projector.projects.ProjectService;
-import ru.javaprojects.projector.projects.ProjectTo;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.references.technologies.TechnologyTestData;
 
 import java.nio.file.Files;
@@ -212,7 +212,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .file(LOGO_FILE)
                     .file(DOCKER_COMPOSE_FILE)
                     .file(CARD_IMAGE_FILE)
-                    .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                    .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(getNewParams())
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -233,12 +233,11 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void createWhenDescriptionElementImageIsBase64String() throws Exception {
+    void createWhenDescriptionElementImageIsBytesArray() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
-        MultipartFile imageFile = getNewDeTo3().getImageFile();
-        newParams.add("descriptionElementTos[2].imageFileString",
-                Base64.getEncoder().encodeToString(imageFile.getBytes()));
-        newParams.add("descriptionElementTos[2].fileName", imageFile.getOriginalFilename());
+        MultipartFile imageFile = getNewDeTo3().getImage().getInputtedFile();
+        newParams.add("descriptionElementTos[2].image.inputtedFileBytes", Arrays.toString(imageFile.getBytes()));
+        newParams.add("descriptionElementTos[2].image.fileName", imageFile.getOriginalFilename());
 
         UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
@@ -272,7 +271,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.add("descriptionElementTos[3].type", IMAGE.name());
         newParams.add("descriptionElementTos[3].index", String.valueOf(4));
-        MultipartFile newDeTo3ImageFile = getNewDeTo3().getImageFile();
+        MultipartFile newDeTo3ImageFile = getNewDeTo3().getImage().getInputtedFile();
         Project newProject = getNew(contentPath);
         newProject.addDescriptionElement(new DescriptionElement(null, IMAGE, (byte) 4, null, "deImage.png",
                 "./content/projects/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png"));
@@ -282,7 +281,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
                 .file((MockMultipartFile) newDeTo3ImageFile)
-                .file(new MockMultipartFile("descriptionElementTos[3].imageFile", newDeTo3ImageFile.getOriginalFilename(),
+                .file(new MockMultipartFile("descriptionElementTos[3].image.inputtedFile", newDeTo3ImageFile.getOriginalFilename(),
                         MediaType.IMAGE_PNG_VALUE, newDeTo3ImageFile.getBytes()))
                 .params(newParams)
                 .with(csrf()))
@@ -313,7 +312,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(getNewParams())
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -333,7 +332,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(getNewParams())
                 .with(csrf()))
                 .andExpect(status().isForbidden());
@@ -352,7 +351,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -360,14 +359,15 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         START_DATE_PARAM, END_DATE_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
                         "descriptionElementTos[1].text"));
-        assertEquals(Base64.getEncoder().encodeToString(getNewDeTo3().getImageFile().getBytes()),
+
+        assertArrayEquals(getNewDeTo3().getImage().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getImageFileString());
-        assertEquals(getNewDeTo3().getImageFile().getOriginalFilename(),
+                        .getDescriptionElementTos().get(2).getImage().getInputtedFileBytes());
+        assertEquals(getNewDeTo3().getImage().getInputtedFile().getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getFileName());
+                        .getDescriptionElementTos().get(2).getImage().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getFileLink());
+                .getDescriptionElementTos().get(2).getImage().getFileLink());
 
         assertThrows(NotFoundException.class, () -> projectService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
@@ -386,7 +386,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("project.logo-not-present",
@@ -404,7 +404,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("project.card-image-not-present",
@@ -428,7 +428,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(LOGO_FILE)
                     .file(CARD_IMAGE_FILE)
-                    .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                    .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(getNewParams())
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -454,7 +454,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -474,7 +474,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
-                    .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                    .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                     .params(getUpdatedParams(contentPath))
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -514,7 +514,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
-                    .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                    .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                     .params(updatedParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -593,7 +593,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
-                    .file((MockMultipartFile) updatedDeToNew.getImageFile())
+                    .file((MockMultipartFile) updatedDeToNew.getImage().getInputtedFile())
                     .params(updatedParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -656,7 +656,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("notfound.entity",
@@ -669,7 +669,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                 .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -687,7 +687,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                 .params(getUpdatedParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
@@ -707,7 +707,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeTo3().getImageFile())
+                .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(updatedInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -717,14 +717,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         "descriptionElementTos[1].text"))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
 
-        assertEquals(Base64.getEncoder().encodeToString(getNewDeTo3().getImageFile().getBytes()),
+        assertArrayEquals(getNewDeTo3().getImage().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getImageFileString());
-        assertEquals(getNewDeTo3().getImageFile().getOriginalFilename(),
+                        .getDescriptionElementTos().get(2).getImage().getInputtedFileBytes());
+        assertEquals(getNewDeTo3().getImage().getInputtedFile().getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getFileName());
+                        .getDescriptionElementTos().get(2).getImage().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROJECT_TO_ATTRIBUTE))
-                        .getDescriptionElementTos().get(2).getFileLink());
+                .getDescriptionElementTos().get(2).getImage().getFileLink());
 
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(contentPath).getName());
 
@@ -748,7 +748,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
-                .file((MockMultipartFile) getNewDeForProjectUpdate().getImageFile())
+                .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isOk())

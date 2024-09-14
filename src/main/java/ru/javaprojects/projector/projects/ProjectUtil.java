@@ -3,12 +3,14 @@ package ru.javaprojects.projector.projects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
@@ -55,24 +57,15 @@ public class ProjectUtil {
 
     private DescriptionElement createNewFromTo(DescriptionElementTo deTo, Project project) {
         if (deTo.getType() == ElementType.IMAGE) {
-            if (isMultipartFileEmpty(deTo.getImageFile()) && !hasImageFileString(deTo)) {
+            if (deTo.getImage() == null || isFileToEmpty(deTo.getImage())) {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "description-element.image-not-present", null);
             }
-            String fileName;
-            if (!isMultipartFileEmpty(deTo.getImageFile())) {
-                fileName = deTo.getImageFile().getOriginalFilename();
-            } else {
-                fileName = deTo.getFileName();
-            }
-            String uniquePrefix = UUID.randomUUID().toString();
-            String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
-                    fileName);
-            deTo.setFileName(fileName);
-            deTo.setFileLink(fileLink);
+            setFileNameAndLink(deTo, project.getName());
         }
-        return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(), deTo.getFileName(),
-                deTo.getFileLink());
+        return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
+                deTo.getImage() != null ? deTo.getImage().getFileName() : null,
+                deTo.getImage() != null ? deTo.getImage().getFileLink() : null);
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -142,25 +135,23 @@ public class ProjectUtil {
 
     private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
         de.setIndex(deTo.getIndex());
-        if (deTo.getType() == ElementType.IMAGE) {
-            String fileName = null;
-            if (!isMultipartFileEmpty(deTo.getImageFile())) {
-                fileName = deTo.getImageFile().getOriginalFilename();
-            } else if (hasImageFileString(deTo)) {
-                fileName = deTo.getFileName();
-            }
-            if (fileName != null) {
-                String uniquePrefix = UUID.randomUUID().toString();
-                String fileLink = contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
-                        fileName);
-                deTo.setFileName(fileName);
-                deTo.setFileLink(fileLink);
-                de.setFileName(fileName);
-                de.setFileLink(fileLink);
-            }
+        if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
+            setFileNameAndLink(deTo, project.getName());
+            de.setFileName(deTo.getImage().getFileName());
+            de.setFileLink(deTo.getImage().getFileLink());
         } else {
             de.setText(deTo.getText());
         }
+    }
+
+    private void setFileNameAndLink(DescriptionElementTo deTo, String projectName) {
+        String fileName = !isMultipartFileEmpty(deTo.getImage().getInputtedFile()) ?
+                deTo.getImage().getInputtedFile().getOriginalFilename() : deTo.getImage().getFileName();
+        String uniquePrefix = UUID.randomUUID().toString();
+        String fileLink = contentPath + normalizePath(projectName + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
+                fileName);
+        deTo.getImage().setFileName(fileName);
+        deTo.getImage().setFileLink(fileLink);
     }
 
     private LogoFile createLogoFile(ProjectTo projectTo) {

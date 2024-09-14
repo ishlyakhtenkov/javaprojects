@@ -172,7 +172,7 @@ function swapElements(firstElemIndex, secondElemIndex) {
     let firstElementFileLink = $(`#elementFileLink-${firstElemIndex}`);
     let firstElementText = $(`#elementText-${firstElemIndex}`);
     let firstElementImage = $(`#elementImage-${firstElemIndex}`);
-    let firstElementImageString = $(`#elementImageString-${firstElemIndex}`);
+    let firstElementImageBytes = $(`#elementImageBytes-${firstElemIndex}`);
 
     let secondElementId = $(`#elementId-${secondElemIndex}`);
     let secondElementType = $(`#elementType-${secondElemIndex}`);
@@ -181,36 +181,36 @@ function swapElements(firstElemIndex, secondElemIndex) {
     let secondElementFileLink = $(`#elementFileLink-${secondElemIndex}`);
     let secondElementText = $(`#elementText-${secondElemIndex}`);
     let secondElementImage = $(`#elementImage-${secondElemIndex}`);
-    let secondElementImageString = $(`#elementImageString-${secondElemIndex}`);
+    let secondElementImageBytes = $(`#elementImageBytes-${secondElemIndex}`);
 
     firstElementId.attr('id', `elementId-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].id`);
     firstElementType.attr('id', `elementType-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].type`);
     firstElementIndex.attr('id', `elementIndex-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].index`);
-    firstElementFileName.attr('id', `elementFileName-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].fileName`);
-    firstElementFileLink.attr('id', `elementFileLink-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].fileLink`);
+    firstElementFileName.attr('id', `elementFileName-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileName`);
+    firstElementFileLink.attr('id', `elementFileLink-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileLink`);
     if (firstElementText.length) {
         firstElementText.attr('id', `elementText-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].text`);
     }
     if (firstElementImage.length) {
-        firstElementImage.attr('id', `elementImage-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].imageFile`);
+        firstElementImage.attr('id', `elementImage-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.inputtedFile`);
     }
-    if (firstElementImageString.length) {
-        firstElementImageString.attr('id', `elementImageString-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].imageFileString`);
+    if (firstElementImageBytes.length) {
+        firstElementImageBytes.attr('id', `elementImageBytes-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.inputtedFileBytes`);
     }
 
     secondElementId.attr('id', `elementId-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].id`);
     secondElementType.attr('id', `elementType-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].type`);
     secondElementIndex.attr('id', `elementIndex-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].index`);
-    secondElementFileName.attr('id', `elementFileName-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].fileName`);
-    secondElementFileLink.attr('id', `elementFileLink-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].fileLink`);
+    secondElementFileName.attr('id', `elementFileName-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileName`);
+    secondElementFileLink.attr('id', `elementFileLink-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileLink`);
     if (secondElementText.length) {
         secondElementText.attr('id', `elementText-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].text`);
     }
     if (secondElementImage.length) {
-        secondElementImage.attr('id', `elementImage-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].imageFile`);
+        secondElementImage.attr('id', `elementImage-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.inputtedFile`);
     }
-    if (secondElementImageString.length) {
-        secondElementImageString.attr('id', `elementImageString-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].imageFileString`);
+    if (secondElementImageBytes.length) {
+        secondElementImageBytes.attr('id', `elementImageBytes-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.inputtedFileBytes`);
     }
 
     let firstElementIndexValue = firstElementIndex.val();
@@ -246,21 +246,21 @@ function deleteElement(deleteElementBtn) {
             let lowerElementFileLink = $(`#elementFileLink-${i}`);
             let lowerElementText = $(`#elementText-${i}`);
             let lowerElementImage = $(`#elementImage-${i}`);
-            let lowerElementImageString = $(`#elementImageString-${i}`);
+            let lowerElementImageBytes = $(`#elementImageBytes-${i}`);
 
             lowerElementId.attr('id', `elementId-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].id`);
             lowerElementType.attr('id', `elementType-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].type`);
             lowerElementIndex.attr('id', `elementIndex-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].index`);
-            lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileName`);
-            lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].fileLink`);
+            lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileName`);
+            lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileLink`);
             if (lowerElementText.length) {
                 lowerElementText.attr('id', `elementText-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].text`);
             }
             if (lowerElementImage.length) {
-                lowerElementImage.attr('id', `elementImage-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].imageFile`);
+                lowerElementImage.attr('id', `elementImage-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.inputtedFile`);
             }
-            if (lowerElementImageString.length) {
-                lowerElementImageString.attr('id', `elementImageString-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].imageFileString`);
+            if (lowerElementImageBytes.length) {
+                lowerElementImageBytes.attr('id', `elementImageBytes-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.inputtedFileBytes`);
             }
 
             let lowerElementIndexValue = lowerElementIndex.val();
@@ -315,7 +315,7 @@ function addNewElement(type) {
 
         let imageInput = $('<input type="file"/>').attr('accept', 'image/*')
             .attr('id', `elementImage-${newElementContainerIndex}`).attr('required', true)
-            .attr('name', `descriptionElementTos[${newElementContainerIndex}].imageFile`)
+            .attr('name', `descriptionElementTos[${newElementContainerIndex}].image.inputtedFile`)
             .attr('hidden', true).addClass('element-image-input').change(function () {previewImage($(this))});
 
         let changeImageBtn = $('<button></button>').attr('type', 'button').attr('title', 'Change image')

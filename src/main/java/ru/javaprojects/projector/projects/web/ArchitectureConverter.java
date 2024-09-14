@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.projects;
+package ru.javaprojects.projector.projects.web;
 
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;

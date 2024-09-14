@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--/*@thymesVar id="projectTo" type="ru.javaprojects.projector.projects.ProjectTo"*/-->
+<!--/*@thymesVar id="projectTo" type="ru.javaprojects.projector.projects.to.ProjectTo"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
@@ -318,12 +318,6 @@
                                     <input type="hidden" th:id="${'elementIndex-' + itemStat.index}"
                                            th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
                                            th:value="${element.index}"/>
-                                    <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
-                                           th:name="${'descriptionElementTos[' + itemStat.index + '].fileName'}"
-                                           th:value="${element.fileName}"/>
-                                    <input type="hidden" th:id="${'elementFileLink-' + itemStat.index}"
-                                           th:name="${'descriptionElementTos[' + itemStat.index + '].fileLink'}"
-                                           th:value="${element.fileLink}"/>
 
                                     <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE ||
                                         element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
@@ -358,23 +352,33 @@
 
                                         <div class="text-start text-muted tiny" th:text="${element.type}">Type</div>
                                         <div class="d-flex align-items-start">
-                                            <img th:if="${element.fileLink != null}" th:src="@{${'/' + element.fileLink}}"
+                                            <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
+                                                   th:if="${element.image?.fileName != null}"
+                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].image.fileName'}"
+                                                   th:value="${element.image.fileName}"/>
+                                            <input type="hidden" th:id="${'elementFileLink-' + itemStat.index}"
+                                                   th:if="${element.image?.fileLink != null}"
+                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].image.fileLink'}"
+                                                   th:value="${element.image.fileLink}"/>
+
+                                            <img th:if="${element.image?.fileLink != null}" th:src="@{${'/' + element.image.fileLink}}"
                                                  height="150px" class="element-image rounded-2 mt-2 mb-1 border"
                                                  style="cursor: zoom-in; max-width: 95%;"
                                                  onclick="showLargerImage($(this))" />
 
                                             <input type="file" accept="image/*" th:id="${'elementImage-' + itemStat.index}"
-                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].imageFile'}"
+                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].image.inputtedFile'}"
                                                    hidden class="element-image-input" onchange="previewImage($(this))" />
 
-                                            <img th:if="${element.imageFileString != null}"
-                                                 th:src="@{'data:image/png;base64,'+${element.imageFileString}}"
+                                            <img th:if="${element.image?.inputtedFileBytes != null}"
+                                                 th:src="@{${element.image.getImageSrc()}}"
                                                  height="150px" class="rounded-2 mt-2 mb-1 border"
                                                  style="cursor: zoom-in; max-width: 95%;" onclick="showLargerImage($(this))" />
 
-                                            <input type="hidden" th:id="${'elementImageString-' + itemStat.index}"
-                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].imageFileString'}"
-                                                   th:value="${element.imageFileString}"/>
+                                            <input type="hidden" th:if="${element.image?.inputtedFileBytes != null}"
+                                                   th:id="${'elementImageBytes-' + itemStat.index}"
+                                                   th:name="${'descriptionElementTos[' + itemStat.index + '].image.inputtedFileBytes'}"
+                                                   th:field="*{descriptionElementTos[__${itemStat.index}__].image.inputtedFileBytes}"/>
 
                                             <button type="button" class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
                                                     title="Change image"

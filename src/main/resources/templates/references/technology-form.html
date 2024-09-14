@@ -28,9 +28,10 @@
                     <form th:action="@{/references/technologies}" method="post" th:object="${technologyTo}" enctype="multipart/form-data">
                         <div class="card-body p-4 pt-4 pb-3 text-center">
                             <input type="hidden" th:field="*{id}">
-                            <input type="hidden" th:field="*{logoFileName}">
-                            <input type="hidden" th:field="*{logoFileLink}">
-                            <input type="hidden" th:field="*{logoFileAsString}">
+                            <input type="hidden" th:field="*{logo.fileName}">
+                            <input type="hidden" th:field="*{logo.fileLink}">
+                            <input type="hidden" th:if="${technologyTo.logo.inputtedFileBytes != null}"
+                                   th:field="*{logo.inputtedFileBytes}">
 
                             <div class="mb-3">
                                 <div class="input-group">
@@ -97,15 +98,15 @@
                                 </span>
                             </div>
 
-                            <div th:hidden="${technologyTo.logoFileLink == null && technologyTo.logoFileAsString == null}"
+                            <div th:hidden="${technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null}"
                                  class="input-group" id="filePreviewDiv">
                                 <span class="input-group-text w-25">Logo</span>
                                 <div class="form-control py-1 text-start">
-                                    <img th:src="@{${technologyTo.logoFileLink != null ?
-                                         ('/' + technologyTo.logoFileLink) : (technologyTo.logoFileAsStringSrc)}}"
+                                    <img th:src="@{${technologyTo.logo.fileLink != null ?
+                                         ('/' + technologyTo.logo.fileLink) : (technologyTo.logo.getImageSrc())}}"
                                          width="24" height="24" alt="" />
 
-                                    <span th:text="${technologyTo?.logoFileName}" id="fileName">File name</span>
+                                    <span th:text="${technologyTo?.logo?.fileName}" id="fileName">File name</span>
                                     <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
                                        onclick="deleteFile()">
                                         <i class="fa-solid fa-xmark"></i>
@@ -114,16 +115,16 @@
                             </div>
 
                             <div id="fileInputDiv">
-                                <div th:if="${technologyTo.logoFileLink == null && technologyTo.logoFileAsString == null}"
+                                <div th:if="${technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null}"
                                      class="input-group custom-file-button">
                                     <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
-                                    <input type="file" accept="image/*" th:field="*{logoFile}" class="form-control text-muted"
+                                    <input type="file" accept="image/*" th:field="*{logo.inputtedFile}" class="form-control text-muted"
                                            id="fileInput" required onchange="previewFile()"/>
                                 </div>
-                                <span th:if="${#fields.hasErrors('logoFile')}">
+                                <span th:if="${#fields.hasErrors('logo.inputtedFile')}">
                                     <ul>
                                         <li class="text-danger text-start"
-                                            th:each="err : ${#fields.errors('logoFile')}" th:text="${err}"/>
+                                            th:each="err : ${#fields.errors('logo.inputtedFile')}" th:text="${err}"/>
                                     </ul>
                                 </span>
                             </div>

@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.projects;
+package ru.javaprojects.projector.projects.to;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
@@ -8,17 +8,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-import ru.javaprojects.projector.common.BaseTo;
 import ru.javaprojects.projector.common.HasId;
-import ru.javaprojects.projector.common.HasImageFileString;
-import ru.javaprojects.projector.common.util.validation.ImageFile;
+import ru.javaprojects.projector.common.to.BaseTo;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.projects.model.ElementType;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class DescriptionElementTo extends BaseTo implements HasId, HasImageFileString, Comparable<DescriptionElementTo> {
+public class DescriptionElementTo extends BaseTo implements HasId, Comparable<DescriptionElementTo> {
 
     @NotNull
     private ElementType type;
@@ -33,36 +32,22 @@ public class DescriptionElementTo extends BaseTo implements HasId, HasImageFileS
     private String text;
 
     @Nullable
-    @NoHtml
-    @Size(max = 128)
-    private String fileName;
+    private FileTo image;
 
-    @Nullable
-    @NoHtml
-    @Size(max = 512)
-    private String fileLink;
-
-    @Nullable //TODO validate not empty when image and new
-    @ImageFile
-    private MultipartFile imageFile;
-
-    @Nullable
-    private String imageFileString;
-
-    public DescriptionElementTo(Long id, ElementType type, Byte index, String text, String fileName, String fileLink) {
+    public DescriptionElementTo(Long id, ElementType type, Byte index, String text, String imageFileName,
+                                String imageFileLink) {
         super(id);
         this.type = type;
         this.index = index;
         this.text = text;
-        this.fileName = fileName;
-        this.fileLink = fileLink;
+        this.image = new FileTo(imageFileName, imageFileLink, null, null);
     }
 
-    public DescriptionElementTo(Long id, ElementType type, Byte index, MultipartFile imageFile) {
+    public DescriptionElementTo(Long id, ElementType type, Byte index, MultipartFile imageMultipartFile) {
         super(id);
         this.type = type;
         this.index = index;
-        this.imageFile = imageFile;
+        this.image = new FileTo(null, null, imageMultipartFile, null);
     }
 
     @Override

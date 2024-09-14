@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.projects;
+package ru.javaprojects.projector.projects.to;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
-import ru.javaprojects.projector.common.BaseTo;
+import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 @Getter
 @Setter

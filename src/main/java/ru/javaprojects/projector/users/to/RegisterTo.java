@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.common.HasIdAndEmail;
-import ru.javaprojects.projector.common.BaseTo;
+import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Data

@@ -10,15 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.technologies.model.Technology;
 
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ru.javaprojects.projector.common.util.FileUtil.*;
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.references.technologies.TechnologyUtil.updateFromTo;
 
@@ -55,7 +56,7 @@ public class TechnologyService {
     @Transactional
     public Technology create(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
-        if (isMultipartFileEmpty(technologyTo.getLogoFile()) && !hasImageFileString(technologyTo)) {
+        if (technologyTo.getLogo() == null || isFileToEmpty(technologyTo.getLogo())) {
             throw new IllegalRequestDataException("Technology logo file is not present",
                     "technology.logo-not-present", null);
         }
@@ -71,7 +72,7 @@ public class TechnologyService {
         String oldName = technology.getName();
         String oldLogoFileLink = technology.getLogoFile().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
-        if (!isMultipartFileEmpty(technologyTo.getLogoFile()) || hasImageFileString(technologyTo)) {
+        if (!isFileToEmpty(technologyTo.getLogo())) {
             uploadImage(technologyTo, technology.getName());
             FileUtil.deleteFile(oldLogoFileLink);
         } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
@@ -80,15 +81,10 @@ public class TechnologyService {
     }
 
     private void uploadImage(TechnologyTo technologyTo, String technologyName) {
-        String fileName = normalizePath(technologyTo.getLogoFile() != null ? technologyTo.getLogoFile().getOriginalFilename() :
-                technologyTo.getLogoFileName());
-        if (!isMultipartFileEmpty(technologyTo.getLogoFile())) {
-            FileUtil.upload(technologyTo.getLogoFile(), contentPath +
-                    FileUtil.normalizePath(technologyName) + "/", fileName);
-        } else if (hasImageFileString(technologyTo)) {
-            FileUtil.upload(Base64.getDecoder().decode(technologyTo.getImageFileString()), contentPath +
-                    FileUtil.normalizePath(technologyName) + "/", fileName);
-        }
+        FileTo logo = technologyTo.getLogo();
+        String fileName = normalizePath(logo.getInputtedFile() != null ? logo.getInputtedFile().getOriginalFilename() :
+                logo.getFileName());
+        FileUtil.upload(logo, contentPath + FileUtil.normalizePath(technologyName) + "/", fileName);
     }
 
     @Transactional

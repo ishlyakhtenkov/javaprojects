@@ -26,7 +26,7 @@ import ru.javaprojects.projector.references.technologies.model.Usage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,12 +164,12 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void createWhenLogoFileIsBase64String() throws Exception {
-        MultipartFile logoFile = getNewTo().getLogoFile();
+    void createWhenLogoFileIsBytesArray() throws Exception {
+        MultipartFile logoFile = getNewTo().getLogo().getInputtedFile();
         Technology newTechnology = getNew(contentPath);
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.add(LOGO_FILE_NAME_PARAM, logoFile.getOriginalFilename());
-        newParams.add(LOGO_FILE_AS_STRING_PARAM,  Base64.getEncoder().encodeToString(logoFile.getBytes()));
+        newParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(logoFile.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .params((newParams))
                 .with(csrf()))
@@ -219,14 +219,14 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
-        assertEquals(Base64.getEncoder().encodeToString(getNewTo().getLogoFile().getBytes()),
+        assertArrayEquals(getNewTo().getLogo().getInputtedFile().getBytes(),
                 ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                        .getImageFileString());
-        assertEquals(getNewTo().getLogoFile().getOriginalFilename(),
+                        .getLogo().getInputtedFileBytes());
+        assertEquals(getNewTo().getLogo().getInputtedFile().getOriginalFilename(),
                 ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                        .getLogoFileName());
+                        .getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                .getLogoFileLink());
+                .getLogo().getFileLink());
         assertThrows(NotFoundException.class, () -> technologyService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(contentPath, newInvalidParams.get(NAME_PARAM).get(0) + "/" +
                 LOGO_FILE.getOriginalFilename())));
@@ -314,10 +314,10 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void updateWhenLogoFileIsBase64String() throws Exception {
+    void updateWhenLogoFileIsBytesArray() throws Exception {
         Technology updatedTechnology = getUpdated(contentPath);
         MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
-        updatedParams.add(LOGO_FILE_AS_STRING_PARAM,  Base64.getEncoder().encodeToString(UPDATED_LOGO_FILE.getBytes()));
+        updatedParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .params(updatedParams)
                 .with(csrf()))
@@ -422,14 +422,14 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(model().attributeHasFieldErrors(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, URL_PARAM))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
 
-        assertEquals(Base64.getEncoder().encodeToString(UPDATED_LOGO_FILE.getBytes()),
+        assertArrayEquals(UPDATED_LOGO_FILE.getBytes(),
                 ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                        .getImageFileString());
+                        .getLogo().getInputtedFileBytes());
         assertEquals(UPDATED_LOGO_FILE.getOriginalFilename(),
                 ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                        .getLogoFileName());
+                        .getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
-                        .getLogoFileLink());
+                .getLogo().getFileLink());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
         assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));

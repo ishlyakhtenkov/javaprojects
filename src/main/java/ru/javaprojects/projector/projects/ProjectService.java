@@ -9,18 +9,20 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectTo;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.util.FileUtil.hasImageFileString;
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
@@ -116,19 +118,15 @@ public class ProjectService {
                     projectTo.getDockerComposeFile().getOriginalFilename());
         }
         projectTo.getDescriptionElementTos().stream()
-                .filter(deTo -> deTo.getType() == IMAGE)
-                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
+                .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null)
+                .forEach(deTo -> uploadDescriptionElementImage(deTo, project.getName()));
         return project;
     }
 
-    private void uploadDeImage(DescriptionElementTo deTo, String projectName) {
-        String uniquePrefixFileName = deTo.getFileLink().substring(deTo.getFileLink().lastIndexOf('/') + 1);
-        if (!isMultipartFileEmpty(deTo.getImageFile())) {
-            uploadFile(deTo.getImageFile(), projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-        } else if (hasImageFileString(deTo)) {
-            uploadFile(Base64.getDecoder().decode(deTo.getImageFileString()), projectName, DESCRIPTION_IMG_DIR,
-                    uniquePrefixFileName);
-        }
+    private void uploadDescriptionElementImage(DescriptionElementTo deTo, String projectName) {
+        FileTo image = deTo.getImage();
+        String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
+        uploadFile(image, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
     }
 
     @Transactional
@@ -148,16 +146,16 @@ public class ProjectService {
         repository.saveAndFlush(projectUtil.updateFromTo(project, projectTo));
 
         projectTo.getDescriptionElementTos().stream()
-                .filter(deTo -> deTo.getType() == IMAGE && deTo.isNew())
-                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
+                .filter(deTo -> deTo.getType() == IMAGE && deTo.isNew() && deTo.getImage() != null)
+                .forEach(deTo -> uploadDescriptionElementImage(deTo, project.getName()));
         oldDeImages.values().stream()
                 .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
                 .forEach(oldDe -> FileUtil.deleteFile(oldDe.getFileLink()));
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
-                    if (!isMultipartFileEmpty(deTo.getImageFile()) || hasImageFileString(deTo)) {
-                        uploadDeImage(deTo, project.getName());
+                    if (deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
+                        uploadDescriptionElementImage(deTo, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
                         FileUtil.moveFile(oldDeImages.get(deTo.getId()).getFileLink(), contentPath +
@@ -194,6 +192,11 @@ public class ProjectService {
 
     private void uploadFile(byte[] fileBytes, String projectName, String dirName, String fileName) {
         FileUtil.upload(fileBytes, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
+                FileUtil.normalizePath(fileName));
+    }
+
+    private void uploadFile(FileTo fileTo, String projectName, String dirName, String fileName) {
+        FileUtil.upload(fileTo, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
                 FileUtil.normalizePath(fileName));
     }
 }

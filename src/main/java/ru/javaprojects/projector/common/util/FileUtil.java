@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.HasImageFileString;
 import ru.javaprojects.projector.common.error.FileException;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
-import ru.javaprojects.projector.projects.DescriptionElementTo;
+import ru.javaprojects.projector.common.to.FileTo;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,6 +37,18 @@ public class FileUtil {
         } catch (IOException e) {
             throw new FileException("Failed to upload file: " + fileName +
                     ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
+        }
+    }
+
+    public static void upload(FileTo fileTo, String dirPath, String fileName) {
+        Assert.notNull(fileTo, "fileTo must not be null");
+        if (!isMultipartFileEmpty(fileTo.getInputtedFile())) {
+            upload(fileTo.getInputtedFile(), dirPath, fileName);
+        } else if (fileTo.getInputtedFileBytes() != null) {
+            upload(fileTo.getInputtedFileBytes(), dirPath, fileName);
+        } else {
+            throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
+                    new Object[]{fileName});
         }
     }
 
@@ -133,5 +145,13 @@ public class FileUtil {
     public static boolean hasImageFileString(HasImageFileString bean) {
         return bean.getImageFileString() != null && !bean.getImageFileString().isEmpty() && bean.getFileName() != null
                 && !bean.getFileName().isEmpty();
+    }
+
+    public static boolean isFileToEmpty(FileTo fileTo) {
+        MultipartFile inputtedFile = fileTo.getInputtedFile();
+        byte[] inputtedFileBytes = fileTo.getInputtedFileBytes();
+        String fileName = fileTo.getFileName();
+        return (inputtedFile == null || inputtedFile.isEmpty()) &&
+                (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isEmpty());
     }
 }

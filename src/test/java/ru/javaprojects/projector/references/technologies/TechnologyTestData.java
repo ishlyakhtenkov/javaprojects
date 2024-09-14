@@ -23,9 +23,9 @@ public class TechnologyTestData {
     public static final String URL_PARAM = "url";
     public static final String USAGE_PARAM = "usage";
     public static final String PRIORITY_PARAM = "priority";
-    public static final String LOGO_FILE_NAME_PARAM = "logoFileName";
-    public static final String LOGO_FILE_LINK_PARAM = "logoFileLink";
-    public static final String LOGO_FILE_AS_STRING_PARAM = "logoFileAsString";
+    public static final String LOGO_FILE_NAME_PARAM = "logo.fileName";
+    public static final String LOGO_FILE_LINK_PARAM = "logo.fileLink";
+    public static final String LOGO_FILE_AS_BYTES_PARAM = "logo.inputtedFileBytes";
 
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;
@@ -45,10 +45,10 @@ public class TechnologyTestData {
             "https://www.thymeleaf.org", BACKEND, MEDIUM, new LogoFile("thymeleaf.png", "./content/technologies/thymeleaf/thymeleaf.png"));
 
 
-    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "Apache Tomcat.png",
+    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "Apache Tomcat.png",
             MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());
 
-    public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logoFile", "updated.png",
+    public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "updated.png",
             MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
 
     public static TechnologyTo getNewTo() {

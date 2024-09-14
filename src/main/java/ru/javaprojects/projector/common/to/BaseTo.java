@@ -1,9 +1,10 @@
-package ru.javaprojects.projector.common;
+package ru.javaprojects.projector.common.to;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.javaprojects.projector.common.HasId;
 
 import java.util.Objects;
 

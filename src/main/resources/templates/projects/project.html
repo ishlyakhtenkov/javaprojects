@@ -115,7 +115,7 @@
                                 <div class="border rounded-2 px-3 pb-3 h-100">
                                     <div class="text-start text-muted tiny">Technologies</div>
                                     <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2">
-                                        <img th:src="@{${technology.logoFile != null ? ('/' + technology.logoFile.fileLink) : ''}}"
+                                        <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                             width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                     </span>
                                 </div>

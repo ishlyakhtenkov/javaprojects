@@ -253,7 +253,7 @@
                                                     th:value="${technology.id}"
                                                     th:text="${technology.name}"
                                                     th:data-name="${technology.name}"
-                                                    th:data-filelink="${technology.logoFile.fileLink}"
+                                                    th:data-filelink="${technology.logo.fileLink}"
                                                     th:selected="${projectTo.technologiesIds != null && projectTo.technologiesIds.contains(technology.id)}">
                                             </option>
                                         </select>
@@ -278,7 +278,7 @@
                                         </div>
                                         <div id="technologiesPreviewDiv">
                                             <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}" class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
-                                                <img th:src="@{${technology.logoFile != null ? ('/' + technology.logoFile.fileLink) : ''}}"
+                                                <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                                      width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                             </span>
                                         </div>

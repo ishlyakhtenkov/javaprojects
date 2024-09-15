@@ -186,10 +186,14 @@ function swapElements(firstElemIndex, secondElemIndex) {
     firstElementId.attr('id', `elementId-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].id`);
     firstElementType.attr('id', `elementType-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].type`);
     firstElementIndex.attr('id', `elementIndex-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].index`);
-    firstElementFileName.attr('id', `elementFileName-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileName`);
-    firstElementFileLink.attr('id', `elementFileLink-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileLink`);
     if (firstElementText.length) {
         firstElementText.attr('id', `elementText-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].text`);
+    }
+    if (firstElementFileName.length) {
+        firstElementFileName.attr('id', `elementFileName-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileName`);
+    }
+    if (firstElementFileLink.length) {
+        firstElementFileLink.attr('id', `elementFileLink-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.fileLink`);
     }
     if (firstElementImage.length) {
         firstElementImage.attr('id', `elementImage-${secondElemIndex}`).attr('name', `descriptionElementTos[${secondElemIndex}].image.inputtedFile`);
@@ -201,10 +205,14 @@ function swapElements(firstElemIndex, secondElemIndex) {
     secondElementId.attr('id', `elementId-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].id`);
     secondElementType.attr('id', `elementType-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].type`);
     secondElementIndex.attr('id', `elementIndex-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].index`);
-    secondElementFileName.attr('id', `elementFileName-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileName`);
-    secondElementFileLink.attr('id', `elementFileLink-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileLink`);
     if (secondElementText.length) {
         secondElementText.attr('id', `elementText-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].text`);
+    }
+    if (secondElementFileName.length) {
+        secondElementFileName.attr('id', `elementFileName-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileName`);
+    }
+    if (secondElementFileLink.length) {
+        secondElementFileLink.attr('id', `elementFileLink-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.fileLink`);
     }
     if (secondElementImage.length) {
         secondElementImage.attr('id', `elementImage-${firstElemIndex}`).attr('name', `descriptionElementTos[${firstElemIndex}].image.inputtedFile`);
@@ -251,10 +259,14 @@ function deleteElement(deleteElementBtn) {
             lowerElementId.attr('id', `elementId-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].id`);
             lowerElementType.attr('id', `elementType-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].type`);
             lowerElementIndex.attr('id', `elementIndex-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].index`);
-            lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileName`);
-            lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileLink`);
             if (lowerElementText.length) {
                 lowerElementText.attr('id', `elementText-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].text`);
+            }
+            if (lowerElementFileName.length) {
+                lowerElementFileName.attr('id', `elementFileName-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileName`);
+            }
+            if (lowerElementFileLink.length) {
+                lowerElementFileLink.attr('id', `elementFileLink-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.fileLink`);
             }
             if (lowerElementImage.length) {
                 lowerElementImage.attr('id', `elementImage-${i - 1}`).attr('name', `descriptionElementTos[${i - 1}].image.inputtedFile`);

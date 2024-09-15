@@ -70,7 +70,7 @@ public class TechnologyService {
         Assert.notNull(technologyTo, "technologyTo must not be null");
         Technology technology = get(technologyTo.getId());
         String oldName = technology.getName();
-        String oldLogoFileLink = technology.getLogoFile().getFileLink();
+        String oldLogoFileLink = technology.getLogo().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
         if (!isFileToEmpty(technologyTo.getLogo())) {
             uploadImage(technologyTo, technology.getName());
@@ -92,7 +92,7 @@ public class TechnologyService {
         Technology technology = get(id);
         repository.delete(technology);
         repository.flush();
-        FileUtil.deleteFile(technology.getLogoFile().getFileLink());
+        FileUtil.deleteFile(technology.getLogo().getFileLink());
     }
 
     public Set<Technology> getAllByIds(Set<Long> ids) {

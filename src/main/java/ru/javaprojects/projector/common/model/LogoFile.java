@@ -13,7 +13,7 @@ import ru.javaprojects.projector.common.util.validation.NoHtml;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class LogoFile implements File {
+public class LogoFile {
 
     @NotBlank
     @NoHtml

@@ -59,7 +59,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> technologyService.get(TECHNOLOGY4_ID));
-        assertTrue(Files.notExists(Paths.get(technology4.getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology4.getLogo().getFileLink())));
     }
 
     @Test
@@ -77,7 +77,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(problemInstance(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID));
 
         assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY1_ID));
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
     }
 
     @Test
@@ -103,7 +103,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY4_ID));
-        assertTrue(Files.exists(Paths.get(technology4.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology4.getLogo().getFileLink())));
     }
 
     @Test
@@ -113,6 +113,6 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY4_ID));
-        assertTrue(Files.exists(Paths.get(technology4.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology4.getLogo().getFileLink())));
     }
 }

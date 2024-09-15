@@ -11,7 +11,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
@@ -48,15 +48,19 @@ public class Technology extends BaseEntity implements HasIdAndName, Comparable<T
     @NotNull
     @Embedded
     @Valid
-    private LogoFile logoFile;
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "logo_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "logo_file_link"))
+    })
+    private File logo;
 
-    public Technology(Long id, String name, String url, Usage usage, Priority priority, LogoFile logoFile) {
+    public Technology(Long id, String name, String url, Usage usage, Priority priority, File logo) {
         super(id);
         this.name = name;
         this.url = url;
         this.usage = usage;
         this.priority = priority;
-        this.logoFile = logoFile;
+        this.logo = logo;
     }
 
     @Override

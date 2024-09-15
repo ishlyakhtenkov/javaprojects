@@ -7,14 +7,13 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class DockerComposeFile implements File {
+public class DockerComposeFile {
 
     @NotBlank
     @NoHtml

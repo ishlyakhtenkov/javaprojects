@@ -159,7 +159,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         Technology created = technologyService.getByName(newTechnologyTo.getName());
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
-        assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
     }
 
     @Test
@@ -180,7 +180,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         Technology created = technologyService.getByName(newTechnology.getName());
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
-        assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
     }
 
     @Test
@@ -193,7 +193,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogo().getFileLink())));
     }
 
     @Test
@@ -205,7 +205,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogo().getFileLink())));
     }
 
     @Test
@@ -307,8 +307,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                         new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
 
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
-        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
     }
 
@@ -327,8 +327,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                         new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
 
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
-        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
     }
 
@@ -345,8 +345,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                         new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
 
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
-        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + technology1.getName().toLowerCase().replace(' ', '_'))));
     }
 
@@ -366,8 +366,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                         new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
 
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
-        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(technology1.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
     }
 
     @Test
@@ -393,8 +393,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
     }
 
     @Test
@@ -406,8 +406,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
     }
 
     @Test
@@ -431,8 +431,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
                 .getLogo().getFileLink());
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
-        assertTrue(Files.exists(Paths.get(technology1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
     }
 
     @Test
@@ -448,7 +448,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(model().attributeHasFieldErrorCode(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), technology2.getName());
-        assertTrue(Files.exists(Paths.get(technology2.getLogoFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(technology2.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + technology2.getName() + "/" + UPDATED_LOGO_FILE.getOriginalFilename().toLowerCase())));
     }
 }

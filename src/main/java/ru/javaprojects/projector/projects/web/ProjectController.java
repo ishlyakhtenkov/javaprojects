@@ -106,6 +106,14 @@ public class ProjectController {
                     projectTo.setCardImage(null);
                 }
             }
+            if (projectTo.getDockerCompose() != null && projectTo.getDockerCompose().getInputtedFile() != null && !projectTo.getDockerCompose().getInputtedFile().isEmpty()) {
+                if (projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yaml") ||
+                        projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yml")) {
+                    keepInputtedFile(projectTo.getDockerCompose());
+                } else {
+                    projectTo.setDockerCompose(null);
+                }
+            }
             if (!isNew) {
                 model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());
             }

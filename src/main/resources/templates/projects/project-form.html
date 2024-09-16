@@ -32,6 +32,10 @@
                             <input type="hidden" th:field="*{cardImage.fileLink}">
                             <input type="hidden" th:if="${projectTo.cardImage.inputtedFileBytes != null}"
                                    th:field="*{cardImage.inputtedFileBytes}">
+                            <input type="hidden" th:field="*{dockerCompose.fileName}">
+                            <input type="hidden" th:field="*{dockerCompose.fileLink}">
+                            <input type="hidden" th:if="${projectTo.dockerCompose.inputtedFileBytes != null}"
+                                   th:field="*{dockerCompose.inputtedFileBytes}">
 
                             <div class="mb-3">
                                 <div class="input-group">
@@ -142,7 +146,8 @@
                                          class="input-group" id="dockerFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Docker file</span>
                                         <div class="form-control py-1 text-start">
-                                            <a th:href="@{${'/' + projectTo.dockerCompose?.fileLink}}" id="dockerComposeFileRef"
+                                            <a th:href="@{${projectTo.dockerCompose?.getImageSrc()}}" id="dockerComposeFileRef"
+                                               th:attr="download=${projectTo.dockerCompose?.fileName}"
                                                th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' +
                                                ${projectTo.dockerCompose?.fileName}"
                                                target="_blank" title="Download file">File name</a>

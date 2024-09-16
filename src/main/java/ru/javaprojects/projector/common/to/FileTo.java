@@ -39,8 +39,8 @@ public class FileTo {
         if (inputtedFileBytes == null || fileName == null) {
             return null;
         }
-        String srcType = fileName.endsWith(".svg") ?
-                "data:image/svg+xml;base64," : "data:image/*;base64,";
+        String srcType = (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) ? "data:application/octet-stream;base64," :
+                fileName.endsWith(".svg") ? "data:image/svg+xml;base64," : "data:image/*;base64,";
         return srcType + Base64.getEncoder().encodeToString(inputtedFileBytes);
     }
 }

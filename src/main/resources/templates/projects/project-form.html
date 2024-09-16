@@ -24,6 +24,15 @@
                     <form th:action="@{/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
                         <div class="card-body text-start">
                             <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{logo.fileName}">
+                            <input type="hidden" th:field="*{logo.fileLink}">
+                            <input type="hidden" th:if="${projectTo.logo.inputtedFileBytes != null}"
+                                   th:field="*{logo.inputtedFileBytes}">
+                            <input type="hidden" th:field="*{cardImage.fileName}">
+                            <input type="hidden" th:field="*{cardImage.fileLink}">
+                            <input type="hidden" th:if="${projectTo.cardImage.inputtedFileBytes != null}"
+                                   th:field="*{cardImage.inputtedFileBytes}">
+
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text project-card-label">Name</span>
@@ -224,63 +233,40 @@
                                     </ul>
                                 </span>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-6 mb-3">
-                                    <div th:hidden="${projectTo.cardImage?.fileLink == null && projectTo.cardImage?.inputtedFileBytes == null}"
-                                         class="input-group" id="cardImageFilePreviewDiv">
-                                        <span class="input-group-text project-card-label">Card image file</span>
-                                        <div class="form-control py-1 text-start">
-                                            <img th:src="@{${projectTo.cardImage?.getImageSrc()}}"
-                                                 width="42" height="24" alt="" id="cardImageFilePreview" />
-                                            <span th:text="${projectTo?.cardImage?.fileName}" id="cardImageFileName">File name</span>
-                                            <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
-                                               onclick="deleteCardImageFile()">
-                                                <i class="fa-solid fa-xmark"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div id="cardImageFileInputDiv">
-                                        <div th:if="${projectTo.cardImage == null ||
-                                            (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
-                                             class="input-group custom-file-button">
-                                            <label class="input-group-text bg-light project-card-label">Card image file</label>
-                                            <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
-                                                   class="form-control text-muted"
-                                                   id="cardImageFileInput" required onchange="previewCardImageFile()"/>
-                                        </div>
-                                        <span th:if="${#fields.hasErrors('cardImage')}">
-                                            <ul>
-                                                <li class="text-danger text-start"
-                                                    th:each="err : ${#fields.errors('cardImage')}" th:text="${err}"/>
-                                            </ul>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text project-card-label">Technologies</span>
-                                        <select class="form-control selectpicker border" data-style="btn-white" id="technologiesSelector"
-                                                name="technologiesIds" multiple data-selected-text-format="count > 3" title="Technologies" required>
-                                            <option th:each="technology : ${technologies}"
-                                                    th:value="${technology.id}"
-                                                    th:text="${technology.name}"
-                                                    th:data-name="${technology.name}"
-                                                    th:data-filelink="${technology.logo.fileLink}"
-                                                    th:selected="${projectTo.technologiesIds != null && projectTo.technologiesIds.contains(technology.id)}">
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
-                                    <div class="border rounded-2 px-3 pb-3 text-center h-100">
+                                    <div class="border rounded-2 ps-3 pe-2 pb-1 h-100">
                                         <div class="text-start text-muted tiny">
                                             Card image
                                         </div>
-                                        <img th:src="@{${projectTo.cardImage?.getImageSrc()}}"
-                                             height="150px" style="max-width: 95%;" class="rounded-2 mt-2" id="cardImageFileLargePreview" alt="" />
+                                        <div class="d-flex align-items-start">
+                                            <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
+                                                   hidden class="element-image-input" onchange="previewImage($(this))"/>
+
+                                            <img th:hidden="${projectTo.cardImage == null && (projectTo.cardImage.getImageSrc() == null)}"
+                                                 th:src="@{${projectTo.cardImage.getImageSrc()}}"
+                                                 class="element-image rounded-2 mt-2 mb-1 border"
+                                                 style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
+                                                 onclick="showLargerImage($(this))" />
+
+                                            <div class="empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center"
+                                                 style="height: 150px; width: 300px;"
+                                                 th:styleappend="${projectTo.cardImage == null ||
+                                                 (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null) ? '' : 'display: none;'}">
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                            onclick="$(this).parent().siblings('input').click()">
+                                                        Choose image
+                                                    </button>
+                                            </div>
+
+                                            <button type="button" th:hidden="${projectTo.cardImage == null ||
+                                                    (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
+                                                    class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
+                                                    title="Change image"
+                                                    onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-8 mb-3">
@@ -289,6 +275,19 @@
                                             Technologies
                                         </div>
                                         <div id="technologiesPreviewDiv">
+                                            <select class="form-control selectpicker border mt-1" data-style="btn-white"
+                                                    id="technologiesSelector"
+                                                    name="technologiesIds" multiple data-selected-text-format="count > 3"
+                                                    title="Technologies" required>
+                                                <option th:each="technology : ${technologies}"
+                                                        th:value="${technology.id}"
+                                                        th:text="${technology.name}"
+                                                        th:data-name="${technology.name}"
+                                                        th:data-filelink="${technology.logo.fileLink}"
+                                                        th:selected="${projectTo.technologiesIds != null && projectTo.technologiesIds.contains(technology.id)}">
+                                                </option>
+                                            </select>
+
                                             <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}" class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
                                                 <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                                      width="32" height="32" th:text="${technology.name}" class="align-bottom"/>

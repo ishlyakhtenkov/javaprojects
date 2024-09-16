@@ -22,6 +22,7 @@ import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.references.architectures.ArchitectureService;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
+import ru.javaprojects.projector.references.technologies.TechnologyTo;
 
 import java.io.IOException;
 
@@ -91,6 +92,12 @@ public class ProjectController {
         boolean isNew = projectTo.isNew();
         if (result.hasErrors()) {
             addAttributesToModel(model);
+            if (projectTo.getLogo().getInputtedFile() != null && !projectTo.getLogo().getInputtedFile().isEmpty()) {
+                keepInputtedFile(projectTo.getLogo());
+            }
+            if (projectTo.getCardImage().getInputtedFile() != null && !projectTo.getCardImage().getInputtedFile().isEmpty()) {
+                keepInputtedFile(projectTo.getCardImage());
+            }
             if (!isNew) {
                 model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());
             }
@@ -117,6 +124,17 @@ public class ProjectController {
         } catch (IOException e) {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
                     new Object[]{descriptionElementTo.getImage().getInputtedFile().getOriginalFilename()});
+        }
+    }
+
+    private void keepInputtedFile(FileTo fileTo) {
+        try {
+            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
+            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
+            fileTo.setFileLink(null);
+        } catch (IOException e) {
+            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
         }
     }
 }

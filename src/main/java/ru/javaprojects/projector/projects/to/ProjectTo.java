@@ -37,7 +37,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
 
     @NotBlank
     @NoHtml
-    @Size(max = 128)
+    @Size(min = 2, max = 128)
     private String shortDescription;
 
     private boolean enabled;

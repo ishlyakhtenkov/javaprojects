@@ -169,7 +169,7 @@ public class ProjectUtil {
     private File createLogoFile(ProjectTo projectTo) {
         FileTo logo = projectTo.getLogo();
         Assert.notNull(logo, "logo must not be null");
-        String filename = normalizePath(logo.getInputtedFile() != null ?
+        String filename = normalizePath(logo.getInputtedFile() != null && !logo.getInputtedFile().isEmpty() ?
                 logo.getInputtedFile().getOriginalFilename() : logo.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + LOGO_DIR + filename);
     }
@@ -177,7 +177,7 @@ public class ProjectUtil {
     private File createCardImageFile(ProjectTo projectTo) {
         FileTo cardImage = projectTo.getCardImage();
         Assert.notNull(cardImage, "cardImage must not be null");
-        String filename = normalizePath(cardImage.getInputtedFile() != null ?
+        String filename = normalizePath(cardImage.getInputtedFile() != null && !cardImage.getInputtedFile().isEmpty() ?
                 cardImage.getInputtedFile().getOriginalFilename() : cardImage.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR + filename);
     }
@@ -185,7 +185,7 @@ public class ProjectUtil {
     private File createDockerComposeFile(ProjectTo projectTo) {
         FileTo dockerCompose = projectTo.getDockerCompose();
         Assert.notNull(dockerCompose, "dockerCompose must not be null");
-        String filename = normalizePath(dockerCompose.getInputtedFile() != null ?
+        String filename = normalizePath(dockerCompose.getInputtedFile() != null && !dockerCompose.getInputtedFile().isEmpty() ?
                 dockerCompose.getInputtedFile().getOriginalFilename() : dockerCompose.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR + filename);
     }

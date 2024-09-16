@@ -62,9 +62,9 @@
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-card-label">Logo file</span>
                                     <span class="form-control">
-                                        <img th:src="@{${project.logoFile != null ? ('/' + project.logoFile.fileLink) : ''}}"
+                                        <img th:src="@{${project.logo != null ? ('/' + project.logo.fileLink) : ''}}"
                                              width="24" height="24" id="filePreview"/>
-                                        <span th:text="${project.logoFile?.fileName}" id="fileName">File name</span>
+                                        <span th:text="${project.logo?.fileName}" id="fileName">File name</span>
                                     </span>
                                 </div>
                             </div>
@@ -72,8 +72,8 @@
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-card-label">Docker file</span>
                                     <span class="form-control">
-                                        <a th:if="${project.dockerComposeFile != null}" th:href="@{${'/' + project.dockerComposeFile.fileLink}}"
-                                           th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' + ${project.dockerComposeFile.fileName}"
+                                        <a th:if="${project.dockerCompose != null}" th:href="@{${'/' + project.dockerCompose.fileLink}}"
+                                           th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' + ${project.dockerCompose.fileName}"
                                            target="_blank" title="Download file">File name</a>
                                     </span>
                                 </div>
@@ -107,7 +107,7 @@
                             <div class="col-lg-4 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
                                     <div class="text-start text-muted tiny">Card image</div>
-                                    <img th:src="@{${project.cardImageFile != null ? ('/' + project.cardImageFile.fileLink) : ''}}"
+                                    <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
                                          height="150px" class="rounded-2 mt-2" />
                                 </div>
                             </div>

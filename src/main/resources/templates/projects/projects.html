@@ -45,7 +45,7 @@
                 <tr th:each="project : ${projects}" th:id="'row-' + ${project.id}" class="align-middle table-row">
                     <td th:text="${project.name}"></td>
                     <td class="text-center py-1">
-                        <img th:src="@{'/' + ${project.logoFile.fileLink}}" th:alt="${project.logoFile.fileName}" width="32" height="32" />
+                        <img th:src="@{'/' + ${project.logo.fileLink}}" th:alt="${project.logo.fileName}" width="32" height="32" />
                     </td>
                     <td th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></td>
                     <td th:text="${project.architecture.name}"></td>

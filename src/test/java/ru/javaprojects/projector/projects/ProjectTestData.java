@@ -5,10 +5,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
-import ru.javaprojects.projector.common.model.LogoFile;
-import ru.javaprojects.projector.projects.model.CardImageFile;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
-import ru.javaprojects.projector.projects.model.DockerComposeFile;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -62,9 +60,9 @@ public class ProjectTestData {
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,
             LocalDate.of(2021, MARCH, 24), LocalDate.of(2021, MAY, 2), architecture1,
-            new LogoFile("restaurant_aggregator_logo.png", "./content/projects/restaurant_aggregator/logo/restaurant_aggregator_logo.png"),
-            new DockerComposeFile("docker-compose.yaml", "./content/projects/restaurant_aggregator/docker/docker-compose.yaml"),
-            new CardImageFile("restaurant_aggregator_card_img.png", "./content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png"),
+            new File("restaurant_aggregator_logo.png", "./content/projects/restaurant_aggregator/logo/restaurant_aggregator_logo.png"),
+            new File("docker-compose.yaml", "./content/projects/restaurant_aggregator/docker/docker-compose.yaml"),
+            new File("restaurant_aggregator_card_img.png", "./content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png"),
             "https://projector.ru/restaurant-aggregator", "https://github.com/ishlyakhtenkov/votingsystem",
             "https://github.com/ishlyakhtenkov/angular-votingsystem", "https://projector.ru/restaurant-aggregator/swagger-ui.html");
 
@@ -98,17 +96,17 @@ public class ProjectTestData {
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
             "The app creates a list of required key skills for a user-specified profession.", true, VERY_HIGH,
             LocalDate.of(2022, JULY, 17), LocalDate.of(2022, SEPTEMBER, 23), architecture1,
-            new LogoFile("skill_aggregator_logo.png", "./content/projects/skill_aggregator/logo/skill_aggregator_logo.png"),
-            new DockerComposeFile("docker-compose.yaml", "./content/projects/skill_aggregator/docker/docker-compose.yaml"),
-            new CardImageFile("skill_aggregator_card_img.png", "./content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png"),
+            new File("skill_aggregator_logo.png", "./content/projects/skill_aggregator/logo/skill_aggregator_logo.png"),
+            new File("docker-compose.yaml", "./content/projects/skill_aggregator/docker/docker-compose.yaml"),
+            new File("skill_aggregator_card_img.png", "./content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png"),
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
             null, null);
 
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
             "The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.",
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),
-            architecture1, new LogoFile("copy_maker_logo.png", "./content/projects/copy_maker/logo/copy_maker_logo.png"), null,
-            new CardImageFile("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
+            architecture1, new File("copy_maker_logo.png", "./content/projects/copy_maker/logo/copy_maker_logo.png"), null,
+            new File("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null);
 
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "New project logo.png",
@@ -172,9 +170,9 @@ public class ProjectTestData {
         ProjectTo newTo = getNewTo();
         return new Project(null, newTo.getName(), newTo.getShortDescription(), newTo.isEnabled(), newTo.getPriority(),
                 newTo.getStartDate(), newTo.getEndDate(), newTo.getArchitecture(),
-                new LogoFile("new_project_logo.png", contentPath + "new_project_name" + LOGO_DIR + "new_project_logo.png"),
-                new DockerComposeFile("docker-compose.yaml", contentPath + "new_project_name" + DOCKER_DIR + "docker-compose.yaml"),
-                new CardImageFile("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
+                new File("new_project_logo.png", contentPath + "new_project_name" + LOGO_DIR + "new_project_logo.png"),
+                new File("docker-compose.yaml", contentPath + "new_project_name" + DOCKER_DIR + "docker-compose.yaml"),
+                new File("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
                 new TreeSet<>(Set.of(technology1, technology2, technology3)),
                 new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())));
@@ -247,9 +245,12 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile("updated_project_logo.png", contentPath + updatedName.toLowerCase() + LOGO_DIR + "updated_project_logo.png"),
-                new DockerComposeFile("docker-compose-updated.yaml", contentPath + updatedName.toLowerCase() + DOCKER_DIR + "docker-compose-updated.yaml"),
-                new CardImageFile("updated_project_card_image.png", contentPath + updatedName.toLowerCase() + CARD_IMG_DIR + "updated_project_card_image.png"),
+                new File("updated_project_logo.png", contentPath + updatedName.toLowerCase() + LOGO_DIR +
+                        "updated_project_logo.png"),
+                new File("docker-compose-updated.yaml", contentPath + updatedName.toLowerCase() + DOCKER_DIR +
+                        "docker-compose-updated.yaml"),
+                new File("updated_project_card_image.png", contentPath + updatedName.toLowerCase() + CARD_IMG_DIR +
+                        "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
@@ -259,9 +260,12 @@ public class ProjectTestData {
     public static Project getUpdatedWhenOldName(String contentPath) {
         return new Project(PROJECT1_ID, project1.getName(), "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile("updated_project_logo.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + LOGO_DIR + "updated_project_logo.png"),
-                new DockerComposeFile("docker-compose-updated.yaml", contentPath + project1.getName().toLowerCase().replace(' ', '_') + DOCKER_DIR + "docker-compose-updated.yaml"),
-                new CardImageFile("updated_project_card_image.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') + CARD_IMG_DIR + "updated_project_card_image.png"),
+                new File("updated_project_logo.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') +
+                        LOGO_DIR + "updated_project_logo.png"),
+                new File("docker-compose-updated.yaml", contentPath + project1.getName().toLowerCase().replace(' ', '_') +
+                        DOCKER_DIR + "docker-compose-updated.yaml"),
+                new File("updated_project_card_image.png", contentPath + project1.getName().toLowerCase().replace(' ', '_') +
+                        CARD_IMG_DIR + "updated_project_card_image.png"),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
@@ -273,9 +277,12 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
-                new LogoFile(project1.getLogoFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + LOGO_DIR + project1.getLogoFile().getFileName()),
-                new DockerComposeFile(project1.getDockerComposeFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + DOCKER_DIR + project1.getDockerComposeFile().getFileName()),
-                new CardImageFile(project1.getCardImageFile().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') + CARD_IMG_DIR + project1.getCardImageFile().getFileName()),
+                new File(project1.getLogo().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') +
+                        LOGO_DIR + project1.getLogo().getFileName()),
+                new File(project1.getDockerCompose().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') +
+                        DOCKER_DIR + project1.getDockerCompose().getFileName()),
+                new File(project1.getCardImage().getFileName(), contentPath + updatedName.toLowerCase().replace(' ', '_') +
+                        CARD_IMG_DIR + project1.getCardImage().getFileName()),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,

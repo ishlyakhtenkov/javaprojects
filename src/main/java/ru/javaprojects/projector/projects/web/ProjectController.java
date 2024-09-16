@@ -18,7 +18,6 @@ import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
-import ru.javaprojects.projector.projects.model.ElementType;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -83,9 +82,9 @@ public class ProjectController {
         log.info("show edit form for project with id={}", id);
         Project project = projectService.getWithTechnologiesAndDescription(id, true);
         model.addAttribute("projectTo", projectUtil.asTo(project));
-        model.addAttribute("logoFile", project.getLogoFile());
-        model.addAttribute("dockerComposeFile", project.getDockerComposeFile());
-        model.addAttribute("cardImageFile", project.getCardImageFile());
+        model.addAttribute("logoFile", project.getLogo());
+        model.addAttribute("dockerComposeFile", project.getDockerCompose());
+        model.addAttribute("cardImageFile", project.getCardImage());
         addAttributesToModel(model);
         return "projects/project-form";
     }
@@ -99,13 +98,13 @@ public class ProjectController {
             if (!isNew) {
                 Project project = projectService.get(projectTo.getId());
                 if (projectTo.getLogoFile() == null) {
-                    model.addAttribute("logoFile", project.getLogoFile());
+                    model.addAttribute("logoFile", project.getLogo());
                 }
                 if (projectTo.getCardImageFile() == null) {
-                    model.addAttribute("cardImageFile", project.getCardImageFile());
+                    model.addAttribute("cardImageFile", project.getCardImage());
                 }
                 if (projectTo.getDockerComposeFile() == null) {
-                    model.addAttribute("dockerComposeFile", project.getDockerComposeFile());
+                    model.addAttribute("dockerComposeFile", project.getDockerCompose());
                 }
                 model.addAttribute("projectName", project.getName());
             }

@@ -13,7 +13,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.references.architectures.Architecture;
@@ -66,17 +66,29 @@ public class Project extends BaseEntity implements HasIdAndName {
     @NotNull
     @Embedded
     @Valid
-    private LogoFile logoFile;
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "logo_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "logo_file_link"))
+    })
+    private File logo;
 
     @Nullable
     @Embedded
     @Valid
-    private DockerComposeFile dockerComposeFile;
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "docker_compose_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "docker_compose_file_link"))
+    })
+    private File dockerCompose;
 
     @NotNull
     @Embedded
     @Valid
-    private CardImageFile cardImageFile;
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "card_image_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "card_image_file_link"))
+    })
+    private File cardImage;
 
     @Nullable
     @NoHtml
@@ -119,9 +131,8 @@ public class Project extends BaseEntity implements HasIdAndName {
     private Set<DescriptionElement> descriptionElements = new HashSet<>();
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
-                   CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                   String openApiUrl) {
+                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -130,9 +141,9 @@ public class Project extends BaseEntity implements HasIdAndName {
         this.startDate = startDate;
         this.endDate = endDate;
         this.architecture = architecture;
-        this.logoFile = logoFile;
-        this.dockerComposeFile = dockerComposeFile;
-        this.cardImageFile = cardImageFile;
+        this.logo = logo;
+        this.dockerCompose = dockerCompose;
+        this.cardImage = cardImage;
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
@@ -140,20 +151,20 @@ public class Project extends BaseEntity implements HasIdAndName {
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
-                   CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                   String openApiUrl, Set<Technology> technologies) {
-        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
-                cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
+                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
+                   Set<Technology> technologies) {
+        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
         this.technologies = technologies;
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, LogoFile logoFile, DockerComposeFile dockerComposeFile,
-                   CardImageFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                   String openApiUrl, Set<Technology> technologies, Set<DescriptionElement> descriptionElements) {
-        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logoFile, dockerComposeFile,
-                cardImageFile, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies);
+                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
+                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements) {
+        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies);
         this.descriptionElements = descriptionElements;
     }
 

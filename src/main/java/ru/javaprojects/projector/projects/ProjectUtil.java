@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.common.model.LogoFile;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
-import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.model.DescriptionElement;
+import ru.javaprojects.projector.projects.model.ElementType;
+import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
@@ -103,23 +105,23 @@ public class ProjectUtil {
                 .forEach(project::addDescriptionElement);
 
         if (!isMultipartFileEmpty(projectTo.getLogoFile())) {
-            project.setLogoFile(createLogoFile(projectTo));
+            project.setLogo(createLogoFile(projectTo));
         }
         if (!isMultipartFileEmpty(projectTo.getCardImageFile())) {
-            project.setCardImageFile(createCardImageFile(projectTo));
+            project.setCardImage(createCardImageFile(projectTo));
         }
         if (!isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
-            project.setDockerComposeFile(createDockerComposeFile(projectTo));
+            project.setDockerCompose(createDockerComposeFile(projectTo));
         }
 
         if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            project.getLogoFile().setFileLink(contentPath + normalizePath(project.getName()) + LOGO_DIR +
-                    project.getLogoFile().getFileName());
-            project.getCardImageFile().setFileLink(contentPath + normalizePath(project.getName()) + CARD_IMG_DIR +
-                    project.getCardImageFile().getFileName());
-            if (project.getDockerComposeFile() != null) {
-                project.getDockerComposeFile().setFileLink(contentPath + normalizePath(project.getName()) + DOCKER_DIR +
-                        project.getDockerComposeFile().getFileName());
+            project.getLogo().setFileLink(contentPath + normalizePath(project.getName()) + LOGO_DIR +
+                    project.getLogo().getFileName());
+            project.getCardImage().setFileLink(contentPath + normalizePath(project.getName()) + CARD_IMG_DIR +
+                    project.getCardImage().getFileName());
+            if (project.getDockerCompose() != null) {
+                project.getDockerCompose().setFileLink(contentPath + normalizePath(project.getName()) + DOCKER_DIR +
+                        project.getDockerCompose().getFileName());
             }
             project.getDescriptionElements().stream()
                     .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew())
@@ -154,21 +156,21 @@ public class ProjectUtil {
         deTo.getImage().setFileLink(fileLink);
     }
 
-    private LogoFile createLogoFile(ProjectTo projectTo) {
+    private File createLogoFile(ProjectTo projectTo) {
         String filename = normalizePath(projectTo.getLogoFile().getOriginalFilename());
-        return new LogoFile(filename, contentPath + normalizePath(projectTo.getName()) + LOGO_DIR + filename);
+        return new File(filename, contentPath + normalizePath(projectTo.getName()) + LOGO_DIR + filename);
     }
 
-    private CardImageFile createCardImageFile(ProjectTo projectTo) {
+    private File createCardImageFile(ProjectTo projectTo) {
         String filename = normalizePath(projectTo.getCardImageFile().getOriginalFilename());
-        return new CardImageFile(filename, contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR + filename);
+        return new File(filename, contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR + filename);
     }
 
-    private DockerComposeFile createDockerComposeFile(ProjectTo projectTo) {
+    private File createDockerComposeFile(ProjectTo projectTo) {
         if (isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
             return null;
         }
         String filename = normalizePath(projectTo.getDockerComposeFile().getOriginalFilename());
-        return new DockerComposeFile(filename, contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR + filename);
+        return new File(filename, contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR + filename);
     }
 }

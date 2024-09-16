@@ -224,9 +224,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
-            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
         }
     }
@@ -258,9 +258,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
-            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
         }
     }
@@ -294,9 +294,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project",
                 "descriptionElements.fileLink");
         actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
-        assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(created.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
         try (Stream<Path> pathStream = Files.list(Paths.get(contentPath + "new_project_name/description/images"))) {
             long fileCounter = pathStream
                     .peek(path ->
@@ -319,9 +319,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertThrows(NotFoundException.class, () -> projectService.getByName(getNewTo().getName()));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
@@ -337,9 +337,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertThrows(NotFoundException.class, () -> projectService.getByName(getNewTo().getName()));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
@@ -392,8 +392,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("project.logo-not-present",
                         null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
@@ -410,8 +410,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("project.card-image-not-present",
                         null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
 
     }
@@ -424,7 +424,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             ProjectTo newProjectTo = getNewTo();
             Project newProject = getNew(contentPath);
-            newProject.setDockerComposeFile(null);
+            newProject.setDockerCompose(null);
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(LOGO_FILE)
                     .file(CARD_IMAGE_FILE)
@@ -439,8 +439,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             created = projectService.getWithTechnologiesAndDescription(created.id(), true);
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
-            assertTrue(Files.exists(Paths.get(created.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImageFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
         }
     }
@@ -484,14 +484,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
-            assertTrue(Files.exists(Paths.get(updatedProject.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImageFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6.getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdate.getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
             assertTrue(Files.notExists(
@@ -524,15 +524,15 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
-            assertTrue(Files.exists(Paths.get(updatedProject.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImageFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6WhenProjectHasOldName.getFileLink())));
             assertTrue(Files.exists(Paths.get(de6.getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdateWithOldName.getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
         }
     }
@@ -568,12 +568,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
                 updatedProject, "descriptionElements.project");
-        assertTrue(Files.exists(Paths.get(updatedProject.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getDockerComposeFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
     }
@@ -603,14 +603,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
-            assertTrue(Files.exists(Paths.get(updatedProject.getLogoFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImageFile().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6WhenProjectHasOldName.getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdateWithOldName.getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
         }
     }
@@ -633,13 +633,13 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
                 updatedProject, "descriptionElements.project");
 
-        assertTrue(Files.exists(Paths.get(updatedProject.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedDe6.getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
         assertTrue(Files.notExists(
@@ -693,9 +693,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isForbidden());
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(contentPath).getName());
         assertTrue(Files.exists(Paths.get(de3.getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(newDeForProjectUpdate.getFileLink())));
     }
 
@@ -728,14 +728,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(contentPath).getName());
 
-        assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getFileLink())));
     }
 
@@ -755,9 +755,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(model().attributeHasFieldErrorCode(PROJECT_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), project2.getName());
-        assertTrue(Files.exists(Paths.get(project2.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project2.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project2.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project2.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project2.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project2.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + project2.getName() + LOGO_DIR +

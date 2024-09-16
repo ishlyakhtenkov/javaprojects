@@ -58,9 +58,9 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
-        assertTrue(Files.notExists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
     }
@@ -88,9 +88,9 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
-        assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getFileLink())));
     }
@@ -102,9 +102,9 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
-        assertTrue(Files.exists(Paths.get(project1.getLogoFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImageFile().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getDockerComposeFile().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getFileLink())));
     }

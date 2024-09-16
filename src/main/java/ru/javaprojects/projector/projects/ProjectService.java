@@ -80,10 +80,10 @@ public class ProjectService {
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
         repository.delete(project);
         repository.flush();
-        FileUtil.deleteFile(project.getLogoFile().getFileLink());
-        FileUtil.deleteFile(project.getCardImageFile().getFileLink());
-        if (project.getDockerComposeFile() != null) {
-            FileUtil.deleteFile(project.getDockerComposeFile().getFileLink());
+        FileUtil.deleteFile(project.getLogo().getFileLink());
+        FileUtil.deleteFile(project.getCardImage().getFileLink());
+        if (project.getDockerCompose() != null) {
+            FileUtil.deleteFile(project.getDockerCompose().getFileLink());
         }
         project.getDescriptionElements().stream()
                 .filter(de -> de.getType() == IMAGE)
@@ -134,10 +134,10 @@ public class ProjectService {
         Assert.notNull(projectTo, "projectTo must not be null");
         Project project = getWithTechnologiesAndDescription(projectTo.getId(), false);
         String projectOldName = project.getName();
-        String oldLogoFileLink = project.getLogoFile().getFileLink();
-        String oldCardImageFileLink = project.getCardImageFile().getFileLink();
+        String oldLogoFileLink = project.getLogo().getFileLink();
+        String oldCardImageFileLink = project.getCardImage().getFileLink();
         String oldDockerComposeFileLink =
-                project.getDockerComposeFile() != null ? project.getDockerComposeFile().getFileLink() : null;
+                project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
         Map<Long, DescriptionElement> oldDeImages = project.getDescriptionElements().stream()
                 .filter(de -> de.getType() == IMAGE)
                 .map(DescriptionElement::new)

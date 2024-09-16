@@ -113,10 +113,12 @@
                             </div>
 
                             <div id="fileInputDiv">
-                                <div th:if="${technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null}"
+                                <div th:if="${technologyTo.logo == null ||
+                                    (technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null)}"
                                      class="input-group custom-file-button">
                                     <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
-                                    <input type="file" accept="image/*" th:field="*{logo.inputtedFile}" class="form-control text-muted"
+                                    <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
+                                           class="form-control text-muted"
                                            id="fileInput" required onchange="previewFile()"/>
                                 </div>
                                 <span th:if="${#fields.hasErrors('logo')}">

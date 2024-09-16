@@ -109,22 +109,22 @@ public class ProjectTestData {
             new File("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null);
 
-    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logoFile", "New project logo.png",
+    public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
             MediaType.IMAGE_PNG_VALUE, "new project logo file content bytes".getBytes());
 
-    public static final MockMultipartFile CARD_IMAGE_FILE = new MockMultipartFile("cardImageFile", "New project card image.png",
+    public static final MockMultipartFile CARD_IMAGE_FILE = new MockMultipartFile("cardImage.inputtedFile", "New project card image.png",
             MediaType.IMAGE_PNG_VALUE, "new project card image file content bytes".getBytes());
 
-    public static final MockMultipartFile DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerComposeFile", "docker-compose.yaml",
+    public static final MockMultipartFile DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerCompose.inputtedFile", "docker-compose.yaml",
             MediaType.TEXT_PLAIN_VALUE, "new project docker compose file content bytes".getBytes());
 
-    public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logoFile", "updated project logo.png",
+    public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "updated project logo.png",
             MediaType.IMAGE_PNG_VALUE, "updated project logo file content bytes".getBytes());
 
-    public static final MockMultipartFile UPDATED_CARD_IMAGE_FILE = new MockMultipartFile("cardImageFile", "Updated project card image.png",
+    public static final MockMultipartFile UPDATED_CARD_IMAGE_FILE = new MockMultipartFile("cardImage.inputtedFile", "Updated project card image.png",
             MediaType.IMAGE_PNG_VALUE, "updated project card image file content bytes".getBytes());
 
-    public static final MockMultipartFile UPDATED_DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerComposeFile", "docker-compose-updated.yaml",
+    public static final MockMultipartFile UPDATED_DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerCompose.inputtedFile", "docker-compose-updated.yaml",
             MediaType.TEXT_PLAIN_VALUE, "updated project docker compose file content bytes".getBytes());
 
 

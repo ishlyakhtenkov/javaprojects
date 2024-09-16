@@ -108,7 +108,7 @@
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
                                     <div class="text-start text-muted tiny">Card image</div>
                                     <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
-                                         height="150px" class="rounded-2 mt-2" />
+                                         height="150px" style="max-width: 95%;" class="rounded-2 mt-2" />
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">

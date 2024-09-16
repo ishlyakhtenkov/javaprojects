@@ -49,7 +49,7 @@ function deleteLogoFile() {
     logoFilePreviewDiv.attr('hidden', true);
     logoFileInputDiv.html('<div class="input-group custom-file-button">' +
         '<label class="input-group-text bg-light project-card-label">Logo file</label>' +
-        '<input type="file" accept="image/*" id="logoFileInput" name="logoFile" ' +
+        '<input type="file" accept="image/*" id="logoFileInput" name="logo.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewLogoFile()" /></div>').attr('hidden', false);
 }
 
@@ -72,7 +72,7 @@ function deleteDockerFile() {
     dockerFilePreviewDiv.attr('hidden', true);
     dockerFileInputDiv.html('<div class="input-group custom-file-button">' +
         '<label class="input-group-text bg-light project-card-label">Docker file</label>' +
-        '<input type="file" accept=".yaml,.yml" id="dockerFileInput" name="dockerComposeFile" ' +
+        '<input type="file" accept=".yaml,.yml" id="dockerFileInput" name="dockerCompose.inputtedFile" ' +
         'class="form-control text-muted" onchange="previewDockerFile()" /></div>').attr('hidden', false);
 }
 
@@ -94,7 +94,7 @@ function deleteCardImageFile() {
     cardImageFilePreviewDiv.attr('hidden', true);
     cardImageFileInputDiv.html('<div class="input-group custom-file-button">' +
         '<label class="input-group-text bg-light project-card-label">Card image file</label>' +
-        '<input type="file" accept="image/*" id="cardImageFileInput" name="cardImageFile" ' +
+        '<input type="file" accept="image/*" id="cardImageFileInput" name="cardImage.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewCardImageFile()" /></div>').attr('hidden', false);
     $('#cardImageFileLargePreview').attr('src', '');
 }

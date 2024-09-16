@@ -3,11 +3,13 @@ package ru.javaprojects.projector.projects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.ElementType;
 import ru.javaprojects.projector.projects.model.Project;
@@ -40,18 +42,26 @@ public class ProjectUtil {
                         de.getFileName(), de.getFileLink()))
                 .toList();
 
+        String dockerComposeFileName = project.getDockerCompose() != null ? project.getDockerCompose().getFileName() : null;
+        String dockerComposeFileLink = project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
         return new ProjectTo(project.getId(), project.getName(), project.getShortDescription(), project.isEnabled(),
                 project.getPriority(), project.getStartDate(), project.getEndDate(), project.getArchitecture(),
-                project.getDeploymentUrl(), project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(),
+                project.getLogo().getFileName(), project.getLogo().getFileLink(), dockerComposeFileName, dockerComposeFileLink,
+                project.getCardImage().getFileName(), project.getCardImage().getFileLink(), project.getDeploymentUrl(),
+                project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(),
                 project.getTechnologies().stream().map(BaseEntity::getId).collect(Collectors.toSet()), descriptionElementTos);
     }
 
     public Project createNewFromTo(ProjectTo projectTo) {
+        File dockerCompose = null;
+        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
+            dockerCompose = createDockerComposeFile(projectTo);
+        }
         Project project = new Project(null, projectTo.getName(), projectTo.getShortDescription(), projectTo.isEnabled(),
                 projectTo.getPriority(), projectTo.getStartDate(), projectTo.getEndDate(), projectTo.getArchitecture(),
-                createLogoFile(projectTo), createDockerComposeFile(projectTo),
-                createCardImageFile(projectTo), projectTo.getDeploymentUrl(), projectTo.getBackendSrcUrl(),
-                projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl());
+                createLogoFile(projectTo), dockerCompose, createCardImageFile(projectTo), projectTo.getDeploymentUrl(),
+                projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl());
+
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
         projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));
         return project;
@@ -63,7 +73,7 @@ public class ProjectUtil {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "description-element.image-not-present", null);
             }
-            setFileNameAndLink(deTo, project.getName());
+            setFileAttributes(deTo, project.getName());
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
                 deTo.getImage() != null ? deTo.getImage().getFileName() : null,
@@ -104,13 +114,13 @@ public class ProjectUtil {
                 .map(deTo -> createNewFromTo(deTo, project))
                 .forEach(project::addDescriptionElement);
 
-        if (!isMultipartFileEmpty(projectTo.getLogoFile())) {
+        if (projectTo.getLogo() != null && !isFileToEmpty(projectTo.getLogo())) {
             project.setLogo(createLogoFile(projectTo));
         }
-        if (!isMultipartFileEmpty(projectTo.getCardImageFile())) {
+        if (projectTo.getCardImage() != null && !isFileToEmpty(projectTo.getCardImage())) {
             project.setCardImage(createCardImageFile(projectTo));
         }
-        if (!isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
+        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
             project.setDockerCompose(createDockerComposeFile(projectTo));
         }
 
@@ -138,7 +148,7 @@ public class ProjectUtil {
     private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
         de.setIndex(deTo.getIndex());
         if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
-            setFileNameAndLink(deTo, project.getName());
+            setFileAttributes(deTo, project.getName());
             de.setFileName(deTo.getImage().getFileName());
             de.setFileLink(deTo.getImage().getFileLink());
         } else {
@@ -146,8 +156,8 @@ public class ProjectUtil {
         }
     }
 
-    private void setFileNameAndLink(DescriptionElementTo deTo, String projectName) {
-        String fileName = !isMultipartFileEmpty(deTo.getImage().getInputtedFile()) ?
+    private void setFileAttributes(DescriptionElementTo deTo, String projectName) {
+        String fileName = deTo.getImage().getInputtedFile() != null ?
                 deTo.getImage().getInputtedFile().getOriginalFilename() : deTo.getImage().getFileName();
         String uniquePrefix = UUID.randomUUID().toString();
         String fileLink = contentPath + normalizePath(projectName + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
@@ -157,20 +167,26 @@ public class ProjectUtil {
     }
 
     private File createLogoFile(ProjectTo projectTo) {
-        String filename = normalizePath(projectTo.getLogoFile().getOriginalFilename());
+        FileTo logo = projectTo.getLogo();
+        Assert.notNull(logo, "logo must not be null");
+        String filename = normalizePath(logo.getInputtedFile() != null ?
+                logo.getInputtedFile().getOriginalFilename() : logo.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + LOGO_DIR + filename);
     }
 
     private File createCardImageFile(ProjectTo projectTo) {
-        String filename = normalizePath(projectTo.getCardImageFile().getOriginalFilename());
+        FileTo cardImage = projectTo.getCardImage();
+        Assert.notNull(cardImage, "cardImage must not be null");
+        String filename = normalizePath(cardImage.getInputtedFile() != null ?
+                cardImage.getInputtedFile().getOriginalFilename() : cardImage.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + CARD_IMG_DIR + filename);
     }
 
     private File createDockerComposeFile(ProjectTo projectTo) {
-        if (isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
-            return null;
-        }
-        String filename = normalizePath(projectTo.getDockerComposeFile().getOriginalFilename());
+        FileTo dockerCompose = projectTo.getDockerCompose();
+        Assert.notNull(dockerCompose, "dockerCompose must not be null");
+        String filename = normalizePath(dockerCompose.getInputtedFile() != null ?
+                dockerCompose.getInputtedFile().getOriginalFilename() : dockerCompose.getFileName());
         return new File(filename, contentPath + normalizePath(projectTo.getName()) + DOCKER_DIR + filename);
     }
 }

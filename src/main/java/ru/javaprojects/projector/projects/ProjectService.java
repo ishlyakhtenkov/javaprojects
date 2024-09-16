@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.BaseEntity;
@@ -23,7 +22,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
-import static ru.javaprojects.projector.common.util.FileUtil.isMultipartFileEmpty;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -100,22 +98,20 @@ public class ProjectService {
     @Transactional
     public Project create(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        if (isMultipartFileEmpty( projectTo.getLogoFile())) {
+        if (projectTo.getLogo() == null || isFileToEmpty(projectTo.getLogo())) {
             throw new IllegalRequestDataException("Project logo file is not present",
                     "project.logo-not-present", null);
         }
-        if (isMultipartFileEmpty(projectTo.getCardImageFile())) {
+        if (projectTo.getCardImage() == null || isFileToEmpty(projectTo.getCardImage())) {
             throw new IllegalRequestDataException("Project card image file is not present",
                     "project.card-image-not-present", null);
         }
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo));
 
-        uploadFile(projectTo.getLogoFile(), project.getName(), LOGO_DIR, projectTo.getLogoFile().getOriginalFilename());
-        uploadFile(projectTo.getCardImageFile(), project.getName(), CARD_IMG_DIR,
-                projectTo.getCardImageFile().getOriginalFilename());
-        if (!isMultipartFileEmpty(projectTo.getDockerComposeFile())) {
-            uploadFile(projectTo.getDockerComposeFile(), project.getName(), DOCKER_DIR,
-                    projectTo.getDockerComposeFile().getOriginalFilename());
+        uploadFile(projectTo.getLogo(), project.getName(), LOGO_DIR);
+        uploadFile(projectTo.getCardImage(), project.getName(), CARD_IMG_DIR);
+        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
+            uploadFile(projectTo.getDockerCompose(), project.getName(), DOCKER_DIR);
         }
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null)
@@ -163,36 +159,34 @@ public class ProjectService {
                     }
                 });
 
-        updateProjectFileIfNecessary(projectTo.getLogoFile(), oldLogoFileLink, project.getName(),
+        updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getName(),
                 projectOldName, LOGO_DIR);
-        updateProjectFileIfNecessary(projectTo.getCardImageFile(), oldCardImageFileLink, project.getName(),
+        updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getName(),
                 projectOldName, CARD_IMG_DIR);
-        updateProjectFileIfNecessary(projectTo.getDockerComposeFile(), oldDockerComposeFileLink, project.getName(),
+        updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink, project.getName(),
                 projectOldName, DOCKER_DIR);
         return project;
     }
 
-    private void updateProjectFileIfNecessary(MultipartFile file, String oldFileFileLink, String projectName,
+    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileFileLink, String projectName,
                                               String projectOldName, String dirName) {
-        if (!isMultipartFileEmpty(file)) {
+        if (fileTo != null && !isFileToEmpty(fileTo)) {
             if (oldFileFileLink != null) {
                 FileUtil.deleteFile(oldFileFileLink);
             }
-            String newFileName =  FileUtil.normalizePath(file.getOriginalFilename());
-            FileUtil.upload(file, contentPath + FileUtil.normalizePath(projectName) + dirName, newFileName);
+            String fileName = (fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty()) ?
+                    fileTo.getInputtedFile().getOriginalFilename() : fileTo.getFileName();
+            FileUtil.upload(fileTo, contentPath + FileUtil.normalizePath(projectName) + dirName,
+                    FileUtil.normalizePath(fileName));
         } else if (!projectName.equalsIgnoreCase(projectOldName)) {
             FileUtil.moveFile(oldFileFileLink, contentPath + FileUtil.normalizePath(projectName + dirName));
         }
     }
 
-    private void uploadFile(MultipartFile file, String projectName, String dirName, String fileName) {
-        FileUtil.upload(file, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
-                FileUtil.normalizePath(fileName));
-    }
-
-    private void uploadFile(byte[] fileBytes, String projectName, String dirName, String fileName) {
-        FileUtil.upload(fileBytes, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
-                FileUtil.normalizePath(fileName));
+    private void uploadFile(FileTo fileTo, String projectName, String dirName) {
+        String fileName = fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty() ?
+                fileTo.getInputtedFile().getOriginalFilename() : fileTo.getFileName();
+        uploadFile(fileTo, projectName, dirName, fileName);
     }
 
     private void uploadFile(FileTo fileTo, String projectName, String dirName, String fileName) {

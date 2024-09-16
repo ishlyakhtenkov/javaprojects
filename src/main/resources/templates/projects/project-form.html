@@ -97,12 +97,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
-                                    <div th:hidden="${logoFile == null}" class="input-group" id="logoFilePreviewDiv">
+                                    <div th:hidden="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
+                                         class="input-group" id="logoFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Logo file</span>
                                         <div class="form-control py-1 text-start">
-                                            <img th:src="@{${logoFile != null ? ('/' + logoFile.fileLink) : ''}}"
-                                                 width="24" height="24" id="logoFilePreview"/>
-                                            <span th:text="${logoFile?.fileName}" id="logoFileName">File name</span>
+                                            <img th:src="@{${projectTo.logo?.getImageSrc()}}"
+                                                 width="24" height="24" alt="" id="logoFilePreview" />
+
+                                            <span th:text="${projectTo?.logo?.fileName}" id="logoFileName">File name</span>
                                             <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
                                                onclick="deleteLogoFile()">
                                                 <i class="fa-solid fa-xmark"></i>
@@ -110,25 +112,28 @@
                                         </div>
                                     </div>
                                     <div id="logoFileInputDiv">
-                                        <div th:if="${logoFile == null}" class="input-group custom-file-button">
+                                        <div th:if="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
+                                             class="input-group custom-file-button">
                                             <label class="input-group-text bg-light project-card-label">Logo file</label>
-                                            <input type="file" accept="image/*" th:field="*{logoFile}" class="form-control text-muted"
+                                            <input type="file" accept="image/*" th:field="*{logo.inputtedFile}" class="form-control text-muted"
                                                    id="logoFileInput" required onchange="previewLogoFile()"/>
                                         </div>
-                                        <span th:if="${#fields.hasErrors('logoFile')}">
+                                        <span th:if="${#fields.hasErrors('logo')}">
                                             <ul>
                                                 <li class="text-danger text-start"
-                                                    th:each="err : ${#fields.errors('logoFile')}" th:text="${err}"/>
+                                                    th:each="err : ${#fields.errors('logo')}" th:text="${err}"/>
                                             </ul>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 mb-3">
-                                    <div th:hidden="${dockerComposeFile == null}" class="input-group" id="dockerFilePreviewDiv">
+                                    <div th:hidden="${projectTo.dockerCompose?.fileLink == null && projectTo.dockerCompose?.inputtedFileBytes == null}"
+                                         class="input-group" id="dockerFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Docker file</span>
                                         <div class="form-control py-1 text-start">
-                                            <a th:href="@{${'/' + dockerComposeFile?.fileLink}}" id="dockerComposeFileRef"
-                                               th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' + ${dockerComposeFile?.fileName}"
+                                            <a th:href="@{${'/' + projectTo.dockerCompose?.fileLink}}" id="dockerComposeFileRef"
+                                               th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' +
+                                               ${projectTo.dockerCompose?.fileName}"
                                                target="_blank" title="Download file">File name</a>
 
                                             <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
@@ -138,15 +143,18 @@
                                         </div>
                                     </div>
                                     <div id="dockerFileInputDiv">
-                                        <div th:if="${dockerComposeFile == null}" class="input-group custom-file-button">
+                                        <div th:if="${projectTo.dockerCompose == null ||
+                                            (projectTo.dockerCompose.fileLink == null && projectTo.dockerCompose.inputtedFileBytes == null)}"
+                                             class="input-group custom-file-button">
                                             <label class="input-group-text bg-light project-card-label">Docker file</label>
-                                            <input type="file" accept=".yaml,.yml" th:field="*{dockerComposeFile}" class="form-control text-muted"
+                                            <input type="file" accept=".yaml,.yml" th:field="*{dockerCompose.inputtedFile}"
+                                                   class="form-control text-muted"
                                                    id="dockerFileInput" onchange="previewDockerFile()"/>
                                         </div>
-                                        <span th:if="${#fields.hasErrors('dockerComposeFile')}">
+                                        <span th:if="${#fields.hasErrors('dockerCompose')}">
                                             <ul>
                                                 <li class="text-danger text-start"
-                                                    th:each="err : ${#fields.errors('dockerComposeFile')}" th:text="${err}"/>
+                                                    th:each="err : ${#fields.errors('dockerCompose')}" th:text="${err}"/>
                                             </ul>
                                         </span>
                                     </div>
@@ -218,12 +226,13 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-6 mb-3">
-                                    <div th:hidden="${cardImageFile == null}" class="input-group" id="cardImageFilePreviewDiv">
+                                    <div th:hidden="${projectTo.cardImage?.fileLink == null && projectTo.cardImage?.inputtedFileBytes == null}"
+                                         class="input-group" id="cardImageFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Card image file</span>
                                         <div class="form-control py-1 text-start">
-                                            <img th:src="@{${cardImageFile != null ? ('/' + cardImageFile.fileLink) : ''}}"
-                                                 width="42" height="24" id="cardImageFilePreview"/>
-                                            <span th:text="${cardImageFile?.fileName}" id="cardImageFileName">File name</span>
+                                            <img th:src="@{${projectTo.cardImage?.getImageSrc()}}"
+                                                 width="42" height="24" alt="" id="cardImageFilePreview" />
+                                            <span th:text="${projectTo?.cardImage?.fileName}" id="cardImageFileName">File name</span>
                                             <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
                                                onclick="deleteCardImageFile()">
                                                 <i class="fa-solid fa-xmark"></i>
@@ -231,15 +240,18 @@
                                         </div>
                                     </div>
                                     <div id="cardImageFileInputDiv">
-                                        <div th:if="${cardImageFile == null}" class="input-group custom-file-button">
+                                        <div th:if="${projectTo.cardImage == null ||
+                                            (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
+                                             class="input-group custom-file-button">
                                             <label class="input-group-text bg-light project-card-label">Card image file</label>
-                                            <input type="file" accept="image/*" th:field="*{cardImageFile}" class="form-control text-muted"
+                                            <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
+                                                   class="form-control text-muted"
                                                    id="cardImageFileInput" required onchange="previewCardImageFile()"/>
                                         </div>
-                                        <span th:if="${#fields.hasErrors('cardImageFile')}">
+                                        <span th:if="${#fields.hasErrors('cardImage')}">
                                             <ul>
                                                 <li class="text-danger text-start"
-                                                    th:each="err : ${#fields.errors('cardImageFile')}" th:text="${err}"/>
+                                                    th:each="err : ${#fields.errors('cardImage')}" th:text="${err}"/>
                                             </ul>
                                         </span>
                                     </div>
@@ -267,8 +279,8 @@
                                         <div class="text-start text-muted tiny">
                                             Card image
                                         </div>
-                                        <img th:src="@{${cardImageFile != null ? ('/' + cardImageFile.fileLink) : ''}}"
-                                             height="150px" class="rounded-2 mt-2" id="cardImageFileLargePreview"/>
+                                        <img th:src="@{${projectTo.cardImage?.getImageSrc()}}"
+                                             height="150px" style="max-width: 95%;" class="rounded-2 mt-2" id="cardImageFileLargePreview" alt="" />
                                     </div>
                                 </div>
                                 <div class="col-lg-8 mb-3">

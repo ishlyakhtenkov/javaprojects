@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
@@ -82,9 +81,6 @@ public class ProjectController {
         log.info("show edit form for project with id={}", id);
         Project project = projectService.getWithTechnologiesAndDescription(id, true);
         model.addAttribute("projectTo", projectUtil.asTo(project));
-        model.addAttribute("logoFile", project.getLogo());
-        model.addAttribute("dockerComposeFile", project.getDockerCompose());
-        model.addAttribute("cardImageFile", project.getCardImage());
         addAttributesToModel(model);
         return "projects/project-form";
     }
@@ -96,21 +92,11 @@ public class ProjectController {
         if (result.hasErrors()) {
             addAttributesToModel(model);
             if (!isNew) {
-                Project project = projectService.get(projectTo.getId());
-                if (projectTo.getLogoFile() == null) {
-                    model.addAttribute("logoFile", project.getLogo());
-                }
-                if (projectTo.getCardImageFile() == null) {
-                    model.addAttribute("cardImageFile", project.getCardImage());
-                }
-                if (projectTo.getDockerComposeFile() == null) {
-                    model.addAttribute("dockerComposeFile", project.getDockerCompose());
-                }
-                model.addAttribute("projectName", project.getName());
+                model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());
             }
             projectTo.getDescriptionElementTos().stream()
                     .filter(de -> de.getType() == IMAGE && de.getImage() != null &&
-                            !FileUtil.isMultipartFileEmpty(de.getImage().getInputtedFile()))
+                            (de.getImage().getInputtedFile() != null && !de.getImage().getInputtedFile().isEmpty()))
                     .forEach(this::keepInputtedFile);
             return "projects/project-form";
         }

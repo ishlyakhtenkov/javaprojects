@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
 import ru.javaprojects.projector.references.technologies.TechnologyTo;
 import ru.javaprojects.projector.references.technologies.model.Technology;
@@ -98,7 +97,7 @@ public class TechnologyController {
         boolean isNew = technologyTo.isNew();
         if (result.hasErrors()) {
             addAttributesToModel(model);
-            if (!FileUtil.isMultipartFileEmpty(technologyTo.getLogo().getInputtedFile())) {
+            if (technologyTo.getLogo().getInputtedFile() != null && !technologyTo.getLogo().getInputtedFile().isEmpty()) {
                 keepInputtedFile(technologyTo);
             }
             if (!isNew) {

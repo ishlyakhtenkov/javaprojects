@@ -3,7 +3,6 @@ package ru.javaprojects.projector.common.util;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-import ru.javaprojects.projector.common.HasImageFileString;
 import ru.javaprojects.projector.common.error.FileException;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.to.FileTo;
@@ -42,7 +41,7 @@ public class FileUtil {
 
     public static void upload(FileTo fileTo, String dirPath, String fileName) {
         Assert.notNull(fileTo, "fileTo must not be null");
-        if (!isMultipartFileEmpty(fileTo.getInputtedFile())) {
+        if ((fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty())) {
             upload(fileTo.getInputtedFile(), dirPath, fileName);
         } else if (fileTo.getInputtedFileBytes() != null) {
             upload(fileTo.getInputtedFileBytes(), dirPath, fileName);
@@ -138,16 +137,8 @@ public class FileUtil {
         return path.toLowerCase().replace(' ', '_');
     }
 
-    public static boolean isMultipartFileEmpty(MultipartFile file) {
-        return file == null || file.isEmpty();
-    }
-
-    public static boolean hasImageFileString(HasImageFileString bean) {
-        return bean.getImageFileString() != null && !bean.getImageFileString().isEmpty() && bean.getFileName() != null
-                && !bean.getFileName().isEmpty();
-    }
-
     public static boolean isFileToEmpty(FileTo fileTo) {
+        Assert.notNull(fileTo, "fileTo must not be null");
         MultipartFile inputtedFile = fileTo.getInputtedFile();
         byte[] inputtedFileBytes = fileTo.getInputtedFileBytes();
         String fileName = fileTo.getFileName();

@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
-import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.common.to.BaseTo;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.common.util.validation.YamlFile;
@@ -36,7 +37,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
 
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 128)
+    @Size(max = 128)
     private String shortDescription;
 
     private boolean enabled;
@@ -55,15 +56,15 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
 
     @Nullable
     @ImageFile
-    private MultipartFile logoFile;
+    private FileTo logo;
 
     @Nullable
     @YamlFile
-    private MultipartFile dockerComposeFile;
+    private FileTo dockerCompose;
 
     @Nullable
     @ImageFile
-    private MultipartFile cardImageFile;
+    private FileTo cardImage;
 
     @Nullable
     @NoHtml
@@ -96,9 +97,10 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     private List<DescriptionElementTo> descriptionElementTos = new ArrayList<>();
 
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                     LocalDate endDate, Architecture architecture, String deploymentUrl, String backendSrcUrl,
-                     String frontendSrcUrl, String openApiUrl, Set<Long> technologiesIds,
-                     List<DescriptionElementTo> descriptionElementTos) {
+                     LocalDate endDate, Architecture architecture, String logoFileName, String logoFileLink,
+                     String dockerComposeFileName, String dockerComposeFileLink, String cardImageFileName,
+                     String cardImageFileLink, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -107,6 +109,9 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.startDate = startDate;
         this.endDate = endDate;
         this.architecture = architecture;
+        this.logo = new FileTo(logoFileName, logoFileLink, null, null);
+        this.dockerCompose = new FileTo(dockerComposeFileName, dockerComposeFileLink, null, null);
+        this.cardImage = new FileTo(cardImageFileName, cardImageFileLink, null, null);
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
@@ -116,14 +121,27 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     }
 
     public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                     LocalDate endDate, Architecture architecture, MultipartFile logoFile, MultipartFile dockerComposeFile,
-                     MultipartFile cardImageFile, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
-        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, deploymentUrl, backendSrcUrl,
-                frontendSrcUrl, openApiUrl, technologiesIds, descriptionElementTos);
-        this.logoFile = logoFile;
-        this.dockerComposeFile = dockerComposeFile;
-        this.cardImageFile = cardImageFile;
+                     LocalDate endDate, Architecture architecture, MultipartFile logoMultipartFile,
+                     MultipartFile dockerComposeMultipartFile, MultipartFile cardImageMultipartFile,
+                     String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
+                     Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
+        super(id);
+        this.name = name;
+        this.shortDescription = shortDescription;
+        this.enabled = enabled;
+        this.priority = priority;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.architecture = architecture;
+        this.logo = new FileTo(null, null, logoMultipartFile, null);
+        this.dockerCompose = new FileTo(null, null, dockerComposeMultipartFile, null);;
+        this.cardImage = new FileTo(null, null, cardImageMultipartFile, null);;
+        this.deploymentUrl = deploymentUrl;
+        this.backendSrcUrl = backendSrcUrl;
+        this.frontendSrcUrl = frontendSrcUrl;
+        this.openApiUrl = openApiUrl;
+        this.technologiesIds = technologiesIds;
+        this.descriptionElementTos = descriptionElementTos;
     }
 
     @Override

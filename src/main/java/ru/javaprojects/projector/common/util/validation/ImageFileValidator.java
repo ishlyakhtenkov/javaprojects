@@ -2,14 +2,15 @@ package ru.javaprojects.projector.common.util.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.web.multipart.MultipartFile;
+import ru.javaprojects.projector.common.to.FileTo;
 
 import java.util.Objects;
 
-public class ImageFileValidator implements ConstraintValidator<ImageFile, MultipartFile> {
+public class ImageFileValidator implements ConstraintValidator<ImageFile, FileTo> {
 
     @Override
-    public boolean isValid(MultipartFile file, ConstraintValidatorContext ctx) {
-        return file == null || file.isEmpty() || Objects.requireNonNull(file.getContentType()).contains("image/");
+    public boolean isValid(FileTo fileTo, ConstraintValidatorContext ctx) {
+        return fileTo == null || fileTo.getInputtedFile() == null || fileTo.getInputtedFile().isEmpty()
+                || Objects.requireNonNull(fileTo.getInputtedFile().getContentType()).contains("image/");
     }
 }

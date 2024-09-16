@@ -13,6 +13,7 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
+import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.references.technologies.model.Usage;
 
@@ -39,6 +40,7 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
     private Priority priority;
 
     @Nullable
+    @ImageFile
     private FileTo logo;
 
     public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile logoMultipartFile) {

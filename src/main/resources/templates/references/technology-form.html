@@ -119,10 +119,10 @@
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}" class="form-control text-muted"
                                            id="fileInput" required onchange="previewFile()"/>
                                 </div>
-                                <span th:if="${#fields.hasErrors('logo.inputtedFile')}">
+                                <span th:if="${#fields.hasErrors('logo')}">
                                     <ul>
                                         <li class="text-danger text-start"
-                                            th:each="err : ${#fields.errors('logo.inputtedFile')}" th:text="${err}"/>
+                                            th:each="err : ${#fields.errors('logo')}" th:text="${err}"/>
                                     </ul>
                                 </span>
                             </div>

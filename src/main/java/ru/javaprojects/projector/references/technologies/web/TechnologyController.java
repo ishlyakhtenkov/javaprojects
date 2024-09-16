@@ -98,7 +98,11 @@ public class TechnologyController {
         if (result.hasErrors()) {
             addAttributesToModel(model);
             if (technologyTo.getLogo().getInputtedFile() != null && !technologyTo.getLogo().getInputtedFile().isEmpty()) {
-                keepInputtedFile(technologyTo);
+                if (technologyTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
+                    keepInputtedFile(technologyTo);
+                } else {
+                    technologyTo.setLogo(null);
+                }
             }
             if (!isNew) {
                 model.addAttribute("technologyName", service.get(technologyTo.getId()).getName());

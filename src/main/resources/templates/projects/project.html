@@ -108,13 +108,13 @@
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
                                     <div class="text-start text-muted tiny">Card image</div>
                                     <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
-                                         height="150px" style="max-width: 95%;" class="rounded-2 mt-2" />
+                                         height="165px" style="max-width: 100%;" class="rounded-2 mt-1" />
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 h-100">
                                     <div class="text-start text-muted tiny">Technologies</div>
-                                    <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2">
+                                    <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-1">
                                         <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                             width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                     </span>

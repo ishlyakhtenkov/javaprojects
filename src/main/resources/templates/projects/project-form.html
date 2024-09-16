@@ -124,7 +124,9 @@
                                         <div th:if="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
                                              class="input-group custom-file-button">
                                             <label class="input-group-text bg-light project-card-label">Logo file</label>
-                                            <input type="file" accept="image/*" th:field="*{logo.inputtedFile}" class="form-control text-muted"
+                                            <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
+                                                   class="form-control text-muted"
+                                                   th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"
                                                    id="logoFileInput" required onchange="previewLogoFile()"/>
                                         </div>
                                         <span th:if="${#fields.hasErrors('logo')}">
@@ -236,21 +238,25 @@
 
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
-                                    <div class="border rounded-2 ps-3 pe-2 pb-1 h-100">
+                                    <div class="border rounded-2 ps-3 pe-4 pb-3 h-100">
                                         <div class="text-start text-muted tiny">
                                             Card image
                                         </div>
                                         <div class="d-flex align-items-start">
                                             <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
-                                                   hidden class="element-image-input" onchange="previewImage($(this))"/>
+                                                   hidden class="element-image-input"
+                                                   th:required="${projectTo.cardImage == null ||
+                                                   (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
+                                                   onchange="previewImage($(this))"/>
 
                                             <img th:hidden="${projectTo.cardImage == null && (projectTo.cardImage.getImageSrc() == null)}"
                                                  th:src="@{${projectTo.cardImage.getImageSrc()}}"
-                                                 class="element-image rounded-2 mt-2 mb-1 border"
-                                                 style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
+                                                 class="element-image rounded-2 mt-1 border"
+                                                 style="cursor: zoom-in; max-width: 95%; max-height: 165px;"
                                                  onclick="showLargerImage($(this))" />
 
                                             <div class="empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center"
+                                                 th:classappend="${#fields.hasErrors('cardImage')} ? 'border-danger' : ''"
                                                  style="height: 150px; width: 300px;"
                                                  th:styleappend="${projectTo.cardImage == null ||
                                                  (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null) ? '' : 'display: none;'}">
@@ -262,11 +268,17 @@
 
                                             <button type="button" th:hidden="${projectTo.cardImage == null ||
                                                     (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
-                                                    class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
+                                                    class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-0"
                                                     title="Change image"
                                                     onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
                                             </button>
                                         </div>
+                                        <span th:if="${#fields.hasErrors('cardImage')}">
+                                            <ul>
+                                                <li class="text-danger text-start"
+                                                    th:each="err : ${#fields.errors('cardImage')}" th:text="${err}"/>
+                                            </ul>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-8 mb-3">

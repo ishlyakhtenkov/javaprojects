@@ -119,6 +119,7 @@
                                     <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                            class="form-control text-muted"
+                                           th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"
                                            id="fileInput" required onchange="previewFile()"/>
                                 </div>
                                 <span th:if="${#fields.hasErrors('logo')}">

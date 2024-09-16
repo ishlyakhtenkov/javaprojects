@@ -93,10 +93,18 @@ public class ProjectController {
         if (result.hasErrors()) {
             addAttributesToModel(model);
             if (projectTo.getLogo().getInputtedFile() != null && !projectTo.getLogo().getInputtedFile().isEmpty()) {
-                keepInputtedFile(projectTo.getLogo());
+                if (projectTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
+                    keepInputtedFile(projectTo.getLogo());
+                } else {
+                    projectTo.setLogo(null);
+                }
             }
             if (projectTo.getCardImage().getInputtedFile() != null && !projectTo.getCardImage().getInputtedFile().isEmpty()) {
-                keepInputtedFile(projectTo.getCardImage());
+                if (projectTo.getCardImage().getInputtedFile().getContentType().contains("image/")) {
+                    keepInputtedFile(projectTo.getCardImage());
+                } else {
+                    projectTo.setCardImage(null);
+                }
             }
             if (!isNew) {
                 model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());

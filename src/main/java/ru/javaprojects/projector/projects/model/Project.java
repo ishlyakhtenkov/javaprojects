@@ -16,8 +16,8 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
-import ru.javaprojects.projector.references.architectures.Architecture;
-import ru.javaprojects.projector.references.technologies.model.Technology;
+import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 import java.time.LocalDate;
 import java.util.HashSet;

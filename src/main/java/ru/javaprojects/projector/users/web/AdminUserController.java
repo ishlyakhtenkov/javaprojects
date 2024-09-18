@@ -29,7 +29,7 @@ import static ru.javaprojects.projector.users.util.UserUtil.asTo;
 @AllArgsConstructor
 @Slf4j
 public class AdminUserController {
-    static final String USERS_URL = "/users";
+    static final String USERS_URL = "/management/users";
 
     private final UserService service;
     private final UniqueEmailValidator emailValidator;
@@ -47,7 +47,7 @@ public class AdminUserController {
         Page<User> users;
         if (keyword != null) {
             if (keyword.isBlank()) {
-                return "redirect:/users";
+                return "redirect:/management/users";
             }
             log.info("get users (pageNumber={}, pageSize={}, keyword={})", pageable.getPageNumber(),
                     pageable.getPageSize(), keyword);
@@ -60,7 +60,7 @@ public class AdminUserController {
             if (keyword != null) {
                 redirectAttributes.addAttribute("keyword", keyword);
             }
-            return "redirect:/users";
+            return "redirect:/management/users";
         }
         model.addAttribute("users", users);
         model.addAttribute("onlineUsersIds", service.getOnlineUsersIds());
@@ -86,7 +86,7 @@ public class AdminUserController {
         service.create(user);
         redirectAttributes.addFlashAttribute("action", messageSource.getMessage("user.created",
                 new Object[]{user.getName()}, LocaleContextHolder.getLocale()));
-        return "redirect:/users";
+        return "redirect:/management/users";
     }
 
     @GetMapping("/edit/{id}")
@@ -111,6 +111,6 @@ public class AdminUserController {
         service.update(userTo);
         redirectAttributes.addFlashAttribute("action", messageSource.getMessage("user.updated",
                 new Object[]{userTo.getName()}, LocaleContextHolder.getLocale()));
-        return "redirect:/users";
+        return "redirect:/management/users";
     }
 }

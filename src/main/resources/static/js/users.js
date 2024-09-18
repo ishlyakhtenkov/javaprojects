@@ -18,7 +18,7 @@ function changePassword() {
     let repeatPassword = changePasswordModal.find('#repeatPassword').val();
     if (password.length && repeatPassword.length && password === repeatPassword) {
         $.ajax({
-            url: `users/change-password/${id}`,
+            url: `/management/users/change-password/${id}`,
             type: "PATCH",
             data: "password=" + password
         }).done(function () {
@@ -34,7 +34,7 @@ function enableUser(checkbox, id) {
     let enabled = checkbox.checked;
     let name = checkbox.dataset.name;
     $.ajax({
-        url: `users/${id}`,
+        url: `/management/users/${id}`,
         type: "PATCH",
         data: "enabled=" + enabled
     }).done(function() {
@@ -52,7 +52,7 @@ function enableUser(checkbox, id) {
 function deleteUser(delButton, id) {
     let name = delButton.dataset.name;
     $.ajax({
-        url: `users/${id}`,
+        url: `/management/users/${id}`,
         type: "DELETE"
     }).done(function() {
         deleteTableRow(id, `User ${name} has been deleted`);

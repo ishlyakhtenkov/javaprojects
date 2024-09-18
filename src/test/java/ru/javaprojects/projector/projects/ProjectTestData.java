@@ -22,9 +22,9 @@ import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.model.Priority.*;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.model.ElementType.*;
-import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture1;
-import static ru.javaprojects.projector.references.architectures.ArchitectureTestData.architecture2;
-import static ru.javaprojects.projector.references.technologies.TechnologyTestData.*;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
+import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.*;
 
 public class ProjectTestData {
     public static final MatcherFactory.Matcher<Project> PROJECT_MATCHER =

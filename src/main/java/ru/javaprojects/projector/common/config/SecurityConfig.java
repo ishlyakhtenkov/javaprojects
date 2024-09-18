@@ -75,7 +75,7 @@ public class SecurityConfig {
                 .addFilterAfter(userMdcFilter, AuthorizationFilter.class)
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/users/**", "/references/**", "/projects/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/management/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password",
                                         "/login").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()

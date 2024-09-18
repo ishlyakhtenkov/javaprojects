@@ -21,7 +21,7 @@
                         <h3 class="text-center" th:text="${projectTo.isNew()} ? 'New project' :
                             ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h3>
                     </div>
-                    <form th:action="@{/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
+                    <form th:action="@{/management/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
                         <div class="card-body text-start">
                             <input type="hidden" th:field="*{id}">
                             <input type="hidden" th:field="*{logo.fileName}">

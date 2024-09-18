@@ -18,7 +18,7 @@ import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.validation.ImageFile;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.common.util.validation.YamlFile;
-import ru.javaprojects.projector.references.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

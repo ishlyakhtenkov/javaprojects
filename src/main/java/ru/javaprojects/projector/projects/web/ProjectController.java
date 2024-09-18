@@ -19,8 +19,8 @@ import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.ProjectTo;
-import ru.javaprojects.projector.references.architectures.ArchitectureService;
-import ru.javaprojects.projector.references.technologies.TechnologyService;
+import ru.javaprojects.projector.reference.architectures.ArchitectureService;
+import ru.javaprojects.projector.reference.technologies.TechnologyService;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 @AllArgsConstructor
 @Slf4j
 public class ProjectController {
-    static final String PROJECTS_URL = "/projects";
+    static final String PROJECTS_URL = "/management/projects";
 
     private final ProjectService projectService;
     private final ArchitectureService architectureService;
@@ -127,7 +127,7 @@ public class ProjectController {
         redirectAttributes.addFlashAttribute("action",
                 messageSource.getMessage((isNew ? "project.created" : "project.updated"),
                         new Object[]{projectTo.getName()}, LocaleContextHolder.getLocale()));
-        return "redirect:/projects/" + project.getId();
+        return "redirect:/management/projects/" + project.getId();
     }
 
     private void keepInputtedFile(FileTo fileTo) {

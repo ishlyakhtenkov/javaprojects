@@ -22,5 +22,5 @@ public interface ProjectRepository extends NamedRepository<Project> {
     Optional<Project> findWithTechnologiesAndDescriptionById(long id);
 
     @EntityGraph(attributePaths = {"descriptionElements"})
-    Optional<Project> findWithDescriptionByIdAndDescriptionElements_Type(long id, ElementType type);
+    Optional<Project> findWithDescriptionById(long id);
 }

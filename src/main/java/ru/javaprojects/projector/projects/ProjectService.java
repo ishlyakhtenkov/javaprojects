@@ -74,7 +74,7 @@ public class ProjectService {
 
     @Transactional
     public void delete(long id) {
-        Project project = repository.findWithDescriptionByIdAndDescriptionElements_Type(id, IMAGE).orElseThrow(() ->
+        Project project = repository.findWithDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
         repository.delete(project);
         repository.flush();

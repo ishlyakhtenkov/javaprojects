@@ -15,8 +15,8 @@ import ru.javaprojects.projector.projects.model.ElementType;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
-import ru.javaprojects.projector.references.technologies.TechnologyService;
-import ru.javaprojects.projector.references.technologies.model.Technology;
+import ru.javaprojects.projector.reference.technologies.TechnologyService;
+import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 import java.util.List;
 import java.util.Map;

@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-5">
                     <div class="float-end">
-                        <a th:href="@{/projects/add}" type="button" title="Add project"
+                        <a th:href="@{/management/projects/add}" type="button" title="Add project"
                            class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -58,11 +58,11 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{'/projects/' + ${project.id}}" type="button" title="Show project"
+                        <a th:href="@{'/management/projects/' + ${project.id}}" type="button" title="Show project"
                            class="btn-link link-underline-opacity-0 link-secondary">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </a>
-                        <a th:href="@{'/projects/edit/' + ${project.id}}" type="button" title="Edit project"
+                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" type="button" title="Edit project"
                            class="btn-link link-underline-opacity-0 link-success ms-3">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>

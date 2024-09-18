@@ -18,13 +18,13 @@
                 </div>
                 <div class="col-sm-8 mt-1 mt-sm-0">
                     <div class="btn-toolbar justify-content-start justify-content-sm-end">
-                        <form class="d-flex" role="search" th:action="@{/users}" method="get">
+                        <form class="d-flex" role="search" th:action="@{/management/users}" method="get">
                             <div class="input-group">
                                 <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
                                 <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
                             </div>
                         </form>
-                        <a th:href="@{/users/add}" type="button" title="Add user"
+                        <a th:href="@{/management/users/add}" type="button" title="Add user"
                            class="btn btn-outline-primary ms-2"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{'/users/edit/' + ${user.id}}" type="button" title="Edit user"
+                        <a th:href="@{'/management/users/edit/' + ${user.id}}" type="button" title="Edit user"
                            class="btn-link link-underline-opacity-0 link-success">
                             <i class="fa-solid fa-user-pen"></i>
                         </a>

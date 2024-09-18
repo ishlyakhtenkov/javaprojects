@@ -38,13 +38,13 @@ public class RegisterController {
     public String showRegisterPage(Model model) {
         log.info("show register page");
         model.addAttribute("registerTo", new RegisterTo());
-        return "users/register";
+        return "profile/register";
     }
 
     @PostMapping
     public String register(@Valid RegisterTo registerTo, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "users/register";
+            return "profile/register";
         }
         log.info("register {}", registerTo);
         checkNew(registerTo);

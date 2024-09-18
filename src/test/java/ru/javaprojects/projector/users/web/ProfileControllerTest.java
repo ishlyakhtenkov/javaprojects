@@ -31,8 +31,8 @@ import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
 class ProfileControllerTest extends AbstractControllerTest {
     private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/reset-password";
-    private static final String RESET_PASSWORD_VIEW = "users/reset-password";
-    private static final String PROFILE_VIEW = "users/profile";
+    private static final String RESET_PASSWORD_VIEW = "profile/reset-password";
+    private static final String PROFILE_VIEW = "profile/profile";
     private static final String CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
 
     @Autowired

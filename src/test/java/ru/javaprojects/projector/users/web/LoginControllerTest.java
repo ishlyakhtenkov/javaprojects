@@ -17,7 +17,7 @@ import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
 class LoginControllerTest extends AbstractControllerTest {
-    private static final String LOGIN_PAGE_VIEW = "users/login";
+    private static final String LOGIN_PAGE_VIEW = "profile/login";
     private static final String ERROR_PARAM_BAD_CREDENTIALS = "?error=bad-credentials";
     private static final String ERROR_PARAM_DISABLED_CREDENTIALS = "?error=disabled-credentials";
 

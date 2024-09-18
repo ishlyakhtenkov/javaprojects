@@ -42,9 +42,9 @@ import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
 class TechnologyControllerTest extends AbstractControllerTest implements TestContentFilesManager {
-    private static final String TECHNOLOGIES_VIEW = "reference/technologies";
+    private static final String TECHNOLOGIES_VIEW = "management/reference/technologies";
     private static final String TECHNOLOGIES_ADD_FORM_URL = TECHNOLOGIES_URL + "/add";
-    private static final String TECHNOLOGY_FORM_VIEW = "reference/technology-form";
+    private static final String TECHNOLOGY_FORM_VIEW = "management/reference/technology-form";
     private static final String TECHNOLOGIES_EDIT_FORM_URL = TECHNOLOGIES_URL + "/edit/";
 
     static final String TECHNOLOGIES_TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";

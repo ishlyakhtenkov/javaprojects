@@ -66,7 +66,7 @@ public class TechnologyController {
             return "redirect:/management/reference/technologies";
         }
         model.addAttribute("technologies", technologies);
-        return "reference/technologies";
+        return "management/reference/technologies";
     }
 
     @GetMapping("/add")
@@ -74,7 +74,7 @@ public class TechnologyController {
         log.info("show technology add form");
         model.addAttribute("technologyTo", new TechnologyTo());
         addAttributesToModel(model);
-        return "reference/technology-form";
+        return "management/reference/technology-form";
     }
 
     private void addAttributesToModel(Model model) {
@@ -88,7 +88,7 @@ public class TechnologyController {
         Technology technology = service.get(id);
         model.addAttribute("technologyTo", asTo(technology));
         addAttributesToModel(model);
-        return "reference/technology-form";
+        return "management/reference/technology-form";
     }
 
     @PostMapping
@@ -107,7 +107,7 @@ public class TechnologyController {
             if (!isNew) {
                 model.addAttribute("technologyName", service.get(technologyTo.getId()).getName());
             }
-            return "reference/technology-form";
+            return "management/reference/technology-form";
         }
         log.info((isNew ? "create" : "update") + " {}", technologyTo);
         if (isNew) {

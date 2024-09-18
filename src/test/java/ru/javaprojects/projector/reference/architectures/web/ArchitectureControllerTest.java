@@ -28,9 +28,9 @@ import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
 class ArchitectureControllerTest extends AbstractControllerTest {
-    private static final String ARCHITECTURES_VIEW = "reference/architectures";
+    private static final String ARCHITECTURES_VIEW = "management/reference/architectures";
     private static final String ARCHITECTURES_ADD_FORM_URL = ARCHITECTURES_URL + "/add";
-    private static final String ARCHITECTURE_FORM_VIEW = "reference/architecture-form";
+    private static final String ARCHITECTURE_FORM_VIEW = "management/reference/architecture-form";
     private static final String ARCHITECTURES_EDIT_FORM_URL = ARCHITECTURES_URL + "/edit/";
 
     @Autowired

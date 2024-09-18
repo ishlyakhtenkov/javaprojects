@@ -24,13 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
-import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_TEST_DATA_FILES_PATH;
-import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_URL_SLASH;
+import static ru.javaprojects.projector.projects.web.AdminProjectControllerTest.PROJECTS_TEST_DATA_FILES_PATH;
+import static ru.javaprojects.projector.projects.web.AdminProjectControllerTest.PROJECTS_URL_SLASH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ProjectRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class AdminProjectRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
 
     @Value("${content-path.projects}")
     private String contentPath;

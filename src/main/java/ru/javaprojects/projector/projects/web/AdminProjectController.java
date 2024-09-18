@@ -28,10 +28,10 @@ import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
 @Controller
-@RequestMapping(ProjectController.PROJECTS_URL)
+@RequestMapping(AdminProjectController.PROJECTS_URL)
 @AllArgsConstructor
 @Slf4j
-public class ProjectController {
+public class AdminProjectController {
     static final String PROJECTS_URL = "/management/projects";
 
     private final ProjectService projectService;
@@ -51,14 +51,14 @@ public class ProjectController {
     public String getAll(Model model) {
         log.info("get projects");
         model.addAttribute("projects", projectService.getAll());
-        return "projects/projects";
+        return "management/projects/projects";
     }
 
     @GetMapping("/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
         model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id, true));
-        return "projects/project";
+        return "management/projects/project";
     }
 
     @GetMapping("/add")
@@ -66,7 +66,7 @@ public class ProjectController {
         log.info("show project add form");
         model.addAttribute("projectTo", new ProjectTo());
         addAttributesToModel(model);
-        return "projects/project-form";
+        return "management/projects/project-form";
     }
 
     private void addAttributesToModel(Model model) {
@@ -81,7 +81,7 @@ public class ProjectController {
         Project project = projectService.getWithTechnologiesAndDescription(id, true);
         model.addAttribute("projectTo", projectUtil.asTo(project));
         addAttributesToModel(model);
-        return "projects/project-form";
+        return "management/projects/project-form";
     }
 
     @PostMapping
@@ -120,7 +120,7 @@ public class ProjectController {
                     .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null &&
                             (deTo.getImage().getInputtedFile() != null && !deTo.getImage().getInputtedFile().isEmpty()))
                     .forEach(deTo -> keepInputtedFile(deTo.getImage()));
-            return "projects/project-form";
+            return "management/projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
         Project project = isNew ? projectService.create(projectTo) : projectService.update(projectTo);

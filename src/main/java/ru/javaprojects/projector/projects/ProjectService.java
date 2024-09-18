@@ -72,6 +72,10 @@ public class ProjectService {
         return repository.findAllByOrderByName();
     }
 
+    public List<Project> getAllEnabled() {
+        return repository.findAllByEnabledIsTrueOrderByName();
+    }
+
     @Transactional
     public void delete(long id) {
         Project project = repository.findWithDescriptionById(id).orElseThrow(() ->

@@ -30,7 +30,7 @@ public class LoginController {
                 model.addAttribute("error", messageSource.getMessage(error, null,
                         "Bad credentials", LocaleContextHolder.getLocale()));
             }
-            return "users/login";
+            return "profile/login";
         }
         return "redirect:/";
     }

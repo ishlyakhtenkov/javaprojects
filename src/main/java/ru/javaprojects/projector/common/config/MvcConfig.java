@@ -23,7 +23,7 @@ public class MvcConfig implements WebMvcConfigurer {
         @Override
         public void postHandle(WebRequest request, ModelMap model) {
             if (model != null) {
-                model.addAttribute("headerProjects", projectService.getAll());
+                model.addAttribute("enabledProjects", projectService.getAllEnabled());
             }
         }
 

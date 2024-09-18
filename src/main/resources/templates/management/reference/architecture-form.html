@@ -48,8 +48,8 @@
                                               maxlength="400" required></textarea>
                                     <label for="descriptionInput" class="text-muted">Short description</label>
                                 </div>
-                                <small class="float-end text-muted" id="characterCounter"
-                                       th:text="*{(400 - (description == null ? 0 : description.length())) + ' characters left'}">Characters left</small>
+                                <span class="float-end text-muted tiny" id="characterCounter"
+                                       th:text="*{(400 - (description == null ? 0 : description.length())) + ' characters left'}">Characters left</span>
                                 <span th:if="${#fields.hasErrors('description')}">
                                     <ul>
                                         <li class="text-danger text-start" th:each="err : ${#fields.errors('description')}"

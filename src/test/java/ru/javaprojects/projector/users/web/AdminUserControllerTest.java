@@ -36,9 +36,9 @@ class AdminUserControllerTest extends AbstractControllerTest {
     private static final String USERS_CREATE_URL = USERS_URL + "/create";
     private static final String USERS_EDIT_FORM_URL = USERS_URL + "/edit/";
     private static final String USERS_UPDATE_URL = USERS_URL + "/update";
-    private static final String USERS_VIEW = "users/users";
-    private static final String USER_ADD_VIEW = "users/user-add-form";
-    private static final String USER_EDIT_VIEW = "users/user-edit-form";
+    private static final String USERS_VIEW = "management/users/users";
+    private static final String USER_ADD_VIEW = "management/users/user-add-form";
+    private static final String USER_EDIT_VIEW = "management/users/user-edit-form";
 
     @Autowired
     private MessageSource messageSource;

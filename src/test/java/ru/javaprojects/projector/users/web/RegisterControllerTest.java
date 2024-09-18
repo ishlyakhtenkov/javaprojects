@@ -40,7 +40,7 @@ import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE
 
 class RegisterControllerTest extends AbstractControllerTest {
     private static final String CONFIRM_REGISTER_URL = REGISTER_URL + "/confirm";
-    private static final String REGISTER_PAGE_VIEW = "users/register";
+    private static final String REGISTER_PAGE_VIEW = "profile/register";
 
     @MockBean
     private MailSender mailSender;

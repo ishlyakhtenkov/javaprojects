@@ -15,6 +15,8 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @EntityGraph(attributePaths = "architecture")
     List<Project> findAllByOrderByName();
 
+    List<Project> findAllByEnabledIsTrueOrderByName();
+
     @EntityGraph(attributePaths = {"architecture", "technologies"})
     Optional<Project> findWithTechnologiesById(long id);
 

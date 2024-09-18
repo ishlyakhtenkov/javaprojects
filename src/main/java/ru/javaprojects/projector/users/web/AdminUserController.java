@@ -64,7 +64,7 @@ public class AdminUserController {
         }
         model.addAttribute("users", users);
         model.addAttribute("onlineUsersIds", service.getOnlineUsersIds());
-        return "users/users";
+        return "management/users/users";
     }
 
     @GetMapping("/add")
@@ -72,14 +72,14 @@ public class AdminUserController {
         log.info("show user add form");
         model.addAttribute("roles", Role.values());
         model.addAttribute("user", new User());
-        return "users/user-add-form";
+        return "management/users/user-add-form";
     }
 
     @PostMapping("/create")
     public String create(@Valid User user, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("roles", Role.values());
-            return "users/user-add-form";
+            return "management/users/user-add-form";
         }
         log.info("create {}", user);
         checkNew(user);
@@ -94,7 +94,7 @@ public class AdminUserController {
         log.info("show edit form for user with id={}", id);
         model.addAttribute("roles", Role.values());
         model.addAttribute("userTo", asTo(service.get(id)));
-        return "users/user-edit-form";
+        return "management/users/user-edit-form";
     }
 
     @PostMapping("/update")
@@ -104,7 +104,7 @@ public class AdminUserController {
             if (!userTo.isNew()) {
                 model.addAttribute("userName", service.get(userTo.getId()).getName());
             }
-            return "users/user-edit-form";
+            return "management/users/user-edit-form";
         }
         log.info("update {}", userTo);
         checkNotNew(userTo);

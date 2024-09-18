@@ -36,14 +36,14 @@ public class ArchitectureController {
     public String getAll(Model model) {
         log.info("get architectures");
         model.addAttribute("architectures", service.getAll());
-        return "reference/architectures";
+        return "management/reference/architectures";
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
         log.info("show architecture add form");
         model.addAttribute("architecture", new Architecture());
-        return "reference/architecture-form";
+        return "management/reference/architecture-form";
     }
 
     @GetMapping("/edit/{id}")
@@ -51,7 +51,7 @@ public class ArchitectureController {
         log.info("show edit form for architecture with id={}", id);
         Architecture architecture = service.get(id);
         model.addAttribute("architecture", architecture);
-        return "reference/architecture-form";
+        return "management/reference/architecture-form";
     }
 
     @PostMapping
@@ -62,7 +62,7 @@ public class ArchitectureController {
             if (!isNew) {
                 model.addAttribute("architectureName", service.get(architecture.id()).getName());
             }
-            return "reference/architecture-form";
+            return "management/reference/architecture-form";
         }
         log.info("{} {}", isNew ? "create" : "update", architecture);
         if (isNew) {

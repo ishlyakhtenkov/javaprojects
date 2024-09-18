@@ -37,13 +37,13 @@ public class ProfileController {
         log.info("show reset password form by token={}", token);
         passwordResetService.checkToken(token);
         model.addAttribute("passwordResetTo",  new PasswordResetTo(null, token));
-        return "users/reset-password";
+        return "profile/reset-password";
     }
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid PasswordResetTo passwordResetTo, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "users/reset-password";
+            return "profile/reset-password";
         }
         log.info("reset password by token={}", passwordResetTo.getToken());
         passwordResetService.resetPassword(passwordResetTo);
@@ -56,7 +56,7 @@ public class ProfileController {
     public String profile(@AuthenticationPrincipal AuthUser authUser, Model model) {
         log.info("show profile for user with id={}", authUser.id());
         model.addAttribute("user", userService.get(authUser.id()));
-        return "users/profile";
+        return "profile/profile";
     }
 
     @GetMapping("/change-email/confirm")

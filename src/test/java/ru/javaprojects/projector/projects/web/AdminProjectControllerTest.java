@@ -43,19 +43,19 @@ import static ru.javaprojects.projector.common.util.validation.UniqueNameValidat
 import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
-import static ru.javaprojects.projector.projects.web.ProjectController.PROJECTS_URL;
+import static ru.javaprojects.projector.projects.web.AdminProjectController.PROJECTS_URL;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ProjectControllerTest extends AbstractControllerTest implements TestContentFilesManager {
-    private static final String PROJECTS_VIEW = "projects/projects";
+class AdminProjectControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+    private static final String PROJECTS_VIEW = "management/projects/projects";
     private static final String PROJECTS_ADD_FORM_URL = PROJECTS_URL + "/add";
-    private static final String PROJECT_FORM_VIEW = "projects/project-form";
+    private static final String PROJECT_FORM_VIEW = "management/projects/project-form";
     static final String PROJECTS_URL_SLASH = PROJECTS_URL + "/";
-    private static final String PROJECT_VIEW = "projects/project";
+    private static final String PROJECT_VIEW = "management/projects/project";
     private static final String PROJECTS_EDIT_FORM_URL = PROJECTS_URL + "/edit/";
 
     static final String PROJECTS_TEST_DATA_FILES_PATH = "src/test/test-data-files/projects";

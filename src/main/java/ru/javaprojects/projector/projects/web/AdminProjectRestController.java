@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.projector.projects.ProjectService;
 
 @RestController
-@RequestMapping(value = ProjectController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminProjectController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
-public class ProjectRestController {
+public class AdminProjectRestController {
     private final ProjectService service;
 
     @DeleteMapping("/{id}")

@@ -76,7 +76,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers("/users/**", "/references/**", "/projects/**").hasRole(Role.ADMIN.name())
-                                .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password", "/login").anonymous()
+                                .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password",
+                                        "/login").anonymous()
                                 .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()
                 )

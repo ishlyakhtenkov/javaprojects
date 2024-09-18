@@ -43,7 +43,7 @@ public class FileUtil {
         Assert.notNull(fileTo, "fileTo must not be null");
         if ((fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty())) {
             upload(fileTo.getInputtedFile(), dirPath, fileName);
-        } else if (fileTo.getInputtedFileBytes() != null) {
+        } else if (fileTo.getInputtedFileBytes() != null && fileTo.getInputtedFileBytes().length != 0) {
             upload(fileTo.getInputtedFileBytes(), dirPath, fileName);
         } else {
             throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",

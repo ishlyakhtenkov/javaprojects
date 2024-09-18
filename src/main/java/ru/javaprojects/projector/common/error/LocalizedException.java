@@ -3,7 +3,7 @@ package ru.javaprojects.projector.common.error;
 import lombok.Getter;
 
 @Getter
-public class LocalizedException extends RuntimeException {
+public abstract class LocalizedException extends RuntimeException {
     private final String messageCode;
     private final Object[] messageArgs;
 

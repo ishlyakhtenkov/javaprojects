@@ -12,7 +12,8 @@ import java.io.IOException;
 
 public class CustomAuthFailureHandler implements AuthenticationFailureHandler {
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                        AuthenticationException exception) throws IOException, ServletException {
         String error = (exception instanceof DisabledException) ? "disabled-credentials" : "bad-credentials";
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.sendRedirect("/login?error=" + error);

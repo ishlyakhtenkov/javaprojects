@@ -14,7 +14,8 @@ import java.io.IOException;
 @Component
 public class UserMdcFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         AuthUser authUser = AuthUser.safeGet();
         String user = authUser != null ? authUser.getUser().getEmail() : "anonymous";
         MDC.put("user", user);

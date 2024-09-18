@@ -48,6 +48,16 @@ public class ProjectTestData {
     public static final String OPEN_API_URL_PARAM = "openApiUrl";
     public static final String TECHNOLOGIES_IDS_PARAM = "technologiesIds";
 
+    public static final String LOGO_FILE_NAME_PARAM = "logo.fileName";
+    public static final String LOGO_FILE_LINK_PARAM = "logo.fileLink";
+    public static final String LOGO_FILE_AS_BYTES_PARAM = "logo.inputtedFileBytes";
+    public static final String CARD_IMAGE_FILE_NAME_PARAM = "cardImage.fileName";
+    public static final String CARD_IMAGE_FILE_LINK_PARAM = "cardImage.fileLink";
+    public static final String CARD_IMAGE_FILE_AS_BYTES_PARAM = "cardImage.inputtedFileBytes";
+    public static final String DOCKER_COMPOSE_FILE_NAME_PARAM = "dockerCompose.fileName";
+    public static final String DOCKER_COMPOSE_FILE_LINK_PARAM = "dockerCompose.fileLink";
+    public static final String DOCKER_COMPOSE_FILE_AS_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
+
     public static final long DESCRIPTION_ELEMENT1_ID = 100020;
     public static final long DESCRIPTION_ELEMENT2_ID = 100021;
     public static final long DESCRIPTION_ELEMENT3_ID = 100022;
@@ -343,6 +353,12 @@ public class ProjectTestData {
         params.add(FRONTEND_SRC_URL_PARAM, updated.getFrontendSrcUrl());
         params.add(OPEN_API_URL_PARAM, updated.getOpenApiUrl());
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY1_ID));
+        params.add(LOGO_FILE_NAME_PARAM, updated.getLogo().getFileName());
+        params.add(LOGO_FILE_LINK_PARAM, updated.getLogo().getFileLink());
+        params.add(CARD_IMAGE_FILE_NAME_PARAM, updated.getCardImage().getFileName());
+        params.add(CARD_IMAGE_FILE_LINK_PARAM, updated.getCardImage().getFileLink());
+        params.add(DOCKER_COMPOSE_FILE_NAME_PARAM, updated.getDockerCompose().getFileName());
+        params.add(DOCKER_COMPOSE_FILE_LINK_PARAM, updated.getDockerCompose().getFileLink());
         params.add("descriptionElementTos[0].id", String.valueOf(updatedDe2.getId()));
         params.add("descriptionElementTos[0].type", updatedDe2.getType().name());
         params.add("descriptionElementTos[0].index", updatedDe2.getIndex().toString());

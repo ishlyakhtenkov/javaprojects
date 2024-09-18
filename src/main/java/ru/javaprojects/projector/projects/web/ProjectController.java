@@ -18,11 +18,9 @@ import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
-import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.references.architectures.ArchitectureService;
 import ru.javaprojects.projector.references.technologies.TechnologyService;
-import ru.javaprojects.projector.references.technologies.TechnologyTo;
 
 import java.io.IOException;
 
@@ -106,7 +104,8 @@ public class ProjectController {
                     projectTo.setCardImage(null);
                 }
             }
-            if (projectTo.getDockerCompose() != null && projectTo.getDockerCompose().getInputtedFile() != null && !projectTo.getDockerCompose().getInputtedFile().isEmpty()) {
+            if (projectTo.getDockerCompose() != null && projectTo.getDockerCompose().getInputtedFile() != null &&
+                    !projectTo.getDockerCompose().getInputtedFile().isEmpty()) {
                 if (projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yaml") ||
                         projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yml")) {
                     keepInputtedFile(projectTo.getDockerCompose());
@@ -118,9 +117,9 @@ public class ProjectController {
                 model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());
             }
             projectTo.getDescriptionElementTos().stream()
-                    .filter(de -> de.getType() == IMAGE && de.getImage() != null &&
-                            (de.getImage().getInputtedFile() != null && !de.getImage().getInputtedFile().isEmpty()))
-                    .forEach(this::keepInputtedFile);
+                    .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null &&
+                            (deTo.getImage().getInputtedFile() != null && !deTo.getImage().getInputtedFile().isEmpty()))
+                    .forEach(deTo -> keepInputtedFile(deTo.getImage()));
             return "projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -129,18 +128,6 @@ public class ProjectController {
                 messageSource.getMessage((isNew ? "project.created" : "project.updated"),
                         new Object[]{projectTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/projects/" + project.getId();
-    }
-
-    private void keepInputtedFile(DescriptionElementTo descriptionElementTo) {
-        try {
-            FileTo image = descriptionElementTo.getImage();
-            image.setInputtedFileBytes(image.getInputtedFile().getBytes());
-            image.setFileName(image.getInputtedFile().getOriginalFilename());
-            image.setFileLink(null);
-        } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{descriptionElementTo.getImage().getInputtedFile().getOriginalFilename()});
-        }
     }
 
     private void keepInputtedFile(FileTo fileTo) {

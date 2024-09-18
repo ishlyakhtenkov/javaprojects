@@ -249,13 +249,23 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void createDuplicateName() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.set(NAME_PARAM, technology1.getName());
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(LOGO_FILE)
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrorCode(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
+
+        assertArrayEquals(getNewTo().getLogo().getInputtedFile().getBytes(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogo().getInputtedFileBytes());
+        assertEquals(getNewTo().getLogo().getInputtedFile().getOriginalFilename(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogo().getFileName());
+        assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                .getLogo().getFileLink());
+
         assertNotEquals(getNew(contentPath).getUrl(), technologyService.getByName(technology1.getName()).getUrl());
     }
 
@@ -440,13 +450,23 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void updateDuplicateName() throws Exception {
         MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
         updatedParams.set(NAME_PARAM, technology2.getName());
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .file(UPDATED_LOGO_FILE)
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeHasFieldErrorCode(TECHNOLOGY_TO_ATTRIBUTE, NAME_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(TECHNOLOGY_FORM_VIEW));
+
+        assertArrayEquals(UPDATED_LOGO_FILE.getBytes(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogo().getInputtedFileBytes());
+        assertEquals(UPDATED_LOGO_FILE.getOriginalFilename(),
+                ((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                        .getLogo().getFileName());
+        assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
+                .getLogo().getFileLink());
+
         assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), technology2.getName());
         assertTrue(Files.exists(Paths.get(technology2.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + technology2.getName() + "/" + UPDATED_LOGO_FILE.getOriginalFilename().toLowerCase())));

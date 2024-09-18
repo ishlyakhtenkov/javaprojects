@@ -99,7 +99,7 @@ public class TechnologyController {
             addAttributesToModel(model);
             if (technologyTo.getLogo().getInputtedFile() != null && !technologyTo.getLogo().getInputtedFile().isEmpty()) {
                 if (technologyTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    keepInputtedFile(technologyTo);
+                    keepInputtedFile(technologyTo.getLogo());
                 } else {
                     technologyTo.setLogo(null);
                 }
@@ -121,15 +121,14 @@ public class TechnologyController {
         return "redirect:/references/technologies";
     }
 
-    private void keepInputtedFile(TechnologyTo technologyTo) {
+    private void keepInputtedFile(FileTo fileTo) {
         try {
-            FileTo logo = technologyTo.getLogo();
-            logo.setInputtedFileBytes(logo.getInputtedFile().getBytes());
-            logo.setFileName(logo.getInputtedFile().getOriginalFilename());
-            logo.setFileLink(null);
+            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
+            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
+            fileTo.setFileLink(null);
         } catch (IOException e) {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{technologyTo.getLogo().getInputtedFile().getOriginalFilename()});
+                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
         }
     }
 }

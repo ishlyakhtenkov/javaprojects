@@ -5,10 +5,10 @@
 
 <th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
-        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
-            <div class="row align-items-center" style="height: 46px">
-                <div class="col text-start">
-                    <span class="h3 text-secondary font-weight-bold"
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">
+            <div class="row align-items-center" style="min-height: 46px">
+                <div class="col text-start text-truncate">
+                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"
                           th:utext="${'<i class=''fa-solid fa-gears me-2''></i>Technologies / ' + (technologyTo.isNew() ? 'Create' : 'Edit')}">
                         Technologies / Create Edit
                     </span>
@@ -49,7 +49,12 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text w-25">URL</span>
-                                    <input type="text" id="hrefInput" th:field="*{url}"
+                                    <a th:hidden="${technologyTo.url == null}" th:href="${technologyTo.url}"
+                                       class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
+                                       title="Check URL" id="urlCheck" target="_blank">
+                                        <i class="fa-solid fa-up-right-from-square ms-1"></i>
+                                    </a>
+                                    <input type="url" id="urlInput" th:field="*{url}"
                                            th:class="${#fields.hasErrors('url')} ? 'form-control is-invalid' : 'form-control'"
                                            required placeholder="Official website URL" />
                                 </div>

@@ -5,10 +5,11 @@
 
 <th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
-        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
-            <div class="row align-items-center" style="height: 46px">
-                <div class="col text-start">
-                    <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-address-card me-2"></i>Profile</span>
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">
+            <div class="row align-items-center" style="min-height: 46px">
+                <div class="col text-start text-truncate">
+                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;">
+                        <i class="fa-solid fa-address-card me-2"></i>Profile</span>
                 </div>
             </div>
         </div>

@@ -22,3 +22,9 @@ function deleteFile() {
         '<input type="file" accept="image/*" id="fileInput" name="logo.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewFile()" /></div>').attr('hidden', false);
 }
+
+$('#urlInput').on('keyup', (event) => {
+    let urlCheck = $('#urlCheck');
+    urlCheck.attr('href', $(event.target).val());
+    urlCheck.attr('hidden', $(event.target).val().length === 0);
+});

@@ -8,7 +8,7 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle" style="padding-top: 1px;"
              th:classappend="${technologies.isEmpty() ? 'rounded-2 border-bottom' : ''}">
             <div class="row row-cols-1 row-cols-sm-2 py-1 align-items-center">
                 <div class="col-sm-5 text-start">
@@ -54,7 +54,8 @@
                     </td>
                     <td>
                         <a th:href="@{${technology.url}}"
-                           th:utext="${technology.name + ' website<i class=''fa-solid fa-up-right-from-square ms-1''></i> '}"
+                           class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                           th:utext="${technology.name + ' website<i class=''fa-solid fa-arrow-right-long ms-1''></i> '}"
                            target="_blank">Site url</a>
                     </td>
                     <td th:text="${technology.usage}"></td>

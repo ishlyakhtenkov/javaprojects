@@ -5,10 +5,10 @@
 <th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
-        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
-            <div class="row align-items-center" style="height: 46px">
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">
+            <div class="row align-items-center" style="min-height: 46px">
                 <div class="col text-start text-truncate">
-                    <span class="h3 text-secondary font-weight-bold"
+                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"
                           th:utext="${'<i class=''fa-solid fa-layer-group me-2''></i>Projects / ' + (project.name)}">Projects / Project</span>
                 </div>
             </div>
@@ -73,6 +73,7 @@
                                     <span class="input-group-text project-card-label">Docker file</span>
                                     <span class="form-control">
                                         <a th:if="${project.dockerCompose != null}" th:href="@{${'/' + project.dockerCompose.fileLink}}"
+                                           class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                            th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' + ${project.dockerCompose.fileName}"
                                            target="_blank" title="Download file">File name</a>
                                     </span>
@@ -82,25 +83,33 @@
                         <div class="input-group mb-3">
                             <span class="input-group-text project-card-label">Deployment URL</span>
                             <span class="form-control">
-                                <a th:href="@{${project.deploymentUrl}}" th:text="${project.deploymentUrl}" target="_blank">Deployment url</a>
+                                <a th:href="@{${project.deploymentUrl}}" th:text="${project.deploymentUrl}"
+                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                   target="_blank">Deployment url</a>
                             </span>
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text project-card-label">Open API URL</span>
                             <span class="form-control">
-                                <a th:href="@{${project.openApiUrl}}" th:text="${project.openApiUrl}" target="_blank">Open API url</a>
+                                <a th:href="@{${project.openApiUrl}}" th:text="${project.openApiUrl}"
+                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                   target="_blank">Open API url</a>
                             </span>
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text project-card-label">Backend src URL</span>
                             <span class="form-control">
-                                <a th:href="@{${project.backendSrcUrl}}" th:text="${project.backendSrcUrl}" target="_blank">Backend src url</a>
+                                <a th:href="@{${project.backendSrcUrl}}" th:text="${project.backendSrcUrl}"
+                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                   target="_blank">Backend src url</a>
                             </span>
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text project-card-label">Frontend src URL</span>
                             <span class="form-control">
-                                <a th:href="@{${project.frontendSrcUrl}}" th:text="${project.frontendSrcUrl}" target="_blank">Frontend src url</a>
+                                <a th:href="@{${project.frontendSrcUrl}}" th:text="${project.frontendSrcUrl}"
+                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                   target="_blank">Frontend src url</a>
                             </span>
                         </div>
                         <div class="row">

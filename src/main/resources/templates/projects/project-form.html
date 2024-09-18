@@ -4,10 +4,10 @@
 
 <th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
-        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle py-0">
-            <div class="row align-items-center" style="height: 46px">
+        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">
+            <div class="row align-items-center" style="min-height: 46px">
                 <div class="col text-start text-truncate">
-                    <span class="h3 text-secondary font-weight-bold"
+                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"
                           th:utext="${'<i class=''fa-solid fa-layer-group me-2''></i>Projects / ' + (projectTo.isNew() ? 'Create' : 'Edit')}">Projects / Create Edit</span>
                 </div>
             </div>
@@ -147,6 +147,7 @@
                                         <span class="input-group-text project-card-label">Docker file</span>
                                         <div class="form-control py-1 text-start">
                                             <a th:href="@{${projectTo.dockerCompose?.getImageSrc()}}" id="dockerComposeFileRef"
+                                               class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                                th:attr="download=${projectTo.dockerCompose?.fileName}"
                                                th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' +
                                                ${projectTo.dockerCompose?.fileName}"
@@ -179,8 +180,11 @@
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
                                     <span class="input-group-text project-card-label">Deployment URL</span>
-                                    <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
-                                       title="Check deployment URL" id="deploymentUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
+                                    <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}"
+                                       class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
+                                       title="Check deployment URL" id="deploymentUrlCheck" target="_blank">
+                                        <i class="fa-solid fa-up-right-from-square ms-1"></i>
+                                    </a>
                                     <input type="url" id="deploymentUrlInput" th:field="*{deploymentUrl}" class="url"
                                            th:classappend="${#fields.hasErrors('deploymentUrl')} ? 'form-control is-invalid' : 'form-control'"
                                            placeholder="Deployment URL" />

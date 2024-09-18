@@ -8,7 +8,7 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!--Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle"
+        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle" style="padding-top: 1px;"
              th:classappend="${projects.isEmpty() ? 'rounded-2 border-bottom' : ''}">
             <div class="row py-1 align-items-center">
                 <div class="col-7 text-start">

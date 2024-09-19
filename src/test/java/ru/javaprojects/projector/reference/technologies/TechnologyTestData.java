@@ -35,8 +35,8 @@ public class TechnologyTestData {
     public static final Technology technology1 = new Technology(TECHNOLOGY1_ID, "Java",
             "https://www.oracle.com/java", BACKEND, ULTRA, new File("java.svg", "./content/technologies/java/java.svg"));
 
-    public static final Technology technology2 = new Technology(TECHNOLOGY2_ID, "Spring",
-            "https://spring.io", BACKEND, VERY_HIGH, new File("spring.svg", "./content/technologies/spring/spring.svg"));
+    public static final Technology technology2 = new Technology(TECHNOLOGY2_ID, "Spring Framework",
+            "https://spring.io", BACKEND, VERY_HIGH, new File("spring_framework.svg", "./content/technologies/spring_framework/spring_framework.svg"));
 
     public static final Technology technology3 = new Technology(TECHNOLOGY3_ID, "Angular",
             "https://angular.dev", FRONTEND, HIGH, new File("angular.svg", "./content/technologies/angular/angular.svg"));

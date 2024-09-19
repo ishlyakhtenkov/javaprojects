@@ -38,7 +38,7 @@ VALUES ('5a49dd09-g23f-44bb-8d41-b6ff44275s56', '2024-08-05 21:49:01', 'some@gma
 
 INSERT INTO technologies (name, url, usage, priority, logo_file_name, logo_file_link)
 VALUES ('Java', 'https://www.oracle.com/java', 'BACKEND', 'ULTRA', 'java.svg', './content/technologies/java/java.svg'),
-       ('Spring', 'https://spring.io', 'BACKEND', 'VERY_HIGH', 'spring.svg', './content/technologies/spring/spring.svg'),
+       ('Spring Framework', 'https://spring.io', 'BACKEND', 'VERY_HIGH', 'spring_framework.svg', './content/technologies/spring_framework/spring_framework.svg'),
        ('Angular', 'https://angular.dev', 'FRONTEND', 'HIGH', 'angular.svg', './content/technologies/angular/angular.svg'),
        ('Thymeleaf', 'https://www.thymeleaf.org', 'BACKEND', 'MEDIUM', 'thymeleaf.png', './content/technologies/thymeleaf/thymeleaf.png');
 

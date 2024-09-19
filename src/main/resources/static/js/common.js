@@ -67,6 +67,7 @@ function handleError(data, title) {
 }
 
 function showLargerImage(image) {
+    $('#largerImageModalHeader').text(image.data('filename'));
     $('#largerImage').attr('src', image.attr('src'));
     $('#largerImageModal').modal('show');
 }

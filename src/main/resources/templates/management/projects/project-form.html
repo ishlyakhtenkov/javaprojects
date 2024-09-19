@@ -262,6 +262,7 @@
                                                  th:src="@{${projectTo.cardImage.getImageSrc()}}"
                                                  class="element-image rounded-2 mt-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 165px;"
+                                                 th:data-filename="${projectTo.cardImage.fileName}"
                                                  onclick="showLargerImage($(this))" />
 
                                             <div class="empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center"
@@ -411,6 +412,7 @@
                                                  th:src="@{${element.image.getImageSrc()}}"
                                                  class="element-image rounded-2 mt-2 mb-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
+                                                 th:data-filename="${element.image.fileName}"
                                                  onclick="showLargerImage($(this))" />
 
                                             <button type="button" class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
@@ -472,6 +474,7 @@
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <span id="largerImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">

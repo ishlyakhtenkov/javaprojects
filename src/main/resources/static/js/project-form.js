@@ -125,7 +125,7 @@ function previewImage(imageInput) {
     if (files.length) {
         let fileReader = new FileReader();
         fileReader.onload = function (event) {
-            imageInput.siblings('img').attr('src', event.target.result).attr('hidden', false);
+            imageInput.siblings('img').attr('src', event.target.result).attr('hidden', false).data('filename', files[0].name);
             imageInput.siblings('.change-img-btn').attr('hidden', false);
             imageInput.siblings('.empty-image-div').attr('style', 'display: none !important;');
         }

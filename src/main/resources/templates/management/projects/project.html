@@ -118,7 +118,7 @@
                                     <div class="text-start text-muted tiny">Card image</div>
                                     <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
                                          style="max-width: 100%; max-height: 165px; cursor: zoom-in;" class="rounded-2 mt-1"
-                                         onclick="showLargerImage($(this))"/>
+                                         th:data-filename="${project.cardImage.fileName}" onclick="showLargerImage($(this))"/>
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
@@ -149,7 +149,7 @@
                                   th:text="${element.text}" style="white-space: pre-wrap;"></span>
                             <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
                                  th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                 class="rounded-2 my-1 border"
+                                 class="rounded-2 my-1 border" th:data-filename="${element.fileName}"
                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
                                  onclick="showLargerImage($(this))"/>
                         </div>
@@ -167,6 +167,7 @@
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <span id="largerImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">

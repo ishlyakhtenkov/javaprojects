@@ -26,6 +26,9 @@
                               th:text="${project.name}">Project name</span>
                     </div>
                     <div class="card-body text-start">
+                        <span th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' +
+                            #temporals.format(project.endDate, 'dd.MM.yyyy')}" class="badge bg-info-subtle text-dark float-end"
+                              title="Development period"></span>
                         <div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -63,6 +66,11 @@
                                 </a>
                             </div>
                         </div>
+
+                        <h3 class="mt-3">Architecture</h3>
+                        <hr style="border: 2px solid black;">
+                        <h6 th:text="${project.architecture.name}"></h6>
+                        <div th:text="${project.architecture.description}"></div>
 
                         <h3 class="mt-3">Technologies stack</h3>
                         <hr style="border: 2px solid black;">

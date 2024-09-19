@@ -404,8 +404,8 @@
 
                                             <img th:if="${element.image != null}"
                                                  th:src="@{${element.image.getImageSrc()}}"
-                                                 height="150px" class="element-image rounded-2 mt-2 mb-1 border"
-                                                 style="cursor: zoom-in; max-width: 95%;"
+                                                 class="element-image rounded-2 mt-2 mb-1 border"
+                                                 style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
                                                  onclick="showLargerImage($(this))" />
 
                                             <button type="button" class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
@@ -464,13 +464,13 @@
 
         <!-- Image modal -->
         <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <img src="" id="largerImage" class="border" style="width: 100%;" />
+                    <div class="modal-body text-center">
+                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>

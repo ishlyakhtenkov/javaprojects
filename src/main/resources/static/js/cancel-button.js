@@ -9,7 +9,7 @@ function cancel() {
     if (prevUrl) {
         sessionStorage.removeItem('prevUrl');
     } else {
-        prevUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+        prevUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
     }
     window.location.href = prevUrl;
 }

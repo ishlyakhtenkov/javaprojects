@@ -117,7 +117,8 @@
                                 <div class="border rounded-2 px-3 pb-3 text-center h-100">
                                     <div class="text-start text-muted tiny">Card image</div>
                                     <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
-                                         height="165px" style="max-width: 100%;" class="rounded-2 mt-1" />
+                                         style="max-width: 100%; max-height: 165px; cursor: zoom-in;" class="rounded-2 mt-1"
+                                         onclick="showLargerImage($(this))"/>
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
@@ -145,27 +146,28 @@
                                   th:text="${element.text}" style="white-space: pre-wrap;"></span>
                             <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
                                  th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                 height="150px" class="image-pop rounded-2 my-1 border"
-                                 style="cursor: zoom-in; max-width: 95%;" />
+                                 class="rounded-2 my-1 border"
+                                 style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
+                                 onclick="showLargerImage($(this))"/>
                         </div>
                     </div>
                     <div class="card-footer text-end">
                         <button class="btn btn-secondary px-3" type="button" onclick="cancel()">Close</button>
-                        <a th:href="@{'/projects/edit/' + ${project.id}}" class="btn btn-warning px-4 ms-1" type="button">Edit</a>
+                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" class="btn btn-warning px-4 ms-1" type="button">Edit</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Image modal -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <img src="" id="imagePreview" class="border" style="width: 100%;" />
+                    <div class="modal-body text-center">
+                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>
@@ -175,7 +177,6 @@
     <ownScript>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/cancel-button.js?v=1"></script>
-        <script src="/js/project.js?v=1"></script>
         <script>
             sessionStorage.removeItem('prevUrl');
         </script>

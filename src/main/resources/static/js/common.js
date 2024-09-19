@@ -65,3 +65,8 @@ function handleError(data, title) {
     }
     failToast(message);
 }
+
+function showLargerImage(image) {
+    $('#largerImage').attr('src', image.attr('src'));
+    $('#largerImageModal').modal('show');
+}

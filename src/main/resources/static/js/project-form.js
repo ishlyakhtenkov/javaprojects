@@ -114,11 +114,6 @@ function previewCardImageFile() {
     cardImageFileInputDiv.attr('hidden', true);
 }
 
-function showLargerImage(image) {
-    $('#largerImage').attr('src', image.attr('src'));
-    $('#largerImageModal').modal('show');
-}
-
 function previewImage(imageInput) {
     let files = imageInput.prop('files');
     if (files.length) {
@@ -322,7 +317,7 @@ function addNewElement(type) {
         let flexDiv = $('<div></div>').addClass('d-flex align-items-start');
 
         let inputtedImage = $('<img />').addClass('element-image rounded-2 mt-2 mb-1 border')
-            .attr('hidden', true).css('height', '150px').css('cursor', 'zoom-in').css('max-width', '95%')
+            .attr('hidden', true).css('max-height', '150px').css('cursor', 'zoom-in').css('max-width', '95%')
             .click(function () {showLargerImage($(this))});
 
         let imageInput = $('<input type="file"/>').attr('accept', 'image/*')

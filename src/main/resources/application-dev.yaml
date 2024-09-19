@@ -7,6 +7,7 @@ spring:
       mode: always
       encoding: UTF-8
       platform: h2
+      data-locations: classpath:data.sql,classpath:dev-data.sql
   datasource:
     url:
   jpa:

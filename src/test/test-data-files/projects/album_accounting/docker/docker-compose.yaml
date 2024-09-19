@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  albumaccounting:
+    image: javaprojects/albumaccounting
+    networks:
+      - albumaccounting-network
+    ports:
+      - 8081:8080
+    depends_on:
+      - albumaccounting-database
+
+  albumaccounting-database:
+    image: javaprojects/albumaccounting-database
+    volumes:
+      - "albumaccountingdata:/var/lib/postgresql/data"
+    networks:
+      - albumaccounting-network
+    ports:
+      - 5555:5432
+
+  angular-albumaccounting:
+    image: javaprojects/angular-albumaccounting
+    networks:
+      - albumaccounting-network
+    ports:
+    - 80:80
+    depends_on:
+      - albumaccounting
+
+networks:
+  albumaccounting-network:
+
+volumes:
+  albumaccountingdata:

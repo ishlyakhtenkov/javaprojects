@@ -25,10 +25,10 @@ import static ru.javaprojects.projector.common.util.validation.ValidationUtil.ch
 import static ru.javaprojects.projector.users.util.UserUtil.asTo;
 
 @Controller
-@RequestMapping(AdminUserController.USERS_URL)
+@RequestMapping(UserManagementController.USERS_URL)
 @AllArgsConstructor
 @Slf4j
-public class AdminUserController {
+public class UserManagementController {
     static final String USERS_URL = "/management/users";
 
     private final UserService service;

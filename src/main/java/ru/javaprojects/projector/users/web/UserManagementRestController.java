@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.projector.users.service.UserService;
 
 @RestController
-@RequestMapping(value = AdminUserController.USERS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = UserManagementController.USERS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
 @Validated
-public class AdminUserRestController {
+public class UserManagementRestController {
     private final UserService service;
 
     @PatchMapping("/{id}")

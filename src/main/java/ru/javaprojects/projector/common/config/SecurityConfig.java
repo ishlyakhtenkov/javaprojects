@@ -78,7 +78,7 @@ public class SecurityConfig {
                                 .requestMatchers("/management/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password",
                                         "/login").anonymous()
-                                .requestMatchers("/", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
+                                .requestMatchers("/", "/projects/**", "/webjars/**", "/css/**", "/images/**", "/js/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) ->

@@ -34,11 +34,11 @@ import static ru.javaprojects.projector.users.UserTestData.USER_ID;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.admin;
 import static ru.javaprojects.projector.users.UserTestData.user;
-import static ru.javaprojects.projector.users.web.AdminUserController.USERS_URL;
+import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
-class AdminUserRestControllerTest extends AbstractControllerTest {
+class UserManagementRestControllerTest extends AbstractControllerTest {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
     private static final String USERS_CHANGE_PASSWORD_URL = USERS_URL + "/change-password/";
 

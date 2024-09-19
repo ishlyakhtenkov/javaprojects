@@ -43,20 +43,20 @@ import static ru.javaprojects.projector.common.util.validation.UniqueNameValidat
 import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
-import static ru.javaprojects.projector.projects.web.AdminProjectController.PROJECTS_URL;
+import static ru.javaprojects.projector.projects.web.ProjectManagementController.PROJECT_MANAGEMENT_URL;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class AdminProjectControllerTest extends AbstractControllerTest implements TestContentFilesManager {
-    private static final String PROJECTS_VIEW = "management/projects/projects";
-    private static final String PROJECTS_ADD_FORM_URL = PROJECTS_URL + "/add";
+class ProjectManagementControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+    private static final String PROJECTS_MANAGEMENT_VIEW = "management/projects/projects";
+    private static final String PROJECTS_ADD_FORM_URL = PROJECT_MANAGEMENT_URL + "/add";
     private static final String PROJECT_FORM_VIEW = "management/projects/project-form";
-    static final String PROJECTS_URL_SLASH = PROJECTS_URL + "/";
-    private static final String PROJECT_VIEW = "management/projects/project";
-    private static final String PROJECTS_EDIT_FORM_URL = PROJECTS_URL + "/edit/";
+    static final String PROJECT_MANAGEMENT_URL_SLASH = PROJECT_MANAGEMENT_URL + "/";
+    private static final String PROJECT_MANAGEMENT_VIEW = "management/projects/project";
+    private static final String PROJECTS_EDIT_FORM_URL = PROJECT_MANAGEMENT_URL + "/edit/";
 
     static final String PROJECTS_TEST_DATA_FILES_PATH = "src/test/test-data-files/projects";
 
@@ -86,17 +86,17 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name(PROJECTS_VIEW))
+                .andExpect(view().name(PROJECTS_MANAGEMENT_VIEW))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project3, project1, project2), "technologies", "descriptionElements"));
     }
 
     @Test
     void getAllUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
@@ -105,17 +105,17 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @Test
     @WithUserDetails(USER_MAIL)
     void getAllForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + PROJECT1_ID))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
-                .andExpect(view().name(PROJECT_VIEW))
+                .andExpect(view().name(PROJECT_MANAGEMENT_VIEW))
                 .andExpect(result -> PROJECT_MATCHER.assertMatch((Project) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECT_ATTRIBUTE), project1));
     }
@@ -123,14 +123,14 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void getNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + NOT_EXISTING_ID))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL_SLASH + NOT_EXISTING_ID))
                 .andExpect(exception().message(messageSource.getMessage("notfound.entity",
                         new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
     }
 
     @Test
     void getUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + PROJECT1_ID))
+        perform(MockMvcRequestBuilders.get(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
@@ -208,7 +208,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             ProjectTo newProjectTo = getNewTo();
             Project newProject = getNew(contentPath);
-            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(LOGO_FILE)
                     .file(DOCKER_COMPOSE_FILE)
                     .file(CARD_IMAGE_FILE)
@@ -223,7 +223,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             created = projectService.getWithTechnologiesAndDescription(created.id(), true);
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
-            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
@@ -246,7 +246,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             ProjectTo newProjectTo = getNewTo();
             Project newProject = getNew(contentPath);
-            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(newParams)
                     .with(csrf()))
@@ -258,7 +258,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             created = projectService.getWithTechnologiesAndDescription(created.id(), true);
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
-            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
@@ -278,7 +278,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             Project newProject = getNew(contentPath);
-            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(LOGO_FILE)
                     .file(DOCKER_COMPOSE_FILE)
                     .file(CARD_IMAGE_FILE)
@@ -292,7 +292,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             created = projectService.getWithTechnologiesAndDescription(created.id(), true);
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
-            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
@@ -311,7 +311,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         newProject.addDescriptionElement(new DescriptionElement(null, IMAGE, (byte) 4, null, "deImage.png",
                 "./content/projects/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png"));
 
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
@@ -328,7 +328,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         created = projectService.getWithTechnologiesAndDescription(created.id(), true);
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project",
                 "descriptionElements.fileLink");
-        actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+        actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
@@ -343,7 +343,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
 
     @Test
     void createUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
@@ -363,7 +363,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @Test
     @WithUserDetails(USER_MAIL)
     void createForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
@@ -382,7 +382,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     void createInvalid() throws Exception {
         MultiValueMap<String, String> newInvalidParams = getNewInvalidParams();
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
@@ -445,7 +445,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     void createWithoutLogoFile() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
@@ -463,7 +463,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     void createWithoutCardImageFile() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
@@ -487,7 +487,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             ProjectTo newProjectTo = getNewTo();
             Project newProject = getNew(contentPath);
             newProject.setDockerCompose(null);
-            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(LOGO_FILE)
                     .file(CARD_IMAGE_FILE)
                     .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
@@ -500,7 +500,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             newProject.setId(created.getId());
             created = projectService.getWithTechnologiesAndDescription(created.id(), true);
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project");
-            actions.andExpect(redirectedUrl(PROJECTS_URL_SLASH + created.getId()));
+            actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getFileLink())));
@@ -512,7 +512,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     void createDuplicateName() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.set(NAME_PARAM, project1.getName());
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(LOGO_FILE)
                 .file(DOCKER_COMPOSE_FILE)
                 .file(CARD_IMAGE_FILE)
@@ -569,7 +569,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             Project updatedProject = getUpdated(contentPath);
-            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -577,7 +577,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
                     .params(getUpdatedParams(contentPath))
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(redirectedUrl(PROJECTS_URL_SLASH + updatedProject.getId()))
+                    .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + updatedProject.getId()))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -610,12 +610,12 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
-            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                     .params(updatedParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(redirectedUrl(PROJECTS_URL_SLASH + updatedProject.getId()))
+                    .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + updatedProject.getId()))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -647,7 +647,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             Project updatedProject = getUpdatedWhenOldName(contentPath);
             MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
             updatedParams.set(NAME_PARAM, project1.getName());
-            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -655,7 +655,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
                     .params(updatedParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(redirectedUrl(PROJECTS_URL_SLASH + PROJECT1_ID))
+                    .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -692,14 +692,14 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         updatedParams.remove("descriptionElementTos[5].type");
         updatedParams.remove("descriptionElementTos[5].index");
 
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROJECTS_URL_SLASH + PROJECT1_ID))
+                .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                         new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -726,7 +726,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
             updatedDeToNew.setId(de3.getId());
             MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
             updatedParams.set(NAME_PARAM, project1.getName());
-            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+            perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                     .file(UPDATED_LOGO_FILE)
                     .file(UPDATED_CARD_IMAGE_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -734,7 +734,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
                     .params(updatedParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(redirectedUrl(PROJECTS_URL_SLASH + PROJECT1_ID))
+                    .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -759,11 +759,11 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
         MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
         updatedParams.remove("descriptionElementTos[5].type");
         updatedParams.remove("descriptionElementTos[5].index");
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROJECTS_URL_SLASH + PROJECT1_ID))
+                .andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                         new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
@@ -789,7 +789,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     void updateNotFound() throws Exception {
         MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
         updatedParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -802,7 +802,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
 
     @Test
     void updateUnAuthorize() throws Exception {
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -820,7 +820,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @Test
     @WithUserDetails(USER_MAIL)
     void updateForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -840,7 +840,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     void updateInvalid() throws Exception {
         MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams();
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
@@ -908,7 +908,7 @@ class AdminProjectControllerTest extends AbstractControllerTest implements TestC
     void updateDuplicateName() throws Exception {
         MultiValueMap<String, String> updatedParams = getUpdatedParams(contentPath);
         updatedParams.set(NAME_PARAM, project2.getName());
-        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECT_MANAGEMENT_URL)
                 .file(UPDATED_LOGO_FILE)
                 .file(UPDATED_CARD_IMAGE_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)

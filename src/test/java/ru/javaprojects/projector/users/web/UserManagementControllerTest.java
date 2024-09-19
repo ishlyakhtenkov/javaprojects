@@ -27,11 +27,11 @@ import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMa
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.util.UserUtil.asTo;
-import static ru.javaprojects.projector.users.web.AdminUserController.USERS_URL;
+import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;
 
-class AdminUserControllerTest extends AbstractControllerTest {
+class UserManagementControllerTest extends AbstractControllerTest {
     private static final String USERS_ADD_FORM_URL = USERS_URL + "/add";
     private static final String USERS_CREATE_URL = USERS_URL + "/create";
     private static final String USERS_EDIT_FORM_URL = USERS_URL + "/edit/";

@@ -305,13 +305,18 @@
                                                         th:text="${technology.name}"
                                                         th:data-name="${technology.name}"
                                                         th:data-filelink="${technology.logo.fileLink}"
+                                                        th:data-url="${technology.url}"
                                                         th:selected="${projectTo.technologiesIds != null && projectTo.technologiesIds.contains(technology.id)}">
                                                 </option>
                                             </select>
 
-                                            <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}" class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
-                                                <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
-                                                     width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
+                                            <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}"
+                                                  class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
+                                                <a type="button" th:href="@{${technology.url}}" target="_blank"
+                                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark">
+                                                    <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
+                                                         width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
+                                                </a>
                                             </span>
                                         </div>
                                     </div>

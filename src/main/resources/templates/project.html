@@ -116,7 +116,7 @@
                             </div>
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
                                 <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                     class="image-pop rounded-2 my-1 border" th:data-filename="${element.fileName}"
+                                     class="image-pop rounded-2 my-1 border"
                                      style="cursor: zoom-in; max-width: 100%;" onclick="showLargerImage($(this))" />
                             </div>
                         </div>

@@ -14,7 +14,9 @@ import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
+import ru.javaprojects.projector.reference.technologies.model.Technology;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -52,13 +54,13 @@ public class ProjectService {
         return project;
     }
 
-    public Project getWithTechnologiesAndDescription(long id, boolean sort) {
+    public Project getWithTechnologiesAndDescription(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithTechnologiesAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
-        if (sort) {
-            project.setTechnologies(new TreeSet<>(project.getTechnologies()));
-            project.setDescriptionElements(new TreeSet<>(project.getDescriptionElements()));
-        }
+        TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
+        sortedTechnologies.addAll(project.getTechnologies());
+        project.setTechnologies(sortedTechnologies);
+        project.setDescriptionElements(new TreeSet<>(project.getDescriptionElements()));
         return project;
     }
 
@@ -132,7 +134,9 @@ public class ProjectService {
     @Transactional
     public Project update(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        Project project = getWithTechnologiesAndDescription(projectTo.getId(), false);
+        Project project = repository.findWithTechnologiesAndDescriptionById(projectTo.getId()).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + projectTo.getId(), "notfound.entity",
+                        new Object[]{projectTo.getId()}));
         String projectOldName = project.getName();
         String oldLogoFileLink = project.getLogo().getFileLink();
         String oldCardImageFileLink = project.getCardImage().getFileLink();

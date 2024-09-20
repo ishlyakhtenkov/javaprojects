@@ -90,8 +90,10 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name(PROJECTS_MANAGEMENT_VIEW))
-                .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project3, project1, project2), "technologies", "descriptionElements"));
+                .andExpect(result ->
+                        PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project3, project1, project2),
+                                "technologies", "descriptionElements"));
     }
 
     @Test
@@ -220,7 +222,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                             new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
-            created = projectService.getWithTechnologiesAndDescription(created.id(), true);
+            created = projectService.getWithTechnologiesAndDescription(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
@@ -255,7 +257,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                             new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
-            created = projectService.getWithTechnologiesAndDescription(created.id(), true);
+            created = projectService.getWithTechnologiesAndDescription(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
@@ -289,7 +291,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                             new Object[]{newProject.getName()}, LocaleContextHolder.getLocale())));
             Project created = projectService.getByName(newProject.getName());
             newProject.setId(created.getId());
-            created = projectService.getWithTechnologiesAndDescription(created.id(), true);
+            created = projectService.getWithTechnologiesAndDescription(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id",
                     "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
@@ -325,7 +327,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                         new Object[]{newProject.getName()}, LocaleContextHolder.getLocale())));
         Project created = projectService.getByName(newProject.getName());
         newProject.setId(created.getId());
-        created = projectService.getWithTechnologiesAndDescription(created.id(), true);
+        created = projectService.getWithTechnologiesAndDescription(created.id(), Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project",
                 "descriptionElements.fileLink");
         actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
@@ -498,7 +500,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                             new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
-            created = projectService.getWithTechnologiesAndDescription(created.id(), true);
+            created = projectService.getWithTechnologiesAndDescription(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "descriptionElements.id", "descriptionElements.project");
             actions.andExpect(redirectedUrl(PROJECT_MANAGEMENT_URL_SLASH + created.getId()));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
@@ -581,7 +583,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
@@ -619,7 +621,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
@@ -659,7 +661,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
@@ -703,7 +705,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                         new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-        PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+        PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                 updatedProject, "descriptionElements.project");
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
@@ -738,7 +740,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                             new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+            PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                     updatedProject, "descriptionElements.id", "descriptionElements.project");
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
@@ -767,7 +769,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
                         new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
 
-        PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, true),
+        PROJECT_MATCHER.assertMatchIgnoreFields(projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()),
                 updatedProject, "descriptionElements.project");
 
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));

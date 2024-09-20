@@ -23,6 +23,7 @@ import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
@@ -57,7 +58,7 @@ public class ProjectManagementController {
     @GetMapping("/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
-        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id, true));
+        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id, Comparator.naturalOrder()));
         return "management/projects/project";
     }
 
@@ -78,7 +79,7 @@ public class ProjectManagementController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
-        Project project = projectService.getWithTechnologiesAndDescription(id, true);
+        Project project = projectService.getWithTechnologiesAndDescription(id, Comparator.naturalOrder());
         model.addAttribute("projectTo", projectUtil.asTo(project));
         addAttributesToModel(model);
         return "management/projects/project-form";

@@ -20,7 +20,7 @@
                         <p class="card-text" th:text="${project.shortDescription}">Short description</p>
                         <a th:href="@{'/projects/' + ${project.id}}" class="stretched-link"></a>
                     </div>
-                    <div class="card-footer pt-1 pb-0" style="min-height: 70px;">
+                    <div class="card-footer" style="min-height: 78px;">
                         <a th:each="technology : ${project.technologies}" th:href="@{${technology.url}}"
                            type="button" target="_blank" class="me-1 mb-1" th:title="${technology.name}"
                            style="z-index: 2; position: relative">

@@ -122,7 +122,7 @@
                             </div>
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
                                 <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                     class="image-pop rounded-2 my-1 border"
+                                     class="rounded-2 my-1 border"
                                      style="cursor: zoom-in; max-width: 100%;" onclick="showLargerImage($(this))" />
                             </div>
                         </div>
@@ -135,7 +135,7 @@
         <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header border-0 pb-0">
                         <span id="largerImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

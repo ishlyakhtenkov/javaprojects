@@ -33,8 +33,8 @@
                                 </ul>
                             </div>
                             <h4 th:text="${user.name}" id="userName">Name</h4>
-                            <div th:text="'Email: ' + ${user.email}">Email</div>
-                            <div sec:authorize="hasRole('ADMIN')"
+                            <div th:text="'Email: ' + ${user.email}" class="mb-1">Email</div>
+                            <div sec:authorize="hasRole('ADMIN')" class="mb-1"
                                  th:text="'Roles: ' + ${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}">
                                 Roles
                             </div>

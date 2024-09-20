@@ -26,8 +26,8 @@
                               th:text="${project.name}">Project name</span>
                     </div>
                     <div class="card-body text-start">
-                        <span th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' +
-                            #temporals.format(project.endDate, 'dd.MM.yyyy')}" class="badge bg-info-subtle text-dark float-end"
+                        <span th:text="${'Dev: ' + #temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' +
+                            #temporals.format(project.endDate, 'dd.MM.yyyy')}" class="badge fw-normal bg-info-subtle text-dark float-end"
                               title="Development period"></span>
                         <div>
                             <div>

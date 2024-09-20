@@ -16,10 +16,7 @@ import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,6 +73,21 @@ public class ProjectService {
 
     public List<Project> getAllEnabled() {
         return repository.findAllByEnabledIsTrueOrderByName();
+    }
+
+    public List<Project> getAllEnabledWithTechnologies() {
+        List<Project> projects = repository.findAllWithArchitectureAndTechnologiesByEnabledIsTrue();
+        projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
+        projects.forEach(project -> {
+            Comparator<Technology> technologyComparator = Comparator
+                    .comparingInt((Technology t) -> t.getUsage().ordinal())
+                    .thenComparing(t -> t.getPriority().ordinal())
+                    .thenComparing(Comparator.naturalOrder());
+            TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
+            sortedTechnologies.addAll(project.getTechnologies());
+            project.setTechnologies(sortedTechnologies);
+        });
+        return projects;
     }
 
     @Transactional

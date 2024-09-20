@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
@@ -15,15 +14,19 @@ import ru.javaprojects.projector.reference.technologies.model.Usage;
 import java.util.Comparator;
 
 @Controller
-@RequestMapping(ProjectController.PROJECTS_URL)
 @AllArgsConstructor
 @Slf4j
 public class ProjectController {
-    static final String PROJECTS_URL = "/projects";
-
     private final ProjectService projectService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/")
+    public String showHomePage(Model model) {
+        log.info("Show home page");
+        model.addAttribute("projects", projectService.getAllEnabledWithTechnologies());
+        return "index";
+    }
+
+    @GetMapping("/projects/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
         Comparator<Technology> technologyComparator = Comparator

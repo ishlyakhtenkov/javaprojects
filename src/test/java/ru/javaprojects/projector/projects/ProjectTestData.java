@@ -112,6 +112,10 @@ public class ProjectTestData {
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
             null, null);
 
+    static {
+        project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
+    }
+
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
             "The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.",
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),

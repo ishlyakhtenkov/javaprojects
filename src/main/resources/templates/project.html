@@ -5,17 +5,6 @@
 <th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript},
           activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
     <appMain>
-<!--        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">-->
-<!--            <div class="row align-items-center" style="min-height: 46px">-->
-<!--                <div class="col text-start text-truncate">-->
-<!--                    <div class="col text-start text-truncate">-->
-<!--                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"-->
-<!--                          th:utext="${'<i class=''fa-solid fa-layer-group me-2''></i>Projects / ' + (project.name)}">Projects / Project</span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-
         <div class="row d-flex justify-content-center align-items-center mt-2">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
@@ -26,9 +15,7 @@
                               th:text="${project.name}">Project name</span>
                     </div>
                     <div class="card-body text-start">
-                        <span th:text="${'Dev: ' + #temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' +
-                            #temporals.format(project.endDate, 'dd.MM.yyyy')}" class="badge fw-normal bg-info-subtle text-dark float-end"
-                              title="Development period"></span>
+                        <span th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}" class="tiny float-end"></span>
                         <div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"

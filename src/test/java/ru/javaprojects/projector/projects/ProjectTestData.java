@@ -77,26 +77,26 @@ public class ProjectTestData {
             "https://github.com/ishlyakhtenkov/angular-votingsystem", "https://projector.ru/restaurant-aggregator/swagger-ui.html");
 
     public static final DescriptionElement de1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
-            (byte) 0, "App description", null, null, project1);
+            (byte) 0, "App description", null, project1);
 
     public static final DescriptionElement de2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
             (byte) 1, "This application allows users to receive information about restaurants and their daily lunch menus, " +
-            "as well as vote for their favorite restaurant once a day.", null, null, project1);
+            "as well as vote for their favorite restaurant once a day.", null, project1);
 
     public static final DescriptionElement de3 = new DescriptionElement(DESCRIPTION_ELEMENT3_ID, IMAGE,
-            (byte) 2, null, "restaurant_aggregator_schema.png",
-            "./content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png", project1);
+            (byte) 2, null, new File("restaurant_aggregator_schema.png",
+            "./content/projects/restaurant_aggregator/description/images/restaurant_aggregator_schema.png"), project1);
 
     public static final DescriptionElement de4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
-            (byte) 3, "Registration, profile", null, null, project1);
+            (byte) 3, "Registration, profile", null, project1);
 
     public static final DescriptionElement de5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
             (byte) 4, "Users can register for the app by filling in their account details on the registration page.",
-            null, null, project1);
+            null, project1);
 
     public static final DescriptionElement de6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
-            (byte) 5, null, "registration_and_profile.png",
-            "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png", project1);
+            (byte) 5, null, new File("registration_and_profile.png",
+            "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
 
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
@@ -167,8 +167,8 @@ public class ProjectTestData {
     public static final String PREPARED_UUID_STRING = "51bd80d0-d529-421e-a6fa-ae4f55d20d7b";
 
     public static DescriptionElement getNewDe3() {
-        return new DescriptionElement(null, IMAGE, (byte) 2, null, "deImage.png",
-                "./content/projects/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png");
+        return new DescriptionElement(null, IMAGE, (byte) 2, null, new File("deImage.png",
+                "./content/projects/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png"));
     }
 
     public static ProjectTo getNewTo() {
@@ -304,36 +304,36 @@ public class ProjectTestData {
     }
 
     public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
-            (byte) 1, "Updated App description", null, null, project1);
+            (byte) 1, "Updated App description", null, project1);
 
     public static final DescriptionElement updatedDe2 = new DescriptionElement(DESCRIPTION_ELEMENT2_ID, PARAGRAPH,
             (byte) 0, "Updated This application allows users to receive information about restaurants and their daily lunch menus, " +
-            "as well as vote for their favorite restaurant once a day.", null, null, project1);
+            "as well as vote for their favorite restaurant once a day.", null, project1);
 
     public static final DescriptionElement updatedDe4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
-            (byte) 2, "Registration, profile", null, null, project1);
+            (byte) 2, "Registration, profile", null, project1);
 
     public static final DescriptionElement updatedDe5 = new DescriptionElement(DESCRIPTION_ELEMENT5_ID, PARAGRAPH,
             (byte) 4, "Users can register for the app by filling in their account details on the registration page.",
-            null, null, project1);
+            null, project1);
 
     public static final DescriptionElement updatedDe6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
-            (byte) 3, null, "registration_and_profile.png",
-            "./content/projects/updatedprojectname/description/images/registration_and_profile.png", project1);
+            (byte) 3, null, new File("registration_and_profile.png",
+            "./content/projects/updatedprojectname/description/images/registration_and_profile.png"), project1);
 
     public static final DescriptionElement updatedDe6WhenProjectHasOldName = new DescriptionElement(DESCRIPTION_ELEMENT6_ID,
-            IMAGE, (byte) 3, null, "registration_and_profile.png",
-            "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png", project1);
+            IMAGE, (byte) 3, null, new File("registration_and_profile.png",
+            "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
 
     public static final DescriptionElement newDeForProjectUpdate = new DescriptionElement(null, IMAGE,
-            (byte) 5, null, "updatedDeNewImage.png",
+            (byte) 5, null, new File("updatedDeNewImage.png",
             "./content/projects/updatedprojectname/description/images/" + PREPARED_UUID_STRING +
-                    "_updateddenewimage.png", project1);
+                    "_updateddenewimage.png"), project1);
 
     public static final DescriptionElement newDeForProjectUpdateWithOldName = new DescriptionElement(null, IMAGE,
-            (byte) 5, null, "updatedDeNewImage.png",
+            (byte) 5, null, new File("updatedDeNewImage.png",
             "./content/projects/restaurant_aggregator/description/images/" + PREPARED_UUID_STRING +
-                    "_updateddenewimage.png", project1);
+                    "_updateddenewimage.png"), project1);
 
     public static DescriptionElementTo getNewDeForProjectUpdate() {
         return new DescriptionElementTo(null, IMAGE, (byte) 5,

@@ -25,7 +25,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.util.FileUtil.*;
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
 @Component
@@ -38,8 +39,15 @@ public class ProjectUtil {
 
     public ProjectTo asTo(Project project) {
         List<DescriptionElementTo> descriptionElementTos = project.getDescriptionElements().stream()
-                .map(de -> new DescriptionElementTo(de.getId(), de.getType(), de.getIndex(), de.getText(),
-                        de.getFileName(), de.getFileLink()))
+                .map(de -> {
+                    String fileName = null;
+                    String fileLink = null;
+                    if (de.getImage() != null) {
+                        fileName = de.getImage().getFileName();
+                        fileLink = de.getImage().getFileLink();
+                    }
+                    return new DescriptionElementTo(de.getId(), de.getType(), de.getIndex(), de.getText(), fileName, fileLink);
+                })
                 .toList();
 
         String dockerComposeFileName = project.getDockerCompose() != null ? project.getDockerCompose().getFileName() : null;
@@ -76,8 +84,7 @@ public class ProjectUtil {
             setFileAttributes(deTo, project.getName());
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
-                deTo.getImage() != null ? deTo.getImage().getFileName() : null,
-                deTo.getImage() != null ? deTo.getImage().getFileLink() : null);
+                deTo.getImage() != null ? new File(deTo.getImage().getFileName(), deTo.getImage().getFileLink()) : null);
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -136,10 +143,11 @@ public class ProjectUtil {
             project.getDescriptionElements().stream()
                     .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew())
                     .forEach(de -> {
-                        String fileNameWithPrefix = de.getFileLink().substring(de.getFileLink().lastIndexOf('/') + 1);
+                        String fileNameWithPrefix = de.getImage().getFileLink()
+                                .substring(de.getImage().getFileLink().lastIndexOf('/') + 1);
                         String newFileLink =
                                 contentPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + fileNameWithPrefix);
-                        de.setFileLink(newFileLink);
+                        de.getImage().setFileLink(newFileLink);
                     });
         }
         return project;
@@ -149,8 +157,8 @@ public class ProjectUtil {
         de.setIndex(deTo.getIndex());
         if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
             setFileAttributes(deTo, project.getName());
-            de.setFileName(deTo.getImage().getFileName());
-            de.setFileLink(deTo.getImage().getFileLink());
+            de.getImage().setFileName(deTo.getImage().getFileName());
+            de.getImage().setFileLink(deTo.getImage().getFileLink());
         } else {
             de.setText(deTo.getText());
         }

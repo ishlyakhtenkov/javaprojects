@@ -121,7 +121,7 @@
                                 <p th:text="${element.text}" style="white-space: pre-wrap;"></p>
                             </div>
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
-                                <img th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
+                                <img th:src="@{${element.image != null ? ('/' + element.image.fileLink) : ''}}"
                                      class="rounded-2 my-1 border"
                                      style="cursor: zoom-in; max-width: 100%;" onclick="showLargerImage($(this))" />
                             </div>

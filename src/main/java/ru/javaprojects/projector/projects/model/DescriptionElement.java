@@ -2,6 +2,7 @@ package ru.javaprojects.projector.projects.model;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity
@@ -36,16 +38,9 @@ public class DescriptionElement extends BaseEntity implements HasId, Comparable<
     private String text;
 
     @Nullable
-    @NoHtml
-    @Size(max = 128)
-    @Column(name = "file_name")
-    private String fileName;
-
-    @Nullable
-    @NoHtml
-    @Size(max = 512)
-    @Column(name = "file_link")
-    private String fileLink;
+    @Embedded
+    @Valid
+    private File image;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,21 +48,19 @@ public class DescriptionElement extends BaseEntity implements HasId, Comparable<
     private Project project;
 
     public DescriptionElement(DescriptionElement de) {
-        this(de.getId(), de.getType(), de.getIndex(), de.getText(), de.getFileName(), de.getFileLink());
+        this(de.id, de.type, de.index, de.text, de.image == null ? null : new File(de.image.getFileName(), de.image.getFileLink()));
     }
 
-    public DescriptionElement(Long id, ElementType type, Byte index, String text, String fileName, String fileLink) {
+    public DescriptionElement(Long id, ElementType type, Byte index, String text, File image) {
         super(id);
         this.type = type;
         this.index = index;
         this.text = text;
-        this.fileName = fileName;
-        this.fileLink = fileLink;
+        this.image = image;
     }
 
-    public DescriptionElement(Long id, ElementType type, Byte index, String text, String fileName, String fileLink,
-                              Project project) {
-        this(id, type, index, text, fileName, fileLink);
+    public DescriptionElement(Long id, ElementType type, Byte index, String text, File image, Project project) {
+        this(id, type, index, text, image);
         this.project = project;
     }
 

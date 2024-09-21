@@ -61,8 +61,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(de3.getFileLink())));
-        assertTrue(Files.notExists(Paths.get(de6.getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
     }
 
     @Test
@@ -91,8 +91,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
-        assertTrue(Files.exists(Paths.get(de3.getFileLink())));
-        assertTrue(Files.exists(Paths.get(de6.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
     }
 
     @Test
@@ -105,8 +105,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
-        assertTrue(Files.exists(Paths.get(de3.getFileLink())));
-        assertTrue(Files.exists(Paths.get(de6.getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
     }
 
     @Test

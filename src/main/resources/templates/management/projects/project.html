@@ -148,8 +148,8 @@
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"
                                   th:text="${element.text}" style="white-space: pre-wrap;"></span>
                             <img th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}"
-                                 th:src="@{${element.fileLink != null ? ('/' + element.fileLink) : ''}}"
-                                 class="rounded-2 my-1 border" th:data-filename="${element.fileName}"
+                                 th:src="@{${element.image != null ? ('/' + element.image.fileLink) : ''}}"
+                                 class="rounded-2 my-1 border" th:data-filename="${element.image.fileName}"
                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
                                  onclick="showLargerImage($(this))"/>
                         </div>

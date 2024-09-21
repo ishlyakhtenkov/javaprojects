@@ -102,8 +102,8 @@ public class ProjectService {
             FileUtil.deleteFile(project.getDockerCompose().getFileLink());
         }
         project.getDescriptionElements().stream()
-                .filter(de -> de.getType() == IMAGE)
-                .forEach(de -> FileUtil.deleteFile(de.getFileLink()));
+                .filter(de -> de.getType() == IMAGE && de.getImage() != null)
+                .forEach(de -> FileUtil.deleteFile(de.getImage().getFileLink()));
     }
 
 
@@ -166,15 +166,15 @@ public class ProjectService {
                 .forEach(deTo -> uploadDescriptionElementImage(deTo, project.getName()));
         oldDeImages.values().stream()
                 .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
-                .forEach(oldDe -> FileUtil.deleteFile(oldDe.getFileLink()));
+                .forEach(oldDe -> FileUtil.deleteFile(oldDe.getImage().getFileLink()));
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
                     if (deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
                         uploadDescriptionElementImage(deTo, project.getName());
-                        FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getFileLink());
+                        FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getImage().getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-                        FileUtil.moveFile(oldDeImages.get(deTo.getId()).getFileLink(), contentPath +
+                        FileUtil.moveFile(oldDeImages.get(deTo.getId()).getImage().getFileLink(), contentPath +
                                 FileUtil.normalizePath(project.getName() + DESCRIPTION_IMG_DIR));
                     }
                 });

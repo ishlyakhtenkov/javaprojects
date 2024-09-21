@@ -19,8 +19,10 @@ VALUES ('Apache Tomcat', 'https://tomcat.com', 'BACKEND', 'HIGH', 'apache_tomcat
        ('Spring Data JPA', 'https://sping-data.com', 'BACKEND', 'VERY_HIGH', 'spring_data_jpa.svg', './content/technologies/spring_data_jpa/spring_data_jpa.svg'); --100043
 
 
-INSERT INTO architectures (name, description)
-VALUES ('Layered Monolith', 'A layered architecture is a way of organizing the components of a software system into distinct layers, each of which performs a specific task or set of tasks.'); --100044
+INSERT INTO architectures (name, description, file_name, file_link)
+VALUES ('Layered Monolith', 'A layered architecture is a way of organizing the components of a software ' ||
+                            'system into distinct layers, each of which performs a specific task or set of tasks.', 'layered_monolith.png',
+        './content/architectures/layered_monolith/layered_monolith.png'); --100044
 
 INSERT INTO projects (name, short_description, enabled, priority, start_date, end_date, architecture_id, logo_file_name, logo_file_link,
                       docker_compose_file_name, docker_compose_file_link, card_image_file_name, card_image_file_link,

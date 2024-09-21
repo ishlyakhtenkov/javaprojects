@@ -75,8 +75,8 @@ public class TechnologyService {
         if (!isFileToEmpty(technologyTo.getLogo())) {
             uploadImage(technologyTo, technology.getName());
             FileUtil.deleteFile(oldLogoFileLink);
-        } else if (!technologyTo.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(technologyTo.getName()));
+        } else if (!technology.getName().equalsIgnoreCase(oldName)) {
+            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(technology.getName()));
         }
     }
 

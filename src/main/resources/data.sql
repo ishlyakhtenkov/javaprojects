@@ -42,9 +42,13 @@ VALUES ('Java', 'https://www.oracle.com/java', 'BACKEND', 'ULTRA', 'java.svg', '
        ('Angular', 'https://angular.dev', 'FRONTEND', 'HIGH', 'angular.svg', './content/technologies/angular/angular.svg'),
        ('Thymeleaf', 'https://www.thymeleaf.org', 'BACKEND', 'MEDIUM', 'thymeleaf.png', './content/technologies/thymeleaf/thymeleaf.png');
 
-INSERT INTO architectures (name, description)
-VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that structures the application into independent modules or components with well-defined boundaries.'),
-       ('Microservices', 'Microservices architecture allow a large application to be separated into smaller independent parts, with each part having its own realm of responsibility.');
+INSERT INTO architectures (name, description, file_name, file_link)
+VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that structures the application ' ||
+                            'into independent modules or components with well-defined boundaries.', 'modular_monolith.png',
+        './content/architectures/modular_monolith/modular_monolith.png'),
+       ('Microservices', 'Microservices architecture allow a large application to be separated into smaller ' ||
+                         'independent parts, with each part having its own realm of responsibility.', 'microservices.png',
+        './content/architectures/microservices/microservices.png');
 
 INSERT INTO projects (name, short_description, enabled, priority, start_date, end_date, architecture_id, logo_file_name, logo_file_link,
                       docker_compose_file_name, docker_compose_file_link, card_image_file_name, card_image_file_link,

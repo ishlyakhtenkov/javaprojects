@@ -1,16 +1,16 @@
 package ru.javaprojects.projector.reference.architectures;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 @Entity
@@ -32,10 +32,16 @@ public class Architecture extends BaseEntity implements HasIdAndName {
     @Column(name = "description", nullable = false)
     private String description;
 
-    public Architecture(Long id, String name, String description) {
+    @NotNull
+    @Embedded
+    @Valid
+    private File logo;
+
+    public Architecture(Long id, String name, String description, File logo) {
         super(id);
         this.name = name;
         this.description = description;
+        this.logo = logo;
     }
 
     @Override

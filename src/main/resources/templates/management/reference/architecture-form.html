@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--/*@thymesVar id="architecture" type="ru.javaprojects.projector.reference.architectures.Architecture"*/-->
+<!--/*@thymesVar id="architectureTo" type="ru.javaprojects.projector.reference.architectures.ArchitectureTo"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Architectures',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
     <appMain>
@@ -8,7 +8,7 @@
             <div class="row align-items-center" style="min-height: 46px">
                 <div class="col text-start text-truncate">
                     <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"
-                          th:utext="${'<i class=''fa-solid fa-cubes me-2''></i>Architectures / ' + (architecture.isNew() ? 'Create' : 'Edit')}">
+                          th:utext="${'<i class=''fa-solid fa-cubes me-2''></i>Architectures / ' + (architectureTo.isNew() ? 'Create' : 'Edit')}">
                         Architectures / Create Edit
                     </span>
                 </div>
@@ -20,18 +20,23 @@
             <div class="col-12 col-sm-9 col-md-7 col-xl-6 col-xxl-5">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${architecture.isNew()} ? 'New architecture' :
-                            ${architectureName == null ? architecture.name : architectureName}">Create/Edit architecture</h3>
+                        <h3 class="text-center" th:text="${architectureTo.isNew()} ? 'New architecture' :
+                            ${architectureName == null ? architectureTo.name : architectureName}">Create/Edit architecture</h3>
                     </div>
-                    <form th:action="@{/management/reference/architectures}" method="post" th:object="${architecture}">
+                    <form th:action="@{/management/reference/architectures}" method="post" th:object="${architectureTo}" enctype="multipart/form-data">
                         <div class="card-body p-4 pt-4 pb-3 text-center">
                             <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{logo.fileName}">
+                            <input type="hidden" th:field="*{logo.fileLink}">
+                            <input type="hidden" th:if="${architectureTo.logo.inputtedFileBytes != null}"
+                                   th:field="*{logo.inputtedFileBytes}">
+
                             <div class="mb-3">
-                                <div class="form-floating">
+                                <div class="input-group">
+                                    <span class="input-group-text w-25">Name</span>
                                     <input type="text" id="nameInput" th:field="*{name}"
                                            th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                            required placeholder="Name" />
-                                    <label for="nameInput" class="text-muted">Name</label>
                                 </div>
                                 <span th:if="${#fields.hasErrors('name')}">
                                     <ul>
@@ -40,7 +45,41 @@
                                     </ul>
                                 </span>
                             </div>
-                            <div class="mb-3">
+
+                            <div th:hidden="${architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null}"
+                                 class="input-group" id="filePreviewDiv">
+                                <span class="input-group-text w-25">Logo</span>
+                                <div class="form-control py-1 text-start">
+                                    <img th:src="@{${architectureTo.logo.getImageSrc()}}"
+                                         width="24" height="24" alt="" />
+
+                                    <span th:text="${architectureTo?.logo?.fileName}" id="fileName">File name</span>
+                                    <a tabindex="0" type="button" class="float-end text-danger" title="Delete"
+                                       onclick="deleteFile()">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div id="fileInputDiv">
+                                <div th:if="${architectureTo.logo == null ||
+                                    (architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null)}"
+                                     class="input-group custom-file-button">
+                                    <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
+                                    <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
+                                           class="form-control text-muted"
+                                           th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"
+                                           id="fileInput" required onchange="previewFile()"/>
+                                </div>
+                                <span th:if="${#fields.hasErrors('logo')}">
+                                    <ul>
+                                        <li class="text-danger text-start"
+                                            th:each="err : ${#fields.errors('logo')}" th:text="${err}"/>
+                                    </ul>
+                                </span>
+                            </div>
+
+                            <div class="my-3">
                                 <div class="form-floating">
                                     <textarea id="descriptionInput" th:field="*{description}"
                                               th:class="${#fields.hasErrors('description')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
@@ -61,7 +100,7 @@
                         <div class="card-footer text-end pe-4 py-2">
                             <button class="btn btn-secondary" type="button" onclick="cancel()">Cancel</button>
                             <button class="btn btn-primary ms-1" type="submit"
-                                    th:text="${architecture.isNew()} ? 'Create' : '&nbsp;&nbsp;Save&nbsp;&nbsp;'">Create/Save</button>
+                                    th:text="${architectureTo.isNew()} ? 'Create' : '&nbsp;&nbsp;Save&nbsp;&nbsp;'">Create/Save</button>
                         </div>
                     </form>
                 </div>

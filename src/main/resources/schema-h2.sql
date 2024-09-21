@@ -79,7 +79,9 @@ CREATE TABLE architectures
 (
     id          BIGINT        DEFAULT nextval('global_seq') PRIMARY KEY,
     name        VARCHAR(32)   NOT NULL,
-    description VARCHAR(400)  NOT NULL
+    description VARCHAR(400)  NOT NULL,
+    file_name   VARCHAR(128) NOT NULL,
+    file_link   VARCHAR(512) NOT NULL
 );
 CREATE UNIQUE INDEX architectures_unique_name_idx ON architectures (name);
 

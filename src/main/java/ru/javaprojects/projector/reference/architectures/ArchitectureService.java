@@ -1,17 +1,31 @@
 package ru.javaprojects.projector.reference.architectures;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.to.FileTo;
+import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 import java.util.List;
 
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.createNewFromTo;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.updateFromTo;
+
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ArchitectureService {
     private final ArchitectureRepository repository;
+
+    @Value("${content-path.architectures}")
+    private String contentPath;
 
     public List<Architecture> getAll() {
         return repository.findAllByOrderByName();
@@ -27,20 +41,44 @@ public class ArchitectureService {
                         new Object[]{name}));
     }
 
-    public Architecture create(Architecture architecture) {
-        Assert.notNull(architecture, "architecture must not be null");
-        return repository.save(architecture);
+    public Architecture create(ArchitectureTo architectureTo) {
+        Assert.notNull(architectureTo, "architectureTo must not be null");
+        if (architectureTo.getLogo() == null || isFileToEmpty(architectureTo.getLogo())) {
+            throw new IllegalRequestDataException("Architecture logo file is not present",
+                    "architecture.logo-not-present", null);
+        }
+        Architecture architecture = repository.saveAndFlush(createNewFromTo(architectureTo, contentPath));
+        uploadImage(architectureTo, architecture.getName());
+        return architecture;
     }
 
-    @Transactional // just to make one select by id instead of two by Hibernate
-    public void update(Architecture architecture) {
-        Assert.notNull(architecture, "architecture must not be null");
-        repository.getExisted(architecture.id());
-        repository.save(architecture);
+    @Transactional
+    public void update(ArchitectureTo architectureTo) {
+        Assert.notNull(architectureTo, "architectureTo must not be null");
+        Architecture architecture = get(architectureTo.getId());
+        String oldName = architecture.getName();
+        String oldLogoFileLink = architecture.getLogo().getFileLink();
+        repository.saveAndFlush(updateFromTo(architecture, architectureTo, contentPath));
+        if (!isFileToEmpty(architectureTo.getLogo())) {
+            uploadImage(architectureTo, architecture.getName());
+            FileUtil.deleteFile(oldLogoFileLink);
+        } else if (!architecture.getName().equalsIgnoreCase(oldName)) {
+            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(architecture.getName()));
+        }
+    }
+
+    private void uploadImage(ArchitectureTo architectureTo, String architectureName) {
+        FileTo logo = architectureTo.getLogo();
+        String fileName = normalizePath(logo.getInputtedFile() != null ? logo.getInputtedFile().getOriginalFilename() :
+                logo.getFileName());
+        FileUtil.upload(logo, contentPath + FileUtil.normalizePath(architectureName) + "/", fileName);
     }
 
     @Transactional
     public void delete(long id) {
-        repository.deleteExisted(id);
+        Architecture architecture = get(id);
+        repository.delete(architecture);
+        repository.flush();
+        FileUtil.deleteFile(architecture.getLogo().getFileLink());
     }
 }

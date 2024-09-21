@@ -23,9 +23,6 @@ public class TechnologyTestData {
     public static final String URL_PARAM = "url";
     public static final String USAGE_PARAM = "usage";
     public static final String PRIORITY_PARAM = "priority";
-    public static final String LOGO_FILE_NAME_PARAM = "logo.fileName";
-    public static final String LOGO_FILE_LINK_PARAM = "logo.fileLink";
-    public static final String LOGO_FILE_AS_BYTES_PARAM = "logo.inputtedFileBytes";
 
     public static final long TECHNOLOGY1_ID = 100011;
     public static final long TECHNOLOGY2_ID = 100012;

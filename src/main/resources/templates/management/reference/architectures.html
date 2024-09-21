@@ -32,13 +32,17 @@
                 <thead class="table-info thead-border-top-none">
                 <tr>
                     <th class="col-2 border-right-none">Name</th>
-                    <th class="col-10 border-right-none">Description</th>
+                    <th class="col-1 text-center border-right-none">Logo</th>
+                    <th class="col-9 border-right-none">Description</th>
                     <th class="col-1 text-center">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="architecture : ${architectures}" th:id="'row-' + ${architecture.id}" class="align-middle table-row">
                     <td th:text="${architecture.name}"></td>
+                    <td class="text-center py-1">
+                        <img th:src="@{'/' + ${architecture.logo.fileLink}}" th:alt="${architecture.logo.fileName}" width="32" height="32" />
+                    </td>
                     <td class="text-wrap" th:text="${architecture.description}"></td>
                     <td class="text-center">
                         <a th:href="@{'/management/reference/architectures/edit/' + ${architecture.id}}" type="button"

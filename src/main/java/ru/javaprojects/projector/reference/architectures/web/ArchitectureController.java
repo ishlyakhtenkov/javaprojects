@@ -12,8 +12,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
+import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
+
+import java.io.IOException;
+
+import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.asTo;
 
 @Controller
 @RequestMapping(ArchitectureController.ARCHITECTURES_URL)
@@ -26,7 +33,7 @@ public class ArchitectureController {
     private final UniqueArchitectureNameValidator nameValidator;
     private final MessageSource messageSource;
 
-    @InitBinder("architecture")
+    @InitBinder("architectureTo")
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(nameValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
@@ -42,7 +49,7 @@ public class ArchitectureController {
     @GetMapping("/add")
     public String showAddForm(Model model) {
         log.info("show architecture add form");
-        model.addAttribute("architecture", new Architecture());
+        model.addAttribute("architectureTo", new ArchitectureTo());
         return "management/reference/architecture-form";
     }
 
@@ -50,29 +57,47 @@ public class ArchitectureController {
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for architecture with id={}", id);
         Architecture architecture = service.get(id);
-        model.addAttribute("architecture", architecture);
+        model.addAttribute("architectureTo", asTo(architecture));
         return "management/reference/architecture-form";
     }
 
     @PostMapping
-    public String createOrUpdate(@Valid Architecture architecture, BindingResult result, Model model,
+    public String createOrUpdate(@Valid ArchitectureTo architectureTo, BindingResult result, Model model,
                                  RedirectAttributes redirectAttributes) {
-        boolean isNew = architecture.isNew();
+        boolean isNew = architectureTo.isNew();
         if (result.hasErrors()) {
+            if (architectureTo.getLogo().getInputtedFile() != null && !architectureTo.getLogo().getInputtedFile().isEmpty()) {
+                if (architectureTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
+                    keepInputtedFile(architectureTo.getLogo());
+                } else {
+                    architectureTo.setLogo(null);
+                }
+            }
             if (!isNew) {
-                model.addAttribute("architectureName", service.get(architecture.id()).getName());
+                model.addAttribute("architectureName", service.get(architectureTo.getId()).getName());
             }
             return "management/reference/architecture-form";
         }
-        log.info("{} {}", isNew ? "create" : "update", architecture);
+        log.info("{} {}", isNew ? "create" : "update", architectureTo);
         if (isNew) {
-            service.create(architecture);
+            service.create(architectureTo);
         }  else {
-            service.update(architecture);
+            service.update(architectureTo);
         }
         redirectAttributes.addFlashAttribute("action",
                 messageSource.getMessage((isNew ? "architecture.created" : "architecture.updated"),
-                        new Object[]{architecture.getName()}, LocaleContextHolder.getLocale()));
+                        new Object[]{architectureTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/management/reference/architectures";
+    }
+
+    private void keepInputtedFile(FileTo fileTo) {
+        try {
+            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
+            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
+            fileTo.setFileLink(null);
+        } catch (IOException e) {
+            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
+        }
     }
 }

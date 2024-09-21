@@ -48,9 +48,6 @@ public class ProjectTestData {
     public static final String OPEN_API_URL_PARAM = "openApiUrl";
     public static final String TECHNOLOGIES_IDS_PARAM = "technologiesIds";
 
-    public static final String LOGO_FILE_NAME_PARAM = "logo.fileName";
-    public static final String LOGO_FILE_LINK_PARAM = "logo.fileLink";
-    public static final String LOGO_FILE_AS_BYTES_PARAM = "logo.inputtedFileBytes";
     public static final String CARD_IMAGE_FILE_NAME_PARAM = "cardImage.fileName";
     public static final String CARD_IMAGE_FILE_LINK_PARAM = "cardImage.fileLink";
     public static final String CARD_IMAGE_FILE_AS_BYTES_PARAM = "cardImage.inputtedFileBytes";

@@ -22,7 +22,7 @@ public class ProjectController {
     @GetMapping("/")
     public String showHomePage(Model model) {
         log.info("Show home page");
-        model.addAttribute("projects", projectService.getAllEnabledWithTechnologies());
+        model.addAttribute("projects", projectService.getAllEnabledWithArchitectureAndTechnologies());
         return "index";
     }
 

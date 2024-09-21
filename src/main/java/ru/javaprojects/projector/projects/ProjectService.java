@@ -75,7 +75,7 @@ public class ProjectService {
         return repository.findAllByEnabledIsTrueOrderByName();
     }
 
-    public List<Project> getAllEnabledWithTechnologies() {
+    public List<Project> getAllEnabledWithArchitectureAndTechnologies() {
         List<Project> projects = repository.findAllWithArchitectureAndTechnologiesByEnabledIsTrue();
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {

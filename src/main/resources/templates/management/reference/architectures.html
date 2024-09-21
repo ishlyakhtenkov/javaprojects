@@ -7,11 +7,15 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!--Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle" style="padding-top: 1px;"
-             th:classappend="${architectures.isEmpty() ? 'rounded-2 border-bottom' : ''}">
-            <div class="row py-1 align-items-center">
+        <div class="bg-light px-2 rounded-top-1 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${architectures.isEmpty() ? 'rounded-1 border-bottom' : ''}">
+            <div class="row row-cols-1 row-cols-sm-2 align-items-center">
                 <div class="col-7 text-start">
-                    <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-cubes me-2"></i>Architectures</span>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb"  style="font-size: 1.5em;">
+                            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-cubes me-1"></i>Architectures</li>
+                        </ol>
+                    </nav>
                 </div>
                 <div class="col-5">
                     <div class="float-end">
@@ -29,7 +33,7 @@
 
         <div th:if="${!architectures.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-info thead-border-top-none">
+                <thead class="table-light thead-border-top-none">
                 <tr>
                     <th class="col-2 border-right-none">Name</th>
                     <th class="col-1 text-center border-right-none">Logo</th>

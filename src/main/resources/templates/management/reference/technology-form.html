@@ -5,16 +5,16 @@
 
 <th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
-        <div class="bg-info-subtle px-2 rounded-2 mb-10px border border-secondary-subtle pb-1">
-            <div class="row align-items-center" style="min-height: 46px">
-                <div class="col text-start text-truncate">
-                    <span class="h3 text-secondary font-weight-bold" style="line-height: normal;"
-                          th:utext="${'<i class=''fa-solid fa-gears me-2''></i>Technologies / ' + (technologyTo.isNew() ? 'Create' : 'Edit')}">
-                        Technologies / Create Edit
-                    </span>
-                </div>
-            </div>
-        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/management/reference/technologies}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-gears me-1"></i>Technologies
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${technologyTo.isNew() ? 'Add' : 'Edit'}">Add/Edit</li>
+            </ol>
+        </nav>
 
         <!-- Create/Edit technology card -->
         <div class="row d-flex justify-content-center align-items-center">

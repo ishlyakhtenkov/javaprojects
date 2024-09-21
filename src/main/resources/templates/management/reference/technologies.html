@@ -8,13 +8,17 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-info-subtle px-2 rounded-top-2 border-top border-start border-end border-secondary-subtle" style="padding-top: 1px;"
-             th:classappend="${technologies.isEmpty() ? 'rounded-2 border-bottom' : ''}">
-            <div class="row row-cols-1 row-cols-sm-2 py-1 align-items-center">
+        <div class="bg-light px-2 rounded-top-1 border-top border-start border-end border-secondary-subtle"
+             th:classappend="${technologies.isEmpty() ? 'rounded-1 border-bottom' : ''}">
+            <div class="row row-cols-1 row-cols-sm-2 align-items-center">
                 <div class="col-sm-5 text-start">
-                    <span class="h3 text-secondary font-weight-bold"><i class="fa-solid fa-gears me-2"></i>Technologies</span>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb"  style="font-size: 1.5em;">
+                            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-gears me-1"></i>Technologies</li>
+                        </ol>
+                    </nav>
                 </div>
-                <div class="col-sm-7 mt-1 mt-sm-0">
+                <div class="col-sm-7">
                     <div class="btn-toolbar justify-content-start justify-content-sm-end">
                         <form class="d-flex" role="search" th:action="@{/management/reference/technologies}" method="get">
                             <div class="input-group">
@@ -36,7 +40,7 @@
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-info thead-border-top-none">
+                <thead class="table-light thead-border-top-none">
                 <tr>
                     <th class="col-3 border-right-none">Name</th>
                     <th class="col-1 text-center border-right-none">Logo</th>

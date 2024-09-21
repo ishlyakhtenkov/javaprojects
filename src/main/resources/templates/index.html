@@ -30,8 +30,8 @@
                     </div>
                     <div class="card-footer" style="min-height: 78px;">
                         <a th:each="technology : ${project.technologies}" th:href="@{${technology.url}}"
-                           type="button" target="_blank" class="me-1 mb-1" th:title="${technology.name}"
-                           style="z-index: 2; position: relative">
+                           type="button" target="_blank" class="me-1 mb-1"
+                           th:title="${technology.name}" style="z-index: 2; position: relative; text-decoration: none">
                             <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                  width="24" height="24" />
                         </a>

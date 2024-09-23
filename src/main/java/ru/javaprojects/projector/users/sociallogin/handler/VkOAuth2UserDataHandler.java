@@ -19,6 +19,11 @@ public class VkOAuth2UserDataHandler implements OAuth2UserDataHandler {
         return oAuth2UserData.getData("email");
     }
 
+    @Override
+    public String getAvatarUrl(OAuth2UserData oAuth2UserData) {
+        return null;
+    }
+
     private String getAttribute(OAuth2UserData oAuth2UserData, String name) {
         List<Map<String, Object>> attributesResponse = oAuth2UserData.getData("response");
         if (attributesResponse != null) {

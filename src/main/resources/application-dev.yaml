@@ -38,3 +38,4 @@ content-path:
   technologies: ./content/technologies/
   architectures: ./content/architectures/
   projects: ./content/projects/
+  avatars: ./content/avatars/

@@ -59,7 +59,9 @@
                     <td th:text="${user.name}"></td>
                     <td class="text-truncate" th:text="${user.email}"></td>
                     <td class="text-center py-1">
-                        <img th:if="${user.avatar != null}" th:src="@{'/' + ${user.avatar.fileLink}}"
+                        <img th:if="${user.avatar != null}"
+                             th:src="@{${user.avatar.fileLink.startsWith('https://') ? (user.avatar.fileLink) :
+                             ('/' + user.avatar.fileLink)}}"
                              width="32" height="32" style="cursor: zoom-in;" class="rounded-circle"
                              th:data-filename="${user.avatar.fileName}" onclick="showLargerImage($(this))" />
                     </td>

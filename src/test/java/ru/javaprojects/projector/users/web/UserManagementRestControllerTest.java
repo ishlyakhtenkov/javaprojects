@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,14 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -34,13 +39,18 @@ import static ru.javaprojects.projector.users.UserTestData.USER_ID;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.admin;
 import static ru.javaprojects.projector.users.UserTestData.user;
-import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
+import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 
-class UserManagementRestControllerTest extends AbstractControllerTest {
+class UserManagementRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
     private static final String USERS_CHANGE_PASSWORD_URL = USERS_URL + "/change-password/";
+
+    static final String AVATARS_TEST_DATA_FILES_PATH = "src/test/test-data-files/avatars";
+
+    @Value("${content-path.avatars}")
+    private String contentPath;
 
     @Autowired
     private UserService service;
@@ -50,6 +60,16 @@ class UserManagementRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private SessionRegistry sessionRegistry;
+
+    @Override
+    public Path getContentPath() {
+        return Paths.get(contentPath);
+    }
+
+    @Override
+    public Path getTestDataFilesPath() {
+        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
@@ -125,6 +145,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
     }
 
     @Test
@@ -150,6 +171,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest {
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertDoesNotThrow(() -> service.get(USER_ID));
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
     }
 
     @Test
@@ -159,6 +181,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertDoesNotThrow(() -> service.get(USER_ID));
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
     }
 
     @Test

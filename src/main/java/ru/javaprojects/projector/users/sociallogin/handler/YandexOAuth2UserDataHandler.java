@@ -14,4 +14,10 @@ public class YandexOAuth2UserDataHandler implements OAuth2UserDataHandler {
     public String getEmail(OAuth2UserData oAuth2UserData) {
         return oAuth2UserData.getData("default_email");
     }
+
+    @Override
+    public String getAvatarUrl(OAuth2UserData oAuth2UserData) {
+        String avatarId = oAuth2UserData.getData("default_avatar_id");
+        return avatarId != null ? String.format("https://avatars.yandex.net/get-yapic/%s/islands-200", avatarId) : null;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.users.model.Role;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
@@ -41,8 +42,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN),
                     clientRegistrationId + " account does not contain email or name");
         }
-        CustomOAuth2User user = new CustomOAuth2User(oAuth2User, repository.findByEmailIgnoreCase(email.toLowerCase()).orElseGet(() ->
-                repository.save(new User(null, email, name, UUID.randomUUID().toString(), true, Set.of(Role.USER)))));
+        CustomOAuth2User user = new CustomOAuth2User(oAuth2User, repository.findByEmailIgnoreCase(email.toLowerCase())
+                .orElseGet(() -> {
+                    String avatarUrl = oAuth2UserDataHandler.getAvatarUrl(oAuth2UserData);
+                    File avatar = null;
+                    if (avatarUrl != null) {
+                        avatar = new File(clientRegistrationId + "_oAuth2_avatar", avatarUrl);
+                    }
+                    return repository.save(new User(null, email, name, UUID.randomUUID().toString(), true,
+                            Set.of(Role.USER), avatar));
+                }));
         if (!user.isEnabled()) {
             throw new DisabledException("Account is disabled");
         }

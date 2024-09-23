@@ -13,4 +13,9 @@ public class GoogleOAuth2UserDataHandler implements OAuth2UserDataHandler {
     public String getEmail(OAuth2UserData oAuth2UserData) {
         return oAuth2UserData.getData("email");
     }
+
+    @Override
+    public String getAvatarUrl(OAuth2UserData oAuth2UserData) {
+        return oAuth2UserData.getData("picture");
+    }
 }

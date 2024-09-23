@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
@@ -83,8 +84,14 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void delete(long id) {
-        repository.deleteExisted(id);
+        User user = get(id);
+        repository.delete(user);
+        repository.flush();
+        if (user.getAvatar() != null) {
+            FileUtil.deleteFile(user.getAvatar().getFileLink());
+        }
     }
 
     public Set<Long> getOnlineUsersIds() {

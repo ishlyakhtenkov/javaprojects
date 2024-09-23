@@ -50,10 +50,21 @@
               <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}">Profile</a>
             </li>
           </ul>
-          <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button" class="btn btn-outline-warning d-none d-lg-block px-3 ">Login</a>
-          <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" class="btn btn-success btn-circle d-none d-lg-block fw-bold"
-             th:title="${authUser != null ? authUser.user.name : ''}"
-             th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></a>
+          <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button"
+             class="btn btn-outline-warning d-none d-lg-block px-3 ">Login</a>
+          <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button"
+             class="d-none d-lg-block"
+             th:classappend="${authUser?.user.avatar == null ? 'btn btn-success btn-circle btn-lg fw-bold' : ''}"
+             th:title="${authUser != null ? authUser.user.name : ''}">
+            <span th:if="${authUser?.user.avatar == null}"
+                  th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></span>
+            <img th:if="${authUser?.user.avatar != null}" class="rounded-circle border border-light-subtle"
+                 th:src="@{${authUser.user.avatar.fileLink.startsWith('https://') ? (authUser.user.avatar.fileLink) :
+                             ('/' + authUser.user.avatar.fileLink)}}"
+                 width="40" height="40"
+                 onmouseenter="$(this).removeClass('border-1').addClass('border-2')"
+                 onmouseleave="$(this).removeClass('border-2').addClass('border-1')" />
+          </a>
         </div>
       </div>
     </nav>

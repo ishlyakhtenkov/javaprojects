@@ -28,6 +28,15 @@
     border-radius: 15px;
 }
 
+.btn-circle.btn-lg {
+    width: 40px;
+    height: 40px;
+    padding: 7px 0;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 25px;
+}
+
 .modal-md {
     max-width: 400px;
 }

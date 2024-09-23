@@ -1,4 +1,4 @@
-package ru.javaprojects.projector.users.sociallogin.handler;
+package ru.javaprojects.projector.users.sociallogin.extractor;
 
 import lombok.AllArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -12,8 +12,8 @@ public class OAuth2UserData {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public <A> A getData(String name) {
-        A attribute = oAuth2User.getAttribute(name);
-        return attribute != null ? attribute : (A) oAuth2UserRequest.getAdditionalParameters().get(name);
+    public <A> A getAttribute(String attributeName) {
+        A attribute = oAuth2User.getAttribute(attributeName);
+        return attribute != null ? attribute : (A) oAuth2UserRequest.getAdditionalParameters().get(attributeName);
     }
 }

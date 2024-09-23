@@ -47,6 +47,7 @@ public class ProfileRestController {
                        @AuthenticationPrincipal AuthUser authUser) {
         log.info("update user with id={}", authUser.id());
         userService.update(authUser.id(), name);
+        AuthUser.get().getUser().setName(name);
     }
 
     @PostMapping("/change-email")

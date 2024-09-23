@@ -1,6 +1,8 @@
 const changePasswordModal = $('#changePasswordModal');
 const editProfileModal = $('#editProfileModal');
 const userName = $('#userName');
+const userNameFirstLetter = $('#userNameFirstLetter');
+const profileButton = $('#profileButton');
 const changeEmailModal = $('#changeEmailModal');
 
 changePasswordModal.on('show.bs.modal', function(e) {
@@ -40,6 +42,8 @@ function updateProfile() {
             data: "name=" + name
         }).done(function () {
             userName.text(name);
+            userNameFirstLetter.text(name.substring(0, 1).toUpperCase());
+            profileButton.attr('title', name).find('span').text(name.substring(0, 1).toUpperCase());
             editProfileModal.modal('toggle');
             successToast('Profile was updated');
         }).fail(function(data) {

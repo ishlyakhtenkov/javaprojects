@@ -11,9 +11,9 @@
             </ol>
         </nav>
 
-        <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-12 col-md-6 col-xl-5">
-                <div class="card shadow-sm">
+        <div class="row d-flex justify-content-center align-items-center mt-3">
+            <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+                <div class="card shadow-sm rounded-4 bg-light-subtle">
                     <div class="card-body">
                         <div class="mb-2 mb-sm-0">
                             <div class="float-end">
@@ -22,22 +22,34 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
-                                           data-bs-target="#editProfileModal">Edit profile</button></li>
+                                                data-bs-target="#editProfileModal">Edit profile</button></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
-                                           data-bs-target="#changeEmailModal">Change email</button></li>
+                                                data-bs-target="#changeEmailModal">Change email</button></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
-                                           data-bs-target="#changePasswordModal">Change password</button></li>
+                                                data-bs-target="#changePasswordModal">Change password</button></li>
                                 </ul>
                             </div>
-                            <h4 th:text="${user.name}" id="userName">Name</h4>
-                            <div th:text="'Email: ' + ${user.email}" class="mb-1">Email</div>
-                            <div sec:authorize="hasRole('ADMIN')" class="mb-1"
-                                 th:text="'Roles: ' + ${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}">
-                                Roles
+
+                            <div class="row">
+                                <div class="col-12 col-sm-4 mt-2 ps-2 pe-3">
+<!--                                    <img th:src="@{/content/account_photo.jpg}"-->
+<!--                                         class="img-fluid" style="width: 180px; height: 165px; border-radius: 10px;">-->
+                                    <div class="bg-info-subtle img-fluid align-content-center text-center border h1 mb-0"
+                                         style="width: 180px; height: 165px; border-radius: 10px;" id="userNameFirstLetter"
+                                         th:text="${#strings.substring(user.name, 0, 1)}">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-8 mt-3">
+                                    <div class="mb-1 position-relative">
+                                        <span class="h4" th:text="${user.name}" id="userName">Name</span>
+                                        <span class="badge rounded-pill bg-danger-subtle text-dark" style="position: absolute; margin-top: -5px;">Admin</span>
+                                    </div>
+                                    <div th:text="${user.email}" class="mb-1">Email</div>
+                                    <div class="small" th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}" style="font-style: italic">Registered</div>
+                                </div>
                             </div>
-                            <div th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}">Registered</div>
                         </div>
-                        <div class="btn-toolbar mt-2 mb-1 float-end">
+                        <div class="btn-toolbar float-end" style="margin-top: -20px;">
                             <form th:action="@{/logout}" method="post">
                                 <button class="btn btn-sm btn-outline-secondary ms-2" type="submit">Logout</button>
                             </form>

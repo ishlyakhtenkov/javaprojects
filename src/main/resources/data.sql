@@ -42,7 +42,7 @@ VALUES ('Java', 'https://www.oracle.com/java', 'BACKEND', 'ULTRA', 'java.svg', '
        ('Angular', 'https://angular.dev', 'FRONTEND', 'HIGH', 'angular.svg', './content/technologies/angular/angular.svg'),
        ('Thymeleaf', 'https://www.thymeleaf.org', 'BACKEND', 'MEDIUM', 'thymeleaf.png', './content/technologies/thymeleaf/thymeleaf.png');
 
-INSERT INTO architectures (name, description, file_name, file_link)
+INSERT INTO architectures (name, description, logo_file_name, logo_file_link)
 VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that structures the application ' ||
                             'into independent modules or components with well-defined boundaries.', 'modular_monolith.png',
         './content/architectures/modular_monolith/modular_monolith.png'),

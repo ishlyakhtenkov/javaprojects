@@ -35,6 +35,10 @@ public class Architecture extends BaseEntity implements HasIdAndName {
     @NotNull
     @Embedded
     @Valid
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "logo_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "logo_file_link"))
+    })
     private File logo;
 
     public Architecture(Long id, String name, String description, File logo) {

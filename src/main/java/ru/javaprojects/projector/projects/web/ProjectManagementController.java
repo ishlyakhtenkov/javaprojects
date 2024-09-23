@@ -12,9 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
-import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
@@ -22,7 +20,6 @@ import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
@@ -93,14 +90,14 @@ public class ProjectManagementController {
             addAttributesToModel(model);
             if (projectTo.getLogo().getInputtedFile() != null && !projectTo.getLogo().getInputtedFile().isEmpty()) {
                 if (projectTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    keepInputtedFile(projectTo.getLogo());
+                    projectTo.getLogo().keepInputtedFile();
                 } else {
                     projectTo.setLogo(null);
                 }
             }
             if (projectTo.getCardImage().getInputtedFile() != null && !projectTo.getCardImage().getInputtedFile().isEmpty()) {
                 if (projectTo.getCardImage().getInputtedFile().getContentType().contains("image/")) {
-                    keepInputtedFile(projectTo.getCardImage());
+                    projectTo.getCardImage().keepInputtedFile();
                 } else {
                     projectTo.setCardImage(null);
                 }
@@ -109,7 +106,7 @@ public class ProjectManagementController {
                     !projectTo.getDockerCompose().getInputtedFile().isEmpty()) {
                 if (projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yaml") ||
                         projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yml")) {
-                    keepInputtedFile(projectTo.getDockerCompose());
+                    projectTo.getDockerCompose().keepInputtedFile();
                 } else {
                     projectTo.setDockerCompose(null);
                 }
@@ -120,7 +117,7 @@ public class ProjectManagementController {
             projectTo.getDescriptionElementTos().stream()
                     .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null &&
                             (deTo.getImage().getInputtedFile() != null && !deTo.getImage().getInputtedFile().isEmpty()))
-                    .forEach(deTo -> keepInputtedFile(deTo.getImage()));
+                    .forEach(deTo -> deTo.getImage().keepInputtedFile());
             return "management/projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);
@@ -129,16 +126,5 @@ public class ProjectManagementController {
                 messageSource.getMessage((isNew ? "project.created" : "project.updated"),
                         new Object[]{projectTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/management/projects/" + project.getId();
-    }
-
-    private void keepInputtedFile(FileTo fileTo) {
-        try {
-            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
-            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
-            fileTo.setFileLink(null);
-        } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
-        }
     }
 }

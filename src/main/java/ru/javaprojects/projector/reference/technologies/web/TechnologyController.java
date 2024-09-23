@@ -15,15 +15,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.Priority;
-import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.TechnologyTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
-
-import java.io.IOException;
 
 import static ru.javaprojects.projector.reference.technologies.TechnologyUtil.asTo;
 
@@ -99,7 +95,7 @@ public class TechnologyController {
             addAttributesToModel(model);
             if (technologyTo.getLogo().getInputtedFile() != null && !technologyTo.getLogo().getInputtedFile().isEmpty()) {
                 if (technologyTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    keepInputtedFile(technologyTo.getLogo());
+                    technologyTo.getLogo().keepInputtedFile();
                 } else {
                     technologyTo.setLogo(null);
                 }
@@ -119,16 +115,5 @@ public class TechnologyController {
                 messageSource.getMessage((isNew ? "technology.created" : "technology.updated"),
                 new Object[]{technologyTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/management/reference/technologies";
-    }
-
-    private void keepInputtedFile(FileTo fileTo) {
-        try {
-            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
-            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
-            fileTo.setFileLink(null);
-        } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
-        }
     }
 }

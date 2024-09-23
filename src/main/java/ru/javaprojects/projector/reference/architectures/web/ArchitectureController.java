@@ -12,13 +12,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.common.error.IllegalRequestDataException;
-import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
-
-import java.io.IOException;
 
 import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.asTo;
 
@@ -68,7 +64,7 @@ public class ArchitectureController {
         if (result.hasErrors()) {
             if (architectureTo.getLogo().getInputtedFile() != null && !architectureTo.getLogo().getInputtedFile().isEmpty()) {
                 if (architectureTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    keepInputtedFile(architectureTo.getLogo());
+                    architectureTo.getLogo().keepInputtedFile();
                 } else {
                     architectureTo.setLogo(null);
                 }
@@ -88,16 +84,5 @@ public class ArchitectureController {
                 messageSource.getMessage((isNew ? "architecture.created" : "architecture.updated"),
                         new Object[]{architectureTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/management/reference/architectures";
-    }
-
-    private void keepInputtedFile(FileTo fileTo) {
-        try {
-            fileTo.setInputtedFileBytes(fileTo.getInputtedFile().getBytes());
-            fileTo.setFileName(fileTo.getInputtedFile().getOriginalFilename());
-            fileTo.setFileLink(null);
-        } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{fileTo.getInputtedFile().getOriginalFilename()});
-        }
     }
 }

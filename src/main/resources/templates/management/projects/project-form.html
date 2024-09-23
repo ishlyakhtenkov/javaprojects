@@ -116,7 +116,7 @@
                                          class="input-group" id="logoFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Logo file</span>
                                         <div class="form-control py-1 text-start">
-                                            <img th:src="@{${projectTo.logo?.getImageSrc()}}"
+                                            <img th:src="@{${projectTo.logo?.getSrc()}}"
                                                  width="24" height="24" alt="" id="logoFilePreview" />
 
                                             <span th:text="${projectTo?.logo?.fileName}" id="logoFileName">File name</span>
@@ -148,7 +148,7 @@
                                          class="input-group" id="dockerFilePreviewDiv">
                                         <span class="input-group-text project-card-label">Docker file</span>
                                         <div class="form-control py-1 text-start">
-                                            <a th:href="@{${projectTo.dockerCompose?.getImageSrc()}}" id="dockerComposeFileRef"
+                                            <a th:href="@{${projectTo.dockerCompose?.getSrc()}}" id="dockerComposeFileRef"
                                                class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                                th:attr="download=${projectTo.dockerCompose?.fileName}"
                                                th:utext="'<i class=&quot;text-primary me-1 fa-brands fa-docker&quot;></i>' +
@@ -260,8 +260,8 @@
                                                    (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
                                                    onchange="previewImage($(this))"/>
 
-                                            <img th:hidden="${projectTo.cardImage == null && (projectTo.cardImage.getImageSrc() == null)}"
-                                                 th:src="@{${projectTo.cardImage.getImageSrc()}}"
+                                            <img th:hidden="${projectTo.cardImage == null && (projectTo.cardImage.getSrc() == null)}"
+                                                 th:src="@{${projectTo.cardImage.getSrc()}}"
                                                  class="element-image rounded-2 mt-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 165px;"
                                                  th:data-filename="${projectTo.cardImage.fileName}"
@@ -411,7 +411,7 @@
                                                    th:field="*{descriptionElementTos[__${itemStat.index}__].image.inputtedFileBytes}"/>
 
                                             <img th:if="${element.image != null}"
-                                                 th:src="@{${element.image.getImageSrc()}}"
+                                                 th:src="@{${element.image.getSrc()}}"
                                                  class="element-image rounded-2 mt-2 mb-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
                                                  th:data-filename="${element.image.fileName}"

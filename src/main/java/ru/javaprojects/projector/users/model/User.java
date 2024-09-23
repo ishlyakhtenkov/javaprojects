@@ -1,6 +1,8 @@
 package ru.javaprojects.projector.users.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.BatchSize;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.common.HasIdAndEmail;
 import ru.javaprojects.projector.common.model.BaseEntity;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 
 import java.util.Date;
@@ -55,6 +58,15 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
     @NotEmpty
     private Set<Role> roles;
 
+    @Nullable
+    @Embedded
+    @Valid
+    @AttributeOverrides({
+            @AttributeOverride(name = "fileName", column = @Column(name = "avatar_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "avatar_file_link"))
+    })
+    private File avatar;
+
     public User(Long id, String email, String name, String password, boolean enabled, Set<Role> roles) {
         super(id);
         this.email = email;
@@ -64,8 +76,13 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
         this.roles = roles;
     }
 
+    public User(Long id, String email, String name, String password, boolean enabled, Set<Role> roles, File avatar) {
+        this(id, email, name, password, enabled, roles);
+        this.avatar = avatar;
+    }
+
     public User(User user) {
-        this(user.id, user.email, user.name, user.password, user.enabled, user.roles);
+        this(user.id, user.email, user.name, user.password, user.enabled, user.roles, user.avatar);
     }
 
     @Override

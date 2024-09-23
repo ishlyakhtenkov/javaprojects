@@ -46,8 +46,9 @@
                 <tr>
                     <th class="col-3 border-right-none">Name</th>
                     <th class="col-3 border-right-none">Email</th>
+                    <th class="col-1 border-right-none text-center">Avatar</th>
                     <th class="col-1 border-right-none">Roles</th>
-                    <th class="col-2 border-right-none">Registered</th>
+                    <th class="col-1 border-right-none">Registered</th>
                     <th class="col-1 text-center border-right-none">Online</th>
                     <th class="col-1 text-center border-right-none">Enabled</th>
                     <th class="col-1 text-center">Actions</th>
@@ -57,6 +58,11 @@
                 <tr th:each="user : ${users}" th:id="'row-' + ${user.id}" class="table-row">
                     <td th:text="${user.name}"></td>
                     <td class="text-truncate" th:text="${user.email}"></td>
+                    <td class="text-center py-1">
+                        <img th:if="${user.avatar != null}" th:src="@{'/' + ${user.avatar.fileLink}}"
+                             width="32" height="32" style="cursor: zoom-in;" class="rounded-circle"
+                             th:data-filename="${user.avatar.fileName}" onclick="showLargerImage($(this))" />
+                    </td>
                     <td th:text="${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}"></td>
                     <td  th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
                     <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id) ? 'online' : 'offline'}"
@@ -151,6 +157,21 @@
                             <button type="submit" class="btn btn-warning" onclick="changePassword()" id="confirmBtn">Change</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image modal -->
+        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0 pb-0">
+                        <span id="largerImageModalHeader"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
+                    </div>
                 </div>
             </div>
         </div>

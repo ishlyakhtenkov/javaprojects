@@ -19,7 +19,9 @@ CREATE TABLE users
     name       VARCHAR(32)  NOT NULL,
     password   VARCHAR(128) NOT NULL,
     enabled    BOOL         DEFAULT TRUE NOT NULL,
-    registered TIMESTAMP    DEFAULT now() NOT NULL
+    registered TIMESTAMP    DEFAULT now() NOT NULL,
+    avatar_file_name VARCHAR(128),
+    avatar_file_link VARCHAR(512)
 );
 CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
 

@@ -11,7 +11,7 @@ public class VkOAuth2UserDataHandler implements OAuth2UserDataHandler {
     public String getName(OAuth2UserData oAuth2UserData) {
         String firstName = getAttribute(oAuth2UserData, "first_name");
         String lastName = getAttribute(oAuth2UserData, "last_name");
-        return firstName + (lastName != null ? lastName : "");
+        return firstName + (lastName != null ? " " + lastName : "");
     }
 
     @Override

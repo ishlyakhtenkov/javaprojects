@@ -1,8 +1,11 @@
 package ru.javaprojects.projector.users;
 
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.users.model.*;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
 import ru.javaprojects.projector.users.to.RegisterTo;
@@ -67,17 +70,27 @@ public class UserTestData {
     public static final long DISABLED_USER_ID = 100003;
     public static final long ADMIN_ID = 100001;
 
-    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "password", true, Set.of(Role.USER));
-    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "admin", true, Set.of(Role.USER, Role.ADMIN));
+    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "password", true, Set.of(Role.USER),
+            new File("cool_user.jpg", "./content/avatars/user@gmail.com/cool_user.jpg"));
+    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "admin", true, Set.of(Role.USER, Role.ADMIN),
+            new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
     public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER));
-    public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password", false, Set.of(Role.USER));
+    public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password",
+            false, Set.of(Role.USER));
+
+    public static final MockMultipartFile AVATAR_FILE = new MockMultipartFile("avatar.inputtedFile", "photo.png",
+            MediaType.IMAGE_PNG_VALUE, "avatar file content bytes".getBytes());
+
+    public static final MockMultipartFile UPDATED_AVATAR_FILE = new MockMultipartFile("avatar.inputtedFile", "updated_photo.png",
+            MediaType.IMAGE_PNG_VALUE, "updated avatar file content bytes".getBytes());
 
     public static User getNewUser() {
         return new User(null, "new@gmail.com", "newName", "newPassword", true, Set.of(USER));
     }
 
     public static User getUpdatedUser() {
-        return new User(USER_ID, "updated@gmail.com", "updatedName", user.getPassword(), user.isEnabled(), Set.of(Role.USER, Role.ADMIN));
+        return new User(USER_ID, "updated@gmail.com", "updatedName", user.getPassword(), user.isEnabled(),
+                Set.of(Role.USER, Role.ADMIN), user.getAvatar());
     }
 
     public static RegisterTo getNewRegisterTo() {

@@ -2,14 +2,17 @@ package ru.javaprojects.projector.users.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.model.Role;
 import ru.javaprojects.projector.users.model.User;
@@ -17,8 +20,12 @@ import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.UserTo;
 import ru.javaprojects.projector.users.util.UserUtil;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -27,11 +34,11 @@ import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMa
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.util.UserUtil.asTo;
-import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;
+import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 
-class UserManagementControllerTest extends AbstractControllerTest {
+class UserManagementControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String USERS_ADD_FORM_URL = USERS_URL + "/add";
     private static final String USERS_CREATE_URL = USERS_URL + "/create";
     private static final String USERS_EDIT_FORM_URL = USERS_URL + "/edit/";
@@ -40,11 +47,26 @@ class UserManagementControllerTest extends AbstractControllerTest {
     private static final String USER_ADD_VIEW = "management/users/user-add-form";
     private static final String USER_EDIT_VIEW = "management/users/user-edit-form";
 
+    static final String AVATARS_TEST_DATA_FILES_PATH = "src/test/test-data-files/avatars";
+
+    @Value("${content-path.avatars}")
+    private String contentPath;
+
     @Autowired
     private MessageSource messageSource;
 
     @Autowired
     private UserService service;
+
+    @Override
+    public Path getContentPath() {
+        return Paths.get(contentPath);
+    }
+
+    @Override
+    public Path getTestDataFilesPath() {
+        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
@@ -226,24 +248,47 @@ class UserManagementControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void update() throws Exception {
-        User updatedUser = getUpdatedUser();
+        User updatedUser = getUpdatedUser(contentPath);
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
-                .params(getUpdatedUserParams())
+                .params(getUpdatedUserParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(USERS_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
                         new Object[]{updatedUser.getName()}, LocaleContextHolder.getLocale())));
         USER_MATCHER.assertMatch(service.get(USER_ID), updatedUser);
+        assertTrue(Files.exists(Paths.get(updatedUser.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + user.getEmail().toLowerCase().replace(' ', '_'))));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void updateNoAvatarUser() throws Exception {
+        User updated = new User(disabledUser);
+        updated.setEmail(NEW_EMAIL);
+        updated.setName("new name");
+        MultiValueMap<String, String> updatedUserParams = new LinkedMultiValueMap<>();
+        updatedUserParams.add(ID_PARAM, String.valueOf(updated.getId()));
+        updatedUserParams.add(NAME_PARAM, updated.getName());
+        updatedUserParams.add(EMAIL_PARAM, updated.getEmail());
+        updatedUserParams.add(ROLES_PARAM, updated.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
+        perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
+                .params(updatedUserParams)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(USERS_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
+                        new Object[]{updated.getName()}, LocaleContextHolder.getLocale())));
+        USER_MATCHER.assertMatch(service.get(DISABLED_USER_ID), updated);
     }
 
     //Check UniqueMailValidator works correct when update with same email
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateEmailNotChange() throws Exception {
-        User updatedUser = getUpdatedUser();
-        updatedUser.setEmail(USER_MAIL);
-        MultiValueMap<String, String> updatedParams = getUpdatedUserParams();
+        User updatedUser = getUpdatedUserWithOldEMail(contentPath);
+        MultiValueMap<String, String> updatedParams = getUpdatedUserParams(contentPath);
         updatedParams.set(EMAIL_PARAM, USER_MAIL);
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
                 .params(updatedParams)
@@ -253,12 +298,13 @@ class UserManagementControllerTest extends AbstractControllerTest {
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
                         new Object[]{updatedUser.getName()}, LocaleContextHolder.getLocale())));
         USER_MATCHER.assertMatch(service.get(USER_ID), updatedUser);
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateNotFound() throws Exception {
-        MultiValueMap<String, String> updatedParams = getUpdatedUserParams();
+        MultiValueMap<String, String> updatedParams = getUpdatedUserParams(contentPath);
         updatedParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
                 .params(updatedParams)
@@ -270,22 +316,26 @@ class UserManagementControllerTest extends AbstractControllerTest {
     @Test
     void updateUnAuthorize() throws Exception {
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
-                .params(getUpdatedUserParams())
+                .params(getUpdatedUserParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser().getEmail());
+        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser(contentPath).getEmail());
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdatedUser(contentPath).getAvatar().getFileLink())));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void updateForbidden() throws Exception {
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
-                .params(getUpdatedUserParams())
+                .params(getUpdatedUserParams(contentPath))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser().getEmail());
+        assertNotEquals(service.get(USER_ID).getEmail(), getUpdatedUser(contentPath).getEmail());
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdatedUser(contentPath).getAvatar().getFileLink())));
     }
 
     @Test
@@ -299,12 +349,15 @@ class UserManagementControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeHasFieldErrors(USER_TO_ATTRIBUTE, NAME_PARAM, EMAIL_PARAM, ROLES_PARAM))
                 .andExpect(view().name(USER_EDIT_VIEW));
         assertNotEquals(service.get(USER_ID).getEmail(), updatedInvalidParams.get(EMAIL_PARAM).get(0));
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath +
+                updatedInvalidParams.get(EMAIL_PARAM).get(0).toLowerCase().replace(" ", "_") + user.getAvatar().getFileName())));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void updateDuplicateEmail() throws Exception {
-        MultiValueMap<String, String> updatedParams = getUpdatedUserParams();
+        MultiValueMap<String, String> updatedParams = getUpdatedUserParams(contentPath);
         updatedParams.set(EMAIL_PARAM, ADMIN_MAIL);
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
                 .params(updatedParams)
@@ -313,5 +366,7 @@ class UserManagementControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeHasFieldErrorCode(USER_TO_ATTRIBUTE, EMAIL_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(USER_EDIT_VIEW));
         assertNotEquals(service.get(USER_ID).getEmail(), ADMIN_MAIL);
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.exists(Paths.get(admin.getAvatar().getFileLink())));
     }
 }

@@ -7,6 +7,7 @@ import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
 public class UserUtil {
@@ -22,10 +23,14 @@ public class UserUtil {
         return new UserTo(user.getId(), user.getEmail(), user.getName(), user.getRoles());
     }
 
-    public static User updateFromTo(User user, UserTo userTo) {
+    public static User updateFromTo(User user, UserTo userTo, String contentPath) {
+        String oldEmail = user.getEmail();
         user.setEmail(userTo.getEmail());
         user.setName(userTo.getName());
         user.setRoles(userTo.getRoles());
+        if (user.getAvatar() != null && !user.getEmail().equalsIgnoreCase(oldEmail)) {
+            user.getAvatar().setFileLink(contentPath + normalizePath(user.getEmail() + "/" + user.getAvatar().getFileName()));
+        }
         return user;
     }
 }

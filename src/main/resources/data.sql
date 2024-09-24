@@ -13,7 +13,7 @@ ALTER SEQUENCE global_seq RESTART WITH 100000;
 INSERT INTO users (email, name, password, enabled, avatar_file_name, avatar_file_link)
 VALUES ('user@gmail.com','John Doe', '{noop}password', true, 'cool_user.jpg', './content/avatars/user@gmail.com/cool_user.jpg'),
        ('admin@gmail.com','Jack', '{noop}admin', true, 'admin.jpg', './content/avatars/admin@gmail.com/admin.jpg'),
-       ('user2@gmail.com','Alice Key', '{noop}somePassword', true, null, null),
+       ('user2@gmail.com','Alice Key', '{noop}somePassword', true, 'cat.jpg', './content/avatars/user2@gmail.com/cat.jpg'),
        ('userDisabled@gmail.com','Freeman25', '{noop}password', false, null, null);
 
 INSERT INTO user_roles (role, user_id)

@@ -42,12 +42,11 @@ import static ru.javaprojects.projector.users.UserTestData.user;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
+import static ru.javaprojects.projector.users.web.UserManagementControllerTest.AVATARS_TEST_DATA_FILES_PATH;
 
 class UserManagementRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
     private static final String USERS_CHANGE_PASSWORD_URL = USERS_URL + "/change-password/";
-
-    static final String AVATARS_TEST_DATA_FILES_PATH = "src/test/test-data-files/avatars";
 
     @Value("${content-path.avatars}")
     private String contentPath;

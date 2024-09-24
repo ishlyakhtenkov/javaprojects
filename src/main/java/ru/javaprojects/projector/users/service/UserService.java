@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.users.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.session.SessionInformation;
@@ -23,10 +24,13 @@ import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
     private final SessionRegistry sessionRegistry;
+
+    @Value("${content-path.avatars}")
+    private String contentPath;
 
     public User getByEmail(String email) {
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->
@@ -68,7 +72,12 @@ public class UserService {
     public void update(UserTo userTo) {
         Assert.notNull(userTo, "userTo must not be null");
         User user = get(userTo.getId());
-        updateFromTo(user, userTo);
+        String oldEmail = user.getEmail();
+        String avatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
+        repository.saveAndFlush(updateFromTo(user, userTo, contentPath));
+        if (avatarFileLink != null && !user.getEmail().equalsIgnoreCase(oldEmail)) {
+            FileUtil.moveFile(avatarFileLink, contentPath + FileUtil.normalizePath(user.getEmail()));
+        }
     }
 
     @Transactional

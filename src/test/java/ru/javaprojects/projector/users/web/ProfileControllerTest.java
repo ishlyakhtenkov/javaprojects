@@ -2,11 +2,13 @@ package ru.javaprojects.projector.users.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
@@ -16,6 +18,9 @@ import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -28,12 +33,16 @@ import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_EN
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
+import static ru.javaprojects.projector.users.web.UserManagementControllerTest.AVATARS_TEST_DATA_FILES_PATH;
 
-class ProfileControllerTest extends AbstractControllerTest {
+class ProfileControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/reset-password";
     private static final String RESET_PASSWORD_VIEW = "profile/reset-password";
     private static final String PROFILE_VIEW = "profile/profile";
     private static final String CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
+
+    @Value("${content-path.avatars}")
+    private String contentPath;
 
     @Autowired
     private MessageSource messageSource;
@@ -46,6 +55,16 @@ class ProfileControllerTest extends AbstractControllerTest {
 
     @Autowired
     private ChangeEmailTokenRepository changeEmailTokenRepository;
+
+    @Override
+    public Path getContentPath() {
+        return Paths.get(contentPath);
+    }
+
+    @Override
+    public Path getTestDataFilesPath() {
+        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    }
 
     @Test
     void showResetPasswordForm() throws Exception {
@@ -211,6 +230,9 @@ class ProfileControllerTest extends AbstractControllerTest {
         assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
         User updated = userService.get(USER2_ID);
         assertEquals(changeEmailToken.getNewEmail(), updated.getEmail());
+        assertTrue(Files.exists(Paths.get(updated.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(user2.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + user2.getEmail().toLowerCase().replace(' ', '_'))));
     }
 
     @Test

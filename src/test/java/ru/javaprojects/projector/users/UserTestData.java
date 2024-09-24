@@ -74,7 +74,8 @@ public class UserTestData {
             new File("cool_user.jpg", "./content/avatars/user@gmail.com/cool_user.jpg"));
     public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "admin", true, Set.of(Role.USER, Role.ADMIN),
             new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
-    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER));
+    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER),
+            new File("cat.jpg", "./content/avatars/user2@gmail.com/cat.jpg"));
     public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password",
             false, Set.of(Role.USER));
 
@@ -88,9 +89,15 @@ public class UserTestData {
         return new User(null, "new@gmail.com", "newName", "newPassword", true, Set.of(USER));
     }
 
-    public static User getUpdatedUser() {
+    public static User getUpdatedUser(String contentPath) {
         return new User(USER_ID, "updated@gmail.com", "updatedName", user.getPassword(), user.isEnabled(),
-                Set.of(Role.USER, Role.ADMIN), user.getAvatar());
+                Set.of(Role.USER, Role.ADMIN),
+                new File(user.getAvatar().getFileName(), contentPath + "updated@gmail.com" + "/" + user.getAvatar().getFileName()));
+    }
+
+    public static User getUpdatedUserWithOldEMail(String contentPath) {
+        return new User(USER_ID, USER_MAIL, "updatedName", user.getPassword(), user.isEnabled(),
+                Set.of(Role.USER, Role.ADMIN), new File(user.getAvatar().getFileName(), user.getAvatar().getFileLink()));
     }
 
     public static RegisterTo getNewRegisterTo() {
@@ -164,9 +171,9 @@ public class UserTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getUpdatedUserParams() {
+    public static MultiValueMap<String, String> getUpdatedUserParams(String contentPath) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        User updatedUser = getUpdatedUser();
+        User updatedUser = getUpdatedUser(contentPath);
         params.add(ID_PARAM, String.valueOf(USER_ID));
         params.add(NAME_PARAM, updatedUser.getName());
         params.add(EMAIL_PARAM, updatedUser.getEmail());

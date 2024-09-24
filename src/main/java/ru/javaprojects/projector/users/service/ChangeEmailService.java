@@ -9,20 +9,24 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.mail.MailSender;
 import ru.javaprojects.projector.users.model.ChangeEmailToken;
+import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.to.UserTo;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Service
 public class ChangeEmailService extends TokenService<ChangeEmailToken> {
+    private final UserService userService;
 
     public ChangeEmailService(MailSender mailSender, MessageSource messageSource, UserRepository userRepository,
                               @Value("${change-email.token-expiration-time}") long tokenExpirationTime,
                               @Value("${change-email.confirm-url}") String confirmUrl,
-                              ChangeEmailTokenRepository tokenRepository) {
+                              ChangeEmailTokenRepository tokenRepository, UserService userService) {
         super(mailSender, messageSource, userRepository, tokenRepository, tokenExpirationTime, confirmUrl, "change-email");
+        this.userService = userService;
     }
 
     @Transactional
@@ -49,11 +53,12 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
     @Transactional
     public void confirmChangeEmail(String token, long userId) {
         ChangeEmailToken changeEmailToken = getAndCheckToken(token);
-        if (changeEmailToken.getUser().id() != userId) {
+        User user = changeEmailToken.getUser();
+        if (user.id() != userId) {
             throw new TokenException("token " + token + " not belongs to user with id=" + userId,
                     "change-email.token-not-belongs", null);
         }
-        changeEmailToken.getUser().setEmail(changeEmailToken.getNewEmail());
+        userService.update(new UserTo(user.getId(), changeEmailToken.getNewEmail(), user.getName(), user.getRoles()));
         tokenRepository.delete(changeEmailToken);
     }
 }

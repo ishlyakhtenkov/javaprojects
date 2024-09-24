@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
+<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.users.AuthUser"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
@@ -32,9 +33,12 @@
 
                             <div class="row">
                                 <div class="col-12 col-sm-4 mt-2 ps-2 pe-3">
-<!--                                    <img th:src="@{/content/account_photo.jpg}"-->
-<!--                                         class="img-fluid" style="width: 180px; height: 165px; border-radius: 10px;">-->
-                                    <div class="bg-info-subtle img-fluid align-content-center text-center border h1 mb-0"
+                                    <img th:if="${authUser.user.avatar != null}"
+                                         th:src="@{${authUser.user.avatar.fileLink.startsWith('https://') ?
+                                            (authUser.user.avatar.fileLink) : ('/' + authUser.user.avatar.fileLink)}}"
+                                         class="img-fluid" style="width: 180px; height: 165px; border-radius: 10px;">
+                                    <div th:if="${authUser.user.avatar == null}"
+                                         class="bg-light img-fluid align-content-center text-center border h1 mb-0"
                                          style="width: 180px; height: 165px; border-radius: 10px;" id="userNameFirstLetter"
                                          th:text="${#strings.substring(user.name, 0, 1)}">
                                     </div>

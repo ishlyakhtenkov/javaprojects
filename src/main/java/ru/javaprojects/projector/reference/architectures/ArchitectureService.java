@@ -9,11 +9,9 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 import java.util.List;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.createNewFromTo;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.updateFromTo;
@@ -43,7 +41,7 @@ public class ArchitectureService {
 
     public Architecture create(ArchitectureTo architectureTo) {
         Assert.notNull(architectureTo, "architectureTo must not be null");
-        if (architectureTo.getLogo() == null || isFileToEmpty(architectureTo.getLogo())) {
+        if (architectureTo.getLogo() == null || architectureTo.getLogo().isEmpty()) {
             throw new IllegalRequestDataException("Architecture logo file is not present",
                     "architecture.logo-not-present", null);
         }
@@ -59,7 +57,7 @@ public class ArchitectureService {
         String oldName = architecture.getName();
         String oldLogoFileLink = architecture.getLogo().getFileLink();
         repository.saveAndFlush(updateFromTo(architecture, architectureTo, contentPath));
-        if (!isFileToEmpty(architectureTo.getLogo())) {
+        if (!architectureTo.getLogo().isEmpty()) {
             uploadImage(architectureTo, architecture.getName());
             if (!oldLogoFileLink.equalsIgnoreCase(architecture.getLogo().getFileLink())) {
                 FileUtil.deleteFile(oldLogoFileLink);

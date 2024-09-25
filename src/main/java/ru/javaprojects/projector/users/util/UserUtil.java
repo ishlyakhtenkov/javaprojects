@@ -11,7 +11,6 @@ import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.UserTo;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
@@ -47,7 +46,7 @@ public class UserUtil {
 
     public static User updateFromTo(User user, ProfileTo profileTo, String contentPath) {
         user.setName(profileTo.getName());
-        if (!isFileToEmpty(profileTo.getAvatar())) {
+        if (!profileTo.getAvatar().isEmpty()) {
             user.setAvatar(createAvatarFile(profileTo, user.getEmail(), contentPath));
         }
         return user;

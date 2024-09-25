@@ -59,8 +59,7 @@
                 <span th:if="${authUser?.user.avatar == null}"
                       th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></span>
                 <img th:if="${authUser?.user.avatar != null}" class="rounded-circle border border-light-subtle"
-                     th:src="@{${authUser.user.avatar.fileLink.startsWith('https://') ? (authUser.user.avatar.fileLink) :
-                                 ('/' + authUser.user.avatar.fileLink)}}"
+                     th:src="@{${authUser.user.avatar.getSrc()}}"
                      width="40" height="40"
                      onmouseenter="$(this).addClass('opacity-75')"
                      onmouseleave="$(this).removeClass('opacity-75')" />

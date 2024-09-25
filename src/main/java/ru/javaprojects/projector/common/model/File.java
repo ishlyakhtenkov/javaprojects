@@ -27,4 +27,12 @@ public class File {
     @Size(max = 512)
     @Column(name = "file_link")
     private String fileLink;
+
+    public String getSrc() {
+        return fileLink != null ? (hasExternalLink() ? fileLink : "/" + fileLink) : null;
+    }
+
+    public boolean hasExternalLink() {
+        return fileLink != null && fileLink.startsWith("https://");
+    }
 }

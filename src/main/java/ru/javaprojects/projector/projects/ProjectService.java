@@ -16,11 +16,13 @@ import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -116,11 +118,11 @@ public class ProjectService {
     @Transactional
     public Project create(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        if (projectTo.getLogo() == null || isFileToEmpty(projectTo.getLogo())) {
+        if (projectTo.getLogo() == null || projectTo.getLogo().isEmpty()) {
             throw new IllegalRequestDataException("Project logo file is not present",
                     "project.logo-not-present", null);
         }
-        if (projectTo.getCardImage() == null || isFileToEmpty(projectTo.getCardImage())) {
+        if (projectTo.getCardImage() == null || projectTo.getCardImage().isEmpty()) {
             throw new IllegalRequestDataException("Project card image file is not present",
                     "project.card-image-not-present", null);
         }
@@ -128,7 +130,7 @@ public class ProjectService {
 
         uploadFile(projectTo.getLogo(), project.getName(), LOGO_DIR);
         uploadFile(projectTo.getCardImage(), project.getName(), CARD_IMG_DIR);
-        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
+        if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             uploadFile(projectTo.getDockerCompose(), project.getName(), DOCKER_DIR);
         }
         projectTo.getDescriptionElementTos().stream()
@@ -170,7 +172,7 @@ public class ProjectService {
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
-                    if (deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
+                    if (deTo.getImage() != null && !deTo.getImage().isEmpty()) {
                         uploadDescriptionElementImage(deTo, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getImage().getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
@@ -191,7 +193,7 @@ public class ProjectService {
 
     private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileFileLink, String currentFileLink, String projectName,
                                               String projectOldName, String dirName) {
-        if (fileTo != null && !isFileToEmpty(fileTo)) {
+        if (fileTo != null && !fileTo.isEmpty()) {
             if (oldFileFileLink != null && !oldFileFileLink.equalsIgnoreCase(currentFileLink)) {
                 FileUtil.deleteFile(oldFileFileLink);
             }

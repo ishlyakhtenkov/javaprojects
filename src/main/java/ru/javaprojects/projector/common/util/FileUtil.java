@@ -136,13 +136,4 @@ public class FileUtil {
         Assert.notNull(path, "path must not be null");
         return path.toLowerCase().replace(' ', '_');
     }
-
-    public static boolean isFileToEmpty(FileTo fileTo) {
-        Assert.notNull(fileTo, "fileTo must not be null");
-        MultipartFile inputtedFile = fileTo.getInputtedFile();
-        byte[] inputtedFileBytes = fileTo.getInputtedFileBytes();
-        String fileName = fileTo.getFileName();
-        return (inputtedFile == null || inputtedFile.isEmpty()) &&
-                (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isEmpty());
-    }
 }

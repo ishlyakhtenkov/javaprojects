@@ -240,36 +240,36 @@ class FileUtilTest implements TestContentFilesManager {
     @Test
     void isFileToEmptyWhenFileToHasMultipartFile() {
         FileTo fileTo = new FileTo(null, null, new MockMultipartFile("fileName", new byte[]{1, 2, 3, 4, 5}), null);
-        assertFalse(FileUtil.isFileToEmpty(fileTo));
+        assertFalse(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasFileBytes() {
         FileTo fileTo = new FileTo("fileName", null, null, new byte[]{1, 2, 3, 4, 5});
-        assertFalse(FileUtil.isFileToEmpty(fileTo));
+        assertFalse(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasEmptyMultipartFile() {
         FileTo fileTo = new FileTo(null, null, new MockMultipartFile("fileName", new byte[]{}), null);
-        assertTrue(FileUtil.isFileToEmpty(fileTo));
+        assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasEmptyFileBytes() {
         FileTo fileTo = new FileTo("fileName", null, null, new byte[]{});
-        assertTrue(FileUtil.isFileToEmpty(fileTo));
+        assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToToHasFileBytesAndHasNoFileName() {
         FileTo fileTo = new FileTo(null, null, null, new byte[]{1, 2, 3, 4, 5});
-        assertTrue(FileUtil.isFileToEmpty(fileTo));
+        assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToToHasFileBytesAndHasEmptyFileName() {
         FileTo fileTo = new FileTo("", null, null, new byte[]{1, 2, 3, 4, 5});
-        assertTrue(FileUtil.isFileToEmpty(fileTo));
+        assertTrue(fileTo.isEmpty());
     }
 }

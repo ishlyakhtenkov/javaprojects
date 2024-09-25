@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.users.to;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,6 +32,7 @@ public class ProfileTo extends BaseTo implements HasIdAndEmail {
     private String name;
 
     @Nullable
+    @Valid
     @ImageFile
     private FileTo avatar;
 

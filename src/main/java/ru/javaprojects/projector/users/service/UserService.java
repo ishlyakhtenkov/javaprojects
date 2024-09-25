@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.users.AuthUser;
@@ -22,7 +23,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
@@ -88,13 +88,13 @@ public class UserService {
     public User update(ProfileTo profileTo) {
         Assert.notNull(profileTo, "profileTo must not be null");
         User user = get(profileTo.getId());
-        String oldAvatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
+        File oldAvatar = user.getAvatar();
         repository.saveAndFlush(updateFromTo(user, profileTo, contentPath));
-        if (!isFileToEmpty(profileTo.getAvatar())) {
+        if (!profileTo.getAvatar().isEmpty()) {
             uploadImage(profileTo, user.getEmail());
-            if (oldAvatarFileLink != null && !oldAvatarFileLink.startsWith("https://") &&
-                    !oldAvatarFileLink.equalsIgnoreCase(user.getAvatar().getFileLink())) {
-                FileUtil.deleteFile(oldAvatarFileLink);
+            if (oldAvatar != null && !oldAvatar.hasExternalLink() &&
+                    !oldAvatar.getFileLink().equalsIgnoreCase(user.getAvatar().getFileLink())) {
+                FileUtil.deleteFile(oldAvatar.getFileLink());
             }
         }
         return user;

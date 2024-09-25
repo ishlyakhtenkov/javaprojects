@@ -55,14 +55,17 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     private Architecture architecture;
 
     @Nullable
+    @Valid
     @ImageFile
     private FileTo logo;
 
     @Nullable
+    @Valid
     @YamlFile
     private FileTo dockerCompose;
 
     @Nullable
+    @Valid
     @ImageFile
     private FileTo cardImage;
 

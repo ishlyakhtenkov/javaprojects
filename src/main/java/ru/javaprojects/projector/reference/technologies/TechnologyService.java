@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.reference.technologies.TechnologyUtil.createNewFromTo;
 import static ru.javaprojects.projector.reference.technologies.TechnologyUtil.updateFromTo;
@@ -56,7 +55,7 @@ public class TechnologyService {
     @Transactional
     public Technology create(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
-        if (technologyTo.getLogo() == null || isFileToEmpty(technologyTo.getLogo())) {
+        if (technologyTo.getLogo() == null || technologyTo.getLogo().isEmpty()) {
             throw new IllegalRequestDataException("Technology logo file is not present",
                     "technology.logo-not-present", null);
         }
@@ -72,7 +71,7 @@ public class TechnologyService {
         String oldName = technology.getName();
         String oldLogoFileLink = technology.getLogo().getFileLink();
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
-        if (!isFileToEmpty(technologyTo.getLogo())) {
+        if (!technologyTo.getLogo().isEmpty()) {
             uploadImage(technologyTo, technology.getName());
             if (!oldLogoFileLink.equalsIgnoreCase(technology.getLogo().getFileLink())) {
                 FileUtil.deleteFile(oldLogoFileLink);

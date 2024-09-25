@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.reference.technologies;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,6 +41,7 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
     private Priority priority;
 
     @Nullable
+    @Valid
     @ImageFile
     private FileTo logo;
 

@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.reference.architectures;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class ArchitectureTo extends BaseTo implements HasIdAndName {
     private String description;
 
     @Nullable
+    @Valid
     @ImageFile
     private FileTo logo;
 

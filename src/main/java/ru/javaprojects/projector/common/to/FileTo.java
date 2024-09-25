@@ -36,7 +36,7 @@ public class FileTo {
 
     public String getSrc() {
         if (fileLink != null) {
-            return fileLink.startsWith("https://") ? fileLink : "/" + fileLink;
+            return hasExternalLink() ? fileLink : "/" + fileLink;
         }
         if (inputtedFileBytes == null || fileName == null) {
             return null;
@@ -44,6 +44,15 @@ public class FileTo {
         String srcType = (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) ? "data:application/octet-stream;base64," :
                 fileName.endsWith(".svg") ? "data:image/svg+xml;base64," : "data:image/*;base64,";
         return srcType + Base64.getEncoder().encodeToString(inputtedFileBytes);
+    }
+
+    public boolean hasExternalLink() {
+        return fileLink != null && fileLink.startsWith("https://");
+    }
+
+    public boolean isEmpty() {
+        return (inputtedFile == null || inputtedFile.isEmpty()) &&
+                (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isEmpty());
     }
 
     public void keepInputtedFile() {

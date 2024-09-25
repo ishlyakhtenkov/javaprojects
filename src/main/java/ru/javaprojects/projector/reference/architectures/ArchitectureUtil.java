@@ -5,7 +5,6 @@ import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
@@ -24,7 +23,7 @@ public class ArchitectureUtil {
         String architectureOldName = architecture.getName();
         architecture.setName(architectureTo.getName());
         architecture.setDescription(architectureTo.getDescription());
-        if (!isFileToEmpty(architectureTo.getLogo())) {
+        if (!architectureTo.getLogo().isEmpty()) {
             architecture.setLogo(createLogoFile(architectureTo, contentPath));
         } else if (!architecture.getName().equalsIgnoreCase(architectureOldName)) {
             architecture.getLogo().setFileLink(contentPath + normalizePath(architecture.getName() + "/" +

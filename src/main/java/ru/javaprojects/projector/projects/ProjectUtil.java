@@ -25,7 +25,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
@@ -62,7 +61,7 @@ public class ProjectUtil {
 
     public Project createNewFromTo(ProjectTo projectTo) {
         File dockerCompose = null;
-        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
+        if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             dockerCompose = createDockerComposeFile(projectTo);
         }
         Project project = new Project(null, projectTo.getName(), projectTo.getShortDescription(), projectTo.isEnabled(),
@@ -77,7 +76,7 @@ public class ProjectUtil {
 
     private DescriptionElement createNewFromTo(DescriptionElementTo deTo, Project project) {
         if (deTo.getType() == ElementType.IMAGE) {
-            if (deTo.getImage() == null || isFileToEmpty(deTo.getImage())) {
+            if (deTo.getImage() == null || deTo.getImage().isEmpty()) {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "description-element.image-not-present", null);
             }
@@ -121,13 +120,13 @@ public class ProjectUtil {
                 .map(deTo -> createNewFromTo(deTo, project))
                 .forEach(project::addDescriptionElement);
 
-        if (projectTo.getLogo() != null && !isFileToEmpty(projectTo.getLogo())) {
+        if (projectTo.getLogo() != null && !projectTo.getLogo().isEmpty()) {
             project.setLogo(createLogoFile(projectTo));
         }
-        if (projectTo.getCardImage() != null && !isFileToEmpty(projectTo.getCardImage())) {
+        if (projectTo.getCardImage() != null && !projectTo.getCardImage().isEmpty()) {
             project.setCardImage(createCardImageFile(projectTo));
         }
-        if (projectTo.getDockerCompose() != null && !isFileToEmpty(projectTo.getDockerCompose())) {
+        if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             project.setDockerCompose(createDockerComposeFile(projectTo));
         }
 
@@ -155,7 +154,7 @@ public class ProjectUtil {
 
     private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
         de.setIndex(deTo.getIndex());
-        if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !isFileToEmpty(deTo.getImage())) {
+        if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !deTo.getImage().isEmpty()) {
             setFileAttributes(deTo, project.getName());
             de.getImage().setFileName(deTo.getImage().getFileName());
             de.getImage().setFileLink(deTo.getImage().getFileLink());

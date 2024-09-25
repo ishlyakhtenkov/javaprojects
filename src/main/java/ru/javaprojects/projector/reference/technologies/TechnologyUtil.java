@@ -6,7 +6,6 @@ import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
-import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
 @UtilityClass
@@ -27,7 +26,7 @@ public class TechnologyUtil {
         technology.setUrl(technologyTo.getUrl());
         technology.setUsage(technologyTo.getUsage());
         technology.setPriority(technologyTo.getPriority());
-        if (!isFileToEmpty(technologyTo.getLogo())) {
+        if (!technologyTo.getLogo().isEmpty()) {
             technology.setLogo(createLogoFile(technologyTo, contentPath));
         } else if (!technology.getName().equalsIgnoreCase(technologyOldName)) {
             technology.getLogo().setFileLink(contentPath + normalizePath(technology.getName() + "/" +

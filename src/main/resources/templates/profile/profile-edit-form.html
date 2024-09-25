@@ -50,9 +50,12 @@
                                 </div>
                                 <div class="col-12 col-sm-7 ps-sm-0">
                                     <div class="mb-3 mt-3 mt-sm-0">
-                                        <input type="text" id="nameInput" th:field="*{name}"
-                                               th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
-                                               required placeholder="Name" />
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;">Name</span>
+                                            <input type="text" id="nameInput" th:field="*{name}"
+                                                   th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
+                                                   required placeholder="Name" />
+                                        </div>
                                         <span th:if="${#fields.hasErrors('name')}">
                                             <ul>
                                                 <li class="text-danger text-start" th:each="err : ${#fields.errors('name')}"
@@ -61,9 +64,12 @@
                                         </span>
                                     </div>
                                     <div class="mb-3">
-                                        <input type="text" id="emailInput" th:field="*{email}"
-                                               th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
-                                               required placeholder="Email" />
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;">Email</span>
+                                            <input type="text" id="emailInput" th:field="*{email}"
+                                                   th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                                                   required placeholder="Email" />
+                                        </div>
                                         <span th:if="${#fields.hasErrors('email')}">
                                             <ul>
                                                 <li class="text-danger text-start" th:each="err : ${#fields.errors('email')}"
@@ -72,9 +78,9 @@
                                         </span>
                                     </div>
 
-                                    <div class="btn-toolbar float-end mt-sm-4">
-                                        <button class="btn btn-sm btn-secondary" type="button" onclick="cancel()">Cancel</button>
-                                        <button class="btn btn-sm btn-primary ms-2" type="submit">&nbsp;&nbsp;Save&nbsp;&nbsp;</button>
+                                    <div class="btn-toolbar float-end mt-sm-3 pt-sm-1">
+                                        <button class="btn btn btn-secondary" type="button" onclick="cancel()">Cancel</button>
+                                        <button class="btn btn btn-primary ms-2" type="submit">&nbsp;&nbsp;Save&nbsp;&nbsp;</button>
                                     </div>
                                 </div>
                             </div>

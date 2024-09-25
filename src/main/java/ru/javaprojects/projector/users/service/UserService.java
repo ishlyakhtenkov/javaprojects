@@ -10,16 +10,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
+import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.UserTo;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.util.FileUtil.isFileToEmpty;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
 
@@ -78,6 +82,29 @@ public class UserService {
         if (avatarFileLink != null && !user.getEmail().equalsIgnoreCase(oldEmail)) {
             FileUtil.moveFile(avatarFileLink, contentPath + FileUtil.normalizePath(user.getEmail()));
         }
+    }
+
+    @Transactional
+    public User update(ProfileTo profileTo) {
+        Assert.notNull(profileTo, "profileTo must not be null");
+        User user = get(profileTo.getId());
+        String oldAvatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
+        repository.saveAndFlush(updateFromTo(user, profileTo, contentPath));
+        if (!isFileToEmpty(profileTo.getAvatar())) {
+            uploadImage(profileTo, user.getEmail());
+            if (oldAvatarFileLink != null && !oldAvatarFileLink.startsWith("https://") &&
+                    !oldAvatarFileLink.equalsIgnoreCase(user.getAvatar().getFileLink())) {
+                FileUtil.deleteFile(oldAvatarFileLink);
+            }
+        }
+        return user;
+    }
+
+    private void uploadImage(ProfileTo profileTo, String userEmail) {
+        FileTo avatar = profileTo.getAvatar();
+        String filename = normalizePath(avatar.getInputtedFile() != null && !avatar.getInputtedFile().isEmpty() ?
+                avatar.getInputtedFile().getOriginalFilename() : avatar.getFileName());
+        FileUtil.upload(avatar, contentPath + FileUtil.normalizePath(userEmail) + "/", filename);
     }
 
     @Transactional

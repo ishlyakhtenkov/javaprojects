@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
@@ -17,10 +20,12 @@ import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
+import ru.javaprojects.projector.users.to.ProfileTo;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,8 +34,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
+import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.util.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.users.UserTestData.*;
+import static ru.javaprojects.projector.users.util.UserUtil.asProfileTo;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 import static ru.javaprojects.projector.users.web.UserManagementControllerTest.AVATARS_TEST_DATA_FILES_PATH;
@@ -40,6 +48,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     private static final String RESET_PASSWORD_VIEW = "profile/reset-password";
     private static final String PROFILE_VIEW = "profile/profile";
     private static final String CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
+    private static final String PROFILE_EDIT_FORM_URL = PROFILE_URL + "/edit";
+    private static final String PROFILE_EDIT_VIEW = "profile/profile-edit-form";
 
     @Value("${content-path.avatars}")
     private String contentPath;
@@ -275,5 +285,145 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("change-email.token-not-belongs", null,
                         LocaleContextHolder.getLocale()), TokenException.class));
         assertNotEquals(changeEmailToken.getNewEmail(), userService.get(ADMIN_ID).getEmail());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void showEditProfilePage() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROFILE_EDIT_FORM_URL))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute(PROFILE_TO_ATTRIBUTE, asProfileTo(user)))
+                .andExpect(view().name(PROFILE_EDIT_VIEW))
+                .andExpect(result ->
+                        PROFILE_TO_MATCHER.assertMatch((ProfileTo) Objects.requireNonNull(result.getModelAndView())
+                                .getModel().get(PROFILE_TO_ATTRIBUTE), asProfileTo(user)));
+    }
+
+    @Test
+    void showEditProfilePageUnAuthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROFILE_EDIT_FORM_URL)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void update() throws Exception {
+        User updatedProfileUser = getUpdatedProfileUser(contentPath);
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .file(UPDATED_AVATAR_FILE)
+                .params(getUpdatedProfileParams(contentPath))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
+                       null, LocaleContextHolder.getLocale())));
+
+        USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
+        assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateWhenLogoFileIsBytesArray() throws Exception {
+        User updatedProfileUser = getUpdatedProfileUser(contentPath);
+        MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(contentPath);
+        updatedParams.add(AVATAR_FILE_AS_BYTES_PARAM,  Arrays.toString(UPDATED_AVATAR_FILE.getBytes()));
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .params(updatedParams)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
+                        null, LocaleContextHolder.getLocale())));
+
+        USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
+        assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateWhenAvatarNotUpdated() throws Exception {
+        User updatedProfileUser = getUpdatedProfileUserWhenOldAvatar(contentPath);
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .params(getUpdatedProfileParams(contentPath))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
+                        null, LocaleContextHolder.getLocale())));
+
+        USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+    }
+
+    @Test
+    void updateUnAuthorize() throws Exception {
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .file(UPDATED_AVATAR_FILE)
+                .params(getUpdatedProfileParams(contentPath))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        assertNotEquals(userService.get(USER_ID).getName(), getUpdatedProfileUser(contentPath).getName());
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdatedProfileUser(contentPath).getAvatar().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateInvalid() throws Exception {
+        MultiValueMap<String, String> updatedProfileInvalidParams = getUpdatedProfileInvalidParams(contentPath);
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .file(UPDATED_AVATAR_FILE)
+                .params(updatedProfileInvalidParams)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors(PROFILE_TO_ATTRIBUTE, NAME_PARAM, EMAIL_PARAM))
+                .andExpect(view().name(PROFILE_EDIT_VIEW));
+
+        assertArrayEquals(UPDATED_AVATAR_FILE.getBytes(),
+                ((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                        .getAvatar().getInputtedFileBytes());
+        assertEquals(UPDATED_AVATAR_FILE.getOriginalFilename(),
+                ((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                        .getAvatar().getFileName());
+        assertNull(((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                .getAvatar().getFileLink());
+        assertNotEquals(userService.get(USER_ID).getName(), updatedProfileInvalidParams.get(NAME_PARAM).get(0));
+        assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdatedProfileUser(contentPath).getAvatar().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateDuplicateEmail() throws Exception {
+        MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(contentPath);
+        updatedParams.set(EMAIL_PARAM, admin.getEmail());
+        ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .file(UPDATED_AVATAR_FILE)
+                .params(updatedParams)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrorCode(PROFILE_TO_ATTRIBUTE, EMAIL_PARAM, DUPLICATE_ERROR_CODE))
+                .andExpect(view().name(PROFILE_EDIT_VIEW));
+
+        assertArrayEquals(UPDATED_AVATAR_FILE.getBytes(),
+                ((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                        .getAvatar().getInputtedFileBytes());
+        assertEquals(UPDATED_AVATAR_FILE.getOriginalFilename(),
+                ((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                        .getAvatar().getFileName());
+        assertNull(((ProfileTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(PROFILE_TO_ATTRIBUTE))
+                .getAvatar().getFileLink());
+
+        assertNotEquals(userService.get(USER_ID).getEmail(), admin.getEmail());
+        assertTrue(Files.exists(Paths.get(admin.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(contentPath + admin.getEmail() + "/" + UPDATED_AVATAR_FILE.getOriginalFilename().toLowerCase())));
     }
 }

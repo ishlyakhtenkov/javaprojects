@@ -36,7 +36,7 @@ public class FileTo {
 
     public String getSrc() {
         if (fileLink != null) {
-            return "/" + fileLink;
+            return fileLink.startsWith("https://") ? fileLink : "/" + fileLink;
         }
         if (inputtedFileBytes == null || fileName == null) {
             return null;
@@ -50,6 +50,7 @@ public class FileTo {
         try {
             setInputtedFileBytes(getInputtedFile().getBytes());
             setFileName(getInputtedFile().getOriginalFilename());
+            setInputtedFile(null);
             setFileLink(null);
         } catch (IOException e) {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",

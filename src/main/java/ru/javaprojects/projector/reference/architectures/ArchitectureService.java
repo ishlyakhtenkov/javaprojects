@@ -61,7 +61,9 @@ public class ArchitectureService {
         repository.saveAndFlush(updateFromTo(architecture, architectureTo, contentPath));
         if (!isFileToEmpty(architectureTo.getLogo())) {
             uploadImage(architectureTo, architecture.getName());
-            FileUtil.deleteFile(oldLogoFileLink);
+            if (!oldLogoFileLink.equalsIgnoreCase(architecture.getLogo().getFileLink())) {
+                FileUtil.deleteFile(oldLogoFileLink);
+            }
         } else if (!architecture.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(architecture.getName()));
         }

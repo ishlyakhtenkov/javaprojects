@@ -179,19 +179,20 @@ public class ProjectService {
                     }
                 });
 
-        updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getName(),
+        updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getLogo().getFileLink(), project.getName(),
                 projectOldName, LOGO_DIR);
-        updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getName(),
-                projectOldName, CARD_IMG_DIR);
-        updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink, project.getName(),
-                projectOldName, DOCKER_DIR);
+        updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getCardImage().getFileLink(),
+                project.getName(), projectOldName, CARD_IMG_DIR);
+        updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink,
+                projectTo.getDockerCompose() != null ? projectTo.getDockerCompose().getFileLink() : null,
+                project.getName(), projectOldName, DOCKER_DIR);
         return project;
     }
 
-    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileFileLink, String projectName,
+    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileFileLink, String currentFileLink, String projectName,
                                               String projectOldName, String dirName) {
         if (fileTo != null && !isFileToEmpty(fileTo)) {
-            if (oldFileFileLink != null) {
+            if (oldFileFileLink != null && !oldFileFileLink.equalsIgnoreCase(currentFileLink)) {
                 FileUtil.deleteFile(oldFileFileLink);
             }
             String fileName = (fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty()) ?

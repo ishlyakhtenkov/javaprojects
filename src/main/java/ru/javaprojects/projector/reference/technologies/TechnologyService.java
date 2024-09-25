@@ -74,7 +74,9 @@ public class TechnologyService {
         repository.saveAndFlush(updateFromTo(technology, technologyTo, contentPath));
         if (!isFileToEmpty(technologyTo.getLogo())) {
             uploadImage(technologyTo, technology.getName());
-            FileUtil.deleteFile(oldLogoFileLink);
+            if (!oldLogoFileLink.equalsIgnoreCase(technology.getLogo().getFileLink())) {
+                FileUtil.deleteFile(oldLogoFileLink);
+            }
         } else if (!technology.getName().equalsIgnoreCase(oldName)) {
             FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(technology.getName()));
         }

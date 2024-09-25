@@ -6,6 +6,7 @@
 
 <th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
+        <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-address-card me-1"></i>Profile</li>
@@ -16,44 +17,38 @@
             <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
                 <div class="card shadow-sm rounded-4 bg-light-subtle">
                     <div class="card-body">
-                        <div class="mb-2 mb-sm-0">
-                            <div class="float-end">
-                                <button type="button" class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle" title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><button class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#editProfileModal">Edit profile</button></li>
-                                    <li><button class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#changeEmailModal">Change email</button></li>
-                                    <li><button class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#changePasswordModal">Change password</button></li>
-                                </ul>
-                            </div>
+                        <div class="float-end">
+                            <button type="button"
+                               class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                               title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a type="button" class="dropdown-item" th:href="@{/profile/edit}">Edit profile</a></li>
+                                <li><button class="dropdown-item" data-bs-toggle="modal"
+                                     data-bs-target="#changeEmailModal">Change email</button></li>
+                                <li><button class="dropdown-item" data-bs-toggle="modal"
+                                     data-bs-target="#changePasswordModal">Change password</button></li>
+                            </ul>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-12 col-sm-4 mt-2 ps-2 pe-3">
-                                    <img th:if="${authUser.user.avatar != null}"
-                                         th:src="@{${authUser.user.avatar.fileLink.startsWith('https://') ?
-                                            (authUser.user.avatar.fileLink) : ('/' + authUser.user.avatar.fileLink)}}"
-                                         class="img-fluid" style="width: 180px; height: 165px; border-radius: 10px;">
-                                    <div th:if="${authUser.user.avatar == null}"
-                                         class="bg-light img-fluid align-content-center text-center border h1 mb-0"
-                                         style="width: 180px; height: 165px; border-radius: 10px;" id="userNameFirstLetter"
-                                         th:text="${#strings.substring(user.name, 0, 1)}">
-                                    </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-5 col-xxl-4 ps-0">
+                                <img class="img-fluid" style="width: 165px; height: 165px; border-radius: 10px;"
+                                     th:src="@{${user.avatar != null ? (user.avatar.fileLink.startsWith('https://') ?
+                                        (user.avatar.fileLink) : ('/' + user.avatar.fileLink)) : '/images/no-avatar.svg'}}" />
+                            </div>
+                            <div class="col-12 col-sm-7 col-xxl-8 ps-0 mt-3 mt-sm-1">
+                                <div class="mb-1 position-relative">
+                                    <span class="h4" th:text="${user.name}" id="userName">Name</span>
+                                    <span class="badge rounded-pill bg-danger-subtle text-dark" style="position: absolute; margin-top: -5px;">Admin</span>
                                 </div>
-                                <div class="col-12 col-sm-8 mt-3">
-                                    <div class="mb-1 position-relative">
-                                        <span class="h4" th:text="${user.name}" id="userName">Name</span>
-                                        <span class="badge rounded-pill bg-danger-subtle text-dark" style="position: absolute; margin-top: -5px;">Admin</span>
-                                    </div>
-                                    <div th:text="${user.email}" class="mb-1">Email</div>
-                                    <div class="small" th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}" style="font-style: italic">Registered</div>
-                                </div>
+                                <div th:text="${user.email}" class="mb-1">Email</div>
+                                <div class="small" th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}" style="font-style: italic">Registered</div>
                             </div>
                         </div>
-                        <div class="btn-toolbar float-end" style="margin-top: -20px;">
+
+                        <div class="btn-toolbar float-end" style="margin-top: -30px; position: relative">
                             <form th:action="@{/logout}" method="post">
                                 <button class="btn btn-sm btn-outline-secondary ms-2" type="submit">Logout</button>
                             </form>
@@ -161,6 +156,9 @@
     </appMain>
 
     <ownScript>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+        </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/profile.js?v=1"></script>
         <script src="/js/check-passwords-match.js?v=1"></script>

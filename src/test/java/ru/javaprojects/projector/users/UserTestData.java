@@ -8,6 +8,7 @@ import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.users.model.*;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
+import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.RegisterTo;
 import ru.javaprojects.projector.users.to.UserTo;
 
@@ -34,6 +35,10 @@ public class UserTestData {
     public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
 
+    public static final MatcherFactory.Matcher<ProfileTo> PROFILE_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(ProfileTo.class);
+
+
     public static final String USER_ATTRIBUTE = "user";
     public static final String REGISTER_TO_ATTRIBUTE = "registerTo";
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
@@ -42,6 +47,7 @@ public class UserTestData {
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String ONLINE_USERS_IDS_ATTRIBUTE = "onlineUsersIds";
     public static final String ROLES_ATTRIBUTE = "roles";
+    public static final String PROFILE_TO_ATTRIBUTE = "profileTo";
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
@@ -50,6 +56,9 @@ public class UserTestData {
     public static final String TOKEN_PARAM = "token";
     public static final String KEYWORD_PARAM = "keyword";
     public static final String ROLES_PARAM = "roles";
+    public static final String AVATAR_FILE_NAME_PARAM = "avatar.fileName";
+    public static final String AVATAR_FILE_LINK_PARAM = "avatar.fileLink";
+    public static final String AVATAR_FILE_AS_BYTES_PARAM = "avatar.inputtedFileBytes";
 
     public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();
@@ -187,6 +196,35 @@ public class UserTestData {
         params.add(NAME_PARAM, INVALID_NAME_WITH_HTML);
         params.add(EMAIL_PARAM, INVALID_EMAIL);
         params.add(ROLES_PARAM, "");
+        return params;
+    }
+
+    public static User getUpdatedProfileUser(String contentPath) {
+        return new User(USER_ID, user.getEmail(), "updatedName", user.getPassword(), user.isEnabled(), user.getRoles(),
+                new File(UPDATED_AVATAR_FILE.getOriginalFilename(), contentPath + user.getEmail().toLowerCase() + "/" +
+                        UPDATED_AVATAR_FILE.getOriginalFilename()));
+    }
+
+    public static User getUpdatedProfileUserWhenOldAvatar(String contentPath) {
+        return new User(USER_ID, user.getEmail(), "updatedName", user.getPassword(), user.isEnabled(), user.getRoles(),
+                user.getAvatar());
+    }
+
+    public static MultiValueMap<String, String> getUpdatedProfileParams(String contentPath) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        User updatedProfileUser = getUpdatedProfileUser(contentPath);
+        params.add(ID_PARAM, String.valueOf(USER_ID));
+        params.add(NAME_PARAM, updatedProfileUser.getName());
+        params.add(EMAIL_PARAM, updatedProfileUser.getEmail());
+        params.add(AVATAR_FILE_NAME_PARAM, updatedProfileUser.getAvatar().getFileName());
+        params.add(AVATAR_FILE_LINK_PARAM, updatedProfileUser.getAvatar().getFileLink());
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getUpdatedProfileInvalidParams(String contentPath) {
+        MultiValueMap<String, String> params = getUpdatedProfileParams(contentPath);
+        params.set(NAME_PARAM, INVALID_NAME);
+        params.set(EMAIL_PARAM, INVALID_EMAIL);
         return params;
     }
 }

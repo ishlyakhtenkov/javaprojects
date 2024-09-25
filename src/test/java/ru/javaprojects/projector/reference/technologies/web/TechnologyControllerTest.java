@@ -440,7 +440,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                         .getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel().get(TECHNOLOGY_TO_ATTRIBUTE))
                 .getLogo().getFileLink());
-        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(contentPath).getName());
+        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), updatedInvalidParams.get(NAME_PARAM).get(0));
         assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(contentPath).getLogo().getFileLink())));
     }

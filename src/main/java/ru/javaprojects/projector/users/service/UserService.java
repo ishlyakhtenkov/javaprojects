@@ -9,6 +9,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
@@ -51,6 +52,19 @@ public class UserService {
         Assert.notNull(password, "password must not be null");
         User user = get(id);
         user.setPassword(PASSWORD_ENCODER.encode(password));
+    }
+
+    @Transactional
+    public void changePassword(long id, String currentPassword, String newPassword) {
+        Assert.notNull(currentPassword, "currentPassword must not be null");
+        Assert.notNull(newPassword, "newPassword must not be null");
+        User user = get(id);
+        if (PASSWORD_ENCODER.matches(currentPassword, user.getPassword())) {
+            user.setPassword(PASSWORD_ENCODER.encode(newPassword));
+        } else {
+            throw new IllegalRequestDataException("Current password for user with id=" + id + " is incorrect",
+                    "profile.incorrect-password", null);
+        }
     }
 
     @Transactional

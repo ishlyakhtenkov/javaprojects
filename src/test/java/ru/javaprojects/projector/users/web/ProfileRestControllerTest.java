@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.users.mail.MailSender;
@@ -141,16 +142,36 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     void changePassword() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
-                .param(PASSWORD_PARAM, NEW_PASSWORD)
+                .param(CURRENT_PASSWORD_PARAM, user.getPassword())
+                .param(NEW_PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(USER_ID).getPassword()));
     }
 
     @Test
+    @WithUserDetails(USER_MAIL)
+    void changePasswordWhenIncorrectCurrentPassword() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
+                .param(CURRENT_PASSWORD_PARAM, INCORRECT_PASSWORD)
+                .param(NEW_PASSWORD_PARAM, NEW_PASSWORD)
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("profile.incorrect-password", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
+        assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(USER_ID).getPassword()));
+    }
+
+    @Test
     void changePasswordUnAuthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
-                .param(PASSWORD_PARAM, NEW_PASSWORD)
+                .param(CURRENT_PASSWORD_PARAM, user.getPassword())
+                .param(NEW_PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
@@ -162,14 +183,15 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void changePasswordInvalid() throws Exception {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
-                .param(PASSWORD_PARAM, INVALID_PASSWORD)
+                .param(CURRENT_PASSWORD_PARAM, user.getPassword())
+                .param(NEW_PASSWORD_PARAM, INVALID_PASSWORD)
                 .with(csrf()))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
                         ConstraintViolationException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("changePassword.password: size must be between 5 and 32"))
+                .andExpect(problemDetail("changePassword.newPassword: size must be between 5 and 32"))
                 .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
         assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userService.get(USER_ID).getPassword()));
     }

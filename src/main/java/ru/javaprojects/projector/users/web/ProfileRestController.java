@@ -1,5 +1,6 @@
 package ru.javaprojects.projector.users.web;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +31,10 @@ public class ProfileRestController {
 
     @PatchMapping("/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(@RequestParam @Size(min = 5, max = 32) String password,
+    public void changePassword(@RequestParam @NotBlank String currentPassword,
+                               @RequestParam @Size(min = 5, max = 32) String newPassword,
                                @AuthenticationPrincipal AuthUser authUser) {
         log.info("change password for user with id={}", authUser.id());
-        userService.changePassword(authUser.id(), password);
+        userService.changePassword(authUser.id(), currentPassword, newPassword);
     }
 }

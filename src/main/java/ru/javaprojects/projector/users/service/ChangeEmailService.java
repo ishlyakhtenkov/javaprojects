@@ -1,7 +1,9 @@
 package ru.javaprojects.projector.users.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -19,13 +21,17 @@ import java.util.UUID;
 
 @Service
 public class ChangeEmailService extends TokenService<ChangeEmailToken> {
-    private final UserService userService;
+    private UserService userService;
 
     public ChangeEmailService(MailSender mailSender, MessageSource messageSource, UserRepository userRepository,
                               @Value("${change-email.token-expiration-time}") long tokenExpirationTime,
                               @Value("${change-email.confirm-url}") String confirmUrl,
-                              ChangeEmailTokenRepository tokenRepository, UserService userService) {
+                              ChangeEmailTokenRepository tokenRepository) {
         super(mailSender, messageSource, userRepository, tokenRepository, tokenExpirationTime, confirmUrl, "change-email");
+    }
+
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
         this.userService = userService;
     }
 
@@ -33,8 +39,8 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
     public void changeEmail(long userId, String newEmail) {
         Assert.notNull(newEmail, "newEmail must not be null");
         userRepository.findByEmailIgnoreCase(newEmail).ifPresent(user -> {
-            String exMessage = user.id() == userId ? "user with id=" + userId + " already has email=" :
-                    "email=" + newEmail + " already in use";
+            String exMessage = user.id() == userId ? ("user with id=" + userId + " already has email=" + newEmail) :
+                    ("email=" + newEmail + " already in use");
             String exMessageCode = user.id() == userId ? "change-email.already-has-email" : "change-email.already-in-use";
             throw new IllegalRequestDataException(exMessage, exMessageCode, new Object[]{newEmail});
         });

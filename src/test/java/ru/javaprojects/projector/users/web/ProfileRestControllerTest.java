@@ -12,14 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.ChangeEmailToken;
 import ru.javaprojects.projector.users.model.PasswordResetToken;
-import ru.javaprojects.projector.users.model.User;
-import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 
@@ -31,8 +27,6 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.INVALID_NAME_WITH_HTML;
-import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
@@ -42,17 +36,12 @@ import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String PROFILE_FORGOT_PASSWORD_URL = PROFILE_URL + "/forgot-password";
     private static final String PROFILE_CHANGE_PASSWORD_URL = PROFILE_URL + "/change-password";
-    private static final String PROFILE_UPDATE_URL = PROFILE_URL + "/update";
-    private static final String PROFILE_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email";
 
     @Autowired
     private MessageSource messageSource;
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
-
-    @Autowired
-    private ChangeEmailTokenRepository changeEmailTokenRepository;
 
     @Autowired
     private UserService userService;
@@ -62,9 +51,6 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Value("${password-reset.confirm-url}")
     private String passwordResetUrl;
-
-    @Value("${change-email.confirm-url}")
-    private String confirmChangeEmailUrl;
 
     @Test
     void forgotPassword() throws Exception {
@@ -186,167 +172,5 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemDetail("changePassword.password: size must be between 5 and 32"))
                 .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
         assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userService.get(USER_ID).getPassword()));
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void updateProfile() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROFILE_UPDATE_URL)
-                .param(NAME_PARAM, UPDATED_NAME)
-                .with(csrf()))
-                .andExpect(status().isNoContent());
-        User updated = new User(user);
-        updated.setName(UPDATED_NAME);
-        USER_MATCHER.assertMatch(userService.get(USER_ID), updated);
-    }
-
-    @Test
-    void updateProfileUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROFILE_UPDATE_URL)
-                .param(NAME_PARAM, UPDATED_NAME)
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(result ->
-                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void updateProfileInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
-        perform(MockMvcRequestBuilders.patch(PROFILE_UPDATE_URL)
-                .param(NAME_PARAM, INVALID_NAME_WITH_HTML)
-                .with(csrf()))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
-                        ConstraintViolationException.class))
-                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
-                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("update.name: Should not be html"))
-                .andExpect(problemInstance(PROFILE_UPDATE_URL));
-        assertNotEquals(INVALID_NAME_WITH_HTML, userService.get(USER_ID).getName());
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void changeEmail() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, NEW_EMAIL)
-                .with(csrf()))
-                .andExpect(status().isNoContent());
-        ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
-        Locale locale = LocaleContextHolder.getLocale();
-        String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
-        String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
-        String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
-                changeEmailUrlLinkText);
-        String emailText = changeEmailMessageText + link;
-        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);
-    }
-
-    @Test
-    void changeEmailUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, NEW_EMAIL)
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(result ->
-                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void changeEmailDuplicateEmail() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, ADMIN_MAIL)
-                .with(csrf()))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
-                        IllegalRequestDataException.class))
-                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
-                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("change-email.already-in-use", new Object[]{ADMIN_MAIL},
-                        LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROFILE_CHANGE_EMAIL_URL));
-        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void changeEmailAlreadyHas() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, USER_MAIL)
-                .with(csrf()))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
-                        IllegalRequestDataException.class))
-                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
-                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("change-email.already-has-email", new Object[]{USER_MAIL},
-                        LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROFILE_CHANGE_EMAIL_URL));
-        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void changeEmailInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, INVALID_EMAIL)
-                .with(csrf()))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
-                        ConstraintViolationException.class))
-                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
-                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("changeEmail.newEmail: must be a well-formed email address"))
-                .andExpect(problemInstance(PROFILE_CHANGE_EMAIL_URL));
-        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-    }
-
-    @Test
-    @WithUserDetails(ADMIN_MAIL)
-    void changeEmailWhenChangeEmailTokenExists() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, NEW_EMAIL)
-                .with(csrf()))
-                .andExpect(status().isNoContent());
-        ChangeEmailToken updatedToken = changeEmailTokenRepository.findByUser_Id(ADMIN_ID).orElseThrow();
-        assertTrue(updatedToken.getExpiryDate().after(new Date()));
-        assertEquals(NEW_EMAIL, updatedToken.getNewEmail());
-        Locale locale = LocaleContextHolder.getLocale();
-        String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
-        String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
-        String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, updatedToken.getToken(),
-                changeEmailUrlLinkText);
-        String emailText = changeEmailMessageText + link;
-        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);
-    }
-
-    @Test
-    @WithUserDetails(USER_MAIL)
-    void changeEmailWhenSomeOneHasTokenWithThisEmail() throws Exception {
-        perform(MockMvcRequestBuilders.post(PROFILE_CHANGE_EMAIL_URL)
-                .param(NEW_EMAIL_PARAM, NEW_EMAIL_SOMEONE_HAS_TOKEN)
-                .with(csrf()))
-                .andExpect(status().isNoContent());
-        ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
-        Locale locale = LocaleContextHolder.getLocale();
-        String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
-        String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
-        String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
-                changeEmailUrlLinkText);
-        String emailText = changeEmailMessageText + link;
-        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL_SOMEONE_HAS_TOKEN, changeEmailMessageSubject,
-                emailText);
     }
 }

@@ -77,8 +77,8 @@ public class ProfileController {
     }
 
     @PostMapping
-    public String update(@Valid ProfileTo profileTo, BindingResult result, Model model,
-                         RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+    public String update(@Valid ProfileTo profileTo, BindingResult result, RedirectAttributes redirectAttributes,
+                         @AuthenticationPrincipal AuthUser authUser) {
         profileTo.setId(authUser.id());
         if (result.hasErrors()) {
             if (profileTo.getAvatar() != null && profileTo.getAvatar().getInputtedFile() != null &&
@@ -92,11 +92,13 @@ public class ProfileController {
             return "profile/profile-edit-form";
         }
         log.info("update {}", profileTo);
-        User updated = userService.update(profileTo);
-        AuthUser.get().getUser().setName(updated.getName());
-        AuthUser.get().getUser().setAvatar(updated.getAvatar());
+        User user = userService.update(profileTo);
+        AuthUser.get().getUser().setName(user.getName());
+        AuthUser.get().getUser().setAvatar(user.getAvatar());
+        String messageCode = profileTo.getEmail().equalsIgnoreCase(user.getEmail()) ? "profile.updated" :
+                "profile.updated.confirm-email";
         redirectAttributes.addFlashAttribute("action",
-                messageSource.getMessage(("profile.updated"),  null, LocaleContextHolder.getLocale()));
+                messageSource.getMessage(messageCode,  null, LocaleContextHolder.getLocale()));
         return "redirect:/profile";
     }
 

@@ -32,6 +32,7 @@ import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
 public class UserService {
     private final UserRepository repository;
     private final SessionRegistry sessionRegistry;
+    private final ChangeEmailService changeEmailService;
 
     @Value("${content-path.avatars}")
     private String contentPath;
@@ -96,6 +97,9 @@ public class UserService {
                     !oldAvatar.getFileLink().equalsIgnoreCase(user.getAvatar().getFileLink())) {
                 FileUtil.deleteFile(oldAvatar.getFileLink());
             }
+        }
+        if (!profileTo.getEmail().equalsIgnoreCase(user.getEmail())) {
+            changeEmailService.changeEmail(user.id(), profileTo.getEmail());
         }
         return user;
     }

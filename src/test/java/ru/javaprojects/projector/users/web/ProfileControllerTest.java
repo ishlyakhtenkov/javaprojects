@@ -1,8 +1,10 @@
 package ru.javaprojects.projector.users.web;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
@@ -15,6 +17,8 @@ import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
+import ru.javaprojects.projector.users.mail.MailSender;
+import ru.javaprojects.projector.users.model.ChangeEmailToken;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
@@ -25,9 +29,7 @@ import ru.javaprojects.projector.users.to.ProfileTo;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -38,6 +40,7 @@ import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.common.util.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.users.UserTestData.*;
+import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.util.UserUtil.asProfileTo;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
@@ -54,6 +57,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Value("${content-path.avatars}")
     private String contentPath;
 
+    @Value("${change-email.confirm-url}")
+    private String confirmChangeEmailUrl;
+
     @Autowired
     private MessageSource messageSource;
 
@@ -65,6 +71,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
 
     @Autowired
     private ChangeEmailTokenRepository changeEmailTokenRepository;
+
+    @MockBean
+    private MailSender mailSender;
 
     @Override
     public Path getContentPath() {
@@ -310,7 +319,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void update() throws Exception {
+    void updateWithoutEmailChange() throws Exception {
         User updatedProfileUser = getUpdatedProfileUser(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)
@@ -324,11 +333,45 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void updateWhenLogoFileIsBytesArray() throws Exception {
+    void updateWithEmailChange() throws Exception {
+        User updatedProfileUser = getUpdatedProfileUser(contentPath);
+        MultiValueMap<String, String> updatedProfileParams = getUpdatedProfileParams(contentPath);
+        updatedProfileParams.set(EMAIL_PARAM, NEW_EMAIL);
+        perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
+                .file(UPDATED_AVATAR_FILE)
+                .params(updatedProfileParams)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated.confirm-email",
+                        null, LocaleContextHolder.getLocale())));
+
+        USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
+        assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+
+        ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
+        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        Locale locale = LocaleContextHolder.getLocale();
+        String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
+        String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
+        String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
+        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
+                changeEmailUrlLinkText);
+        String emailText = changeEmailMessageText + link;
+        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateWithoutEmailChangeWhenLogoFileIsBytesArray() throws Exception {
         User updatedProfileUser = getUpdatedProfileUser(contentPath);
         MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(contentPath);
         updatedParams.add(AVATAR_FILE_AS_BYTES_PARAM,  Arrays.toString(UPDATED_AVATAR_FILE.getBytes()));
@@ -343,11 +386,14 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void updateWhenAvatarNotUpdated() throws Exception {
+    void updateWithoutEmailChangeWhenAvatarNotUpdated() throws Exception {
         User updatedProfileUser = getUpdatedProfileUserWhenOldAvatar(contentPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .params(getUpdatedProfileParams(contentPath))
@@ -359,6 +405,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
 
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -373,6 +422,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         assertNotEquals(userService.get(USER_ID).getName(), getUpdatedProfileUser(contentPath).getName());
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdatedProfileUser(contentPath).getAvatar().getFileLink())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -398,6 +450,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         assertNotEquals(userService.get(USER_ID).getName(), updatedProfileInvalidParams.get(NAME_PARAM).get(0));
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdatedProfileUser(contentPath).getAvatar().getFileLink())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -425,5 +480,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         assertNotEquals(userService.get(USER_ID).getEmail(), admin.getEmail());
         assertTrue(Files.exists(Paths.get(admin.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(contentPath + admin.getEmail() + "/" + UPDATED_AVATAR_FILE.getOriginalFilename().toLowerCase())));
+
+        assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 }

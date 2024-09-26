@@ -7,7 +7,12 @@
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
-                <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-address-card me-1"></i>Profile</li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Profile</li>
             </ol>
         </nav>
 

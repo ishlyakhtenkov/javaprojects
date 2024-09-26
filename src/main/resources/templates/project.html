@@ -5,6 +5,16 @@
 <th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript},
           activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
     <appMain>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${project.name}">Project name</li>
+            </ol>
+        </nav>
         <div class="row d-flex justify-content-center align-items-center mt-2">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">

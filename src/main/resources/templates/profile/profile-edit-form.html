@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="profileTo" type="ru.javaprojects.projector.users.to.ProfileTo"*/-->
-<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.users.AuthUser"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item">
+                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
                     <a th:href="@{/profile}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fa-solid fa-address-card me-1"></i>Profile
+                        Profile
                     </a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">Edit</li>

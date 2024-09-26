@@ -6,8 +6,19 @@
 <th:block th:replace="~{fragments/main::page(title='Sign in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Login</li>
+            </ol>
+        </nav>
+
         <!-- Login card -->
-        <div class="row d-flex justify-content-center align-items-center pt-4 pt-sm-5">
+        <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
                 <div class="card shadow-sm" style="border-radius: 1rem;">
                     <div class="card-body p-4 pt-3 text-center">

@@ -67,7 +67,7 @@ public class ProjectUtil {
         Project project = new Project(null, projectTo.getName(), projectTo.getShortDescription(), projectTo.isEnabled(),
                 projectTo.getPriority(), projectTo.getStartDate(), projectTo.getEndDate(), projectTo.getArchitecture(),
                 createLogoFile(projectTo), dockerCompose, createCardImageFile(projectTo), projectTo.getDeploymentUrl(),
-                projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl());
+                projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0);
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
         projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));

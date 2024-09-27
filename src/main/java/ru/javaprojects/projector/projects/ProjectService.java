@@ -53,6 +53,13 @@ public class ProjectService {
         return project;
     }
 
+    @Transactional
+    public void addViewsToProject(long id) {
+        Project project = repository.findForAddViewsById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
+        project.setViews(project.getViews() + 1);
+    }
+
     public Project getWithTechnologiesAndDescription(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithTechnologiesAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));

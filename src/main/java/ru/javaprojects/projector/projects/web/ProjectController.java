@@ -32,6 +32,7 @@ public class ProjectController {
         Comparator<Technology> technologyComparator = Comparator
                 .comparingInt((Technology t) -> t.getPriority().ordinal())
                 .thenComparing(Technology::getName);
+        projectService.addViewsToProject(id);
         Project project = projectService.getWithTechnologiesAndDescription(id, technologyComparator);
         boolean hasFrontendTechnologies = project.getTechnologies().stream()
                 .anyMatch(technology -> technology.getUsage() == Usage.FRONTEND);

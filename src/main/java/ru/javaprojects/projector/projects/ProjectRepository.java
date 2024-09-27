@@ -1,9 +1,10 @@
 package ru.javaprojects.projector.projects;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.repository.NamedRepository;
-import ru.javaprojects.projector.projects.model.ElementType;
 import ru.javaprojects.projector.projects.model.Project;
 
 import java.util.List;
@@ -28,4 +29,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     @EntityGraph(attributePaths = {"descriptionElements"})
     Optional<Project> findWithDescriptionById(long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Project> findForAddViewsById(long id);
 }

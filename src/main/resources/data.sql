@@ -52,24 +52,24 @@ VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that
 
 INSERT INTO projects (name, short_description, enabled, priority, start_date, end_date, architecture_id, logo_file_name, logo_file_link,
                       docker_compose_file_name, docker_compose_file_link, card_image_file_name, card_image_file_link,
-                      deployment_url, backend_src_url, frontend_src_url, open_api_url)
+                      deployment_url, backend_src_url, frontend_src_url, open_api_url, views)
 VALUES ('Restaurant aggregator', 'The app offers users to get information about restaurants and vote for their favorite one.',
         true, 'ULTRA', '2021-03-24', '2021-05-02', 100015, 'restaurant_aggregator_logo.png', './content/projects/restaurant_aggregator/logo/restaurant_aggregator_logo.png',
         'docker-compose.yaml', './content/projects/restaurant_aggregator/docker/docker-compose.yaml',
         'restaurant_aggregator_card_img.png','./content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png',
         'https://projector.ru/restaurant-aggregator', 'https://github.com/ishlyakhtenkov/votingsystem',
-        'https://github.com/ishlyakhtenkov/angular-votingsystem', 'https://projector.ru/restaurant-aggregator/swagger-ui.html'),
+        'https://github.com/ishlyakhtenkov/angular-votingsystem', 'https://projector.ru/restaurant-aggregator/swagger-ui.html', 12),
 
        ('Skill aggregator', 'The app creates a list of required key skills for a user-specified profession.', true, 'VERY_HIGH', '2022-07-17', '2022-09-23',
         100015, 'skill_aggregator_logo.png', './content/projects/skill_aggregator/logo/skill_aggregator_logo.png', 'docker-compose.yaml',
         './content/projects/skill_aggregator/docker/docker-compose.yaml', 'skill_aggregator_card_img.png',
         './content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png', 'https://projector.ru/skill-aggregator',
-        'https://github.com/ishlyakhtenkov/skillaggregator', null, null),
+        'https://github.com/ishlyakhtenkov/skillaggregator', null, null, 21),
 
        ('Copy maker', 'The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.',
         false, 'MEDIUM', '2022-10-11', '2022-12-29', 100015, 'copy_maker_logo.png', './content/projects/copy_maker/logo/copy_maker_logo.png', null,
         null, 'copy_maker_card_img.png', './content/projects/copy_maker/card_img/copy_maker_card_img.png', null,
-        'https://github.com/ishlyakhtenkov/doccopymaker', null, null);
+        'https://github.com/ishlyakhtenkov/doccopymaker', null, null, 7);
 
 INSERT INTO project_technology (project_id, technology_id)
 VALUES (100017, 100011),

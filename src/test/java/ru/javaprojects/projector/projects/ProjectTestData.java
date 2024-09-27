@@ -71,7 +71,8 @@ public class ProjectTestData {
             new File("docker-compose.yaml", "./content/projects/restaurant_aggregator/docker/docker-compose.yaml"),
             new File("restaurant_aggregator_card_img.png", "./content/projects/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png"),
             "https://projector.ru/restaurant-aggregator", "https://github.com/ishlyakhtenkov/votingsystem",
-            "https://github.com/ishlyakhtenkov/angular-votingsystem", "https://projector.ru/restaurant-aggregator/swagger-ui.html");
+            "https://github.com/ishlyakhtenkov/angular-votingsystem",
+            "https://projector.ru/restaurant-aggregator/swagger-ui.html", 12);
 
     public static final DescriptionElement de1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
             (byte) 0, "App description", null, project1);
@@ -97,7 +98,7 @@ public class ProjectTestData {
 
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
-        project1.getDescriptionElements().addAll(Set.of(de1, de2, de3, de4, de5, de6));
+        project1.setDescriptionElements(new TreeSet<>(Set.of(de1, de2, de3, de4, de5, de6)));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
@@ -107,7 +108,7 @@ public class ProjectTestData {
             new File("docker-compose.yaml", "./content/projects/skill_aggregator/docker/docker-compose.yaml"),
             new File("skill_aggregator_card_img.png", "./content/projects/skill_aggregator/card_img/skill_aggregator_card_img.png"),
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
-            null, null);
+            null, null, 21);
 
     static {
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
@@ -118,7 +119,7 @@ public class ProjectTestData {
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),
             architecture1, new File("copy_maker_logo.png", "./content/projects/copy_maker/logo/copy_maker_logo.png"), null,
             new File("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
-            null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null);
+            null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7);
 
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
             MediaType.IMAGE_PNG_VALUE, "new project logo file content bytes".getBytes());
@@ -186,7 +187,7 @@ public class ProjectTestData {
                 new File("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
                 new TreeSet<>(Set.of(technology1, technology2, technology3)),
-                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())));
+                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), 0);
     }
 
     public static MultiValueMap<String, String> getNewParams() {
@@ -265,7 +266,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)));
+                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)), project1.getViews());
     }
 
     public static Project getUpdatedWhenOldName(String contentPath) {
@@ -281,7 +282,7 @@ public class ProjectTestData {
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
                 updatedDe4, updatedDe6WhenProjectHasOldName, updatedDe5,
-                newDeForProjectUpdateWithOldName)));
+                newDeForProjectUpdateWithOldName)), project1.getViews());
     }
 
     public static Project getUpdatedWhenOldFiles(String contentPath) {
@@ -297,7 +298,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5)));
+                updatedDe4, updatedDe6, updatedDe5)), project1.getViews());
     }
 
     public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,

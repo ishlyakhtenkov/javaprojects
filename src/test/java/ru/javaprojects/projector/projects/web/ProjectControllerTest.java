@@ -12,6 +12,7 @@ import ru.javaprojects.projector.projects.model.Project;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -32,8 +33,10 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
                 .andExpect(model().attributeExists("hasFrontendTechnologies"))
                 .andExpect(view().name(PROJECT_VIEW))
-                .andExpect(result -> PROJECT_MATCHER.assertMatch((Project) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(PROJECT_ATTRIBUTE), project1))
+                .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((Project) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECT_ATTRIBUTE), project1, "views", "descriptionElements.project"))
+                .andExpect(result -> assertEquals(project1.getViews() + 1, ((Project) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECT_ATTRIBUTE)).getViews()))
                 .andExpect(result -> assertTrue((Boolean) Objects.requireNonNull(result.getModelAndView()).getModel()
                         .get("hasFrontendTechnologies")));
     }

@@ -79,9 +79,9 @@ CREATE UNIQUE INDEX technologies_unique_name_idx ON technologies (name);
 
 CREATE TABLE architectures
 (
-    id          BIGINT        DEFAULT nextval('global_seq') PRIMARY KEY,
-    name        VARCHAR(32)   NOT NULL,
-    description VARCHAR(400)  NOT NULL,
+    id               BIGINT        DEFAULT nextval('global_seq') PRIMARY KEY,
+    name             VARCHAR(32)   NOT NULL,
+    description      VARCHAR(400)  NOT NULL,
     logo_file_name   VARCHAR(128) NOT NULL,
     logo_file_link   VARCHAR(512) NOT NULL
 );
@@ -92,7 +92,7 @@ CREATE TABLE projects
     id                       BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
     name                     VARCHAR(64)  NOT NULL,
     short_description        VARCHAR(128) NOT NULL,
-    enabled                  BOOL         DEFAULT TRUE   NOT NULL,
+    enabled                  BOOL         DEFAULT TRUE NOT NULL,
     priority                 VARCHAR(16)  NOT NULL,
     start_date               DATE         NOT NULL,
     end_date                 DATE         NOT NULL,
@@ -107,6 +107,7 @@ CREATE TABLE projects
     backend_src_url          VARCHAR(512) NOT NULL,
     frontend_src_url         VARCHAR(512),
     open_api_url             VARCHAR(512),
+    views                    INTEGER      DEFAULT 0 NOT NULL,
     FOREIGN KEY (architecture_id) REFERENCES architectures (id)
 );
 CREATE UNIQUE INDEX projects_unique_name_idx ON projects (name);

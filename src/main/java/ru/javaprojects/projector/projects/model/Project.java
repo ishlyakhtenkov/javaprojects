@@ -101,7 +101,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     @NoHtml
     @URL
     @Size(max = 512)
-    @Column(name = "backend_src_url",nullable = false)
+    @Column(name = "backend_src_url", nullable = false)
     private String backendSrcUrl;
 
     @Nullable
@@ -130,9 +130,12 @@ public class Project extends BaseEntity implements HasIdAndName {
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Set<DescriptionElement> descriptionElements = new HashSet<>();
 
+    @Column(name = "views", nullable = false, columnDefinition = "integer default 0")
+    private int views;
+
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl) {
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -148,23 +151,24 @@ public class Project extends BaseEntity implements HasIdAndName {
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
         this.openApiUrl = openApiUrl;
+        this.views = views;
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies) {
+                   Set<Technology> technologies, int views) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl);
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views);
         this.technologies = technologies;
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements) {
+                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies);
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies, views);
         this.descriptionElements = descriptionElements;
     }
 

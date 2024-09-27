@@ -43,8 +43,8 @@
                                 </a>
                             </div>
                             <div class="col-4 text-end">
-                                <i class="fa-regular fa-eye text-secondary"></i>
-                                <span class="text-secondary small">547</span>
+                                <i class="fa-regular fa-eye" style="color: #a1a0a0;" title="Views"></i>
+                                <span class="text-secondary small" th:text="${project.views}"></span>
                             </div>
                         </div>
                         <a th:href="@{'/projects/' + ${project.id}}" class="stretched-link"></a>

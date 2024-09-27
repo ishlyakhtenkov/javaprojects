@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
+<!--/*@thymesVar id="likedProjectsIds" type="java.util.Set"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Home',appMain=~{::appMain}, ownScript=~{::ownScript},
@@ -34,13 +35,15 @@
                         <div class="row mt-auto pt-3" style="position: relative; z-index: 2;">
                             <div class="col-8">
                                 <a href="#" type="button" title="Comments"
-                                   class="btn-link link-underline-opacity-0 link-info">
+                                   class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small">204</span>
                                 </a>
-                                <a type="button" title="Like"
-                                   class="btn-link link-underline-opacity-0 link-danger ms-3">
-                                    <i class="fa-regular fa-heart"></i>
+                                <a type="button" title="Like" th:onclick="|like(this, '${project.id}')|"
+                                   class="btn-link link-danger text-decoration-none ms-3">
+                                    <i class="fa-heart"
+                                       th:classappend="${likedProjectsIds == null || !likedProjectsIds.contains(project.id) ?
+                                            'fa-regular' : 'fa-solid'}"></i>
                                     <span class="text-secondary small" th:text="${project.likes.size()}"></span>
                                 </a>
                             </div>
@@ -74,7 +77,26 @@
                 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             }
 
-
+            function like(likeBtn, id) {
+                if (authenticated) {
+                    let likeIcon = $(likeBtn).find('i');
+                    let likeCounter = $(likeBtn).find('span');
+                    let liked = likeIcon.attr('class').includes('fa-regular');
+                    $.ajax({
+                        url: `/projects/${id}/like`,
+                        type: "PATCH",
+                        data: { id: id, liked: liked },
+                    }).done(function() {
+                        likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
+                        likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
+                    }).fail(function(data) {
+                        likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
+                        handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+                    });
+                } else  {
+                    failToast('You should login to like projects');
+                }
+            }
         </script>
     </ownScript>
 </th:block>

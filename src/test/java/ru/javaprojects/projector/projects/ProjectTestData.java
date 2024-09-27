@@ -35,6 +35,7 @@ public class ProjectTestData {
     public static final String PROJECTS_ATTRIBUTE = "projects";
     public static final String PROJECT_ATTRIBUTE = "project";
     public static final String PROJECT_TO_ATTRIBUTE = "projectTo";
+    public static final String LIKED_PROJECTS_IDS_ATTRIBUTE = "likedProjectsIds";
 
     public static final long PROJECT1_ID = 100017;
     public static final long PROJECT2_ID = 100018;
@@ -57,6 +58,8 @@ public class ProjectTestData {
     public static final String DOCKER_COMPOSE_FILE_LINK_PARAM = "dockerCompose.fileLink";
     public static final String DOCKER_COMPOSE_FILE_AS_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
 
+    public static final String LIKED_PARAM = "liked";
+
     public static final long DESCRIPTION_ELEMENT1_ID = 100020;
     public static final long DESCRIPTION_ELEMENT2_ID = 100021;
     public static final long DESCRIPTION_ELEMENT3_ID = 100022;
@@ -69,9 +72,8 @@ public class ProjectTestData {
     public static final long PROJECT1_LIKE3_ID = 100028;
     public static final long PROJECT1_LIKE4_ID = 100029;
 
-    public static final long PROJECT3_LIKE1_ID = 100030;
-    public static final long PROJECT3_LIKE2_ID = 100031;
-    public static final long PROJECT3_LIKE3_ID = 100032;
+    public static final long PROJECT2_LIKE1_ID = 100030;
+    public static final long PROJECT2_LIKE2_ID = 100031;
 
     public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
 
@@ -107,10 +109,10 @@ public class ProjectTestData {
             (byte) 5, null, new File("registration_and_profile.png",
             "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
 
-    public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, project1, user);
-    public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, project1, admin);
-    public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, project1, user2);
-    public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, project1, disabledUser);
+    public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, PROJECT1_ID, USER_ID);
+    public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, PROJECT1_ID, ADMIN_ID);
+    public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, PROJECT1_ID, USER2_ID);
+    public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, PROJECT1_ID, DISABLED_USER_ID);
 
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
@@ -127,8 +129,12 @@ public class ProjectTestData {
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
             null, null, 21);
 
+    public static final Like project2Like1 = new Like(PROJECT2_LIKE1_ID, PROJECT2_ID, USER_ID);
+    public static final Like project2Like2 = new Like(PROJECT2_LIKE2_ID, PROJECT2_ID, ADMIN_ID);
+
     static {
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
+        project2.setLikes(Set.of(project2Like1, project2Like2));
     }
 
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
@@ -137,14 +143,6 @@ public class ProjectTestData {
             architecture1, new File("copy_maker_logo.png", "./content/projects/copy_maker/logo/copy_maker_logo.png"), null,
             new File("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7);
-
-    public static final Like project3Like1 = new Like(PROJECT3_LIKE1_ID, project3, user);
-    public static final Like project3Like2 = new Like(PROJECT3_LIKE2_ID, project3, admin);
-    public static final Like project3Like3 = new Like(PROJECT3_LIKE3_ID, project3, user2);
-
-    static {
-        project3.setLikes(Set.of(project3Like1, project3Like2, project3Like3));
-    }
 
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
             MediaType.IMAGE_PNG_VALUE, "new project logo file content bytes".getBytes());

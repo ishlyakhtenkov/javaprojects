@@ -3,6 +3,7 @@ package ru.javaprojects.projector.common.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -78,8 +79,8 @@ public class SecurityConfig {
                                 .requestMatchers("/management/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/register/**", "/profile/forgot-password", "/profile/reset-password",
                                         "/login").anonymous()
-                                .requestMatchers("/", "/projects/**", "/webjars/**", "/css/**", "/images/**",
-                                        "/js/**", "/content/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/", "/projects/**", "/webjars/**", "/css/**",
+                                        "/images/**", "/js/**", "/content/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) ->

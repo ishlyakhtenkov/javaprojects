@@ -11,10 +11,13 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
+import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
+import ru.javaprojects.projector.users.service.UserService;
 
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +39,8 @@ public class ProjectService {
 
     private final ProjectRepository repository;
     private final ProjectUtil projectUtil;
+    private final LikeRepository likeRepository;
+    private final UserService userService;
 
     @Value("${content-path.projects}")
     private String contentPath;
@@ -222,5 +227,20 @@ public class ProjectService {
     private void uploadFile(FileTo fileTo, String projectName, String dirName, String fileName) {
         FileUtil.upload(fileTo, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
                 FileUtil.normalizePath(fileName));
+    }
+
+
+    public void like(long id, boolean liked, long userId) {
+        get(id);
+        userService.get(userId);
+        likeRepository.findByProjectIdAndUserId(id, userId).ifPresentOrElse(like -> {
+            if (!liked) {
+                likeRepository.delete(like);
+            }
+        }, () -> {
+            if (liked) {
+                likeRepository.save(new Like(null, id, userId));
+            }
+        });
     }
 }

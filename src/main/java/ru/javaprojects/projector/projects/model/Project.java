@@ -133,7 +133,7 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Column(name = "views", nullable = false, columnDefinition = "integer default 0")
     private int views;
 
-    @OneToMany(mappedBy = "project",  fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,

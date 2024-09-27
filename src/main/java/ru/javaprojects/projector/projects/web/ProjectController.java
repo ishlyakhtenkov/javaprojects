@@ -7,11 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.javaprojects.projector.projects.ProjectService;
+import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
+import ru.javaprojects.projector.users.AuthUser;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
@@ -22,7 +27,17 @@ public class ProjectController {
     @GetMapping("/")
     public String showHomePage(Model model) {
         log.info("Show home page");
-        model.addAttribute("projects", projectService.getAllEnabledWithArchitectureAndTechnologies());
+        List<Project> projects = projectService.getAllEnabledWithArchitectureAndTechnologies();
+        if (AuthUser.safeGet() != null) {
+            long authId = AuthUser.authId();
+            Set<Long> likedProjectsIds = projects.stream()
+                    .flatMap(project -> project.getLikes().stream())
+                    .filter(like -> like.getUserId() == authId)
+                    .map(Like::getProjectId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("likedProjectsIds", likedProjectsIds);
+        }
+        model.addAttribute("projects", projects);
         return "index";
     }
 

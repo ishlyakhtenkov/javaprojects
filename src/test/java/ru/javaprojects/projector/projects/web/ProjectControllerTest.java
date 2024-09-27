@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
@@ -12,6 +13,7 @@ import ru.javaprojects.projector.projects.model.Project;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,10 +21,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
+import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 
 class ProjectControllerTest extends AbstractControllerTest {
     private static final String PROJECT_VIEW = "project";
-    private static final String PROJECTS_URL_SLASH = "/projects/";
+    static final String PROJECTS_URL_SLASH = "/projects/";
 
     @Autowired
     private MessageSource messageSource;
@@ -52,11 +55,31 @@ class ProjectControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
     void showHomePage() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(model().attributeExists(LIKED_PROJECTS_IDS_ATTRIBUTE))
+                .andExpect(view().name("index"))
+                .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "likes", "descriptionElements"))
+                .andExpect(result -> assertEquals(Set.of(PROJECT1_ID, PROJECT2_ID), Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(LIKED_PROJECTS_IDS_ATTRIBUTE)));
+        List<Project> projects = (List<Project>) Objects.requireNonNull(actions.andReturn().getModelAndView())
+                .getModel().get(PROJECTS_ATTRIBUTE);
+        assertEquals(project1.getLikes(), projects.get(0).getLikes());
+        assertEquals(project2.getLikes(), projects.get(1).getLikes());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void showHomePageUnauthorized() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get("/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(model().attributeDoesNotExist(LIKED_PROJECTS_IDS_ATTRIBUTE))
                 .andExpect(view().name("index"))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "likes", "descriptionElements"));

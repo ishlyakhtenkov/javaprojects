@@ -1,13 +1,15 @@
 package ru.javaprojects.projector.projects.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.users.model.User;
 
 @Entity
 @Table(name = "likes", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "user_id"}, name = "likes_unique_project_like_idx"))
@@ -16,18 +18,16 @@ import ru.javaprojects.projector.users.model.User;
 @NoArgsConstructor
 public class Like extends BaseEntity implements HasId {
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
+    @Column(name = "project_id", nullable = false)
+    private Long projectId;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    public Like(Long id, Project project, User user) {
+    public Like(Long id, Long projectId, Long userId) {
         super(id);
-        this.project = project;
-        this.user = user;
+        this.projectId = projectId;
+        this.userId = userId;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
+import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -25,6 +26,7 @@ import static ru.javaprojects.projector.projects.model.ElementType.*;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.*;
+import static ru.javaprojects.projector.users.UserTestData.*;
 
 public class ProjectTestData {
     public static final MatcherFactory.Matcher<Project> PROJECT_MATCHER =
@@ -62,6 +64,15 @@ public class ProjectTestData {
     public static final long DESCRIPTION_ELEMENT5_ID = 100024;
     public static final long DESCRIPTION_ELEMENT6_ID = 100025;
 
+    public static final long PROJECT1_LIKE1_ID = 100026;
+    public static final long PROJECT1_LIKE2_ID = 100027;
+    public static final long PROJECT1_LIKE3_ID = 100028;
+    public static final long PROJECT1_LIKE4_ID = 100029;
+
+    public static final long PROJECT3_LIKE1_ID = 100030;
+    public static final long PROJECT3_LIKE2_ID = 100031;
+    public static final long PROJECT3_LIKE3_ID = 100032;
+
     public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
@@ -96,9 +107,15 @@ public class ProjectTestData {
             (byte) 5, null, new File("registration_and_profile.png",
             "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
 
+    public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, project1, user);
+    public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, project1, admin);
+    public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, project1, user2);
+    public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, project1, disabledUser);
+
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project1.setDescriptionElements(new TreeSet<>(Set.of(de1, de2, de3, de4, de5, de6)));
+        project1.setLikes(Set.of(project1Like1, project1Like2, project1Like3, project1Like4));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
@@ -120,6 +137,14 @@ public class ProjectTestData {
             architecture1, new File("copy_maker_logo.png", "./content/projects/copy_maker/logo/copy_maker_logo.png"), null,
             new File("copy_maker_card_img.png", "./content/projects/copy_maker/card_img/copy_maker_card_img.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7);
+
+    public static final Like project3Like1 = new Like(PROJECT3_LIKE1_ID, project3, user);
+    public static final Like project3Like2 = new Like(PROJECT3_LIKE2_ID, project3, admin);
+    public static final Like project3Like3 = new Like(PROJECT3_LIKE3_ID, project3, user2);
+
+    static {
+        project3.setLikes(Set.of(project3Like1, project3Like2, project3Like3));
+    }
 
     public static final MockMultipartFile LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
             MediaType.IMAGE_PNG_VALUE, "new project logo file content bytes".getBytes());
@@ -187,7 +212,7 @@ public class ProjectTestData {
                 new File("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
                 new TreeSet<>(Set.of(technology1, technology2, technology3)),
-                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), 0);
+                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), 0, Set.of());
     }
 
     public static MultiValueMap<String, String> getNewParams() {
@@ -266,7 +291,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)), project1.getViews());
+                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)), project1.getViews(), project1.getLikes());
     }
 
     public static Project getUpdatedWhenOldName(String contentPath) {
@@ -282,7 +307,7 @@ public class ProjectTestData {
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
                 updatedDe4, updatedDe6WhenProjectHasOldName, updatedDe5,
-                newDeForProjectUpdateWithOldName)), project1.getViews());
+                newDeForProjectUpdateWithOldName)), project1.getViews(), project1.getLikes());
     }
 
     public static Project getUpdatedWhenOldFiles(String contentPath) {
@@ -298,7 +323,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5)), project1.getViews());
+                updatedDe4, updatedDe6, updatedDe5)), project1.getViews(), project1.getLikes());
     }
 
     public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,

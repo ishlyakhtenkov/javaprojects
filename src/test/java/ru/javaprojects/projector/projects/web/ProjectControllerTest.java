@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
@@ -34,7 +35,9 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists("hasFrontendTechnologies"))
                 .andExpect(view().name(PROJECT_VIEW))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((Project) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(PROJECT_ATTRIBUTE), project1, "views", "descriptionElements.project"))
+                        .getModel().get(PROJECT_ATTRIBUTE), project1, "likes", "views", "descriptionElements.project"))
+                .andExpect(result -> assertEquals(project1.getLikes(), ((Project) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECT_ATTRIBUTE)).getLikes()))
                 .andExpect(result -> assertEquals(project1.getViews() + 1, ((Project) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECT_ATTRIBUTE)).getViews()))
                 .andExpect(result -> assertTrue((Boolean) Objects.requireNonNull(result.getModelAndView()).getModel()
@@ -51,11 +54,15 @@ class ProjectControllerTest extends AbstractControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     void showHomePage() throws Exception {
-        perform(MockMvcRequestBuilders.get("/"))
+        ResultActions actions = perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name("index"))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "descriptionElements"));
+                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "likes", "descriptionElements"));
+        List<Project> projects = (List<Project>) Objects.requireNonNull(actions.andReturn().getModelAndView())
+                .getModel().get(PROJECTS_ATTRIBUTE);
+        assertEquals(project1.getLikes(), projects.get(0).getLikes());
+        assertEquals(project2.getLikes(), projects.get(1).getLikes());
     }
 }

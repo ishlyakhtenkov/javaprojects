@@ -132,3 +132,13 @@ CREATE TABLE description_elements
     project_id   BIGINT       NOT NULL,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
 );
+
+CREATE TABLE likes
+(
+    id         BIGINT DEFAULT nextval('global_seq') PRIMARY KEY,
+    project_id BIGINT NOT NULL,
+    user_id    BIGINT NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX likes_unique_project_like_idx ON likes (project_id, user_id);

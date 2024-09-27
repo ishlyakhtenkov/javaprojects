@@ -88,3 +88,12 @@ VALUES (0, 'TITLE', 'App description', null, null, 100017),
        (3, 'TITLE', 'Registration, profile', null, null, 100017),
        (4, 'PARAGRAPH', 'Users can register for the app by filling in their account details on the registration page.', null, null, 100017),
        (5, 'IMAGE', null, 'registration_and_profile.png','./content/projects/restaurant_aggregator/description/images/registration_and_profile.png', 100017);
+
+INSERT INTO likes (project_id, user_id)
+VALUES (100017, 100000),
+       (100017, 100001),
+       (100017, 100002),
+       (100017, 100003),
+       (100019, 100000),
+       (100019, 100001),
+       (100019, 100002);

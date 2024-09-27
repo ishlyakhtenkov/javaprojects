@@ -18,13 +18,13 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     List<Project> findAllByEnabledIsTrueOrderByName();
 
-    @EntityGraph(attributePaths = {"architecture", "technologies"})
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes"})
     List<Project> findAllWithArchitectureAndTechnologiesByEnabledIsTrue();
 
     @EntityGraph(attributePaths = {"architecture", "technologies"})
     Optional<Project> findWithTechnologiesById(long id);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements"})
+    @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements", "likes"})
     Optional<Project> findWithTechnologiesAndDescriptionById(long id);
 
     @EntityGraph(attributePaths = {"descriptionElements"})

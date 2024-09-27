@@ -3,7 +3,8 @@
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Home',appMain=~{::appMain}, activeMenuItem=${'projectsDropdown'})}">
+<th:block th:replace="~{fragments/main::page(title='Home',appMain=~{::appMain}, ownScript=~{::ownScript},
+            activeMenuItem=${'projectsDropdown'})}">
     <appMain>
         <span th:if="${projects.isEmpty()}">
             <h5 class="alert alert-warning mt-2">No projects found.</h5>
@@ -18,9 +19,10 @@
                     <div>
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                              class="float-end bg-light rounded-circle p-2"
+                             data-bs-toggle="tooltip" th:title="${project.architecture.name + ' architecture'}"
                              onmouseenter="$(this).removeClass('p-2').addClass('p-1')"
                              onmouseleave="$(this).removeClass('p-1').addClass('p-2')"
-                             width="48" height="48" th:title="${project.architecture.name + ' architecture'}"
+                             width="48" height="48"
                              style="margin-top: -25px; margin-right: 15px; z-index: 2; position: relative;
                              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);"/>
                     </div>
@@ -28,8 +30,8 @@
                     <div class="card-body d-flex flex-column pb-1" style="margin-top: -39px;">
                         <span class="tiny text-secondary mb-2" th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}"></span>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>
-                        <p class="card-text" th:text="${project.shortDescription}">Short description</p>
-                        <div class="row mt-auto" style="position: relative; z-index: 2;">
+                        <span class="card-text" th:text="${project.shortDescription}">Short description</span>
+                        <div class="row mt-auto pt-3" style="position: relative; z-index: 2;">
                             <div class="col-8">
                                 <a href="#" type="button" title="Comments"
                                    class="btn-link link-underline-opacity-0 link-info">
@@ -39,11 +41,11 @@
                                 <a type="button" title="Like"
                                    class="btn-link link-underline-opacity-0 link-danger ms-3">
                                     <i class="fa-regular fa-heart"></i>
-                                    <span class="text-secondary small">53</span>
+                                    <span class="text-secondary small" th:text="${project.likes.size()}"></span>
                                 </a>
                             </div>
                             <div class="col-4 text-end">
-                                <i class="fa-regular fa-eye" style="color: #a1a0a0;" title="Views"></i>
+                                <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
                                 <span class="text-secondary small" th:text="${project.views}"></span>
                             </div>
                         </div>
@@ -61,4 +63,18 @@
             </div>
         </div>
     </appMain>
+
+    <ownScript>
+        <script src="/js/common.js?v=1"></script>
+        <script>
+            setupTooltips();
+
+            function setupTooltips() {
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            }
+
+
+        </script>
+    </ownScript>
 </th:block>

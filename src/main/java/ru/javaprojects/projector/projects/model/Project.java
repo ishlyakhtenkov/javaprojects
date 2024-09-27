@@ -133,6 +133,9 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Column(name = "views", nullable = false, columnDefinition = "integer default 0")
     private int views;
 
+    @OneToMany(mappedBy = "project",  fetch = FetchType.LAZY)
+    private Set<Like> likes = new HashSet<>();
+
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views) {
@@ -166,10 +169,11 @@ public class Project extends BaseEntity implements HasIdAndName {
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views) {
+                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views, Set<Like> likes) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
                 cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies, views);
         this.descriptionElements = descriptionElements;
+        this.likes = likes;
     }
 
     public void addTechnology(Technology technology) {

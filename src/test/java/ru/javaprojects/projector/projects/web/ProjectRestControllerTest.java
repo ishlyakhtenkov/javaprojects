@@ -49,6 +49,18 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER_MAIL)
+    void likeWhenAlreadyLiked() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/like")
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project1.getLikes().size(),
+                projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
+        assertDoesNotThrow(() -> likeRepository.findByProjectIdAndUserId(PROJECT1_ID, USER_ID).orElseThrow());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
     void dislike() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(false))
@@ -57,6 +69,18 @@ class ProjectRestControllerTest extends AbstractControllerTest {
         assertEquals(project1.getLikes().size() - 1,
                 projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
         assertTrue(() -> likeRepository.findByProjectIdAndUserId(PROJECT1_ID, USER_ID).isEmpty());
+    }
+
+    @Test
+    @WithUserDetails(USER2_MAIL)
+    void dislikeWhenHasNotLike() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT2_ID + "/like")
+                .param(LIKED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project2.getLikes().size(),
+                projectService.getWithTechnologiesAndDescription(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
+        assertTrue(() -> likeRepository.findByProjectIdAndUserId(PROJECT2_ID, USER2_ID).isEmpty());
     }
 
     @Test

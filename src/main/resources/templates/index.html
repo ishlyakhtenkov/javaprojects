@@ -34,7 +34,7 @@
                         <span class="card-text" th:text="${project.shortDescription}">Short description</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
-                                <a href="#" type="button" title="Comments"
+                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" title="Comments"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small">204</span>
@@ -86,7 +86,7 @@
             }
 
             function like(likeBtn, id) {
-                if (authenticated) {
+                if (authUser != null) {
                     let likeIcon = $(likeBtn).find('i');
                     let likeCounter = $(likeBtn).find('span');
                     let liked = likeIcon.attr('class').includes('fa-regular');

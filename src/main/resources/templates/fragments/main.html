@@ -41,7 +41,7 @@
         $([[${activeMenuItem}]]).addClass('active');
     </script>
     <script th:inline="javascript">
-        const authenticated = [[${authUser != null}]];
+        const authUser = [[${authUser}]];
     </script>
     <th:block th:insert="${ownScript}?: ~{}"/>
 <!--    </html>-->

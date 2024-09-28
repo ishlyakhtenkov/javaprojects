@@ -130,6 +130,51 @@
             </div>
         </div>
 
+        <!-- Comments -->
+        <div class="row d-flex justify-content-center align-items-center mt-3 mb-2" id="comments">
+            <div class="col-12 col-xxl-10">
+                <div class="card shadow">
+                    <div class="card-body text-start">
+                        <span class="h3">Comments</span>
+                        <span class="h3 text-secondary ms-1 fw-light">112</span>
+
+
+                        <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
+                            <textarea class="form-control bg-light new-comment pb-4" id="newCommentInput" style="resize: none" placeholder="Leave a comment here" rows="2"></textarea>
+                            <a type="button" id="sendNewBtn" hidden class="btn btn-link text-decoration-none float-end pe-2"
+                               title="Send" style="margin-top: -35px;" onclick="postComment(null, $('#newCommentInput').val())">Send</a>
+                        </div>
+
+
+                        <div id="commentsArea" class="mt-3">
+                            <div class="comment mt-3">
+                                <div class="d-flex ">
+                                    <img class="rounded-circle border" th:src="@{/images/no-avatar.svg}" width="40" height="40" />
+                                    <div class="ms-2 ">
+                                        <span class="h6">Jack Sanjers</span>
+                                        <div class="text-secondary tiny" style="margin-top: -3px;">28.09.2024 15:45</div>
+                                    </div>
+                                </div>
+                                <div style="white-space: pre-wrap">Hello, world! This is a test comment to check how it looks like!</div>
+                                <div>
+                                    <a type="button" class="like-btn btn-link link-danger text-decoration-none" title="Like">
+                                        <i class="fa-regular fa-heart"></i>
+                                        <span class="text-secondary small">4</span>
+                                    </a>
+
+                                    <a type="button" class="btn-link text-decoration-none ms-1" id="replyBtn-42" onclick="reply($(this))">
+                                        <i class="fa-solid fa-reply"></i>
+                                        <span class="text-secondary small">Reply</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Image modal -->
         <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
@@ -148,5 +193,115 @@
 
     <ownScript>
         <script src="/js/common.js?v=1"></script>
+
+        <script>
+            $('.new-comment').on('input', (event) => {
+                $(event.target).css('height', 'auto');
+                $(event.target).css('height', $(event.target).prop('scrollHeight') + 1 + 'px');
+                $('#sendNewBtn').attr('hidden', $(event.target).val().length === 0);
+            });
+
+
+            function reply(replyBtn) {
+                console.log(replyBtn);
+
+                $('#newCommentDiv').attr('hidden', true);
+                $('#newCommentInput').val('');
+                $('#sendNewBtn').attr('hidden', true);
+
+                $('#replyCommentDiv').remove();
+                let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
+                let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
+                    .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
+                    .attr('rows', '2');
+
+                let sendReplyBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
+                    .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html('Send');
+                let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
+                    .attr('type', 'button').attr('id', 'cancelReplyBtn').html('Cancel');
+                div.append(textArea);
+                div.append(sendReplyBtn);
+                div.append(cancelReplyBtn);
+                div.insertAfter(replyBtn);
+
+                $('#replyComment').on('input', (event) => {
+                    $(event.target).css('height', 'auto');
+                    $(event.target).css('height', $(event.target).prop('scrollHeight') + 1 + 'px');
+                    $('#sendReplyBtn').attr('hidden', $(event.target).val().length === 0);
+                });
+
+                $('#cancelReplyBtn').on('click', () => {
+                    $('#replyCommentDiv').remove();
+                    $('#newCommentDiv').attr('hidden', false);
+                });
+
+                $('#sendReplyBtn').on('click', () => {
+                    let text = $('#replyComment').val();
+                    let parentId = replyBtn.attr('id').replace('replyBtn-', '');
+                    successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
+
+                    //TODO generate  created comment instead of replyCommentDiv
+
+                    let commentDiv = generateCommentDiv(parentId, text).addClass('ms-3');
+                    commentDiv.insertAfter(replyBtn);
+
+                    $('#replyCommentDiv').remove();
+                    $('#newCommentDiv').attr('hidden', false);
+                });
+            }
+
+            //TODO try to use callback as method param. after success ajax - run callback to set up comment div
+            function postComment(parentId, text) {
+                successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
+
+                let commentDiv = generateCommentDiv(parentId, text);
+
+                $('#commentsArea').prepend(commentDiv);
+
+                $('#newCommentInput').val('');
+                $('#sendNewBtn').attr('hidden', true);
+            }
+
+            function generateCommentDiv(parentId, text) {
+                let commentDiv = $('<div></div>').addClass('comment mt-3');
+                let dFlexDiv = $('<div></div>').addClass('d-flex');
+                let avatar = $('<img>').addClass('rounded-circle border')
+                    .attr('src', `${(authUser.user.avatar.fileLink).startsWith('https://') ? authUser.user.avatar.fileLink : ('/' + authUser.user.avatar.fileLink)}`)
+                    .attr('width', '40').attr('height', '40');
+                let nameAndTimeDiv = $('<div></div>').addClass('ms-2');
+                let nameSpan = $('<span></span>').addClass('h6').html(`${authUser.user.name}`);
+                let timeDiv = $('<div></div>').addClass('text-secondary tiny').css('margin-top', '-3px').html(new Date().getDate());
+                nameAndTimeDiv.append(nameSpan);
+                nameAndTimeDiv.append(timeDiv);
+                dFlexDiv.append(avatar);
+                dFlexDiv.append(nameAndTimeDiv);
+                let textDiv = $('<div></div>').css('white-space', 'pre-wrap').html(text);
+
+                let buttonsDiv = $('<div></div>');
+                let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none')
+                    .attr('type', 'button').attr('title', 'Like');
+                let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
+                let likeCounter = $('<span></span>').addClass('text-secondary small').text(' 4');
+                likeBtn.append(likeSymbol);
+                likeBtn.append(likeCounter);
+                let replyBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
+                    .attr('type', 'button').attr('id', 'replyBtn-55');
+                let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
+                let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply');
+                replyBtn.on('click', () => {
+                    reply(replyBtn);
+                })
+
+                replyBtn.append(replySymbol);
+                replyBtn.append(replySpan);
+                buttonsDiv.append(likeBtn);
+                buttonsDiv.append(replyBtn);
+                commentDiv.append(dFlexDiv);
+                commentDiv.append(textDiv);
+                commentDiv.append(buttonsDiv);
+
+                return commentDiv;
+            }
+        </script>
     </ownScript>
 </th:block>

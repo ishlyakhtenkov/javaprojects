@@ -5,6 +5,8 @@ import org.springframework.util.MultiValueMap;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class CommonTestData {
@@ -28,6 +30,8 @@ public class CommonTestData {
 
     public static final long NOT_EXISTING_ID = 100;
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd Hh:mm:ss");
+
     public static MultiValueMap<String, String> getPageableParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("page", "0");
@@ -41,5 +45,9 @@ public class CommonTestData {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public static LocalDateTime parseLocalDateTime(String date) {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").parse(date, LocalDateTime::from);
     }
 }

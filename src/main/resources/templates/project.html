@@ -159,7 +159,7 @@
                                     <div class="ms-2 ">
                                         <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
                                         <div class="text-secondary tiny" style="margin-top: -3px;"
-                                             th:text="${#dates.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
+                                             th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                     </div>
                                 </div>
                                 <div style="white-space: pre-wrap" th:text="${commentEntry.getKey().deleted ?

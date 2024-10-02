@@ -8,13 +8,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaprojects.projector.common.HasId;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.javaprojects.projector.common.HasIdAndParentId;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.users.model.User;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,8 +45,14 @@ public class Comment extends BaseEntity implements HasIdAndParentId {
     private String text;
 
     @NotNull
+    @CreationTimestamp
     @Column(name = "created", nullable = false, columnDefinition = "timestamp default now()")
-    private Date created = new Date();
+    private LocalDateTime created;
+
+    @Nullable
+    @UpdateTimestamp
+    @Column(name = "updated", columnDefinition = "timestamp")
+    private LocalDateTime updated;
 
     @Column(name = "deleted", nullable = false, columnDefinition = "bool default false")
     private boolean deleted;
@@ -53,14 +60,15 @@ public class Comment extends BaseEntity implements HasIdAndParentId {
     @OneToMany(mappedBy = "objectId",  fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
 
-    public Comment(Long id, Long projectId, User author, Long parentId, String text, Date created, boolean deleted,
-                   Set<Like> likes) {
+    public Comment(Long id, Long projectId, User author, Long parentId, String text, LocalDateTime created,
+                   LocalDateTime updated, boolean deleted, Set<Like> likes) {
         super(id);
         this.projectId = projectId;
         this.author = author;
         this.parentId = parentId;
         this.text = text;
         this.created = created;
+        this.updated = updated;
         this.deleted = deleted;
         this.likes = likes;
     }

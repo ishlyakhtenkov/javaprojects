@@ -97,14 +97,14 @@ VALUES (100017, 100000, 'PROJECT'),
        (100018, 100000, 'PROJECT'),
        (100018, 100001, 'PROJECT');
 
-INSERT INTO comments (project_id, user_id, parent_id, text, created, deleted)
-VALUES (100017, 100001, null, 'admin 1st comment', '2024-09-11 11:44:56', false),
-       (100017, 100001, null, 'admin 2nd comment', '2024-09-11 12:35:44', false),
-       (100017, 100000, null, 'user 1st comment', '2024-09-11 11:55:37', false),
-       (100017, 100000, 100032, 'user 2nd comment for admin 1st comment', '2024-09-11 11:57:23', false),
-       (100017, 100000, 100035, 'user 3rd comment for its user 2nd comment', '2024-09-11 12:14:13', false),
-       (100017, 100000, 100032, 'user 4th comment deleted', '2024-09-11 13:18:53', true),
-       (100018, 100001, null, 'admin comment for project 2', '2024-09-11 14:15:39', false);
+INSERT INTO comments (project_id, user_id, parent_id, text, created, updated, deleted)
+VALUES (100017, 100001, null, 'admin 1st comment', '2024-09-11 11:44:56', null, false),
+       (100017, 100001, null, 'admin 2nd comment', '2024-09-11 12:35:44', '2024-09-11 13:21:32', false),
+       (100017, 100000, null, 'user 1st comment', '2024-09-11 11:55:37', null, false),
+       (100017, 100000, 100032, 'user 2nd comment for admin 1st comment', '2024-09-11 11:57:23', null, false),
+       (100017, 100000, 100035, 'user 3rd comment for its user 2nd comment', '2024-09-11 12:14:13', null, false),
+       (100017, 100000, 100032, 'user 4th comment deleted', '2024-09-11 13:18:53', null, true),
+       (100018, 100001, null, 'admin comment for project 2', '2024-09-11 14:15:39', null, false);
 
 INSERT INTO likes (object_id, user_id, object_type)
 VALUES (100032, 100001, 'COMMENT'),

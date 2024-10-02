@@ -151,6 +151,7 @@ CREATE TABLE comments
     parent_id  BIGINT,
     text       VARCHAR(4096) NOT NULL,
     created    TIMESTAMP     DEFAULT now() NOT NULL,
+    updated    TIMESTAMP,
     deleted    BOOL          DEFAULT FALSE NOT NULL,
     FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,

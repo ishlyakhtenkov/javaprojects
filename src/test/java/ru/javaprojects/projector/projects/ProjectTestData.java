@@ -140,19 +140,20 @@ public class ProjectTestData {
     public static final Like project1Comment4Like2 = new Like(PROJECT1_COMMENT4_LIKE2_ID, PROJECT1_COMMENT4_ID, USER2_ID, COMMENT);
 
     public static final Comment project1Comment1 = new Comment(PROJECT1_COMMENT1_ID, PROJECT1_ID, admin, null,
-            "admin 1st comment", parseDate("2024-09-11 11:44:56"), false,
+            "admin 1st comment", parseLocalDateTime("2024-09-11 11:44:56"), null, false,
             Set.of(project1Comment1Like1, project1Comment1Like2, project1Comment1Like3));
     public static final Comment project1Comment2 = new Comment(PROJECT1_COMMENT2_ID, PROJECT1_ID, admin, null,
-            "admin 2nd comment", parseDate("2024-09-11 12:35:44"), false, Set.of());
+            "admin 2nd comment", parseLocalDateTime("2024-09-11 12:35:44"), parseLocalDateTime("2024-09-11 13:21:32"),
+            false, Set.of());
     public static final Comment project1Comment3 = new Comment(PROJECT1_COMMENT3_ID, PROJECT1_ID, user, null,
-            "user 1st comment", parseDate("2024-09-11 11:55:37"), false, Set.of());
+            "user 1st comment", parseLocalDateTime("2024-09-11 11:55:37"), null, false, Set.of());
     public static final Comment project1Comment4 = new Comment(PROJECT1_COMMENT4_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
-            "user 2nd comment for admin 1st comment", parseDate("2024-09-11 11:57:23"), false,
+            "user 2nd comment for admin 1st comment", parseLocalDateTime("2024-09-11 11:57:23"), null, false,
             Set.of(project1Comment4Like1, project1Comment4Like2));
     public static final Comment project1Comment5 = new Comment(PROJECT1_COMMENT5_ID, PROJECT1_ID, user, PROJECT1_COMMENT4_ID,
-            "user 3rd comment for its user 2nd comment", parseDate("2024-09-11 12:14:13"), false, Set.of());
+            "user 3rd comment for its user 2nd comment", parseLocalDateTime("2024-09-11 12:14:13"), null, false, Set.of());
     public static final Comment project1Comment6 = new Comment(PROJECT1_COMMENT6_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
-            "user 4th comment deleted", parseDate("2024-09-11 13:18:53"), true, Set.of());
+            "user 4th comment deleted", parseLocalDateTime("2024-09-11 13:18:53"), null, true, Set.of());
 
     public static final  Map<Comment, Integer> project1CommentIndents = new LinkedHashMap<>();
 
@@ -188,7 +189,7 @@ public class ProjectTestData {
     public static final Like project2Comment1Like1 = new Like(PROJECT2_COMMENT1_LIKE1_ID, PROJECT2_COMMENT1_ID, USER_ID, COMMENT);
 
     public static final Comment project2Comment1 = new Comment(PROJECT2_COMMENT1_ID, PROJECT2_ID, admin, null,
-            "admin comment for project 2", parseDate("2024-09-11 14:15:39"), false, Set.of(project2Comment1Like1));
+            "admin comment for project 2", parseLocalDateTime("2024-09-11 14:15:39"), null, false, Set.of(project2Comment1Like1));
 
     static {
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));

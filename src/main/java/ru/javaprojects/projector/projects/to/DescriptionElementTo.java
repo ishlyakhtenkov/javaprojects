@@ -17,7 +17,7 @@ import ru.javaprojects.projector.projects.model.ElementType;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DescriptionElementTo extends BaseTo implements HasId, Comparable<DescriptionElementTo> {
+public class DescriptionElementTo extends BaseTo implements Comparable<DescriptionElementTo> {
 
     @NotNull
     private ElementType type;

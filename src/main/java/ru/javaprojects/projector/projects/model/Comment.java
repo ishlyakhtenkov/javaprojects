@@ -44,12 +44,10 @@ public class Comment extends BaseEntity implements HasIdAndParentId {
     @Column(name = "text")
     private String text;
 
-    @NotNull
     @CreationTimestamp
     @Column(name = "created", nullable = false, columnDefinition = "timestamp default now()")
     private LocalDateTime created;
 
-    @Nullable
     @UpdateTimestamp
     @Column(name = "updated", columnDefinition = "timestamp")
     private LocalDateTime updated;
@@ -62,15 +60,19 @@ public class Comment extends BaseEntity implements HasIdAndParentId {
 
     public Comment(Long id, Long projectId, User author, Long parentId, String text, LocalDateTime created,
                    LocalDateTime updated, boolean deleted, Set<Like> likes) {
+        this(id, projectId, author, parentId, text);
+        this.created = created;
+        this.updated = updated;
+        this.deleted = deleted;
+        this.likes = likes;
+    }
+
+    public Comment(Long id, Long projectId, User author, Long parentId, String text) {
         super(id);
         this.projectId = projectId;
         this.author = author;
         this.parentId = parentId;
         this.text = text;
-        this.created = created;
-        this.updated = updated;
-        this.deleted = deleted;
-        this.likes = likes;
     }
 
     @Override

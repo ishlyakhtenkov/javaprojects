@@ -1,5 +1,6 @@
 package ru.javaprojects.projector.users.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -37,6 +38,7 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonIgnore
     @Size(min = 5, max = 128)
     @Column(name = "password", nullable = false)
     private String password;

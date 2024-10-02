@@ -20,6 +20,7 @@
         <div class="row d-flex justify-content-center align-items-center mt-2">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
+                    <span id="projectId" th:text="${project.id}" hidden></span>
                     <div class="card-header text-center">
                         <img th:src="@{${'/' + project.logo.fileLink}}" alt="Logo" width="32" height="32"
                              class="d-inline-block align-text-bottom">
@@ -144,7 +145,8 @@
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
                             <textarea class="form-control bg-light new-comment pb-4" id="newCommentInput" style="resize: none" placeholder="Leave a comment here" rows="2"></textarea>
                             <a type="button" id="sendNewBtn" hidden class="btn btn-link text-decoration-none float-end pe-2"
-                               title="Send" style="margin-top: -35px;" onclick="postComment(null, $('#newCommentInput').val())">Send</a>
+                               title="Send" style="margin-top: -35px;"
+                               onclick="postComment(null, $('#newCommentInput').val(), postNewCommentSuccess)">Send</a>
                         </div>
 
 
@@ -209,16 +211,16 @@
         <script src="/js/common.js?v=1"></script>
 
         <script>
+            const projectId = $('#projectId').text();
+
             $('.new-comment').on('input', (event) => {
                 $(event.target).css('height', 'auto');
-                $(event.target).css('height', $(event.target).prop('scrollHeight') + 1 + 'px');
+                $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
                 $('#sendNewBtn').attr('hidden', $(event.target).val().length === 0);
             });
 
 
             function reply(replyBtn) {
-                console.log(replyBtn);
-
                 $('#newCommentDiv').attr('hidden', true);
                 $('#newCommentInput').val('');
                 $('#sendNewBtn').attr('hidden', true);
@@ -240,7 +242,7 @@
 
                 $('#replyComment').on('input', (event) => {
                     $(event.target).css('height', 'auto');
-                    $(event.target).css('height', $(event.target).prop('scrollHeight') + 1 + 'px');
+                    $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
                     $('#sendReplyBtn').attr('hidden', $(event.target).val().length === 0);
                 });
 
@@ -252,55 +254,75 @@
                 $('#sendReplyBtn').on('click', () => {
                     let text = $('#replyComment').val();
                     let parentId = replyBtn.attr('id').replace('replyBtn-', '');
-
-                    successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
-                    $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
-
-                    let commentDiv = generateCommentDiv(parentId, text).addClass('ms-3');
-                    commentDiv.insertAfter(replyBtn);
-
-                    $('#replyCommentDiv').remove();
-                    $('#newCommentDiv').attr('hidden', false);
+                    postComment(parentId, text, postRepliedCommentSuccess);
                 });
             }
 
-            //TODO try to use callback as method param. after success ajax - run callback to set up comment div
-            function postComment(parentId, text) {
-                successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
+            function postRepliedCommentSuccess(comment) {
                 $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
+                let commentDiv = generateCommentDiv(comment).addClass('ms-3');
+                commentDiv.insertAfter($(`#replyBtn-${comment.parentId}`));
+                $('#replyCommentDiv').remove();
+                $('#newCommentDiv').attr('hidden', false);
+            }
 
-                let commentDiv = generateCommentDiv(parentId, text);
+            function postComment(parentId, text, successCallBack) {
+                if (text.length) {
+                    $.ajax({
+                        url: `/projects/${projectId}/comments`,
+                        type: 'POST',
+                        data: JSON.stringify(makeCommentObject(parentId, text)),
+                        contentType: 'application/json; charset=utf-8'
+                    }).done((comment) => {
+                        successCallBack(comment);
+                    }).fail(function(data) {
+                        handleError(data, `Failed to add comment`);
+                    });
 
+                }
+            }
+
+            function makeCommentObject(parentId, text) {
+                return {
+                    projectId: projectId,
+                    parentId: parentId,
+                    text: text
+                };
+            }
+
+            function postNewCommentSuccess(comment) {
+                $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
+                let commentDiv = generateCommentDiv(comment);
                 $('#commentsArea').prepend(commentDiv);
-
                 $('#newCommentInput').val('');
                 $('#sendNewBtn').attr('hidden', true);
             }
 
-            function generateCommentDiv(parentId, text) {
+            function generateCommentDiv(comment) {
                 let commentDiv = $('<div></div>').addClass('comment mt-3');
                 let dFlexDiv = $('<div></div>').addClass('d-flex');
                 let avatar = $('<img>').addClass('rounded-circle border')
-                    .attr('src', `${(authUser.user.avatar.fileLink).startsWith('https://') ? authUser.user.avatar.fileLink : ('/' + authUser.user.avatar.fileLink)}`)
+                    .attr('src', `${(comment.author.avatar.fileLink).startsWith('https://') ? comment.author.avatar.fileLink : ('/' + comment.author.avatar.fileLink)}`)
                     .attr('width', '40').attr('height', '40');
                 let nameAndTimeDiv = $('<div></div>').addClass('ms-2');
-                let nameSpan = $('<span></span>').addClass('h6').html(`${authUser.user.name}`);
-                let timeDiv = $('<div></div>').addClass('text-secondary tiny').css('margin-top', '-3px').html(new Date().getDate());
+                let nameSpan = $('<span></span>').addClass('h6').html(`${comment.author.name}`);
+                let timeDiv = $('<div></div>').addClass('text-secondary tiny').css('margin-top', '-3px')
+                    .html(formatDateTime(comment.created));
                 nameAndTimeDiv.append(nameSpan);
                 nameAndTimeDiv.append(timeDiv);
                 dFlexDiv.append(avatar);
                 dFlexDiv.append(nameAndTimeDiv);
-                let textDiv = $('<div></div>').css('white-space', 'pre-wrap').html(text);
+                let textDiv = $('<div></div>').css('white-space', 'pre-wrap').html(comment.text);
 
                 let buttonsDiv = $('<div></div>');
                 let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none')
                     .attr('type', 'button').attr('title', 'Like');
                 let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
-                let likeCounter = $('<span></span>').addClass('text-secondary small').text(' 99'); //TODO real count = 0
+                let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
                 likeBtn.append(likeSymbol);
                 likeBtn.append(likeCounter);
                 let replyBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
-                    .attr('type', 'button').attr('id', 'replyBtn-55'); //TODO real id
+                    .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
                 let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
                 let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply');
                 replyBtn.on('click', () => {
@@ -316,6 +338,14 @@
                 commentDiv.append(buttonsDiv);
 
                 return commentDiv;
+            }
+
+            function formatDateTime(dateTime) {
+                let dateAndTime = dateTime.split('T');
+                let dateParts =  dateAndTime[0].split('-');
+                let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                let formattedTime = dateAndTime[1].split('.')[0];
+                return `${formattedDate} ${formattedTime}`;
             }
         </script>
     </ownScript>

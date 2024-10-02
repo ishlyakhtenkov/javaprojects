@@ -7,6 +7,7 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 
@@ -28,6 +29,10 @@ import static ru.javaprojects.projector.users.UserTestData.*;
 public class ProjectTestData {
     public static final MatcherFactory.Matcher<Project> PROJECT_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Project.class);
+
+    public static final MatcherFactory.Matcher<Comment> COMMENT_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(Comment.class, "created", "updated", "author.password",
+                    "author.registered", "author.roles");
 
     public static final String PROJECTS_ATTRIBUTE = "projects";
     public static final String PROJECT_ATTRIBUTE = "project";
@@ -473,5 +478,13 @@ public class ProjectTestData {
         MultiValueMap<String, String> invalidParams = getNewInvalidParams();
         invalidParams.add(ID_PARAM, String.valueOf(PROJECT1_ID));
         return invalidParams;
+    }
+
+    public static CommentTo getNewCommentTo() {
+        return new CommentTo(null, PROJECT1_ID, null, "new comment text");
+    }
+
+    public static Comment getNewComment() {
+        return new Comment(null, PROJECT1_ID, user, null, "new comment text");
     }
 }

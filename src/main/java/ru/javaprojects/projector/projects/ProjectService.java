@@ -10,15 +10,14 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.projects.model.DescriptionElement;
-import ru.javaprojects.projector.projects.model.Like;
-import ru.javaprojects.projector.projects.model.ObjectType;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
+import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
+import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.UserService;
 
 import java.util.Comparator;
@@ -248,5 +247,16 @@ public class ProjectService {
                 likeRepository.save(new Like(null, id, userId, ObjectType.PROJECT));
             }
         });
+    }
+
+    public Comment createComment(CommentTo commentTo, long userId) {
+        Assert.notNull(commentTo, "commentTo must not be null");
+        User user = userService.get(userId);
+        get(commentTo.getProjectId());
+        if (commentTo.getParentId() != null) {
+            commentRepository.getExisted(commentTo.getParentId());
+        }
+        return commentRepository.save(new Comment(null, commentTo.getProjectId(), user, commentTo.getParentId(),
+                commentTo.getText()));
     }
 }

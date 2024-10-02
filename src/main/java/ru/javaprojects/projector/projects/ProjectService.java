@@ -12,7 +12,9 @@ import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.Like;
+import ru.javaprojects.projector.projects.model.ObjectType;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -40,6 +42,7 @@ public class ProjectService {
     private final ProjectRepository repository;
     private final ProjectUtil projectUtil;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
 
     @Value("${content-path.projects}")
@@ -50,7 +53,7 @@ public class ProjectService {
     }
 
     public Project getWithTechnologies(long id, boolean sort) {
-        Project project = repository.findWithTechnologiesById(id).orElseThrow(() ->
+        Project project = repository.findWithArchitectureAndTechnologiesById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
         if (sort) {
             project.setTechnologies(new TreeSet<>(project.getTechnologies()));
@@ -65,13 +68,14 @@ public class ProjectService {
         project.setViews(project.getViews() + 1);
     }
 
-    public Project getWithTechnologiesAndDescription(long id, Comparator<Technology> technologyComparator) {
-        Project project = repository.findWithTechnologiesAndDescriptionById(id).orElseThrow(() ->
+    public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
+        Project project = repository.findWithAllInformationById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
         TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
         sortedTechnologies.addAll(project.getTechnologies());
         project.setTechnologies(sortedTechnologies);
         project.setDescriptionElements(new TreeSet<>(project.getDescriptionElements()));
+        project.setComments(commentRepository.findAllByProjectIdOrderByCreated(id));
         return project;
     }
 
@@ -110,6 +114,8 @@ public class ProjectService {
                 new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
         repository.delete(project);
         repository.flush();
+        likeRepository.deleteAllByObjectId(id);
+        likeRepository.flush();
         FileUtil.deleteFile(project.getLogo().getFileLink());
         FileUtil.deleteFile(project.getCardImage().getFileLink());
         if (project.getDockerCompose() != null) {
@@ -160,7 +166,7 @@ public class ProjectService {
     @Transactional
     public Project update(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        Project project = repository.findWithTechnologiesAndDescriptionById(projectTo.getId()).orElseThrow(() ->
+        Project project = repository.findWithAllInformationById(projectTo.getId()).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + projectTo.getId(), "notfound.entity",
                         new Object[]{projectTo.getId()}));
         String projectOldName = project.getName();
@@ -233,13 +239,13 @@ public class ProjectService {
     public void like(long id, boolean liked, long userId) {
         get(id);
         userService.get(userId);
-        likeRepository.findByProjectIdAndUserId(id, userId).ifPresentOrElse(like -> {
+        likeRepository.findByObjectIdAndUserId(id, userId).ifPresentOrElse(like -> {
             if (!liked) {
                 likeRepository.delete(like);
             }
         }, () -> {
             if (liked) {
-                likeRepository.save(new Like(null, id, userId));
+                likeRepository.save(new Like(null, id, userId, ObjectType.PROJECT));
             }
         });
     }

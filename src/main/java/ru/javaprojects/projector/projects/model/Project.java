@@ -20,7 +20,9 @@ import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -133,8 +135,11 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Column(name = "views", nullable = false, columnDefinition = "integer default 0")
     private int views;
 
-    @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "objectId",  fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
@@ -169,11 +174,13 @@ public class Project extends BaseEntity implements HasIdAndName {
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views, Set<Like> likes) {
+                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views, Set<Like> likes,
+                   List<Comment> comments) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
                 cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies, views);
         this.descriptionElements = descriptionElements;
         this.likes = likes;
+        this.comments = comments;
     }
 
     public void addTechnology(Technology technology) {
@@ -183,11 +190,6 @@ public class Project extends BaseEntity implements HasIdAndName {
     public void addDescriptionElement(DescriptionElement element) {
         descriptionElements.add(element);
         element.setProject(this);
-    }
-
-    public void removeDescriptionElement(DescriptionElement element) {
-        descriptionElements.remove(element);
-        element.setProject(null);
     }
 
     @Override

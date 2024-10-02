@@ -55,7 +55,7 @@ public class ProjectManagementController {
     @GetMapping("/{id}")
     public String get(@PathVariable long id, Model model) {
         log.info("get project with id={}", id);
-        model.addAttribute("project", projectService.getWithTechnologiesAndDescription(id, Comparator.naturalOrder()));
+        model.addAttribute("project", projectService.getWithAllInformation(id, Comparator.naturalOrder()));
         return "management/projects/project";
     }
 
@@ -76,7 +76,7 @@ public class ProjectManagementController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
-        Project project = projectService.getWithTechnologiesAndDescription(id, Comparator.naturalOrder());
+        Project project = projectService.getWithAllInformation(id, Comparator.naturalOrder());
         model.addAttribute("projectTo", projectUtil.asTo(project));
         addAttributesToModel(model);
         return "management/projects/project-form";

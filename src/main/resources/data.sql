@@ -89,10 +89,27 @@ VALUES (0, 'TITLE', 'App description', null, null, 100017),
        (4, 'PARAGRAPH', 'Users can register for the app by filling in their account details on the registration page.', null, null, 100017),
        (5, 'IMAGE', null, 'registration_and_profile.png','./content/projects/restaurant_aggregator/description/images/registration_and_profile.png', 100017);
 
-INSERT INTO likes (project_id, user_id)
-VALUES (100017, 100000),
-       (100017, 100001),
-       (100017, 100002),
-       (100017, 100003),
-       (100018, 100000),
-       (100018, 100001);
+INSERT INTO likes (object_id, user_id, object_type)
+VALUES (100017, 100000, 'PROJECT'),
+       (100017, 100001, 'PROJECT'),
+       (100017, 100002, 'PROJECT'),
+       (100017, 100003, 'PROJECT'),
+       (100018, 100000, 'PROJECT'),
+       (100018, 100001, 'PROJECT');
+
+INSERT INTO comments (project_id, user_id, parent_id, text, created, deleted)
+VALUES (100017, 100001, null, 'admin 1st comment', '2024-09-11 11:44:56', false),
+       (100017, 100001, null, 'admin 2nd comment', '2024-09-11 12:35:44', false),
+       (100017, 100000, null, 'user 1st comment', '2024-09-11 11:55:37', false),
+       (100017, 100000, 100032, 'user 2nd comment for admin 1st comment', '2024-09-11 11:57:23', false),
+       (100017, 100000, 100035, 'user 3rd comment for its user 2nd comment', '2024-09-11 12:14:13', false),
+       (100017, 100000, 100032, 'user 4th comment deleted', '2024-09-11 13:18:53', true),
+       (100018, 100001, null, 'admin comment for project 2', '2024-09-11 14:15:39', false);
+
+INSERT INTO likes (object_id, user_id, object_type)
+VALUES (100032, 100001, 'COMMENT'),
+       (100032, 100000, 'COMMENT'),
+       (100032, 100002, 'COMMENT'),
+       (100035, 100001, 'COMMENT'),
+       (100035, 100002, 'COMMENT'),
+       (100038, 100000, 'COMMENT');

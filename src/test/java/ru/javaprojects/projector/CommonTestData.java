@@ -3,6 +3,10 @@ package ru.javaprojects.projector;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class CommonTestData {
     public static final String HOME_URL = "/";
     public static final String ACTION_ATTRIBUTE = "action";
@@ -29,5 +33,13 @@ public class CommonTestData {
         params.add("page", "0");
         params.add("size", "2");
         return params;
+    }
+
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd Hh:mm:ss").parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

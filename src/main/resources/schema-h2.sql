@@ -135,10 +135,24 @@ CREATE TABLE description_elements
 
 CREATE TABLE likes
 (
-    id         BIGINT DEFAULT nextval('global_seq') PRIMARY KEY,
-    project_id BIGINT NOT NULL,
-    user_id    BIGINT NOT NULL,
-    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+    id          BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    object_id   BIGINT       NOT NULL,
+    user_id     BIGINT       NOT NULL,
+    object_type VARCHAR(16)  NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX likes_unique_project_like_idx ON likes (project_id, user_id);
+CREATE UNIQUE INDEX likes_unique_object_like_idx ON likes (object_id, user_id);
+
+CREATE TABLE comments
+(
+    id         BIGINT        DEFAULT nextval('global_seq') PRIMARY KEY,
+    project_id BIGINT        NOT NULL,
+    user_id    BIGINT        NOT NULL,
+    parent_id  BIGINT,
+    text       VARCHAR(4096) NOT NULL,
+    created    TIMESTAMP     DEFAULT now() NOT NULL,
+    deleted    BOOL          DEFAULT FALSE NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
+    FOREIGN KEY (parent_id)  REFERENCES comments (id) ON DELETE SET NULL
+);

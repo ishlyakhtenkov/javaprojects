@@ -43,8 +43,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertEquals(project2.getLikes().size() + 1,
-                projectService.getWithTechnologiesAndDescription(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
-        assertDoesNotThrow(() -> likeRepository.findByProjectIdAndUserId(PROJECT2_ID, USER2_ID).orElseThrow());
+                projectService.getWithAllInformation(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
+        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT2_ID, USER2_ID).orElseThrow());
     }
 
     @Test
@@ -55,8 +55,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertEquals(project1.getLikes().size(),
-                projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
-        assertDoesNotThrow(() -> likeRepository.findByProjectIdAndUserId(PROJECT1_ID, USER_ID).orElseThrow());
+                projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
+        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, USER_ID).orElseThrow());
     }
 
     @Test
@@ -67,8 +67,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertEquals(project1.getLikes().size() - 1,
-                projectService.getWithTechnologiesAndDescription(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
-        assertTrue(() -> likeRepository.findByProjectIdAndUserId(PROJECT1_ID, USER_ID).isEmpty());
+                projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, USER_ID).isEmpty());
     }
 
     @Test
@@ -79,8 +79,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertEquals(project2.getLikes().size(),
-                projectService.getWithTechnologiesAndDescription(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
-        assertTrue(() -> likeRepository.findByProjectIdAndUserId(PROJECT2_ID, USER2_ID).isEmpty());
+                projectService.getWithAllInformation(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT2_ID, USER2_ID).isEmpty());
     }
 
     @Test
@@ -97,7 +97,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(PROJECTS_URL_SLASH + NOT_EXISTING_ID + "/like"));
-        assertTrue(() -> likeRepository.findByProjectIdAndUserId(NOT_EXISTING_ID, USER2_ID).isEmpty());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(NOT_EXISTING_ID, USER2_ID).isEmpty());
     }
 
     @Test
@@ -109,6 +109,6 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertEquals(project2.getLikes().size(),
-                projectService.getWithTechnologiesAndDescription(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
+                projectService.getWithAllInformation(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
     }
 }

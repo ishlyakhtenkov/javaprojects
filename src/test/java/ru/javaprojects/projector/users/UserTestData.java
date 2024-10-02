@@ -154,14 +154,6 @@ public class UserTestData {
     public static final ChangeEmailToken expiredChangeEmailToken = new ChangeEmailToken(100009L,
             "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseDate("2024-08-05 21:49:01"), "some@gmail.com", admin);
 
-    public static Date parseDate(String date) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd Hh:mm:ss").parse(date);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
     public static MultiValueMap<String, String> getNewUserParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         User newUser = getNewUser();

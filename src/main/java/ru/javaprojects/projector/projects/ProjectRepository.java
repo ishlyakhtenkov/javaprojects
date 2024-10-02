@@ -22,10 +22,10 @@ public interface ProjectRepository extends NamedRepository<Project> {
     List<Project> findAllWithArchitectureAndTechnologiesByEnabledIsTrue();
 
     @EntityGraph(attributePaths = {"architecture", "technologies"})
-    Optional<Project> findWithTechnologiesById(long id);
+    Optional<Project> findWithArchitectureAndTechnologiesById(long id);
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements", "likes"})
-    Optional<Project> findWithTechnologiesAndDescriptionById(long id);
+    Optional<Project> findWithAllInformationById(long id);
 
     @EntityGraph(attributePaths = {"descriptionElements"})
     Optional<Project> findWithDescriptionById(long id);

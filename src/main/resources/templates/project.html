@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
+<!--/*@thymesVar id="comments" type="java.util.Map"*/-->
+<!--/*@thymesVar id="likedCommentsIds" type="java.util.Set"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript},
           activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
@@ -136,7 +138,7 @@
                 <div class="card shadow">
                     <div class="card-body text-start">
                         <span class="h3">Comments</span>
-                        <span class="h3 text-secondary ms-1 fw-light">112</span>
+                        <span class="h3 text-secondary ms-1 fw-light" id="commentsCounter" th:text="${comments.size()}"></span>
 
 
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
@@ -147,22 +149,34 @@
 
 
                         <div id="commentsArea" class="mt-3">
-                            <div class="comment mt-3">
+                            <div class="comment mt-3" th:each="commentEntry : ${comments.entrySet()}"
+                                 th:style="${'margin-left: ' + 16 * commentEntry.getValue() + 'px'}">
                                 <div class="d-flex ">
-                                    <img class="rounded-circle border" th:src="@{/images/no-avatar.svg}" width="40" height="40" />
+                                    <img class="rounded-circle border"
+                                         th:src="@{${commentEntry.getKey().author.avatar != null ?
+                                                 commentEntry.getKey().author.avatar.getSrc() : '/images/no-avatar.svg'}}"
+                                         width="40" height="40" />
                                     <div class="ms-2 ">
-                                        <span class="h6">Jack Sanjers</span>
-                                        <div class="text-secondary tiny" style="margin-top: -3px;">28.09.2024 15:45</div>
+                                        <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
+                                        <div class="text-secondary tiny" style="margin-top: -3px;"
+                                             th:text="${#dates.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                     </div>
                                 </div>
-                                <div style="white-space: pre-wrap">Hello, world! This is a test comment to check how it looks like!</div>
-                                <div>
+                                <div style="white-space: pre-wrap" th:text="${commentEntry.getKey().deleted ?
+                                     'Comment has been deleted' : commentEntry.getKey().text}"
+                                     th:classappend="${commentEntry.getKey().deleted ? 'text-secondary' : ''}"
+                                     th:style="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
+
+                                <div th:if="${!commentEntry.getKey().deleted}">
                                     <a type="button" class="like-btn btn-link link-danger text-decoration-none" title="Like">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span class="text-secondary small">4</span>
+                                        <i class="fa-heart" title="Like"
+                                           th:classappend="${likedCommentsIds == null || !likedCommentsIds.contains(commentEntry.getKey().id) ?
+                                            'fa-regular' : 'fa-solid'}"></i>
+                                        <span class="text-secondary small" th:text="${commentEntry.getKey().likes.size()}"></span>
                                     </a>
 
-                                    <a type="button" class="btn-link text-decoration-none ms-1" id="replyBtn-42" onclick="reply($(this))">
+                                    <a type="button" class="btn-link text-decoration-none ms-1"
+                                       th:id="${'replyBtn-' + commentEntry.getKey().id}" onclick="reply($(this))">
                                         <i class="fa-solid fa-reply"></i>
                                         <span class="text-secondary small">Reply</span>
                                     </a>
@@ -238,9 +252,9 @@
                 $('#sendReplyBtn').on('click', () => {
                     let text = $('#replyComment').val();
                     let parentId = replyBtn.attr('id').replace('replyBtn-', '');
-                    successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
 
-                    //TODO generate  created comment instead of replyCommentDiv
+                    successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
+                    $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
 
                     let commentDiv = generateCommentDiv(parentId, text).addClass('ms-3');
                     commentDiv.insertAfter(replyBtn);
@@ -253,6 +267,7 @@
             //TODO try to use callback as method param. after success ajax - run callback to set up comment div
             function postComment(parentId, text) {
                 successToast(`Comment '${text}' has been posted with  parentId = ${parentId}`);
+                $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
 
                 let commentDiv = generateCommentDiv(parentId, text);
 
@@ -281,11 +296,11 @@
                 let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none')
                     .attr('type', 'button').attr('title', 'Like');
                 let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
-                let likeCounter = $('<span></span>').addClass('text-secondary small').text(' 4');
+                let likeCounter = $('<span></span>').addClass('text-secondary small').text(' 99'); //TODO real count = 0
                 likeBtn.append(likeSymbol);
                 likeBtn.append(likeCounter);
                 let replyBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
-                    .attr('type', 'button').attr('id', 'replyBtn-55');
+                    .attr('type', 'button').attr('id', 'replyBtn-55'); //TODO real id
                 let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
                 let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply');
                 replyBtn.on('click', () => {

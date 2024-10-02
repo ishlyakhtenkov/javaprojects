@@ -12,6 +12,7 @@ import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.projects.ProjectService;
+import ru.javaprojects.projector.projects.repository.LikeRepository;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +42,9 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
     @Override
     public Path getContentPath() {
         return Paths.get(contentPath);
@@ -58,6 +62,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
+        assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
@@ -88,6 +94,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
+        assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
@@ -102,6 +110,8 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
+        assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));

@@ -6,23 +6,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
-import ru.javaprojects.projector.projects.model.DescriptionElement;
-import ru.javaprojects.projector.projects.model.Like;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static java.time.Month.*;
 import static ru.javaprojects.projector.CommonTestData.*;
 import static ru.javaprojects.projector.common.model.Priority.*;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.model.ElementType.*;
+import static ru.javaprojects.projector.projects.model.ObjectType.COMMENT;
+import static ru.javaprojects.projector.projects.model.ObjectType.PROJECT;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
 import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.*;
@@ -36,6 +33,9 @@ public class ProjectTestData {
     public static final String PROJECT_ATTRIBUTE = "project";
     public static final String PROJECT_TO_ATTRIBUTE = "projectTo";
     public static final String LIKED_PROJECTS_IDS_ATTRIBUTE = "likedProjectsIds";
+    public static final String LIKED_COMMENTS_IDS_ATTRIBUTE = "likedCommentsIds";
+    public static final String HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE = "hasFrontendTechnologies";
+    public static final String COMMENTS_ATTRIBUTE = "comments";
 
     public static final long PROJECT1_ID = 100017;
     public static final long PROJECT2_ID = 100018;
@@ -75,6 +75,24 @@ public class ProjectTestData {
     public static final long PROJECT2_LIKE1_ID = 100030;
     public static final long PROJECT2_LIKE2_ID = 100031;
 
+    public static final long PROJECT1_COMMENT1_ID = 100032;
+    public static final long PROJECT1_COMMENT2_ID = 100033;
+    public static final long PROJECT1_COMMENT3_ID = 100034;
+    public static final long PROJECT1_COMMENT4_ID = 100035;
+    public static final long PROJECT1_COMMENT5_ID = 100036;
+    public static final long PROJECT1_COMMENT6_ID = 100037;
+
+    public static final long PROJECT2_COMMENT1_ID = 100038;
+
+    public static final long PROJECT1_COMMENT1_LIKE1_ID = 100039;
+    public static final long PROJECT1_COMMENT1_LIKE2_ID = 100040;
+    public static final long PROJECT1_COMMENT1_LIKE3_ID = 100041;
+
+    public static final long PROJECT1_COMMENT4_LIKE1_ID = 100042;
+    public static final long PROJECT1_COMMENT4_LIKE2_ID = 100043;
+
+    public static final long PROJECT2_COMMENT1_LIKE1_ID = 100044;
+
     public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
@@ -109,15 +127,50 @@ public class ProjectTestData {
             (byte) 5, null, new File("registration_and_profile.png",
             "./content/projects/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
 
-    public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, PROJECT1_ID, USER_ID);
-    public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, PROJECT1_ID, ADMIN_ID);
-    public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, PROJECT1_ID, USER2_ID);
-    public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, PROJECT1_ID, DISABLED_USER_ID);
+    public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, PROJECT1_ID, USER_ID, PROJECT);
+    public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, PROJECT1_ID, ADMIN_ID, PROJECT);
+    public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, PROJECT1_ID, USER2_ID, PROJECT);
+    public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, PROJECT1_ID, DISABLED_USER_ID, PROJECT);
+
+    public static final Like project1Comment1Like1 = new Like(PROJECT1_COMMENT1_LIKE1_ID, PROJECT1_COMMENT1_ID, ADMIN_ID, COMMENT);
+    public static final Like project1Comment1Like2 = new Like(PROJECT1_COMMENT1_LIKE2_ID, PROJECT1_COMMENT1_ID, USER_ID, COMMENT);
+    public static final Like project1Comment1Like3 = new Like(PROJECT1_COMMENT1_LIKE3_ID, PROJECT1_COMMENT1_ID, USER2_ID, COMMENT);
+
+    public static final Like project1Comment4Like1 = new Like(PROJECT1_COMMENT4_LIKE1_ID, PROJECT1_COMMENT4_ID, ADMIN_ID, COMMENT);
+    public static final Like project1Comment4Like2 = new Like(PROJECT1_COMMENT4_LIKE2_ID, PROJECT1_COMMENT4_ID, USER2_ID, COMMENT);
+
+    public static final Comment project1Comment1 = new Comment(PROJECT1_COMMENT1_ID, PROJECT1_ID, admin, null,
+            "admin 1st comment", parseDate("2024-09-11 11:44:56"), false,
+            Set.of(project1Comment1Like1, project1Comment1Like2, project1Comment1Like3));
+    public static final Comment project1Comment2 = new Comment(PROJECT1_COMMENT2_ID, PROJECT1_ID, admin, null,
+            "admin 2nd comment", parseDate("2024-09-11 12:35:44"), false, Set.of());
+    public static final Comment project1Comment3 = new Comment(PROJECT1_COMMENT3_ID, PROJECT1_ID, user, null,
+            "user 1st comment", parseDate("2024-09-11 11:55:37"), false, Set.of());
+    public static final Comment project1Comment4 = new Comment(PROJECT1_COMMENT4_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
+            "user 2nd comment for admin 1st comment", parseDate("2024-09-11 11:57:23"), false,
+            Set.of(project1Comment4Like1, project1Comment4Like2));
+    public static final Comment project1Comment5 = new Comment(PROJECT1_COMMENT5_ID, PROJECT1_ID, user, PROJECT1_COMMENT4_ID,
+            "user 3rd comment for its user 2nd comment", parseDate("2024-09-11 12:14:13"), false, Set.of());
+    public static final Comment project1Comment6 = new Comment(PROJECT1_COMMENT6_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
+            "user 4th comment deleted", parseDate("2024-09-11 13:18:53"), true, Set.of());
+
+    public static final  Map<Comment, Integer> project1CommentIndents = new LinkedHashMap<>();
+
+    static {
+        project1CommentIndents.put(project1Comment1, 0);
+        project1CommentIndents.put(project1Comment4, 1);
+        project1CommentIndents.put(project1Comment5, 2);
+        project1CommentIndents.put(project1Comment6, 1);
+        project1CommentIndents.put(project1Comment3, 0);
+        project1CommentIndents.put(project1Comment2, 0);
+    }
 
     static {
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project1.setDescriptionElements(new TreeSet<>(Set.of(de1, de2, de3, de4, de5, de6)));
         project1.setLikes(Set.of(project1Like1, project1Like2, project1Like3, project1Like4));
+        project1.setComments(List.of(project1Comment1, project1Comment3, project1Comment4, project1Comment5,
+                project1Comment2, project1Comment6));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
@@ -129,12 +182,18 @@ public class ProjectTestData {
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
             null, null, 21);
 
-    public static final Like project2Like1 = new Like(PROJECT2_LIKE1_ID, PROJECT2_ID, USER_ID);
-    public static final Like project2Like2 = new Like(PROJECT2_LIKE2_ID, PROJECT2_ID, ADMIN_ID);
+    public static final Like project2Like1 = new Like(PROJECT2_LIKE1_ID, PROJECT2_ID, USER_ID, PROJECT);
+    public static final Like project2Like2 = new Like(PROJECT2_LIKE2_ID, PROJECT2_ID, ADMIN_ID, PROJECT);
+
+    public static final Like project2Comment1Like1 = new Like(PROJECT2_COMMENT1_LIKE1_ID, PROJECT2_COMMENT1_ID, USER_ID, COMMENT);
+
+    public static final Comment project2Comment1 = new Comment(PROJECT2_COMMENT1_ID, PROJECT2_ID, admin, null,
+            "admin comment for project 2", parseDate("2024-09-11 14:15:39"), false, Set.of(project2Comment1Like1));
 
     static {
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project2.setLikes(Set.of(project2Like1, project2Like2));
+        project2.setComments(List.of(project2Comment1));
     }
 
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
@@ -210,7 +269,7 @@ public class ProjectTestData {
                 new File("new_project_card_image.png", contentPath + "new_project_name" + CARD_IMG_DIR + "new_project_card_image.png"),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(),
                 new TreeSet<>(Set.of(technology1, technology2, technology3)),
-                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), 0, Set.of());
+                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), 0, Set.of(), List.of());
     }
 
     public static MultiValueMap<String, String> getNewParams() {
@@ -289,7 +348,8 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)), project1.getViews(), project1.getLikes());
+                updatedDe4, updatedDe6, updatedDe5, newDeForProjectUpdate)), project1.getViews(), project1.getLikes(),
+                project1.getComments());
     }
 
     public static Project getUpdatedWhenOldName(String contentPath) {
@@ -305,7 +365,7 @@ public class ProjectTestData {
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
                 updatedDe4, updatedDe6WhenProjectHasOldName, updatedDe5,
-                newDeForProjectUpdateWithOldName)), project1.getViews(), project1.getLikes());
+                newDeForProjectUpdateWithOldName)), project1.getViews(), project1.getLikes(), project1.getComments());
     }
 
     public static Project getUpdatedWhenOldFiles(String contentPath) {
@@ -321,7 +381,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front", "https://updatedProjectName.ru/swagger-ui.html",
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1,
-                updatedDe4, updatedDe6, updatedDe5)), project1.getViews(), project1.getLikes());
+                updatedDe4, updatedDe6, updatedDe5)), project1.getViews(), project1.getLikes(), project1.getComments());
     }
 
     public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,

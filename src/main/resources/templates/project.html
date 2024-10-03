@@ -251,6 +251,10 @@
                     $('#newCommentInput').attr('readonly', 'true');
                     $('.with-popover').popover('hide');
                     $('#newCommentInput').popover('toggle');
+                } else {
+                    $('#newCommentDiv').removeClass('opacity-50');
+                    $('#replyCommentDiv').remove();
+                    $('#cancelEditBtn').click();
                 }
             })
 
@@ -263,9 +267,16 @@
 
             function reply(replyBtn) {
                 if (authUser != null) {
-                    $('#newCommentDiv').attr('hidden', true);
+                    $('#newCommentDiv').addClass('opacity-50');
                     $('#newCommentInput').val('');
                     $('#sendNewBtn').attr('hidden', true);
+
+                    let editCommentDiv = $('.editCommentDiv');
+                    if (editCommentDiv.length) {
+                        let commentId = editCommentDiv.attr('id').replace('editCommentDiv-', '');
+                        $(`#comment-${commentId}`).attr('hidden', false);
+                        editCommentDiv.remove();
+                    }
 
                     $('#replyCommentDiv').remove();
                     let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
@@ -290,7 +301,7 @@
 
                     $('#cancelReplyBtn').on('click', () => {
                         $('#replyCommentDiv').remove();
-                        $('#newCommentDiv').attr('hidden', false);
+                        $('#newCommentDiv').removeClass('opacity-50');
                     });
 
                     $('#sendReplyBtn').on('click', () => {
@@ -314,7 +325,7 @@
                 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
                 $('#replyCommentDiv').remove();
-                $('#newCommentDiv').attr('hidden', false);
+                $('#newCommentDiv').removeClass('opacity-50');
             }
 
             function postComment(parentId, text, successCallBack) {
@@ -475,6 +486,12 @@
             }
 
             function edit(editBtn) {
+                $('#newCommentDiv').addClass('opacity-50');
+                $('#newCommentInput').val('');
+                $('#sendNewBtn').attr('hidden', true);
+
+                $('#replyCommentDiv').remove();
+
                 let editCommentDiv = $('.editCommentDiv');
                 if (editCommentDiv.length) {
                     let editCommentId = editCommentDiv.attr('id').replace('editCommentDiv-', '');
@@ -485,15 +502,12 @@
                 let commentDiv = editBtn.closest('.comment');
                 let commentId = commentDiv.attr('id').replace('comment-', '');
                 let text = commentDiv.find('.comment-text').text();
-
                 commentDiv.attr('hidden', true);
-                $('#newCommentInput').val('');
-                $('#sendNewBtn').attr('hidden', true);
 
-                let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 editCommentDiv')
+                let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 py-1 editCommentDiv')
                     .css('margin-left', commentDiv.css('margin-left'))
                     .attr('id', `editCommentDiv-${commentId}`);
-                let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
+                let textArea = $('<textarea></textarea>').addClass('form-control bg-light pb-4')
                     .attr('id', 'editComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
                     .attr('rows', '2').text(text);
 
@@ -516,6 +530,7 @@
                 $('#cancelEditBtn').on('click', () => {
                     $(`#editCommentDiv-${commentId}`).remove();
                     commentDiv.attr('hidden', false);
+                    $('#newCommentDiv').removeClass('opacity-50');
                 });
 
                 $('#sendEditBtn').on('click', () => {
@@ -529,6 +544,7 @@
                         div.remove();
                         commentDiv.find('.comment-text').text(text).css('white-space', 'pre-wrap');
                         commentDiv.attr('hidden', false);
+                        $('#newCommentDiv').removeClass('opacity-50');
                     }).fail(function(data) {
                         handleError(data, `Failed to update comment`);
                     });

@@ -11,6 +11,7 @@ import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.users.model.Role;
 
 @RestController
 @RequestMapping(value = ProjectRestController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,5 +43,12 @@ public class ProjectRestController {
         log.info("{} comment with id={} for project with id={} by user with id={}", liked ? "like" : "dislike",
                 id, projectId, AuthUser.authId());
         service.likeComment(id, liked, AuthUser.authId());
+    }
+
+    @DeleteMapping("/{projectId}/comments/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable long projectId, @PathVariable long id) {
+        log.info("delete comment with id={} for project with id={}{}", id, projectId, AuthUser.isAdmin() ? " by admin" : "");
+        service.deleteComment(id, AuthUser.authId(), AuthUser.isAdmin());
     }
 }

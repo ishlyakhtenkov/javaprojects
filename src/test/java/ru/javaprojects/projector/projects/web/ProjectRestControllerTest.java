@@ -249,7 +249,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("like.forbidden-like-yourself", null,
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-like-yourself", null,
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID));
         assertEquals(project1Comment3.getLikes().size(),
@@ -308,5 +308,74 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertEquals(project1Comment1.getLikes().size(),
                 commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow().getLikes().size());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void deleteComment() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        Comment deleted = commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatchIgnoreFields(deleted, project1Comment3, "created", "updated", "author.password",
+                "author.registered", "author.roles", "deleted");
+        assertTrue(deleted.isDeleted());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void deleteAnotherUserComment() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-delete-another", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID));
+        Comment comment = commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatch(comment, project1Comment1);
+        assertFalse(comment.isDeleted());
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void deleteAnotherUserCommentByAdmin() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        Comment deleted = commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatchIgnoreFields(deleted, project1Comment3, "created", "updated", "author.password",
+                "author.registered", "author.roles", "deleted");
+        assertTrue(deleted.isDeleted());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void deleteCommentNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID)
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        NotFoundException.class))
+                .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
+                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID));
+    }
+
+    @Test
+    void deleteCommentUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        Comment comment = commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatch(comment, project1Comment3);
+        assertFalse(comment.isDeleted());
     }
 }

@@ -265,7 +265,7 @@ public class ProjectService {
                 new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
         if (comment.getAuthor().id() == userId) {
             throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId + ", commentId=" + commentId,
-                    "like.forbidden-like-yourself", null);
+                    "comment.forbidden-like-yourself", null);
         }
         userService.get(userId);
         likeRepository.findByObjectIdAndUserId(commentId, userId).ifPresentOrElse(like -> {
@@ -277,5 +277,17 @@ public class ProjectService {
                 likeRepository.save(new Like(null, commentId, userId, ObjectType.COMMENT));
             }
         });
+    }
+
+    @Transactional
+    public void deleteComment(long commentId, long userId, boolean byAdmin) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+        if (comment.getAuthor().id() == userId || byAdmin) {
+            comment.setDeleted(true);
+        } else {
+            throw new IllegalRequestDataException("Forbidden to delete another user comment, commentId=" + commentId +
+                    ", userId=" + userId, "comment.forbidden-delete-another", null);
+        }
     }
 }

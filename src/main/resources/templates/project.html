@@ -243,6 +243,30 @@
         <script>
             const projectId = $('#projectId').text();
 
+
+            $('.comment').each(function() {
+                let counter = +$(this).css('margin-left').replace('px', '') / 16;
+                if (counter > 0) {
+                    let outerDiv = $('<div></div>').addClass('ps-3 border-start');
+                    counter--;
+                    let innerDiv = outerDiv;
+                    while (counter > 0) {
+                        let div = $('<div></div>').addClass('ps-3 border-start');
+                        innerDiv.append(div);
+                        innerDiv = div;
+                        counter--;
+                    }
+                    $(this).css('margin-left', '0px').removeClass('mt-3').addClass('pt-3');
+                    //innerDiv.addClass('d-flex align-items-center').append($('<span></span>').addClass('border-top').css('width', '16px').css('margin-left', '-16px').css('margin-top', `-${+$(this).css('height').replace('px', '') / 4}px`));
+                    innerDiv.append($(this));
+                    $('#commentsArea').append(outerDiv);
+                } else {
+                    $('#commentsArea').append($(this).removeClass('mt-3').addClass('pt-3'));
+                }
+            })
+
+
+
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 

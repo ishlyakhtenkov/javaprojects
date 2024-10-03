@@ -235,7 +235,7 @@ public class ProjectService {
     }
 
 
-    public void like(long id, boolean liked, long userId) {
+    public void likeProject(long id, boolean liked, long userId) {
         get(id);
         userService.get(userId);
         likeRepository.findByObjectIdAndUserId(id, userId).ifPresentOrElse(like -> {
@@ -258,5 +258,24 @@ public class ProjectService {
         }
         return commentRepository.save(new Comment(null, commentTo.getProjectId(), user, commentTo.getParentId(),
                 commentTo.getText()));
+    }
+
+    public void likeComment(long commentId, boolean liked, long userId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+        if (comment.getAuthor().id() == userId) {
+            throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId + ", commentId=" + commentId,
+                    "like.forbidden-like-yourself", null);
+        }
+        userService.get(userId);
+        likeRepository.findByObjectIdAndUserId(commentId, userId).ifPresentOrElse(like -> {
+            if (!liked) {
+                likeRepository.delete(like);
+            }
+        }, () -> {
+            if (liked) {
+                likeRepository.save(new Like(null, commentId, userId, ObjectType.COMMENT));
+            }
+        });
     }
 }

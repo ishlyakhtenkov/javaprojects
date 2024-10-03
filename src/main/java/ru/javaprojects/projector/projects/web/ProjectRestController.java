@@ -23,9 +23,9 @@ public class ProjectRestController {
 
     @PatchMapping("/{id}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void like(@PathVariable long id, @RequestParam boolean liked) {
+    public void likeProject(@PathVariable long id, @RequestParam boolean liked) {
         log.info("{} project with id={} by user with id={}", liked ? "like" : "dislike", id, AuthUser.authId());
-        service.like(id, liked, AuthUser.authId());
+        service.likeProject(id, liked, AuthUser.authId());
     }
 
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -34,5 +34,13 @@ public class ProjectRestController {
         log.info("create {}", commentTo);
         ValidationUtil.checkNew(commentTo);
         return service.createComment(commentTo, AuthUser.authId());
+    }
+
+    @PatchMapping("/{projectId}/comments/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void likeComment(@PathVariable long projectId, @PathVariable long id, @RequestParam boolean liked) {
+        log.info("{} comment with id={} for project with id={} by user with id={}", liked ? "like" : "dislike",
+                id, projectId, AuthUser.authId());
+        service.likeComment(id, liked, AuthUser.authId());
     }
 }

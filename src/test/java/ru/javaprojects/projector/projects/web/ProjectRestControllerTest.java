@@ -1,6 +1,5 @@
 package ru.javaprojects.projector.projects.web;
 
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,6 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
@@ -50,7 +50,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void like() throws Exception {
+    void likeProject() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT2_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
@@ -62,7 +62,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void likeWhenAlreadyLiked() throws Exception {
+    void likeProjectWhenAlreadyLiked() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
@@ -74,7 +74,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void dislike() throws Exception {
+    void dislikeProject() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -86,7 +86,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void dislikeWhenHasNotLike() throws Exception {
+    void dislikeProjectWhenHasNotLike() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT2_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -98,7 +98,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void likeProjectNotFound() throws Exception {
+    void likeProjectWhenProjectNotFound() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + NOT_EXISTING_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
@@ -114,7 +114,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void likeUnauthorized() throws Exception {
+    void likeProjectUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT2_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
@@ -212,5 +212,101 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertEquals(project1.getComments().size(),
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getComments().size());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void likeComment() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT2_ID)
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project1Comment2.getLikes().size() + 1,
+                commentRepository.findById(PROJECT1_COMMENT2_ID).orElseThrow().getLikes().size());
+        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT2_ID, USER_ID).orElseThrow());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void likeCommentWhenAlreadyLiked() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project1Comment1.getLikes().size(),
+                commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow().getLikes().size());
+        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT1_ID, USER_ID).orElseThrow());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void likeYourselfComment() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("like.forbidden-like-yourself", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID));
+        assertEquals(project1Comment3.getLikes().size(),
+                commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow().getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT3_ID, USER_ID).isEmpty());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void dislikeComment() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .param(LIKED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project1Comment1.getLikes().size() - 1,
+                commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow().getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT1_ID, USER_ID).isEmpty());
+    }
+
+    @Test
+    @WithUserDetails(DISABLED_USER_MAIL)
+    void dislikeCommentWhenHasNotLike() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT4_ID)
+                .param(LIKED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertEquals(project1Comment4.getLikes().size(),
+                commentRepository.findById(PROJECT1_COMMENT4_ID).orElseThrow().getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT4_ID, DISABLED_USER_ID).isEmpty());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void likeCommentWhenCommentNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID)
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        NotFoundException.class))
+                .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
+                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID));
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(NOT_EXISTING_ID, USER_ID).isEmpty());
+    }
+
+    @Test
+    void likeCommentUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        assertEquals(project1Comment1.getLikes().size(),
+                commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow().getLikes().size());
     }
 }

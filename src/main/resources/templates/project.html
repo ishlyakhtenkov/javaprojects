@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="comments" type="java.util.Map"*/-->
 <!--/*@thymesVar id="likedCommentsIds" type="java.util.Set"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript},
+<th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css',
           activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
     <appMain>
         <nav aria-label="breadcrumb">
@@ -170,11 +170,15 @@
                                      th:style="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
 
                                 <div th:if="${!commentEntry.getKey().deleted}">
-                                    <a type="button" class="like-btn btn-link link-danger text-decoration-none" title="Like">
+                                    <a type="button" title="Like" th:onclick="|like(this, '${commentEntry.getKey().id}')|"
+                                       class="like-btn btn-link link-danger text-decoration-none"
+                                       data-bs-toggle="popover" data-bs-trigger="manual"
+                                       data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
+                                       data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true">
                                         <i class="fa-heart" title="Like"
                                            th:classappend="${likedCommentsIds == null || !likedCommentsIds.contains(commentEntry.getKey().id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
-                                        <span class="text-secondary small" th:text="${commentEntry.getKey().likes.size()}"></span>
+                                        <span class="text-secondary small" title="Like" th:text="${commentEntry.getKey().likes.size()}"></span>
                                     </a>
 
                                     <a type="button" class="btn-link text-decoration-none ms-1"
@@ -212,6 +216,9 @@
 
         <script>
             const projectId = $('#projectId').text();
+
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
             $('.new-comment').on('input', (event) => {
                 $(event.target).css('height', 'auto');
@@ -321,6 +328,10 @@
                 let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
                 likeBtn.append(likeSymbol);
                 likeBtn.append(likeCounter);
+                likeBtn.on('click', () => {
+                    like(likeBtn, comment.id);
+                });
+
                 let replyBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
                     .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
                 let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
@@ -347,6 +358,33 @@
                 let formattedTime = dateAndTime[1].split('.')[0];
                 return `${formattedDate} ${formattedTime}`;
             }
+
+            function like(likeBtn, commentId) {
+                if (authUser != null) {
+                    let likeIcon = $(likeBtn).find('i');
+                    let likeCounter = $(likeBtn).find('span');
+                    let liked = likeIcon.attr('class').includes('fa-regular');
+                    $.ajax({
+                        url: `/projects/${projectId}/comments/${commentId}`,
+                        type: "PATCH",
+                        data: "liked=" + liked
+                    }).done(function() {
+                        likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
+                        likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
+                    }).fail(function(data) {
+                        likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
+                        handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+                    });
+                } else  {
+                    $('.like-btn').popover('hide');
+                    $(likeBtn).popover('toggle');
+                }
+            }
+
+            $('.like-btn').on('shown.bs.popover', () => {
+                $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
+            });
+
         </script>
     </ownScript>
 </th:block>

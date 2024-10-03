@@ -247,7 +247,8 @@
             $('.comment').each(function() {
                 let counter = +$(this).css('margin-left').replace('px', '') / 16;
                 if (counter > 0) {
-                    let outerDiv = $('<div></div>').addClass('ps-3 border-start');
+                    let outerDiv = $('<div></div>').addClass('ps-3 border-start').attr('id',`outer-${$(this).attr('id').replace('comment-', '')}`);
+                    outerDiv.data('indent', counter);
                     counter--;
                     let innerDiv = outerDiv;
                     while (counter > 0) {
@@ -341,9 +342,27 @@
 
             function postRepliedCommentSuccess(comment) {
                 $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
-                let commentDiv = generateCommentDiv(comment)
-                    .css('margin-left', `${+($(`#comment-${comment.parentId}`).css('margin-left').replace('px', '')) + 16}px`);
-                commentDiv.insertAfter($(`#comment-${comment.parentId}`));
+                let commentDiv = generateCommentDiv(comment);
+                let indent = $(`#outer-${comment.parentId}`).data('indent') != null ? +$(`#outer-${comment.parentId}`).data('indent') : 0;
+                let counter = indent + 1;
+                let outerDiv = $('<div></div>').addClass('ps-3 border-start').attr('id', `outer-${comment.id}`).data('indent', counter);
+                counter--;
+                let innerDiv = outerDiv;
+                while (counter > 0) {
+                    let div = $('<div></div>').addClass('ps-3 border-start');
+                    innerDiv.append(div);
+                    innerDiv = div;
+                    counter--;
+                }
+                commentDiv.removeClass('mt-3').addClass('pt-3');
+                //innerDiv.addClass('d-flex align-items-center').append($('<span></span>').addClass('border-top').css('width', '16px').css('margin-left', '-16px').css('margin-top', `-${+$(this).css('height').replace('px', '') / 4}px`));
+                innerDiv.append(commentDiv);
+                if (indent !== 0) {
+                    outerDiv.insertAfter($(`#outer-${comment.parentId}`));
+                } else {
+                    outerDiv.insertAfter($(`#comment-${comment.parentId}`));
+                }
+
 
                 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
                 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));

@@ -143,7 +143,11 @@
 
 
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
-                            <textarea class="form-control bg-light new-comment pb-4" id="newCommentInput" style="resize: none" placeholder="Leave a comment here" rows="2"></textarea>
+                            <textarea class="form-control bg-light new-comment with-popover pb-4" id="newCommentInput"
+                                      style="resize: none" placeholder="Leave a comment here" rows="2"
+                                      data-bs-toggle="popover" data-bs-trigger="manual"
+                                      data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
+                                      data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true" ></textarea>
                             <a type="button" id="sendNewBtn" hidden class="btn btn-link text-decoration-none float-end pe-2"
                                title="Send" style="margin-top: -35px;"
                                onclick="postComment(null, $('#newCommentInput').val(), postNewCommentSuccess)">Send</a>
@@ -171,7 +175,7 @@
 
                                 <div th:if="${!commentEntry.getKey().deleted}">
                                     <a type="button" title="Like" th:onclick="|like(this, '${commentEntry.getKey().id}')|"
-                                       class="like-btn btn-link link-danger text-decoration-none"
+                                       class="like-btn btn-link link-danger text-decoration-none with-popover"
                                        data-bs-toggle="popover" data-bs-trigger="manual"
                                        data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
                                        data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true">
@@ -181,8 +185,13 @@
                                         <span class="text-secondary small" title="Like" th:text="${commentEntry.getKey().likes.size()}"></span>
                                     </a>
 
-                                    <a type="button" class="btn-link text-decoration-none ms-1"
-                                       th:id="${'replyBtn-' + commentEntry.getKey().id}" onclick="reply($(this))">
+                                    <a type="button" class="reply-btn btn-link text-decoration-none ms-1 with-popover"
+                                       th:id="${'replyBtn-' + commentEntry.getKey().id}"
+                                       data-bs-toggle="popover" data-bs-trigger="manual"
+                                       data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
+                                       data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>"
+                                       data-bs-html="true"
+                                       onclick="reply($(this))">
                                         <i class="fa-solid fa-reply"></i>
                                         <span class="text-secondary small">Reply</span>
                                     </a>
@@ -220,6 +229,14 @@
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
+            $('#newCommentInput').on('focus', () => {
+                if (authUser === null) {
+                    $('#newCommentInput').attr('readonly', 'true');
+                    $('.with-popover').popover('hide');
+                    $('#newCommentInput').popover('toggle');
+                }
+            })
+
             $('.new-comment').on('input', (event) => {
                 $(event.target).css('height', 'auto');
                 $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
@@ -228,41 +245,46 @@
 
 
             function reply(replyBtn) {
-                $('#newCommentDiv').attr('hidden', true);
-                $('#newCommentInput').val('');
-                $('#sendNewBtn').attr('hidden', true);
+                if (authUser != null) {
+                    $('#newCommentDiv').attr('hidden', true);
+                    $('#newCommentInput').val('');
+                    $('#sendNewBtn').attr('hidden', true);
 
-                $('#replyCommentDiv').remove();
-                let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
-                let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
-                    .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
-                    .attr('rows', '2');
-
-                let sendReplyBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
-                    .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html('Send');
-                let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
-                    .attr('type', 'button').attr('id', 'cancelReplyBtn').html('Cancel');
-                div.append(textArea);
-                div.append(sendReplyBtn);
-                div.append(cancelReplyBtn);
-                div.insertAfter(replyBtn);
-
-                $('#replyComment').on('input', (event) => {
-                    $(event.target).css('height', 'auto');
-                    $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
-                    $('#sendReplyBtn').attr('hidden', $(event.target).val().length === 0);
-                });
-
-                $('#cancelReplyBtn').on('click', () => {
                     $('#replyCommentDiv').remove();
-                    $('#newCommentDiv').attr('hidden', false);
-                });
+                    let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
+                    let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
+                        .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
+                        .attr('rows', '2');
 
-                $('#sendReplyBtn').on('click', () => {
-                    let text = $('#replyComment').val();
-                    let parentId = replyBtn.attr('id').replace('replyBtn-', '');
-                    postComment(parentId, text, postRepliedCommentSuccess);
-                });
+                    let sendReplyBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
+                        .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html('Send');
+                    let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
+                        .attr('type', 'button').attr('id', 'cancelReplyBtn').html('Cancel');
+                    div.append(textArea);
+                    div.append(sendReplyBtn);
+                    div.append(cancelReplyBtn);
+                    div.insertAfter(replyBtn);
+
+                    $('#replyComment').on('input', (event) => {
+                        $(event.target).css('height', 'auto');
+                        $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
+                        $('#sendReplyBtn').attr('hidden', $(event.target).val().length === 0);
+                    });
+
+                    $('#cancelReplyBtn').on('click', () => {
+                        $('#replyCommentDiv').remove();
+                        $('#newCommentDiv').attr('hidden', false);
+                    });
+
+                    $('#sendReplyBtn').on('click', () => {
+                        let text = $('#replyComment').val();
+                        let parentId = replyBtn.attr('id').replace('replyBtn-', '');
+                        postComment(parentId, text, postRepliedCommentSuccess);
+                    });
+                } else {
+                    $('.with-popover').popover('hide');
+                    $(replyBtn).popover('toggle');
+                }
             }
 
             function postRepliedCommentSuccess(comment) {
@@ -322,7 +344,7 @@
                 let textDiv = $('<div></div>').css('white-space', 'pre-wrap').html(comment.text);
 
                 let buttonsDiv = $('<div></div>');
-                let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none')
+                let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none with-popover')
                     .attr('type', 'button').attr('title', 'Like');
                 let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
                 let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
@@ -332,7 +354,7 @@
                     like(likeBtn, comment.id);
                 });
 
-                let replyBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
+                let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
                     .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
                 let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
                 let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply');
@@ -376,13 +398,13 @@
                         handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
                     });
                 } else  {
-                    $('.like-btn').popover('hide');
+                    $('.with-popover').popover('hide');
                     $(likeBtn).popover('toggle');
                 }
             }
 
-            $('.like-btn').on('shown.bs.popover', () => {
-                $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
+            $('.with-popover').on('shown.bs.popover', () => {
+                $('.btn-close').on('click', () => $('.with-popover').popover('hide'));
             });
 
         </script>

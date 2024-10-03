@@ -64,6 +64,7 @@ public class ProjectTestData {
     public static final String DOCKER_COMPOSE_FILE_AS_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
 
     public static final String LIKED_PARAM = "liked";
+    public static final String TEXT_PARAM = "text";
 
     public static final long DESCRIPTION_ELEMENT1_ID = 100020;
     public static final long DESCRIPTION_ELEMENT2_ID = 100021;
@@ -99,6 +100,8 @@ public class ProjectTestData {
     public static final long PROJECT2_COMMENT1_LIKE1_ID = 100044;
 
     public static final String INVALID_SHORT_DESCRIPTION = "<p>short description html</p>";
+
+    public static final String UPDATED_TEXT = "updated comment text";
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,

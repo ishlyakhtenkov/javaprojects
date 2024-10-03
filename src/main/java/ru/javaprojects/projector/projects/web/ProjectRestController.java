@@ -1,22 +1,26 @@
 package ru.javaprojects.projector.projects.web;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.projector.common.util.validation.NoHtml;
 import ru.javaprojects.projector.common.util.validation.ValidationUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.users.AuthUser;
-import ru.javaprojects.projector.users.model.Role;
 
 @RestController
 @RequestMapping(value = ProjectRestController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
+@Validated
 public class ProjectRestController {
     static final String PROJECTS_URL = "/projects";
 
@@ -37,7 +41,7 @@ public class ProjectRestController {
         return service.createComment(commentTo, AuthUser.authId());
     }
 
-    @PatchMapping("/{projectId}/comments/{id}")
+    @PatchMapping("/{projectId}/comments/{id}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void likeComment(@PathVariable long projectId, @PathVariable long id, @RequestParam boolean liked) {
         log.info("{} comment with id={} for project with id={} by user with id={}", liked ? "like" : "dislike",
@@ -50,5 +54,13 @@ public class ProjectRestController {
     public void deleteComment(@PathVariable long projectId, @PathVariable long id) {
         log.info("delete comment with id={} for project with id={}{}", id, projectId, AuthUser.isAdmin() ? " by admin" : "");
         service.deleteComment(id, AuthUser.authId(), AuthUser.isAdmin());
+    }
+
+    @PutMapping("/{projectId}/comments/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateComment(@PathVariable long projectId, @PathVariable long id,
+                              @NotBlank @NoHtml @Size(max = 4096) String text) {
+        log.info("update comment with id={} for project with id={}", id, projectId);
+        service.updateComment(id, text, AuthUser.authId());
     }
 }

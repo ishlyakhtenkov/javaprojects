@@ -1,5 +1,6 @@
 package ru.javaprojects.projector.projects.web;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -217,7 +218,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void likeComment() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT2_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT2_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -229,7 +230,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void likeCommentWhenAlreadyLiked() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -241,7 +242,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void likeYourselfComment() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isUnprocessableEntity())
@@ -251,7 +252,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
                 .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-like-yourself", null,
                         LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID));
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID + "/like"));
         assertEquals(project1Comment3.getLikes().size(),
                 commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow().getLikes().size());
         assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_COMMENT3_ID, USER_ID).isEmpty());
@@ -260,7 +261,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void dislikeComment() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -272,7 +273,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(DISABLED_USER_MAIL)
     void dislikeCommentWhenHasNotLike() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT4_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT4_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -284,7 +285,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void likeCommentWhenCommentNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNotFound())
@@ -294,13 +295,13 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
                 .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID));
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID + "/like"));
         assertTrue(() -> likeRepository.findByObjectIdAndUserId(NOT_EXISTING_ID, USER_ID).isEmpty());
     }
 
     @Test
     void likeCommentUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID + "/like")
                 .param(LIKED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -377,5 +378,82 @@ class ProjectRestControllerTest extends AbstractControllerTest {
         Comment comment = commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow();
         COMMENT_MATCHER.assertMatch(comment, project1Comment3);
         assertFalse(comment.isDeleted());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateComment() throws Exception {
+        perform(MockMvcRequestBuilders.put(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .param(TEXT_PARAM, UPDATED_TEXT)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        Comment updated = commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatchIgnoreFields(updated, project1Comment3, "created", "updated", "author.password",
+                "author.registered", "author.roles", "text");
+        assertEquals(UPDATED_TEXT, updated.getText());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateAnotherUserComment() throws Exception {
+        perform(MockMvcRequestBuilders.put(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .param(TEXT_PARAM, UPDATED_TEXT)
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-edit-another", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID));
+
+        Comment updated = commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow();
+        COMMENT_MATCHER.assertMatch(updated, project1Comment1);
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateCommentNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.put(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID)
+                .param(TEXT_PARAM, UPDATED_TEXT)
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        NotFoundException.class))
+                .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
+                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + NOT_EXISTING_ID));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void updateCommentInvalid() throws Exception {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+        perform(MockMvcRequestBuilders.put(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID)
+                .param(TEXT_PARAM, "<p>dsdadsasd</p>")
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        ConstraintViolationException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail("updateComment.text: Should not be html"))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT3_ID));
+        COMMENT_MATCHER.assertMatch(commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow(), project1Comment3);
+    }
+
+    @Test
+
+    void updateCommentUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.put(PROJECTS_URL_SLASH + PROJECT1_ID + "/comments/" + PROJECT1_COMMENT1_ID)
+                .param(TEXT_PARAM, UPDATED_TEXT)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        COMMENT_MATCHER.assertMatch(commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow(), project1Comment1);
     }
 }

@@ -290,4 +290,17 @@ public class ProjectService {
                     ", userId=" + userId, "comment.forbidden-delete-another", null);
         }
     }
+
+    @Transactional
+    public void updateComment(long commentId, String text, long userId) {
+        Assert.notNull(text, "text must not be null");
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+        if (comment.getAuthor().id() == userId) {
+            comment.setText(text);
+        } else {
+            throw new IllegalRequestDataException("Forbidden to edit another user comment, commentId=" + commentId +
+                    ", userId=" + userId, "comment.forbidden-edit-another", null);
+        }
+    }
 }

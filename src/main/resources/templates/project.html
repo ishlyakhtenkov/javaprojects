@@ -170,10 +170,10 @@
                                              th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                     </div>
                                 </div>
-                                <div class="comment-text" style="white-space: pre-wrap" th:text="${commentEntry.getKey().deleted ?
+                                <div class="comment-text" style="white-space: pre-wrap;" th:text="${commentEntry.getKey().deleted ?
                                      'Comment has been deleted' : commentEntry.getKey().text}"
                                      th:classappend="${commentEntry.getKey().deleted ? 'text-secondary' : ''}"
-                                     th:style="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
+                                     th:styleappend="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
 
                                 <div th:if="${!commentEntry.getKey().deleted}" class="comment-actions">
                                     <a type="button" title="Like" th:onclick="|like(this, '${commentEntry.getKey().id}')|"
@@ -198,13 +198,19 @@
                                         <span class="text-secondary small">Reply</span>
                                     </a>
 
+                                    <a th:if="${authUser != null && commentEntry.getKey().author.id == authUser.id}"
+                                       type="button" class="btn-link text-decoration-none ms-1" title="Edit"
+                                       th:id="${'editBtn-' + commentEntry.getKey().id}" onclick="edit($(this))">
+                                        <i class="fa-solid fa-pencil text-secondary small"></i>
+                                    </a>
+
                                     <a th:if="${authUser != null && (commentEntry.getKey().author.id == authUser.id || authUser.isAdmin())}"
                                        tabindex="0" type="button" class="delete-comment-btn btn-link text-decoration-none ms-1"
                                        th:id="${'deleteCommentBtn-' + commentEntry.getKey().id}"
                                        data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete comment?"
                                        data-bs-content="<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>Cancel</a><a type='button' class='btn btn-sm btn-danger del-com'>Delete</a></div>"
                                        data-bs-html="true">
-                                        <i title="Delete" class="fa-solid fa-trash-can text-danger"></i>
+                                        <i title="Delete" class="fa-solid fa-trash-can text-danger small"></i>
                                     </a>
                                 </div>
                             </div>
@@ -384,13 +390,21 @@
                 replyBtn.append(replySymbol);
                 replyBtn.append(replySpan);
 
+                let editBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
+                    .attr('type', 'button').attr('title', 'Edit').attr('id', `editBtn-${comment.id}`);
+                let editSymbol = $('<i></i>').addClass('fa-solid fa-pencil text-secondary small');
+                editBtn.on('click', () => {
+                    edit(editBtn);
+                })
+                editBtn.append(editSymbol);
+
                 let deleteCommentBtn = $('<a></a>').addClass('delete-comment-btn btn-link text-decoration-none ms-2')
                     .attr('type', 'button').attr('id', `deleteCommentBtn-${comment.id}`)
                     .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus')
                     .attr('data-bs-title', 'Delete comment?')
                     .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>Cancel</a><a type='button' class='btn btn-sm btn-danger del-com'>Delete</a></div>"`)
                     .attr('data-bs-html', 'true')
-                let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger');
+                let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger small');
                 deleteCommentBtn.append(deleteSymbol);
                 deleteCommentBtn.on('shown.bs.popover', (event) => {
                     $('.del-com').on('click', () => deleteComment($(event.target).attr('id').replace('deleteCommentBtn-', '')));
@@ -399,6 +413,7 @@
 
                 buttonsDiv.append(likeBtn);
                 buttonsDiv.append(replyBtn);
+                buttonsDiv.append(editBtn);
                 buttonsDiv.append(deleteCommentBtn);
                 commentDiv.append(dFlexDiv);
                 commentDiv.append(textDiv);
@@ -421,7 +436,7 @@
                     let likeCounter = $(likeBtn).find('span');
                     let liked = likeIcon.attr('class').includes('fa-regular');
                     $.ajax({
-                        url: `/projects/${projectId}/comments/${commentId}`,
+                        url: `/projects/${projectId}/comments/${commentId}/like`,
                         type: "PATCH",
                         data: "liked=" + liked
                     }).done(function() {
@@ -456,6 +471,67 @@
                     commentDiv.find('.comment-actions').remove();
                 }).fail(function(data) {
                     handleError(data, `Failed to delete comment`);
+                });
+            }
+
+            function edit(editBtn) {
+                let editCommentDiv = $('.editCommentDiv');
+                if (editCommentDiv.length) {
+                    let editCommentId = editCommentDiv.attr('id').replace('editCommentDiv-', '');
+                    $(`#comment-${editCommentId}`).attr('hidden', false);
+                    editCommentDiv.remove();
+                }
+
+                let commentDiv = editBtn.closest('.comment');
+                let commentId = commentDiv.attr('id').replace('comment-', '');
+                let text = commentDiv.find('.comment-text').text();
+
+                commentDiv.attr('hidden', true);
+                $('#newCommentInput').val('');
+                $('#sendNewBtn').attr('hidden', true);
+
+                let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 editCommentDiv')
+                    .css('margin-left', commentDiv.css('margin-left'))
+                    .attr('id', `editCommentDiv-${commentId}`);
+                let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
+                    .attr('id', 'editComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
+                    .attr('rows', '2').text(text);
+
+                let sendEditBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
+                    .attr('type', 'button').attr('id', 'sendEditBtn').html('Send');
+                let cancelEditBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
+                    .attr('type', 'button').attr('id', 'cancelEditBtn').html('Cancel');
+                div.append(textArea);
+                div.append(sendEditBtn);
+                div.append(cancelEditBtn);
+                div.insertAfter(commentDiv);
+                textArea.css('height', textArea.prop('scrollHeight') + 2 + 'px');
+
+                $('#editComment').on('input', (event) => {
+                    $(event.target).css('height', 'auto');
+                    $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
+                    $('#sendEditBtn').attr('hidden', $(event.target).val().length === 0);
+                });
+
+                $('#cancelEditBtn').on('click', () => {
+                    $(`#editCommentDiv-${commentId}`).remove();
+                    commentDiv.attr('hidden', false);
+                });
+
+                $('#sendEditBtn').on('click', () => {
+                    let text = $('#editComment').val();
+
+                    $.ajax({
+                        url: `/projects/${projectId}/comments/${commentId}`,
+                        type: "PUT",
+                        data: "text=" + text
+                    }).done(function() {
+                        div.remove();
+                        commentDiv.find('.comment-text').text(text).css('white-space', 'pre-wrap');
+                        commentDiv.attr('hidden', false);
+                    }).fail(function(data) {
+                        handleError(data, `Failed to update comment`);
+                    });
                 });
             }
 

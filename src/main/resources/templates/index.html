@@ -40,7 +40,7 @@
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
                                 </a>
-                                <a type="button" title="Like" th:onclick="|like(this, '${project.id}')|"
+                                <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
                                    data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
@@ -86,7 +86,7 @@
                 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             }
 
-            function like(likeBtn, id) {
+            function likeProject(likeBtn, id) {
                 if (authUser != null) {
                     let likeIcon = $(likeBtn).find('i');
                     let likeCounter = $(likeBtn).find('span');

@@ -37,6 +37,7 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
                 .andExpect(model().attributeExists(HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE))
                 .andExpect(model().attributeExists(COMMENTS_ATTRIBUTE))
+                .andExpect(model().attributeDoesNotExist(LIKED_ATTRIBUTE))
                 .andExpect(model().attributeDoesNotExist(LIKED_COMMENTS_IDS_ATTRIBUTE))
                 .andExpect(view().name(PROJECT_VIEW))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((Project) Objects.requireNonNull(result.getModelAndView())
@@ -62,6 +63,8 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeExists(HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE))
                 .andExpect(model().attributeExists(COMMENTS_ATTRIBUTE))
                 .andExpect(model().attributeExists(LIKED_COMMENTS_IDS_ATTRIBUTE))
+                .andExpect(model().attributeExists(LIKED_ATTRIBUTE))
+                .andExpect(model().attribute(LIKED_ATTRIBUTE, true))
                 .andExpect(view().name(PROJECT_VIEW))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((Project) Objects.requireNonNull(result.getModelAndView())
                                 .getModel().get(PROJECT_ATTRIBUTE), project1, "views", "descriptionElements.project",

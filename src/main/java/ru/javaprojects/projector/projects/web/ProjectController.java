@@ -62,6 +62,9 @@ public class ProjectController {
                     .map(Like::getObjectId)
                     .collect(Collectors.toSet());
             model.addAttribute("likedCommentsIds", likedCommentsIds);
+            boolean liked = project.getLikes().stream()
+                    .anyMatch(like -> like.getUserId() == authId);
+            model.addAttribute("liked", liked);
         }
         model.addAttribute("project", project);
         model.addAttribute("hasFrontendTechnologies", hasFrontendTechnologies);

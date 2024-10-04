@@ -39,6 +39,7 @@ public class ProjectTestData {
     public static final String PROJECT_TO_ATTRIBUTE = "projectTo";
     public static final String LIKED_PROJECTS_IDS_ATTRIBUTE = "likedProjectsIds";
     public static final String LIKED_COMMENTS_IDS_ATTRIBUTE = "likedCommentsIds";
+    public static final String LIKED_ATTRIBUTE = "liked";
     public static final String COMMENTS_TOTAL_ATTRIBUTE = "commentsTotal";
     public static final String HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE = "hasFrontendTechnologies";
     public static final String COMMENTS_ATTRIBUTE = "comments";

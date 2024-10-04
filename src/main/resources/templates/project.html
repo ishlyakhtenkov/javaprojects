@@ -129,6 +129,28 @@
                                      style="cursor: zoom-in; max-width: 100%;" onclick="showLargerImage($(this))" />
                             </div>
                         </div>
+
+                        <div class="row mt-3">
+                            <div class="col-8">
+                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" title="Comments"
+                                   class="btn-link text-decoration-none link-info">
+                                    <i class="fa-regular fa-comments"></i>
+                                    <span class="text-secondary small commentsCounter" th:text="${comments.size()}"></span>
+                                </a>
+                                <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
+                                   class="like-btn btn-link link-danger text-decoration-none ms-3 with-popover"
+                                   data-bs-toggle="popover" data-bs-trigger="manual"
+                                   data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
+                                   data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true">
+                                    <i class="fa-heart" title="Like" th:classappend="${liked == null || !liked ? 'fa-regular' : 'fa-solid'}"></i>
+                                    <span class="text-secondary small" title="Like" th:text="${project.likes.size()}"></span>
+                                </a>
+                            </div>
+                            <div class="col-4 text-end">
+                                <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
+                                <span class="text-secondary small" th:text="${project.views}"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,7 +162,7 @@
                 <div class="card shadow">
                     <div class="card-body text-start">
                         <span class="h3">Comments</span>
-                        <span class="h3 text-secondary ms-1 fw-light" id="commentsCounter" th:text="${comments.size()}"></span>
+                        <span class="h3 text-secondary ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
 
 
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
@@ -342,7 +364,9 @@
             }
 
             function postRepliedCommentSuccess(comment) {
-                $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
+                $('.commentsCounter').each(function() {
+                    $(this).text(+$(this).text() + 1);
+                });
                 let commentDiv = generateCommentDiv(comment);
                 let indent = $(`#outer-${comment.parentId}`).data('indent') != null ? +$(`#outer-${comment.parentId}`).data('indent') : 0;
                 let counter = indent + 1;
@@ -397,7 +421,9 @@
             }
 
             function postNewCommentSuccess(comment) {
-                $('#commentsCounter').text(+($('#commentsCounter').text()) + 1);
+                $('.commentsCounter').each(function() {
+                    $(this).text(+$(this).text() + 1);
+                });
                 let commentDiv = generateCommentDiv(comment);
                 $('#commentsArea').prepend(commentDiv);
 
@@ -494,6 +520,28 @@
                         url: `/projects/${projectId}/comments/${commentId}/like`,
                         type: "PATCH",
                         data: "liked=" + liked
+                    }).done(function() {
+                        likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
+                        likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
+                    }).fail(function(data) {
+                        likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
+                        handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+                    });
+                } else  {
+                    $('.with-popover').popover('hide');
+                    $(likeBtn).popover('toggle');
+                }
+            }
+
+            function likeProject(likeBtn, id) {
+                if (authUser != null) {
+                    let likeIcon = $(likeBtn).find('i');
+                    let likeCounter = $(likeBtn).find('span');
+                    let liked = likeIcon.attr('class').includes('fa-regular');
+                    $.ajax({
+                        url: `/projects/${id}/like`,
+                        type: "PATCH",
+                        data: { id: id, liked: liked },
                     }).done(function() {
                         likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
                         likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));

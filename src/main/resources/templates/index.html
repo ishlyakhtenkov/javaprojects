@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="likedProjectsIds" type="java.util.Set"*/-->
+<!--/*@thymesVar id="commentsTotal" type="java.util.Map"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
 <th:block th:replace="~{fragments/main::page(title='Home',appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css',
@@ -37,7 +38,7 @@
                                 <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" title="Comments"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
-                                    <span class="text-secondary small">204</span>
+                                    <span class="text-secondary small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
                                 </a>
                                 <a type="button" title="Like" th:onclick="|like(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"

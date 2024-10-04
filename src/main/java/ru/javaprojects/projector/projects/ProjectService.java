@@ -13,6 +13,7 @@ import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
+import ru.javaprojects.projector.projects.repository.CommentCount;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -302,5 +303,10 @@ public class ProjectService {
             throw new IllegalRequestDataException("Forbidden to edit another user comment, commentId=" + commentId +
                     ", userId=" + userId, "comment.forbidden-edit-another", null);
         }
+    }
+
+    public Map<Long, Long> getTotalCommentsByProject() {
+        return commentRepository.countTotalCommentsByProject().stream()
+                .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getTotalComment));
     }
 }

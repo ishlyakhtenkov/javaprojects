@@ -40,6 +40,7 @@ public class ProjectController {
             model.addAttribute("likedProjectsIds", likedProjectsIds);
         }
         model.addAttribute("projects", projects);
+        model.addAttribute("commentsTotal", projectService.getTotalCommentsByProject());
         return "index";
     }
 

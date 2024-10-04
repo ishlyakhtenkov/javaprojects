@@ -93,12 +93,15 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(model().attributeExists(LIKED_PROJECTS_IDS_ATTRIBUTE))
+                .andExpect(model().attributeExists(COMMENTS_TOTAL_ATTRIBUTE))
                 .andExpect(view().name("index"))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "descriptionElements",
                         "comments"))
                 .andExpect(result -> assertEquals(Set.of(PROJECT1_ID, PROJECT2_ID), Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(LIKED_PROJECTS_IDS_ATTRIBUTE)));
+                        .getModel().get(LIKED_PROJECTS_IDS_ATTRIBUTE)))
+                .andExpect(result -> assertEquals(Map.of(PROJECT1_ID, 6L, PROJECT2_ID, 1L), Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(COMMENTS_TOTAL_ATTRIBUTE)));
     }
 
     @Test
@@ -108,9 +111,12 @@ class ProjectControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(model().attributeDoesNotExist(LIKED_PROJECTS_IDS_ATTRIBUTE))
+                .andExpect(model().attributeExists(COMMENTS_TOTAL_ATTRIBUTE))
                 .andExpect(view().name("index"))
                 .andExpect(result -> PROJECT_MATCHER.assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1, project2), "descriptionElements",
-                        "comments"));
+                        "comments"))
+                .andExpect(result -> assertEquals(Map.of(PROJECT1_ID, 6L, PROJECT2_ID, 1L), Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(COMMENTS_TOTAL_ATTRIBUTE)));
     }
 }

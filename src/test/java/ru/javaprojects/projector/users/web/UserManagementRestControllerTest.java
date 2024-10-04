@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
@@ -31,14 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
-import static ru.javaprojects.projector.users.UserTestData.INVALID_PASSWORD;
-import static ru.javaprojects.projector.users.UserTestData.NEW_PASSWORD;
-import static ru.javaprojects.projector.users.UserTestData.PASSWORD_PARAM;
-import static ru.javaprojects.projector.users.UserTestData.USER_ID;
-import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
-import static ru.javaprojects.projector.users.UserTestData.admin;
-import static ru.javaprojects.projector.users.UserTestData.user;
+import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
@@ -84,6 +78,23 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertTrue(service.get(USER_ID).isEnabled());
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void enableYourself() throws Exception {
+        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + ADMIN_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-disable-yourself", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(USERS_URL_SLASH + ADMIN_ID));
+        assertTrue(service.get(ADMIN_ID).isEnabled());
     }
 
     @Test
@@ -145,6 +156,23 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void deleteYourself() throws Exception {
+        perform(MockMvcRequestBuilders.delete(USERS_URL_SLASH + ADMIN_ID)
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-delete-yourself", null,
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(USERS_URL_SLASH + ADMIN_ID));
+        assertDoesNotThrow(() -> service.get(ADMIN_ID));
+        assertTrue(Files.exists(Paths.get(admin.getAvatar().getFileLink())));
     }
 
     @Test

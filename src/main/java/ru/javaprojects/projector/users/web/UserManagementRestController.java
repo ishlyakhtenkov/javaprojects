@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
 
 @RestController
@@ -21,14 +22,14 @@ public class UserManagementRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@PathVariable long id, @RequestParam boolean enabled) {
         log.info((enabled ? "enable" : "disable") + " user with id={}", id);
-        service.enable(id, enabled);
+        service.enable(id, enabled, AuthUser.authId());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
         log.info("delete user with id={}", id);
-        service.delete(id);
+        service.delete(id, AuthUser.authId());
     }
 
     @PatchMapping("/change-password/{id}")

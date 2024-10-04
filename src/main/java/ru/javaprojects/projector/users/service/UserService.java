@@ -126,7 +126,11 @@ public class UserService {
     }
 
     @Transactional
-    public void enable(long id, boolean enabled) {
+    public void enable(long id, boolean enabled, long authUserId) {
+        if (id == authUserId) {
+            throw new IllegalRequestDataException("Forbidden to disable yourself, userId=" + id,
+                    "user.forbidden-disable-yourself", null);
+        }
         User user = get(id);
         user.setEnabled(enabled);
         if (!enabled) {
@@ -139,7 +143,11 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(long id) {
+    public void delete(long id, long authUserId) {
+        if (id == authUserId) {
+            throw new IllegalRequestDataException("Forbidden to delete yourself, userId=" + id,
+                    "user.forbidden-delete-yourself", null);
+        }
         User user = get(id);
         repository.delete(user);
         repository.flush();

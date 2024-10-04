@@ -155,7 +155,7 @@
                         </div>
 
 
-                        <div id="commentsArea" class="mt-3">
+                        <div id="commentsArea">
                             <div class="comment mt-3" th:each="commentEntry : ${comments.entrySet()}"
                                  th:style="${'margin-left: ' + 16 * commentEntry.getValue() + 'px'}"
                                  th:id="${'comment-' + commentEntry.getKey().id}">
@@ -194,8 +194,9 @@
                                        data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>"
                                        data-bs-html="true"
                                        onclick="reply($(this))">
-                                        <i class="fa-solid fa-reply"></i>
-                                        <span class="text-secondary small">Reply</span>
+                                        <i class="fa-solid fa-share fa-rotate-270 small"></i>
+                                        <span class="text-secondary small" style="margin-left: -3px;">Reply</span>
+
                                     </a>
 
                                     <a th:if="${authUser != null && commentEntry.getKey().author.id == authUser.id}"
@@ -436,8 +437,8 @@
 
                 let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
                     .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
-                let replySymbol = $('<i></i>').addClass('fa-solid fa-reply');
-                let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply');
+                let replySymbol = $('<i></i>').addClass('fa-solid fa-share fa-rotate-270 small');
+                let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply').css('margin-left', '-3px');
                 replyBtn.on('click', () => {
                     reply(replyBtn);
                 })

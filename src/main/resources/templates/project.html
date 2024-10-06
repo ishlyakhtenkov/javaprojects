@@ -182,6 +182,7 @@
                                  th:style="${'margin-left: ' + 16 * commentEntry.getValue() + 'px'}"
                                  th:id="${'comment-' + commentEntry.getKey().id}">
                                 <div class="d-flex ">
+                                    <span th:if="${commentEntry.getValue() != 0}" class="my-auto border-bottom" style="margin-left: -16px; width: 16px;"></span>
                                     <img class="rounded-circle border"
                                          th:src="@{${commentEntry.getKey().author.avatar != null ?
                                                  commentEntry.getKey().author.avatar.getSrc() : '/images/no-avatar.svg'}}"
@@ -367,7 +368,7 @@
                 $('.commentsCounter').each(function() {
                     $(this).text(+$(this).text() + 1);
                 });
-                let commentDiv = generateCommentDiv(comment);
+                let commentDiv = generateCommentDiv(comment, true);
                 let indent = $(`#outer-${comment.parentId}`).data('indent') != null ? +$(`#outer-${comment.parentId}`).data('indent') : 0;
                 let counter = indent + 1;
                 let outerDiv = $('<div></div>').addClass('ps-3 border-start').attr('id', `outer-${comment.id}`).data('indent', counter);
@@ -424,7 +425,7 @@
                 $('.commentsCounter').each(function() {
                     $(this).text(+$(this).text() + 1);
                 });
-                let commentDiv = generateCommentDiv(comment);
+                let commentDiv = generateCommentDiv(comment, false);
                 $('#commentsArea').prepend(commentDiv);
 
                 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
@@ -434,7 +435,7 @@
                 $('#sendNewBtn').attr('hidden', true);
             }
 
-            function generateCommentDiv(comment) {
+            function generateCommentDiv(comment, isReply) {
                 let commentDiv = $('<div></div>').addClass('comment mt-3').attr('id', `comment-${comment.id}`);
                 let dFlexDiv = $('<div></div>').addClass('d-flex');
                 let avatar = $('<img>').addClass('rounded-circle border')
@@ -446,6 +447,10 @@
                     .html(formatDateTime(comment.created));
                 nameAndTimeDiv.append(nameSpan);
                 nameAndTimeDiv.append(timeDiv);
+                if (isReply) {
+                    let borderSpan = $('<span></span>').addClass('my-auto border-bottom').css('margin-left', '-16px').css('width', '16px');
+                    dFlexDiv.append(borderSpan);
+                }
                 dFlexDiv.append(avatar);
                 dFlexDiv.append(nameAndTimeDiv);
                 let textDiv = $('<div></div>').addClass('comment-text').css('white-space', 'pre-wrap').html(comment.text);

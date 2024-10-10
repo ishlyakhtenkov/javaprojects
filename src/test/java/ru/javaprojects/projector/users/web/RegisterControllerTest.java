@@ -13,8 +13,8 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.TokenException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.RegisterToken;
+import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.users.model.token.RegisterToken;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
@@ -31,9 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
 import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
-import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
+import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.RegisterController.REGISTER_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;
@@ -93,7 +93,7 @@ class RegisterControllerTest extends AbstractControllerTest {
         String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject, emailText);
@@ -117,7 +117,7 @@ class RegisterControllerTest extends AbstractControllerTest {
         String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject, emailText);

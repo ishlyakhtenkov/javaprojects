@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
+import ru.javaprojects.projector.common.mail.MailSender;
 import ru.javaprojects.projector.users.error.TokenException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.ChangeEmailToken;
 import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.UserTo;
@@ -52,7 +52,7 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
             changeEmailToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
             changeEmailToken.setNewEmail(newEmail);
         }
-        tokenRepository.save(changeEmailToken);
+        tokenRepository.saveAndFlush(changeEmailToken);
         sendEmail(newEmail, changeEmailToken.getToken());
     }
 

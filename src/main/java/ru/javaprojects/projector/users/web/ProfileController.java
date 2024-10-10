@@ -6,14 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
+import ru.javaprojects.projector.common.util.Util;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.ChangeEmailService;
 import ru.javaprojects.projector.users.service.PasswordResetService;
@@ -51,7 +51,8 @@ public class ProfileController {
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@Valid PasswordResetTo passwordResetTo, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String resetPassword(@Valid PasswordResetTo passwordResetTo, BindingResult result,
+                                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "profile/reset-password";
         }
@@ -63,32 +64,24 @@ public class ProfileController {
     }
 
     @GetMapping
-    public String profile(@AuthenticationPrincipal AuthUser authUser, Model model) {
-        log.info("show profile for user with id={}", authUser.id());
-        model.addAttribute("user", userService.get(authUser.id()));
+    public String profile(Model model) {
+        log.info("show profile for user with id={}", AuthUser.authId());
+        model.addAttribute("user", userService.get(AuthUser.authId()));
         return "profile/profile";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(@AuthenticationPrincipal AuthUser authUser, Model model) {
-        log.info("show profile edit form for user with id={}", authUser.id());
-        model.addAttribute("profileTo", asProfileTo(userService.get(authUser.id())));
+    public String showEditForm(Model model) {
+        log.info("show profile edit form for user with id={}", AuthUser.authId());
+        model.addAttribute("profileTo", asProfileTo(userService.get(AuthUser.authId())));
         return "profile/profile-edit-form";
     }
 
     @PostMapping
-    public String update(@Valid ProfileTo profileTo, BindingResult result, RedirectAttributes redirectAttributes,
-                         @AuthenticationPrincipal AuthUser authUser) {
-        profileTo.setId(authUser.id());
+    public String update(@Valid ProfileTo profileTo, BindingResult result, RedirectAttributes redirectAttributes) {
+        profileTo.setId(AuthUser.authId());
         if (result.hasErrors()) {
-            if (profileTo.getAvatar() != null && profileTo.getAvatar().getInputtedFile() != null &&
-                    !profileTo.getAvatar().getInputtedFile().isEmpty()) {
-                if (profileTo.getAvatar().getInputtedFile().getContentType().contains("image/")) {
-                    profileTo.getAvatar().keepInputtedFile();
-                } else {
-                    profileTo.setAvatar(null);
-                }
-            }
+            Util.keepInputtedFile(profileTo.getAvatar(), Util.IS_IMAGE_FILE,  () -> profileTo.setAvatar(null));
             return "profile/profile-edit-form";
         }
         log.info("update {}", profileTo);
@@ -103,10 +96,9 @@ public class ProfileController {
     }
 
     @GetMapping("/change-email/confirm")
-    public String confirmChangeEmail(@RequestParam String token, RedirectAttributes redirectAttributes,
-                                     @AuthenticationPrincipal AuthUser authUser) {
-        log.info("confirm change email for user with id={} by token={}", authUser.id(), token);
-        changeEmailService.confirmChangeEmail(token, authUser.id());
+    public String confirmChangeEmail(@RequestParam String token, RedirectAttributes redirectAttributes) {
+        log.info("confirm change email for user with id={} by token={}", AuthUser.authId(), token);
+        changeEmailService.confirmChangeEmail(token, AuthUser.authId());
         redirectAttributes.addFlashAttribute("action", messageSource.getMessage("change-email.email-confirmed", null,
                 LocaleContextHolder.getLocale()));
         return "redirect:/profile";

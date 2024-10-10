@@ -13,6 +13,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.common.util.Util;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Project;
@@ -88,36 +89,15 @@ public class ProjectManagementController {
         boolean isNew = projectTo.isNew();
         if (result.hasErrors()) {
             addAttributesToModel(model);
-            if (projectTo.getLogo().getInputtedFile() != null && !projectTo.getLogo().getInputtedFile().isEmpty()) {
-                if (projectTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    projectTo.getLogo().keepInputtedFile();
-                } else {
-                    projectTo.setLogo(null);
-                }
-            }
-            if (projectTo.getCardImage().getInputtedFile() != null && !projectTo.getCardImage().getInputtedFile().isEmpty()) {
-                if (projectTo.getCardImage().getInputtedFile().getContentType().contains("image/")) {
-                    projectTo.getCardImage().keepInputtedFile();
-                } else {
-                    projectTo.setCardImage(null);
-                }
-            }
-            if (projectTo.getDockerCompose() != null && projectTo.getDockerCompose().getInputtedFile() != null &&
-                    !projectTo.getDockerCompose().getInputtedFile().isEmpty()) {
-                if (projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yaml") ||
-                        projectTo.getDockerCompose().getInputtedFile().getOriginalFilename().endsWith(".yml")) {
-                    projectTo.getDockerCompose().keepInputtedFile();
-                } else {
-                    projectTo.setDockerCompose(null);
-                }
-            }
+            Util.keepInputtedFile(projectTo.getLogo(), Util.IS_IMAGE_FILE,  () -> projectTo.setLogo(null));
+            Util.keepInputtedFile(projectTo.getCardImage(), Util.IS_IMAGE_FILE,  () -> projectTo.setCardImage(null));
+            Util.keepInputtedFile(projectTo.getDockerCompose(), Util.IS_YAML_FILE,  () -> projectTo.setDockerCompose(null));
+            projectTo.getDescriptionElementTos().stream()
+                    .filter(deTo -> deTo.getType() == IMAGE)
+                    .forEach(deTo -> Util.keepInputtedFile(deTo.getImage(), Util.IS_IMAGE_FILE, () -> deTo.setImage(null)));
             if (!isNew) {
                 model.addAttribute("projectName", projectService.get(projectTo.getId()).getName());
             }
-            projectTo.getDescriptionElementTos().stream()
-                    .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null &&
-                            (deTo.getImage().getInputtedFile() != null && !deTo.getImage().getInputtedFile().isEmpty()))
-                    .forEach(deTo -> deTo.getImage().keepInputtedFile());
             return "management/projects/project-form";
         }
         log.info("{} {}", isNew ? "create" : "update", projectTo);

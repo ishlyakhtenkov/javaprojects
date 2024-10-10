@@ -8,27 +8,27 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.HasIdAndName;
+import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 @Entity
-@Table(name = "architectures", uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "architectures_unique_name_idx"))
+@Table(name = "architectures",
+        uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "architectures_unique_name_idx"))
 @Getter
 @Setter
 @NoArgsConstructor
 public class Architecture extends BaseEntity implements HasIdAndName {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @NotBlank
     @NoHtml
-    @Size(min = 20, max = 400)
+    @Size(max = 400)
     @Column(name = "description", nullable = false)
     private String description;
 

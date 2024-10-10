@@ -12,18 +12,13 @@ import ru.javaprojects.projector.common.HasId;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseEntity implements Persistable<Long>, HasId {
+public abstract class BaseEntity implements HasId {
     public static final int START_SEQ = 100000;
 
     @Id
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     protected Long id;
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
 
     //    https://stackoverflow.com/questions/1638723
     @Override

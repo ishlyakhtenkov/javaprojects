@@ -12,8 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.ChangeEmailToken;
+import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
-import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
+import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
 
 @SpringBootTest
 @Sql(scripts = "classpath:data.sql", config = @SqlConfig(encoding = "UTF-8"))
@@ -52,7 +52,7 @@ class ChangeEmailServiceTest {
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
         String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
                 changeEmailUrlLinkText);
         String emailText = changeEmailMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);
@@ -88,7 +88,7 @@ class ChangeEmailServiceTest {
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
         String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, updatedToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmChangeEmailUrl, updatedToken.getToken(),
                 changeEmailUrlLinkText);
         String emailText = changeEmailMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);
@@ -103,7 +103,7 @@ class ChangeEmailServiceTest {
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
         String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
                 changeEmailUrlLinkText);
         String emailText = changeEmailMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL_SOMEONE_HAS_TOKEN, changeEmailMessageSubject,

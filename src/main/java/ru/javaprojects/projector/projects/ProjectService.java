@@ -11,9 +11,10 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.repository.CommentCount;
 import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
-import ru.javaprojects.projector.projects.repository.CommentCount;
+import ru.javaprojects.projector.projects.repository.ProjectRepository;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -46,19 +47,10 @@ public class ProjectService {
     private final UserService userService;
 
     @Value("${content-path.projects}")
-    private String contentPath;
+    private String projectFilesPath;
 
     public Project get(long id) {
         return repository.getExisted(id);
-    }
-
-    public Project getWithTechnologies(long id, boolean sort) {
-        Project project = repository.findWithArchitectureAndTechnologiesById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
-        if (sort) {
-            project.setTechnologies(new TreeSet<>(project.getTechnologies()));
-        }
-        return project;
     }
 
     @Transactional
@@ -80,21 +72,22 @@ public class ProjectService {
     }
 
     public Project getByName(String name) {
+        Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "notfound.project",
                         new Object[]{name}));
     }
 
     public List<Project> getAll() {
-        return repository.findAllByOrderByName();
+        return repository.findAllWithArchitectureByOrderByName();
     }
 
     public List<Project> getAllEnabled() {
         return repository.findAllByEnabledIsTrueOrderByName();
     }
 
-    public List<Project> getAllEnabledWithArchitectureAndTechnologies() {
-        List<Project> projects = repository.findAllWithArchitectureAndTechnologiesByEnabledIsTrue();
+    public List<Project> getAllEnabledWithArchitectureAndTechnologiesAndLikes() {
+        List<Project> projects = repository.findAllWithArchAndTechnologiesAndLikesByEnabledIsTrue();
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {
             Comparator<Technology> technologyComparator = Comparator
@@ -146,21 +139,16 @@ public class ProjectService {
         }
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo));
 
-        uploadFile(projectTo.getLogo(), project.getName(), LOGO_DIR);
-        uploadFile(projectTo.getCardImage(), project.getName(), CARD_IMG_DIR);
+        uploadFile(projectTo.getLogo(), project.getName(), LOGO_DIR, projectTo.getLogo().getRealFileName());
+        uploadFile(projectTo.getCardImage(), project.getName(), CARD_IMG_DIR, projectTo.getCardImage().getRealFileName());
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
-            uploadFile(projectTo.getDockerCompose(), project.getName(), DOCKER_DIR);
+            uploadFile(projectTo.getDockerCompose(), project.getName(), DOCKER_DIR,
+                    projectTo.getDockerCompose().getRealFileName());
         }
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null)
-                .forEach(deTo -> uploadDescriptionElementImage(deTo, project.getName()));
+                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
         return project;
-    }
-
-    private void uploadDescriptionElementImage(DescriptionElementTo deTo, String projectName) {
-        FileTo image = deTo.getImage();
-        String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
-        uploadFile(image, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
     }
 
     @Transactional
@@ -183,7 +171,7 @@ public class ProjectService {
 
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.isNew() && deTo.getImage() != null)
-                .forEach(deTo -> uploadDescriptionElementImage(deTo, project.getName()));
+                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
         oldDeImages.values().stream()
                 .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
                 .forEach(oldDe -> FileUtil.deleteFile(oldDe.getImage().getFileLink()));
@@ -191,10 +179,10 @@ public class ProjectService {
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
                     if (deTo.getImage() != null && !deTo.getImage().isEmpty()) {
-                        uploadDescriptionElementImage(deTo, project.getName());
+                        uploadDeImage(deTo, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getImage().getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
-                        FileUtil.moveFile(oldDeImages.get(deTo.getId()).getImage().getFileLink(), contentPath +
+                        FileUtil.moveFile(oldDeImages.get(deTo.getId()).getImage().getFileLink(), projectFilesPath +
                                 FileUtil.normalizePath(project.getName() + DESCRIPTION_IMG_DIR));
                     }
                 });
@@ -209,32 +197,29 @@ public class ProjectService {
         return project;
     }
 
-    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileFileLink, String currentFileLink, String projectName,
+    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink, String projectName,
                                               String projectOldName, String dirName) {
         if (fileTo != null && !fileTo.isEmpty()) {
-            if (oldFileFileLink != null && !oldFileFileLink.equalsIgnoreCase(currentFileLink)) {
-                FileUtil.deleteFile(oldFileFileLink);
+            if (oldFileLink != null && !oldFileLink.equalsIgnoreCase(currentFileLink)) {
+                FileUtil.deleteFile(oldFileLink);
             }
-            String fileName = (fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty()) ?
-                    fileTo.getInputtedFile().getOriginalFilename() : fileTo.getFileName();
-            FileUtil.upload(fileTo, contentPath + FileUtil.normalizePath(projectName) + dirName,
-                    FileUtil.normalizePath(fileName));
+            FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(projectName + dirName),
+                    FileUtil.normalizePath(fileTo.getRealFileName()));
         } else if (!projectName.equalsIgnoreCase(projectOldName)) {
-            FileUtil.moveFile(oldFileFileLink, contentPath + FileUtil.normalizePath(projectName + dirName));
+            FileUtil.moveFile(oldFileLink, projectFilesPath + FileUtil.normalizePath(projectName + dirName));
         }
     }
 
-    private void uploadFile(FileTo fileTo, String projectName, String dirName) {
-        String fileName = fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty() ?
-                fileTo.getInputtedFile().getOriginalFilename() : fileTo.getFileName();
-        uploadFile(fileTo, projectName, dirName, fileName);
+    private void uploadDeImage(DescriptionElementTo deTo, String projectName) {
+        FileTo image = deTo.getImage();
+        String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
+        uploadFile(image, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
     }
 
     private void uploadFile(FileTo fileTo, String projectName, String dirName, String fileName) {
-        FileUtil.upload(fileTo, contentPath + FileUtil.normalizePath(projectName + "/" + dirName + "/"),
+        FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(projectName + dirName),
                 FileUtil.normalizePath(fileName));
     }
-
 
     public void likeProject(long id, boolean liked, long userId) {
         get(id);

@@ -13,25 +13,25 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 @Entity
-@Table(name = "technologies", uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "technologies_unique_name_idx"))
+@Table(name = "technologies",
+        uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "technologies_unique_name_idx"))
 @Getter
 @Setter
 @NoArgsConstructor
 public class Technology extends BaseEntity implements HasIdAndName, Comparable<Technology> {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @NotBlank
     @NoHtml
     @URL
-    @Size(min = 2, max = 512)
+    @Size(max = 512)
     @Column(name = "url", nullable = false)
     private String url;
 

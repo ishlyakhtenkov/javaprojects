@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.mail.MailSender;
 import ru.javaprojects.projector.users.error.UserDisabledException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.PasswordResetToken;
 import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.model.token.PasswordResetToken;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
@@ -17,7 +17,7 @@ import ru.javaprojects.projector.users.to.PasswordResetTo;
 import java.util.Date;
 import java.util.UUID;
 
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Service
 public class PasswordResetService extends TokenService<PasswordResetToken> {
@@ -43,7 +43,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
             passwordResetToken.setToken(UUID.randomUUID().toString());
             passwordResetToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
         }
-        tokenRepository.save(passwordResetToken);
+        tokenRepository.saveAndFlush(passwordResetToken);
         sendEmail(email, passwordResetToken.getToken());
     }
 

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.users.service.RegisterService;
 import ru.javaprojects.projector.users.to.RegisterTo;
 
-import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
+import static ru.javaprojects.projector.common.validation.ValidationUtil.checkNew;
 
 @Controller
 @RequestMapping(RegisterController.REGISTER_URL)

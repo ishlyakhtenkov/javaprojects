@@ -3,19 +3,18 @@ package ru.javaprojects.projector.users.to;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.common.HasIdAndEmail;
 import ru.javaprojects.projector.common.to.BaseTo;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @NoArgsConstructor
 public class RegisterTo extends BaseTo implements HasIdAndEmail, HasEmailAndPassword {
-
     @Email
     @NotBlank
     @NoHtml
@@ -24,7 +23,7 @@ public class RegisterTo extends BaseTo implements HasIdAndEmail, HasEmailAndPass
 
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     private String name;
 
     @NotBlank

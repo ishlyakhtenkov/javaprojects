@@ -12,7 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.javaprojects.projector.common.HasIdAndParentId;
 import ru.javaprojects.projector.common.model.BaseEntity;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.users.model.User;
 
 import java.time.LocalDateTime;
@@ -55,7 +55,7 @@ public class Comment extends BaseEntity implements HasIdAndParentId {
     @Column(name = "deleted", nullable = false, columnDefinition = "bool default false")
     private boolean deleted;
 
-    @OneToMany(mappedBy = "objectId",  fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "objectId", fetch = FetchType.LAZY)
     private Set<Like> likes = new HashSet<>();
 
     public Comment(Long id, Long projectId, User author, Long parentId, String text, LocalDateTime created,

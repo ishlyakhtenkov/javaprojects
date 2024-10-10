@@ -16,6 +16,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.model.Priority;
+import ru.javaprojects.projector.common.util.Util;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.TechnologyTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
@@ -93,13 +94,7 @@ public class TechnologyController {
         boolean isNew = technologyTo.isNew();
         if (result.hasErrors()) {
             addAttributesToModel(model);
-            if (technologyTo.getLogo().getInputtedFile() != null && !technologyTo.getLogo().getInputtedFile().isEmpty()) {
-                if (technologyTo.getLogo().getInputtedFile().getContentType().contains("image/")) {
-                    technologyTo.getLogo().keepInputtedFile();
-                } else {
-                    technologyTo.setLogo(null);
-                }
-            }
+            Util.keepInputtedFile(technologyTo.getLogo(), Util.IS_IMAGE_FILE,  () -> technologyTo.setLogo(null));
             if (!isNew) {
                 model.addAttribute("technologyName", service.get(technologyTo.getId()).getName());
             }

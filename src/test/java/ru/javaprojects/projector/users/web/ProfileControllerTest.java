@@ -17,8 +17,8 @@ import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.ChangeEmailToken;
+import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
@@ -37,10 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
 import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.common.util.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.users.UserTestData.*;
-import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
+import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.util.UserUtil.asProfileTo;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
@@ -363,7 +363,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
         String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmChangeEmailUrl, createdToken.getToken(),
                 changeEmailUrlLinkText);
         String emailText = changeEmailMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(NEW_EMAIL, changeEmailMessageSubject, emailText);

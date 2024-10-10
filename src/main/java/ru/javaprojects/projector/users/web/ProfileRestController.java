@@ -6,10 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.users.service.PasswordResetService;
 import ru.javaprojects.projector.users.service.UserService;
 
@@ -32,9 +31,8 @@ public class ProfileRestController {
     @PatchMapping("/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changePassword(@RequestParam @NotBlank String currentPassword,
-                               @RequestParam @Size(min = 5, max = 32) String newPassword,
-                               @AuthenticationPrincipal AuthUser authUser) {
-        log.info("change password for user with id={}", authUser.id());
-        userService.changePassword(authUser.id(), currentPassword, newPassword);
+                               @RequestParam @Size(min = 5, max = 32) String newPassword) {
+        log.info("change password for user with id={}", AuthUser.authId());
+        userService.changePassword(AuthUser.authId(), currentPassword, newPassword);
     }
 }

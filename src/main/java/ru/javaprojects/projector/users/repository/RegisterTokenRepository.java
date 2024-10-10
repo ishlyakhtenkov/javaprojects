@@ -1,7 +1,7 @@
 package ru.javaprojects.projector.users.repository;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.projector.users.model.RegisterToken;
+import ru.javaprojects.projector.users.model.token.RegisterToken;
 
 import java.util.Optional;
 

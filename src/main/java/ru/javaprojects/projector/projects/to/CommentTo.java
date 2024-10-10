@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.to.BaseTo;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 @Getter
 @Setter

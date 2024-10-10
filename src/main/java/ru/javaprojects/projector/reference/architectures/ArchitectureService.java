@@ -7,12 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 
 import java.util.List;
 
-import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.createNewFromTo;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureUtil.updateFromTo;
 
@@ -23,7 +21,7 @@ public class ArchitectureService {
     private final ArchitectureRepository repository;
 
     @Value("${content-path.architectures}")
-    private String contentPath;
+    private String architectureFilesPath;
 
     public List<Architecture> getAll() {
         return repository.findAllByOrderByName();
@@ -34,6 +32,7 @@ public class ArchitectureService {
     }
 
     public Architecture getByName(String name) {
+        Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new NotFoundException("Not found architecture with name =" + name, "notfound.architecture",
                         new Object[]{name}));
@@ -45,8 +44,10 @@ public class ArchitectureService {
             throw new IllegalRequestDataException("Architecture logo file is not present",
                     "architecture.logo-not-present", null);
         }
-        Architecture architecture = repository.saveAndFlush(createNewFromTo(architectureTo, contentPath));
-        uploadImage(architectureTo, architecture.getName());
+        Architecture architecture = repository.saveAndFlush(createNewFromTo(architectureTo, architectureFilesPath));
+        FileUtil.upload(architectureTo.getLogo(),
+                architectureFilesPath + FileUtil.normalizePath(architecture.getName() + "/"),
+                FileUtil.normalizePath(architectureTo.getLogo().getRealFileName()));
         return architecture;
     }
 
@@ -56,22 +57,17 @@ public class ArchitectureService {
         Architecture architecture = get(architectureTo.getId());
         String oldName = architecture.getName();
         String oldLogoFileLink = architecture.getLogo().getFileLink();
-        repository.saveAndFlush(updateFromTo(architecture, architectureTo, contentPath));
-        if (!architectureTo.getLogo().isEmpty()) {
-            uploadImage(architectureTo, architecture.getName());
+        repository.saveAndFlush(updateFromTo(architecture, architectureTo, architectureFilesPath));
+        if (architectureTo.getLogo() != null && !architectureTo.getLogo().isEmpty()) {
+            FileUtil.upload(architectureTo.getLogo(),
+                    architectureFilesPath + FileUtil.normalizePath(architecture.getName() + "/"),
+                    FileUtil.normalizePath(architectureTo.getLogo().getRealFileName()));
             if (!oldLogoFileLink.equalsIgnoreCase(architecture.getLogo().getFileLink())) {
                 FileUtil.deleteFile(oldLogoFileLink);
             }
         } else if (!architecture.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, contentPath + FileUtil.normalizePath(architecture.getName()));
+            FileUtil.moveFile(oldLogoFileLink, architectureFilesPath + FileUtil.normalizePath(architecture.getName()));
         }
-    }
-
-    private void uploadImage(ArchitectureTo architectureTo, String architectureName) {
-        FileTo logo = architectureTo.getLogo();
-        String fileName = normalizePath(logo.getInputtedFile() != null ? logo.getInputtedFile().getOriginalFilename() :
-                logo.getFileName());
-        FileUtil.upload(logo, contentPath + FileUtil.normalizePath(architectureName) + "/", fileName);
     }
 
     @Transactional

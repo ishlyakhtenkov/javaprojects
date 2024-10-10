@@ -2,7 +2,7 @@ package ru.javaprojects.projector.users.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.projector.users.model.ChangeEmailToken;
+import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
 
 import java.util.Optional;
 

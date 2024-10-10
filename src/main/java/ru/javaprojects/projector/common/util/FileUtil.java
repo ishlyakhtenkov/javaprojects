@@ -18,6 +18,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 @UtilityClass
 public class FileUtil {
     public static void upload(MultipartFile multipartFile, String dirPath, String fileName) {
+        Assert.notNull(multipartFile, "multipartFile must not be null");
+        Assert.notNull(dirPath, "dirPath must not be null");
+        Assert.notNull(fileName, "fileName must not be null");
         try {
             upload(multipartFile.getBytes(), dirPath, fileName);
         } catch (IOException e) {
@@ -27,6 +30,9 @@ public class FileUtil {
     }
 
     public static void upload(byte[] fileBytes, String dirPath, String fileName) {
+        Assert.notNull(fileBytes, "fileBytes must not be null");
+        Assert.notNull(dirPath, "dirPath must not be null");
+        Assert.notNull(fileName, "fileName must not be null");
         if (fileBytes.length == 0) {
             throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
                     new Object[]{fileName});
@@ -41,6 +47,8 @@ public class FileUtil {
 
     public static void upload(FileTo fileTo, String dirPath, String fileName) {
         Assert.notNull(fileTo, "fileTo must not be null");
+        Assert.notNull(dirPath, "dirPath must not be null");
+        Assert.notNull(fileName, "fileName must not be null");
         if ((fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty())) {
             upload(fileTo.getInputtedFile(), dirPath, fileName);
         } else if (fileTo.getInputtedFileBytes() != null && fileTo.getInputtedFileBytes().length != 0) {
@@ -51,14 +59,44 @@ public class FileUtil {
         }
     }
 
+    public static String normalizePath(String path) {
+        Assert.notNull(path, "path must not be null");
+        return path.toLowerCase().replace(' ', '_');
+    }
+
+    public static void moveFile(String filePath, String dirPath) {
+        Assert.notNull(filePath, "filePath must not be null");
+        Assert.notNull(dirPath, "dirPath must not be null");
+        try {
+            Path file = Paths.get(filePath);
+            checkNotExistOrNotFile(file);
+            Path dir = Paths.get(dirPath);
+            if (!file.equals(dir.resolve(file.getFileName()))) {
+                Files.createDirectories(dir);
+                Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
+                deleteEmptyParentDirs(file);
+            }
+        } catch (IOException ex) {
+            throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
+        }
+    }
+
+    public static void deleteFile(String filePath) {
+        Assert.notNull(filePath, "filePath must not be null");
+        try {
+            Path file = Paths.get(filePath);
+            checkNotExistOrNotFile(file);
+            Files.delete(file);
+            deleteEmptyParentDirs(file);
+        } catch (IOException ex) {
+            throw new FileException("Failed to delete file: " + filePath, "file.failed-to-delete", new Object[]{filePath});
+        }
+    }
+
     public static void deleteDirectory(String dirPath) {
+        Assert.notNull(dirPath, "dirPath must not be null");
         Path dir = Paths.get(dirPath);
-        if (Files.notExists(dir)) {
-            throw new IllegalArgumentException("Directory does not exist: " + dirPath);
-        }
-        if (!Files.isDirectory(dir)) {
-            throw new IllegalArgumentException("Not a directory: " + dirPath);
-        }
+        checkNotExistOrNotDirectory(dir);
         try {
             Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                 @Override
@@ -83,32 +121,6 @@ public class FileUtil {
         }
     }
 
-    public static void moveFile(String filePath, String dirPath) {
-        try {
-            Path file = Paths.get(filePath);
-            checkNotExistOrDirectory(file);
-            Path dir = Paths.get(dirPath);
-            if (!file.equals(dir.resolve(file.getFileName()))) {
-                Files.createDirectories(dir);
-                Files.move(file, dir.resolve(file.getFileName()), REPLACE_EXISTING);
-                deleteEmptyParentDirs(file);
-            }
-        } catch (IOException ex) {
-            throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
-        }
-    }
-
-    public static void deleteFile(String filePath) {
-        try {
-            Path file = Paths.get(filePath);
-            checkNotExistOrDirectory(file);
-            Files.delete(file);
-            deleteEmptyParentDirs(file);
-        } catch (IOException ex) {
-            throw new FileException("Failed to delete file: " + filePath, "file.failed-to-delete", new Object[]{filePath});
-        }
-    }
-
     private static void deleteEmptyParentDirs(Path file) throws IOException {
         Path parentDir = file.getParent();
         while (parentDir != null) {
@@ -123,17 +135,21 @@ public class FileUtil {
         }
     }
 
-    private static void checkNotExistOrDirectory(Path file) {
+    private static void checkNotExistOrNotFile(Path file) {
         if (Files.notExists(file)) {
             throw new IllegalArgumentException("File does not exist: " + file);
         }
         if (Files.isDirectory(file)) {
-            throw new IllegalArgumentException("Not a file: " + file);
+            throw new IllegalArgumentException("File is a directory: " + file);
         }
     }
 
-    public static String normalizePath(String path) {
-        Assert.notNull(path, "path must not be null");
-        return path.toLowerCase().replace(' ', '_');
+    private static void checkNotExistOrNotDirectory(Path dir) {
+        if (Files.notExists(dir)) {
+            throw new IllegalArgumentException("Directory does not exist: " + dir);
+        }
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException("Not a directory: " + dir);
+        }
     }
 }

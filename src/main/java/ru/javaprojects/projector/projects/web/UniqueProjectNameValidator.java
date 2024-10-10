@@ -2,8 +2,8 @@ package ru.javaprojects.projector.projects.web;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import ru.javaprojects.projector.common.util.validation.UniqueNameValidator;
-import ru.javaprojects.projector.projects.ProjectRepository;
+import ru.javaprojects.projector.common.validation.UniqueNameValidator;
+import ru.javaprojects.projector.projects.repository.ProjectRepository;
 import ru.javaprojects.projector.projects.model.Project;
 
 @Component

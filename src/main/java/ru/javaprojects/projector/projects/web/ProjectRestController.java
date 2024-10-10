@@ -9,12 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
-import ru.javaprojects.projector.common.util.validation.ValidationUtil;
+import ru.javaprojects.projector.common.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.ValidationUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.to.CommentTo;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
 
 @RestController
 @RequestMapping(value = ProjectRestController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)

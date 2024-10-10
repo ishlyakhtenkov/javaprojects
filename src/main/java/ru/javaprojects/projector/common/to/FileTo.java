@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -52,7 +52,7 @@ public class FileTo {
 
     public boolean isEmpty() {
         return (inputtedFile == null || inputtedFile.isEmpty()) &&
-                (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isEmpty());
+                (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isBlank());
     }
 
     public void keepInputtedFile() {
@@ -65,5 +65,9 @@ public class FileTo {
             throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
                     new Object[]{getInputtedFile().getOriginalFilename()});
         }
+    }
+
+    public String getRealFileName() {
+        return inputtedFile != null && !inputtedFile.isEmpty() ? inputtedFile.getOriginalFilename() : getFileName();
     }
 }

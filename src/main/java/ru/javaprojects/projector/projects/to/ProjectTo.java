@@ -15,9 +15,9 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.common.util.validation.ImageFile;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
-import ru.javaprojects.projector.common.util.validation.YamlFile;
+import ru.javaprojects.projector.common.validation.ImageFile;
+import ru.javaprojects.projector.common.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.YamlFile;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 
 import java.time.LocalDate;
@@ -29,15 +29,14 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class ProjectTo extends BaseTo implements HasIdAndName {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 64)
+    @Size(max = 64)
     private String name;
 
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 128)
+    @Size(max = 128)
     private String shortDescription;
 
     private boolean enabled;

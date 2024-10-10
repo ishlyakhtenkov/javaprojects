@@ -14,24 +14,23 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.common.util.validation.ImageFile;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.ImageFile;
+import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class TechnologyTo extends BaseTo implements HasIdAndName {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     private String name;
 
     @NotBlank
     @NoHtml
     @URL
-    @Size(min = 2, max = 512)
+    @Size(max = 512)
     private String url;
 
     @NotNull

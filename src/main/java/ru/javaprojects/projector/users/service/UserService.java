@@ -9,12 +9,12 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.users.AuthUser;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.ProfileTo;
@@ -23,7 +23,7 @@ import ru.javaprojects.projector.users.to.UserTo;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 import static ru.javaprojects.projector.users.util.UserUtil.updateFromTo;
@@ -36,9 +36,10 @@ public class UserService {
     private final ChangeEmailService changeEmailService;
 
     @Value("${content-path.avatars}")
-    private String contentPath;
+    private String avatarFilesPath;
 
     public User getByEmail(String email) {
+        Assert.notNull(email, "email must not be null");
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->
                 new NotFoundException("Not found user with email=" + email, "notfound.user", new Object[]{email}));
     }
@@ -67,18 +68,14 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public void update(long id, String name) {
-        Assert.notNull(name, "name must not be null");
-        User user = get(id);
-        user.setName(name);
-    }
-
     public Page<User> getAll(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
         return repository.findAll(pageable);
     }
 
     public Page<User> getAll(Pageable pageable, String keyword) {
+        Assert.notNull(pageable, "pageable must not be null");
+        Assert.notNull(keyword, "keyword must not be null");
         return repository.findAllByKeyword(keyword, pageable);
     }
 
@@ -93,9 +90,9 @@ public class UserService {
         User user = get(userTo.getId());
         String oldEmail = user.getEmail();
         String avatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
-        repository.saveAndFlush(updateFromTo(user, userTo, contentPath));
-        if (avatarFileLink != null && !user.getEmail().equalsIgnoreCase(oldEmail)) {
-            FileUtil.moveFile(avatarFileLink, contentPath + FileUtil.normalizePath(user.getEmail()));
+        repository.saveAndFlush(updateFromTo(user, userTo, avatarFilesPath));
+        if (!user.getEmail().equalsIgnoreCase(oldEmail) && avatarFileLink != null) {
+            FileUtil.moveFile(avatarFileLink, avatarFilesPath + FileUtil.normalizePath(user.getEmail()));
         }
     }
 
@@ -104,9 +101,12 @@ public class UserService {
         Assert.notNull(profileTo, "profileTo must not be null");
         User user = get(profileTo.getId());
         File oldAvatar = user.getAvatar();
-        repository.saveAndFlush(updateFromTo(user, profileTo, contentPath));
+        repository.saveAndFlush(updateFromTo(user, profileTo, avatarFilesPath));
         if (!profileTo.getAvatar().isEmpty()) {
-            uploadImage(profileTo, user.getEmail());
+            FileTo newAvatar = profileTo.getAvatar();
+            String filename = normalizePath(newAvatar.getInputtedFile() != null && !newAvatar.getInputtedFile().isEmpty() ?
+                    newAvatar.getInputtedFile().getOriginalFilename() : newAvatar.getFileName());
+            FileUtil.upload(newAvatar, avatarFilesPath + FileUtil.normalizePath(user.getEmail() + "/"), filename);
             if (oldAvatar != null && !oldAvatar.hasExternalLink() &&
                     !oldAvatar.getFileLink().equalsIgnoreCase(user.getAvatar().getFileLink())) {
                 FileUtil.deleteFile(oldAvatar.getFileLink());
@@ -118,42 +118,32 @@ public class UserService {
         return user;
     }
 
-    private void uploadImage(ProfileTo profileTo, String userEmail) {
-        FileTo avatar = profileTo.getAvatar();
-        String filename = normalizePath(avatar.getInputtedFile() != null && !avatar.getInputtedFile().isEmpty() ?
-                avatar.getInputtedFile().getOriginalFilename() : avatar.getFileName());
-        FileUtil.upload(avatar, contentPath + FileUtil.normalizePath(userEmail) + "/", filename);
-    }
-
     @Transactional
-    public void enable(long id, boolean enabled, long authUserId) {
-        if (id == authUserId) {
-            throw new IllegalRequestDataException("Forbidden to disable yourself, userId=" + id,
-                    "user.forbidden-disable-yourself", null);
-        }
+    public void enable(long id, boolean enabled) {
         User user = get(id);
         user.setEnabled(enabled);
         if (!enabled) {
-            sessionRegistry.getAllPrincipals().stream()
-                    .filter(principal -> ((AuthUser) principal).id() == id)
-                    .findFirst().
-                    ifPresent(o -> sessionRegistry.getAllSessions(o, false)
-                            .forEach(SessionInformation::expireNow));
+            expireUserSessions(id);
         }
     }
 
     @Transactional
-    public void delete(long id, long authUserId) {
-        if (id == authUserId) {
-            throw new IllegalRequestDataException("Forbidden to delete yourself, userId=" + id,
-                    "user.forbidden-delete-yourself", null);
-        }
+    public void delete(long id) {
         User user = get(id);
         repository.delete(user);
         repository.flush();
+        expireUserSessions(id);
         if (user.getAvatar() != null) {
             FileUtil.deleteFile(user.getAvatar().getFileLink());
         }
+    }
+
+    private void expireUserSessions(long id) {
+        sessionRegistry.getAllPrincipals().stream()
+                .filter(principal -> ((AuthUser) principal).id() == id)
+                .findFirst().
+                ifPresent(principal -> sessionRegistry.getAllSessions(principal, false)
+                        .forEach(SessionInformation::expireNow));
     }
 
     public Set<Long> getOnlineUsersIds() {

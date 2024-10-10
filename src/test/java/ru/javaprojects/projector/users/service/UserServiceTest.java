@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.test.context.ActiveProfiles;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
 
 import java.util.Set;
 
@@ -27,6 +27,8 @@ class UserServiceTest {
         sessionRegistry.registerNewSession("1", new AuthUser(admin));
         sessionRegistry.registerNewSession("2", new AuthUser(user));
         sessionRegistry.registerNewSession("3", new AuthUser(user2));
+        sessionRegistry.registerNewSession("4", new AuthUser(user));
+        sessionRegistry.registerNewSession("5", new AuthUser(user));
 
         assertEquals(Set.of(admin.id(), user.id(), user2.id()), userService.getOnlineUsersIds());
     }

@@ -9,8 +9,8 @@ import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.model.BaseEntity;
 
 @Entity
-@Table(name = "likes", uniqueConstraints = @UniqueConstraint(columnNames = {"object_id", "user_id"},
-        name = "likes_unique_object_like_idx"))
+@Table(name = "likes",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"object_id", "user_id"}, name = "likes_unique_object_like_idx"))
 @Getter
 @Setter
 @NoArgsConstructor

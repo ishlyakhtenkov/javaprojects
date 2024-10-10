@@ -2,7 +2,7 @@ package ru.javaprojects.projector.users.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaprojects.projector.users.model.PasswordResetToken;
+import ru.javaprojects.projector.users.model.token.PasswordResetToken;
 
 import java.util.Optional;
 

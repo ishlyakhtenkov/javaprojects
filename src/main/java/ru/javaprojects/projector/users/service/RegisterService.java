@@ -5,10 +5,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.RegisterToken;
+import ru.javaprojects.projector.common.mail.MailSender;
 import ru.javaprojects.projector.users.model.Role;
 import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.model.token.RegisterToken;
 import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.RegisterTo;
@@ -39,7 +39,7 @@ public class RegisterService extends TokenService<RegisterToken> {
         registerToken.setEmail(registerTo.getEmail());
         registerToken.setName(registerTo.getName());
         registerToken.setPassword(registerTo.getPassword());
-        tokenRepository.save(registerToken);
+        tokenRepository.saveAndFlush(registerToken);
         sendEmail(registerTo.getEmail(), registerToken.getToken());
     }
 

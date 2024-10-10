@@ -11,22 +11,21 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.common.util.validation.ImageFile;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.ImageFile;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class ArchitectureTo extends BaseTo implements HasIdAndName {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     private String name;
 
     @NotBlank
     @NoHtml
-    @Size(min = 20, max = 400)
+    @Size(max = 400)
     private String description;
 
     @Nullable

@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PasswordResetTo {
-
     @NotBlank
     @Size(min = 5, max = 32)
     private String password;

@@ -13,7 +13,7 @@ import ru.javaprojects.projector.common.HasEmailAndPassword;
 import ru.javaprojects.projector.common.HasIdAndEmail;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 import java.util.Date;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
 
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 32)
+    @Size(max = 32)
     @Column(name = "name", nullable = false)
     private String name;
 

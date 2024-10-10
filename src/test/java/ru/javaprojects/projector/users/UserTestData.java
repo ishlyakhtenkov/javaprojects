@@ -7,14 +7,14 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.users.model.*;
+import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
+import ru.javaprojects.projector.users.model.token.PasswordResetToken;
+import ru.javaprojects.projector.users.model.token.RegisterToken;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
 import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.RegisterTo;
 import ru.javaprojects.projector.users.to.UserTo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;

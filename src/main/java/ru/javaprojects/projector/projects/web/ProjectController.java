@@ -14,10 +14,9 @@ import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -29,7 +28,7 @@ public class ProjectController {
     @GetMapping("/")
     public String showHomePage(Model model) {
         log.info("Show home page");
-        List<Project> projects = projectService.getAllEnabledWithArchitectureAndTechnologies();
+        List<Project> projects = projectService.getAllEnabledWithArchitectureAndTechnologiesAndLikes();
         if (AuthUser.safeGet() != null) {
             long authId = AuthUser.authId();
             Set<Long> likedProjectsIds = projects.stream()

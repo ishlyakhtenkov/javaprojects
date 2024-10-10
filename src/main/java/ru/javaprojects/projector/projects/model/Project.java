@@ -15,7 +15,7 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
@@ -31,16 +31,15 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class Project extends BaseEntity implements HasIdAndName {
-
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 64)
+    @Size(max = 64)
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @NotBlank
     @NoHtml
-    @Size(min = 2, max = 128)
+    @Size(max = 128)
     @Column(name = "short_description", nullable = false)
     private String shortDescription;
 
@@ -129,7 +128,8 @@ public class Project extends BaseEntity implements HasIdAndName {
     private Set<Technology> technologies = new HashSet<>();
 
     @Valid
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
     private Set<DescriptionElement> descriptionElements = new HashSet<>();
 
     @Column(name = "views", nullable = false, columnDefinition = "integer default 0")

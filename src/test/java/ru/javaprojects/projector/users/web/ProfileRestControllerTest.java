@@ -15,8 +15,8 @@ import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.users.error.UserDisabledException;
-import ru.javaprojects.projector.users.mail.MailSender;
-import ru.javaprojects.projector.users.model.PasswordResetToken;
+import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.users.model.token.PasswordResetToken;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 
@@ -28,9 +28,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
-import static ru.javaprojects.projector.users.service.TokenService.LINK_TEMPLATE;
+import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
@@ -65,7 +65,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         String passwordResetUrlLinkText = messageSource.getMessage("password-reset.message-link-text", null, locale);
         String passwordResetMessageSubject = messageSource.getMessage("password-reset.message-subject", null, locale);
         String passwordResetMessageText = messageSource.getMessage("password-reset.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, passwordResetUrl, createdToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, passwordResetUrl, createdToken.getToken(),
                 passwordResetUrlLinkText);
         String emailText = passwordResetMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(USER_MAIL, passwordResetMessageSubject, emailText);
@@ -84,7 +84,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         String passwordResetUrlLinkText = messageSource.getMessage("password-reset.message-link-text", null, locale);
         String passwordResetMessageSubject = messageSource.getMessage("password-reset.message-subject", null, locale);
         String passwordResetMessageText = messageSource.getMessage("password-reset.message-text", null, locale);
-        String link = String.format(LINK_TEMPLATE, passwordResetUrl, updatedToken.getToken(),
+        String link = String.format(CONFIRMATION_LINK_TEMPLATE, passwordResetUrl, updatedToken.getToken(),
                 passwordResetUrlLinkText);
         String emailText = passwordResetMessageText + link;
         Mockito.verify(mailSender, Mockito.times(1)).sendEmail(passwordResetToken.getUser().getEmail(),

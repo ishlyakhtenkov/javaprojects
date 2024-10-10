@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
+import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.users.service.UserService;
 
 @RestController
@@ -22,14 +23,22 @@ public class UserManagementRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@PathVariable long id, @RequestParam boolean enabled) {
         log.info((enabled ? "enable" : "disable") + " user with id={}", id);
-        service.enable(id, enabled, AuthUser.authId());
+        if (id == AuthUser.authId()) {
+            throw new IllegalRequestDataException("Forbidden to disable yourself, userId=" + id,
+                    "user.forbidden-disable-yourself", null);
+        }
+        service.enable(id, enabled);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
         log.info("delete user with id={}", id);
-        service.delete(id, AuthUser.authId());
+        if (id == AuthUser.authId()) {
+            throw new IllegalRequestDataException("Forbidden to delete yourself, userId=" + id,
+                    "user.forbidden-delete-yourself", null);
+        }
+        service.delete(id);
     }
 
     @PatchMapping("/change-password/{id}")

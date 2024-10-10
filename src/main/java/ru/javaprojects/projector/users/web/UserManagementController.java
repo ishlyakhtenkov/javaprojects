@@ -20,8 +20,8 @@ import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.UserTo;
 
-import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNew;
-import static ru.javaprojects.projector.common.util.validation.ValidationUtil.checkNotNew;
+import static ru.javaprojects.projector.common.validation.ValidationUtil.checkNew;
+import static ru.javaprojects.projector.common.validation.ValidationUtil.checkNotNew;
 import static ru.javaprojects.projector.users.util.UserUtil.asTo;
 
 @Controller
@@ -49,8 +49,8 @@ public class UserManagementController {
             if (keyword.isBlank()) {
                 return "redirect:/management/users";
             }
-            log.info("get users (pageNumber={}, pageSize={}, keyword={})", pageable.getPageNumber(),
-                    pageable.getPageSize(), keyword);
+            log.info("get users by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(),
+                    pageable.getPageSize());
             users = service.getAll(pageable, keyword.trim());
         } else  {
             log.info("get users (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());

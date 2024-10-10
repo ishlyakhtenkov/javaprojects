@@ -12,7 +12,7 @@ import lombok.Setter;
 import ru.javaprojects.projector.common.HasId;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
-import ru.javaprojects.projector.common.util.validation.NoHtml;
+import ru.javaprojects.projector.common.validation.NoHtml;
 
 @Entity
 @Table(name = "description_elements")
@@ -20,7 +20,6 @@ import ru.javaprojects.projector.common.util.validation.NoHtml;
 @Setter
 @NoArgsConstructor
 public class DescriptionElement extends BaseEntity implements HasId, Comparable<DescriptionElement> {
-
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -48,7 +47,8 @@ public class DescriptionElement extends BaseEntity implements HasId, Comparable<
     private Project project;
 
     public DescriptionElement(DescriptionElement de) {
-        this(de.id, de.type, de.index, de.text, de.image == null ? null : new File(de.image.getFileName(), de.image.getFileLink()));
+        this(de.id, de.type, de.index, de.text,
+                de.image == null ? null : new File(de.image.getFileName(), de.image.getFileLink()));
     }
 
     public DescriptionElement(Long id, ElementType type, Byte index, String text, File image) {

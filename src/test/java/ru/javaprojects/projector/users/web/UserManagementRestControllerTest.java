@@ -16,7 +16,7 @@ import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.AuthUser;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
 
 import java.nio.file.Files;
@@ -31,7 +31,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
-import static ru.javaprojects.projector.common.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
@@ -104,11 +104,18 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
         HttpSession userSession = actions.andReturn().getRequest().getSession();
         sessionRegistry.registerNewSession(Objects.requireNonNull(userSession).getId(), new AuthUser(user));
         assertFalse(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        ResultActions actions2 = perform(MockMvcRequestBuilders.get(PROFILE_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession2 = actions2.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession2).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
+
         perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID).with(user(new AuthUser(admin)))
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertTrue(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        assertTrue(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
     }
 
     @Test
@@ -151,11 +158,24 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void delete() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROFILE_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession = actions.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        ResultActions actions2 = perform(MockMvcRequestBuilders.get(PROFILE_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession2 = actions2.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession2).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
+
         perform(MockMvcRequestBuilders.delete(USERS_URL_SLASH + USER_ID)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
+        assertTrue(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        assertTrue(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
     }
 
     @Test

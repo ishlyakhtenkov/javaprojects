@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.javaprojects.projector.users.model.Token;
+import ru.javaprojects.projector.users.model.token.Token;
 import ru.javaprojects.projector.users.repository.TokenRepository;
 
 import java.util.List;

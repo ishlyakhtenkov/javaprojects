@@ -22,10 +22,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.*;
 import static ru.javaprojects.projector.reference.technologies.web.TechnologyController.TECHNOLOGIES_URL;
-import static ru.javaprojects.projector.reference.technologies.web.TechnologyControllerTest.TECHNOLOGIES_TEST_DATA_FILES_PATH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
@@ -34,7 +33,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
     private static final String TECHNOLOGIES_URL_SLASH = TECHNOLOGIES_URL + "/";
 
     @Value("${content-path.technologies}")
-    private String contentPath;
+    private String technologyFilesPath;
 
     @Autowired
     private TechnologyService technologyService;
@@ -44,7 +43,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
 
     @Override
     public Path getContentPath() {
-        return Paths.get(contentPath);
+        return Paths.get(technologyFilesPath);
     }
 
     @Override
@@ -64,7 +63,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void deleteWhenReferenced() throws Exception {
+    void deleteWhenTechnologyInUse() throws Exception {
         perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
                 .with(csrf()))
                 .andExpect(status().isConflict())
@@ -75,7 +74,6 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(problemDetail(messageSource.getMessage("technology.is-referenced", null,
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID));
-
         assertDoesNotThrow(() -> technologyService.get(TECHNOLOGY1_ID));
         assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
     }
@@ -96,7 +94,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
     }
 
     @Test
-    void deleteUnAuthorized() throws Exception {
+    void deleteUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY4_ID)
                 .with(csrf()))
                 .andExpect(status().isFound())

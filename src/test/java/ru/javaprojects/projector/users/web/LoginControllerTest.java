@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.projector.CommonTestData.HOME_URL;
+import static ru.javaprojects.projector.common.CommonTestData.HOME_URL;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
@@ -25,7 +25,7 @@ class LoginControllerTest extends AbstractControllerTest {
     private MessageSource messageSource;
 
     @Test
-    void showLoginPageUnAuthorized() throws Exception {
+    void showLoginPageUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(LOGIN_URL))
                 .andExpect(status().isOk())
                 .andExpect(view().name(LOGIN_PAGE_VIEW));
@@ -40,7 +40,7 @@ class LoginControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void loginNotFound() throws Exception {
+    void loginWithNotExistingEmail() throws Exception {
         perform(MockMvcRequestBuilders.post(LOGIN_URL)
                 .param(USERNAME_PARAM, NOT_EXISTING_EMAIL)
                 .param(PASSWORD_PARAM, INVALID_PASSWORD)
@@ -50,7 +50,7 @@ class LoginControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void loginDisabled() throws Exception {
+    void loginWhenUserDisabled() throws Exception {
         perform(MockMvcRequestBuilders.post(LOGIN_URL)
                 .param(USERNAME_PARAM, disabledUser.getEmail())
                 .param(PASSWORD_PARAM, disabledUser.getPassword())
@@ -60,7 +60,7 @@ class LoginControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void showLoginPageWhenLoginFailedByNotFound() throws Exception {
+    void showLoginPageWithBadCredentialsParam() throws Exception {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.get(LOGIN_URL + ERROR_PARAM_BAD_CREDENTIALS))
                 .andExpect(status().isOk())
@@ -70,7 +70,7 @@ class LoginControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void showLoginPageWhenLoginFailedByDisabled() throws Exception {
+    void showLoginPageWithDisabledCredentialsParam() throws Exception {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.get(LOGIN_URL + ERROR_PARAM_DISABLED_CREDENTIALS))
                 .andExpect(status().isOk())

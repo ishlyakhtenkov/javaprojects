@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class MatcherFactory {
 
-    public static <T> Matcher<T> usingAssertions(Class<T> clazz, BiConsumer<T, T> assertion, BiConsumer<Iterable<T>, Iterable<T>> iterableAssertion) {
+    public static <T> Matcher<T> usingAssertions(Class<T> clazz, BiConsumer<T, T> assertion,
+                                                 BiConsumer<Iterable<T>, Iterable<T>> iterableAssertion) {
         return new Matcher<>(clazz, assertion, iterableAssertion);
     }
 

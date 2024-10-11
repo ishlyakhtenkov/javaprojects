@@ -22,11 +22,10 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
-import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.common.CommonTestData.ENABLED_PARAM;
+import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
-import static ru.javaprojects.projector.projects.web.ProjectManagementControllerTest.PROJECTS_TEST_DATA_FILES_PATH;
-import static ru.javaprojects.projector.projects.web.ProjectManagementControllerTest.PROJECT_MANAGEMENT_URL_SLASH;
+import static ru.javaprojects.projector.projects.web.ProjectManagementControllerTest.MANAGEMENT_PROJECTS_URL_SLASH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
@@ -34,7 +33,7 @@ import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 class ProjectManagementRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
 
     @Value("${content-path.projects}")
-    private String contentPath;
+    private String projectFilesPath;
 
     @Autowired
     private ProjectService projectService;
@@ -47,7 +46,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
 
     @Override
     public Path getContentPath() {
-        return Paths.get(contentPath);
+        return Paths.get(projectFilesPath);
     }
 
     @Override
@@ -58,12 +57,11 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+        perform(MockMvcRequestBuilders.delete(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
         assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
-
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
@@ -74,7 +72,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void deleteNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.delete(PROJECT_MANAGEMENT_URL_SLASH + NOT_EXISTING_ID)
+        perform(MockMvcRequestBuilders.delete(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID)
                 .with(csrf()))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
@@ -83,19 +81,18 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
                 .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROJECT_MANAGEMENT_URL_SLASH + NOT_EXISTING_ID));
+                .andExpect(problemInstance(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID));
     }
 
     @Test
-    void deleteUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.delete(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+    void deleteUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.delete(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
         assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
-
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
@@ -106,12 +103,11 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(USER_MAIL)
     void deleteForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.delete(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+        perform(MockMvcRequestBuilders.delete(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
         assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
-
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
@@ -122,13 +118,13 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void enable() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+        perform(MockMvcRequestBuilders.patch(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         assertFalse(projectService.get(PROJECT1_ID).isEnabled());
 
-        perform(MockMvcRequestBuilders.patch(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+        perform(MockMvcRequestBuilders.patch(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(ENABLED_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -138,7 +134,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void enableNotFound() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECT_MANAGEMENT_URL_SLASH + NOT_EXISTING_ID)
+        perform(MockMvcRequestBuilders.patch(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID)
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNotFound())
@@ -148,12 +144,12 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
                 .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
-                .andExpect(problemInstance(PROJECT_MANAGEMENT_URL_SLASH + NOT_EXISTING_ID));
+                .andExpect(problemInstance(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID));
     }
 
     @Test
-    void enableUnAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+    void enableUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.patch(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -165,7 +161,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     @Test
     @WithUserDetails(USER_MAIL)
     void enableForbidden() throws Exception {
-        perform(MockMvcRequestBuilders.patch(PROJECT_MANAGEMENT_URL_SLASH + PROJECT1_ID)
+        perform(MockMvcRequestBuilders.patch(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isForbidden());

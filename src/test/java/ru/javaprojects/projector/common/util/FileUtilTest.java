@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.TECHNOLOGIES_TEST_DATA_FILES_PATH;
 
 @SpringBootTest
 @ActiveProfiles({"dev", "test"})
@@ -25,208 +26,211 @@ class FileUtilTest implements TestContentFilesManager {
     private static final String EXISTING_FILE_PATH = EXISTING_DIR_NAME + "/" + EXISTING_FILE_NAME;
     private static final String NOT_EXISTING_DIR_NAME = "notExistDir";
     private static final String NOT_EXISTING_FILE_NAME = "notExistFile.svg";
+    private static final String FILE_NAME = "fileName";
+    private static final byte[] BYTES_ARRAY = new byte[] {1, 2, 3, 4, 5};
+    private static final byte[] EMPTY_BYTES_ARRAY = new byte[] {};
     private static final String NOT_EXISTING_FILE_PATH = NOT_EXISTING_DIR_NAME + "/" + NOT_EXISTING_FILE_NAME;
 
-    private static final String TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";
-
     @Value("${content-path.technologies}")
-    private String contentPath;
+    private String technologyFilesPath;
 
     @Override
     public Path getContentPath() {
-        return Paths.get(contentPath);
+        return Paths.get(technologyFilesPath);
     }
 
     @Override
     public Path getTestDataFilesPath() {
-        return Paths.get(TEST_DATA_FILES_PATH);
+        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
     }
 
     @Test
     void uploadMultipart() throws IOException {
-        MockMultipartFile file = new MockMultipartFile("fileName", new byte[] {1, 2, 3, 4, 5});
-        FileUtil.upload(file, contentPath + NEW_DIR_NAME, file.getName());
-        assertEquals(file.getSize(), Files.size(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
+        MockMultipartFile file = new MockMultipartFile(FILE_NAME, BYTES_ARRAY);
+        FileUtil.upload(file, technologyFilesPath + NEW_DIR_NAME, file.getName());
+        assertEquals(file.getSize(), Files.size(Paths.get(technologyFilesPath, NEW_DIR_NAME, file.getName())));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, file.getName())));
     }
 
     @Test
     void uploadMultipartWhenFileIsEmpty() {
-        MockMultipartFile file = new MockMultipartFile("fileName", new byte[] {});
-        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(file, contentPath, file.getName()));
-        assertTrue(Files.notExists(Paths.get(contentPath, file.getName())));
+        MockMultipartFile file = new MockMultipartFile(FILE_NAME, EMPTY_BYTES_ARRAY);
+        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(file, technologyFilesPath, file.getName()));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, file.getName())));
     }
 
     @Test
     void uploadMultipartWhenFileExists() throws IOException {
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
-        MockMultipartFile file = new MockMultipartFile(EXISTING_FILE_NAME, new byte[] {1, 2, 3, 4, 5});
-        FileUtil.upload(file, contentPath + EXISTING_DIR_NAME, file.getName());
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, file.getName())));
-        assertEquals(file.getSize(), Files.size(Paths.get(contentPath, EXISTING_DIR_NAME, file.getName())));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        MockMultipartFile file = new MockMultipartFile(EXISTING_FILE_NAME, BYTES_ARRAY);
+        FileUtil.upload(file, technologyFilesPath + EXISTING_DIR_NAME, file.getName());
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, file.getName())));
+        assertEquals(file.getSize(), Files.size(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, file.getName())));
     }
 
     @Test
     void uploadBytesArray() throws IOException {
-        byte[] bytes = new byte[]{1, 2, 3, 4, 5};
-        String fileName = "fileName";
-        FileUtil.upload(bytes, contentPath + NEW_DIR_NAME, fileName);
-        assertEquals(bytes.length, Files.size(Paths.get(contentPath, NEW_DIR_NAME, fileName)));
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, fileName)));
+        FileUtil.upload(BYTES_ARRAY, technologyFilesPath + NEW_DIR_NAME, FILE_NAME);
+        assertEquals(BYTES_ARRAY.length, Files.size(Paths.get(technologyFilesPath, NEW_DIR_NAME, FILE_NAME)));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, FILE_NAME)));
     }
 
     @Test
     void uploadBytesArrayWhenArrayEmpty() {
-        byte[] bytes = new byte[]{};
-        String fileName = "fileName";
-        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(bytes, contentPath,fileName));
-        assertTrue(Files.notExists(Paths.get(contentPath, fileName)));
+        assertThrows(IllegalRequestDataException.class,
+                () -> FileUtil.upload(EMPTY_BYTES_ARRAY, technologyFilesPath, FILE_NAME));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, FILE_NAME)));
     }
 
     @Test
     void uploadBytesArrayWhenFileExists() throws IOException {
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
-        byte[] bytes = new byte[]{1, 2, 3, 4, 5};
-        FileUtil.upload(bytes, contentPath + EXISTING_DIR_NAME, EXISTING_FILE_NAME);
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
-        assertEquals(bytes.length, Files.size(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        FileUtil.upload(BYTES_ARRAY, technologyFilesPath + EXISTING_DIR_NAME, EXISTING_FILE_NAME);
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        assertEquals(BYTES_ARRAY.length, Files.size(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
     }
 
     @Test
     void uploadFileToWithMultipartFile() throws IOException {
-        MockMultipartFile file = new MockMultipartFile("fileName", new byte[] {1, 2, 3, 4, 5});
+        MockMultipartFile file = new MockMultipartFile(FILE_NAME, BYTES_ARRAY);
         FileTo fileTo = new FileTo(null, null, file, null);
-        FileUtil.upload(fileTo, contentPath + NEW_DIR_NAME, file.getName());
-        assertEquals(file.getSize(), Files.size(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, file.getName())));
+        FileUtil.upload(fileTo, technologyFilesPath + NEW_DIR_NAME, file.getName());
+        assertEquals(file.getSize(), Files.size(Paths.get(technologyFilesPath, NEW_DIR_NAME, file.getName())));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, file.getName())));
     }
 
     @Test
     void uploadFileToWithEmptyMultipartFile() {
-        MockMultipartFile file = new MockMultipartFile("fileName", new byte[] {});
+        MockMultipartFile file = new MockMultipartFile(FILE_NAME, EMPTY_BYTES_ARRAY);
         FileTo fileTo = new FileTo(null, null, file, null);
-        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(fileTo, contentPath, file.getName()));
-        assertTrue(Files.notExists(Paths.get(contentPath, file.getName())));
+        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(fileTo, technologyFilesPath, file.getName()));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, file.getName())));
     }
 
     @Test
     void uploadFileToWithFileBytes() throws IOException {
-        FileTo fileTo = new FileTo("fileName", null, null, new byte[]{1, 2, 3, 4, 5});
-        FileUtil.upload(fileTo, contentPath + NEW_DIR_NAME, fileTo.getFileName());
-        assertEquals(fileTo.getInputtedFileBytes().length, Files.size(Paths.get(contentPath, NEW_DIR_NAME, fileTo.getFileName())));
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, fileTo.getFileName())));
+        FileTo fileTo = new FileTo(FILE_NAME, null, null, BYTES_ARRAY);
+        FileUtil.upload(fileTo, technologyFilesPath + NEW_DIR_NAME, fileTo.getFileName());
+        assertEquals(fileTo.getInputtedFileBytes().length,
+                Files.size(Paths.get(technologyFilesPath, NEW_DIR_NAME, fileTo.getFileName())));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, fileTo.getFileName())));
     }
 
     @Test
     void uploadFileToWithEmptyFileBytes() {
-        FileTo fileTo = new FileTo("fileName", null, null, new byte[]{});
-        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(fileTo, contentPath, fileTo.getFileName()));
-        assertTrue(Files.notExists(Paths.get(contentPath, fileTo.getFileName())));
+        FileTo fileTo = new FileTo(FILE_NAME, null, null, EMPTY_BYTES_ARRAY);
+        assertThrows(IllegalRequestDataException.class,
+                () -> FileUtil.upload(fileTo, technologyFilesPath, fileTo.getFileName()));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, fileTo.getFileName())));
     }
 
     @Test
     void uploadFileToWithoutMultipartFileAndFileBytes() {
-        FileTo fileTo = new FileTo("fileName", null, null, null);
-        assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(fileTo, contentPath, fileTo.getFileName()));
-        assertTrue(Files.notExists(Paths.get(contentPath, fileTo.getFileName())));
+        FileTo fileTo = new FileTo(FILE_NAME, null, null, null);
+        assertThrows(IllegalRequestDataException.class,
+                () -> FileUtil.upload(fileTo, technologyFilesPath, fileTo.getFileName()));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, fileTo.getFileName())));
     }
 
     @Test
     void deleteDirectory() {
-        FileUtil.deleteDirectory(contentPath + EXISTING_DIR_NAME);
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+        FileUtil.deleteDirectory(technologyFilesPath + EXISTING_DIR_NAME);
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME)));
     }
 
     @Test
     void deleteDirectoryWhenNotExists() {
-        assertTrue(Files.notExists(Paths.get(contentPath + NOT_EXISTING_DIR_NAME)));
-        assertThrows(IllegalArgumentException.class, () -> FileUtil.deleteDirectory(contentPath + NOT_EXISTING_DIR_NAME));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath + NOT_EXISTING_DIR_NAME)));
+        assertThrows(IllegalArgumentException.class,
+                () -> FileUtil.deleteDirectory(technologyFilesPath + NOT_EXISTING_DIR_NAME));
     }
 
     @Test
     void deleteDirectoryWhenNotDirectory() {
-        assertTrue(Files.exists(Paths.get(contentPath + EXISTING_FILE_PATH)));
-        assertThrows(IllegalArgumentException.class, () -> FileUtil.deleteDirectory(contentPath + EXISTING_FILE_PATH));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath + EXISTING_FILE_PATH)));
+        assertThrows(IllegalArgumentException.class,
+                () -> FileUtil.deleteDirectory(technologyFilesPath + EXISTING_FILE_PATH));
     }
 
     @Test
     void moveFile() {
-        FileUtil.moveFile(contentPath + EXISTING_FILE_PATH, contentPath + NEW_DIR_NAME);
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+        FileUtil.moveFile(technologyFilesPath + EXISTING_FILE_PATH, technologyFilesPath + NEW_DIR_NAME);
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_FILE_PATH)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME)));
     }
 
     @Test
     void moveFileToSameDir() {
-        FileUtil.moveFile(contentPath + EXISTING_FILE_PATH, contentPath + EXISTING_DIR_NAME);
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
+        FileUtil.moveFile(technologyFilesPath + EXISTING_FILE_PATH, technologyFilesPath + EXISTING_DIR_NAME);
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
     }
 
     @Test
     void moveFileWhenFileNotExists() {
         assertThrows(IllegalArgumentException.class, () ->
-                FileUtil.moveFile(contentPath + NOT_EXISTING_FILE_PATH, contentPath + NEW_DIR_NAME));
-        assertTrue(Files.notExists(Paths.get(contentPath, NEW_DIR_NAME, NOT_EXISTING_FILE_NAME)));
-        assertTrue(Files.notExists(Paths.get(contentPath, NEW_DIR_NAME)));
+                FileUtil.moveFile(technologyFilesPath + NOT_EXISTING_FILE_PATH, technologyFilesPath + NEW_DIR_NAME));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, NEW_DIR_NAME, NOT_EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, NEW_DIR_NAME)));
     }
 
     @Test
     void moveFileWhenFileNotFile() {
         assertThrows(IllegalArgumentException.class, () ->
-                FileUtil.moveFile(contentPath + EXISTING_DIR_NAME, contentPath + NEW_DIR_NAME));
-        assertTrue(Files.notExists(Paths.get(contentPath, NEW_DIR_NAME)));
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+                FileUtil.moveFile(technologyFilesPath + EXISTING_DIR_NAME, technologyFilesPath + NEW_DIR_NAME));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, NEW_DIR_NAME)));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME)));
     }
 
     @Test
     void moveFileWhenFileExistsInNewDir() throws IOException {
-        Files.createDirectories(Paths.get(contentPath, NEW_DIR_NAME));
-        Files.createFile(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME));
+        Files.createDirectories(Paths.get(technologyFilesPath, NEW_DIR_NAME));
+        Files.createFile(Paths.get(technologyFilesPath, NEW_DIR_NAME, EXISTING_FILE_NAME));
 
-        FileUtil.moveFile(contentPath + EXISTING_FILE_PATH, contentPath + NEW_DIR_NAME);
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+        FileUtil.moveFile(technologyFilesPath + EXISTING_FILE_PATH, technologyFilesPath + NEW_DIR_NAME);
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_FILE_PATH)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME)));
     }
 
     @Test
     void moveFileWhenFileNotAloneInOldDir() throws IOException {
         String anotherFileName = "anotherFile.svg";
-        Files.createFile(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName));
+        Files.createFile(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, anotherFileName));
 
-        FileUtil.moveFile(contentPath + EXISTING_FILE_PATH, contentPath + NEW_DIR_NAME);
-        assertTrue(Files.exists(Paths.get(contentPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName)));
+        FileUtil.moveFile(technologyFilesPath + EXISTING_FILE_PATH, technologyFilesPath + NEW_DIR_NAME);
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, NEW_DIR_NAME, EXISTING_FILE_NAME)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_FILE_PATH)));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, anotherFileName)));
     }
 
     @Test
     void deleteFile() {
-        FileUtil.deleteFile(contentPath + EXISTING_FILE_PATH);
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_DIR_NAME)));
+        FileUtil.deleteFile(technologyFilesPath + EXISTING_FILE_PATH);
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_FILE_PATH)));
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME)));
     }
 
     @Test
     void deleteFileWhenNotExists() {
-        assertThrows(IllegalArgumentException.class, () -> FileUtil.deleteFile(contentPath + NOT_EXISTING_FILE_PATH));
+        assertThrows(IllegalArgumentException.class,
+                () -> FileUtil.deleteFile(technologyFilesPath + NOT_EXISTING_FILE_PATH));
     }
 
     @Test
     void deleteFileWhenNotFile() {
-        assertThrows(IllegalArgumentException.class, () -> FileUtil.deleteFile(contentPath + EXISTING_DIR_NAME));
+        assertThrows(IllegalArgumentException.class, () -> FileUtil.deleteFile(technologyFilesPath + EXISTING_DIR_NAME));
     }
 
     @Test
     void deleteFileWhenNotAloneInDir() throws IOException {
         String anotherFileName = "anotherFile.svg";
-        Files.createFile(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName));
+        Files.createFile(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, anotherFileName));
 
-        FileUtil.deleteFile(contentPath + EXISTING_FILE_PATH);
-        assertTrue(Files.notExists(Paths.get(contentPath, EXISTING_FILE_PATH)));
-        assertTrue(Files.exists(Paths.get(contentPath, EXISTING_DIR_NAME, anotherFileName)));
+        FileUtil.deleteFile(technologyFilesPath + EXISTING_FILE_PATH);
+        assertTrue(Files.notExists(Paths.get(technologyFilesPath, EXISTING_FILE_PATH)));
+        assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, anotherFileName)));
     }
 
     @Test
@@ -239,37 +243,37 @@ class FileUtilTest implements TestContentFilesManager {
 
     @Test
     void isFileToEmptyWhenFileToHasMultipartFile() {
-        FileTo fileTo = new FileTo(null, null, new MockMultipartFile("fileName", new byte[]{1, 2, 3, 4, 5}), null);
+        FileTo fileTo = new FileTo(null, null, new MockMultipartFile(FILE_NAME, BYTES_ARRAY), null);
         assertFalse(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasFileBytes() {
-        FileTo fileTo = new FileTo("fileName", null, null, new byte[]{1, 2, 3, 4, 5});
+        FileTo fileTo = new FileTo(FILE_NAME, null, null, BYTES_ARRAY);
         assertFalse(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasEmptyMultipartFile() {
-        FileTo fileTo = new FileTo(null, null, new MockMultipartFile("fileName", new byte[]{}), null);
+        FileTo fileTo = new FileTo(null, null, new MockMultipartFile(FILE_NAME, EMPTY_BYTES_ARRAY), null);
         assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToHasEmptyFileBytes() {
-        FileTo fileTo = new FileTo("fileName", null, null, new byte[]{});
+        FileTo fileTo = new FileTo(FILE_NAME, null, null, EMPTY_BYTES_ARRAY);
         assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToToHasFileBytesAndHasNoFileName() {
-        FileTo fileTo = new FileTo(null, null, null, new byte[]{1, 2, 3, 4, 5});
+        FileTo fileTo = new FileTo(null, null, null, BYTES_ARRAY);
         assertTrue(fileTo.isEmpty());
     }
 
     @Test
     void isFileToEmptyWhenFileToToHasFileBytesAndHasEmptyFileName() {
-        FileTo fileTo = new FileTo("", null, null, new byte[]{1, 2, 3, 4, 5});
+        FileTo fileTo = new FileTo("", null, null, BYTES_ARRAY);
         assertTrue(fileTo.isEmpty());
     }
 }

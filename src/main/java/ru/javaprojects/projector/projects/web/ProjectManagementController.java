@@ -27,11 +27,11 @@ import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
 @Controller
-@RequestMapping(ProjectManagementController.PROJECT_MANAGEMENT_URL)
+@RequestMapping(ProjectManagementController.MANAGEMENT_PROJECTS_URL)
 @AllArgsConstructor
 @Slf4j
 public class ProjectManagementController {
-    static final String PROJECT_MANAGEMENT_URL = "/management/projects";
+    static final String MANAGEMENT_PROJECTS_URL = "/management/projects";
 
     private final ProjectService projectService;
     private final ArchitectureService architectureService;

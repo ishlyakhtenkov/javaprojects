@@ -17,10 +17,18 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @UtilityClass
 public class FileUtil {
+    private static final String MULTIPART_FILE_MUST_NOT_BE_NULL = "multipartFile must not be null";
+    private static final String FILE_BYTES_MUST_NOT_BE_NULL = "fileBytes must not be null";
+    private static final String FILE_TO_MUST_NOT_BE_NULL = "fileTo must not be null";
+    private static final String FILE_NAME_MUST_NOT_BE_NULL = "fileName must not be null";
+    private static final String DIR_PATH_MUST_NOT_BE_NULL = "dirPath must not be null";
+    private static final String FILE_PATH_MUST_NOT_BE_NULL = "filePath must not be null";
+    private static final String PATH_MUST_NOT_BE_NULL = "path must not be null";
+
     public static void upload(MultipartFile multipartFile, String dirPath, String fileName) {
-        Assert.notNull(multipartFile, "multipartFile must not be null");
-        Assert.notNull(dirPath, "dirPath must not be null");
-        Assert.notNull(fileName, "fileName must not be null");
+        Assert.notNull(multipartFile, MULTIPART_FILE_MUST_NOT_BE_NULL);
+        Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
+        Assert.notNull(fileName, FILE_NAME_MUST_NOT_BE_NULL);
         try {
             upload(multipartFile.getBytes(), dirPath, fileName);
         } catch (IOException e) {
@@ -30,9 +38,9 @@ public class FileUtil {
     }
 
     public static void upload(byte[] fileBytes, String dirPath, String fileName) {
-        Assert.notNull(fileBytes, "fileBytes must not be null");
-        Assert.notNull(dirPath, "dirPath must not be null");
-        Assert.notNull(fileName, "fileName must not be null");
+        Assert.notNull(fileBytes, FILE_BYTES_MUST_NOT_BE_NULL);
+        Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
+        Assert.notNull(fileName, FILE_NAME_MUST_NOT_BE_NULL);
         if (fileBytes.length == 0) {
             throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
                     new Object[]{fileName});
@@ -46,9 +54,9 @@ public class FileUtil {
     }
 
     public static void upload(FileTo fileTo, String dirPath, String fileName) {
-        Assert.notNull(fileTo, "fileTo must not be null");
-        Assert.notNull(dirPath, "dirPath must not be null");
-        Assert.notNull(fileName, "fileName must not be null");
+        Assert.notNull(fileTo, FILE_TO_MUST_NOT_BE_NULL);
+        Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
+        Assert.notNull(fileName, FILE_NAME_MUST_NOT_BE_NULL);
         if ((fileTo.getInputtedFile() != null && !fileTo.getInputtedFile().isEmpty())) {
             upload(fileTo.getInputtedFile(), dirPath, fileName);
         } else if (fileTo.getInputtedFileBytes() != null && fileTo.getInputtedFileBytes().length != 0) {
@@ -60,13 +68,13 @@ public class FileUtil {
     }
 
     public static String normalizePath(String path) {
-        Assert.notNull(path, "path must not be null");
+        Assert.notNull(path, PATH_MUST_NOT_BE_NULL);
         return path.toLowerCase().replace(' ', '_');
     }
 
     public static void moveFile(String filePath, String dirPath) {
-        Assert.notNull(filePath, "filePath must not be null");
-        Assert.notNull(dirPath, "dirPath must not be null");
+        Assert.notNull(filePath, FILE_PATH_MUST_NOT_BE_NULL);
+        Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
         try {
             Path file = Paths.get(filePath);
             checkNotExistOrNotFile(file);
@@ -82,7 +90,7 @@ public class FileUtil {
     }
 
     public static void deleteFile(String filePath) {
-        Assert.notNull(filePath, "filePath must not be null");
+        Assert.notNull(filePath, FILE_PATH_MUST_NOT_BE_NULL);
         try {
             Path file = Paths.get(filePath);
             checkNotExistOrNotFile(file);
@@ -94,7 +102,7 @@ public class FileUtil {
     }
 
     public static void deleteDirectory(String dirPath) {
-        Assert.notNull(dirPath, "dirPath must not be null");
+        Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
         Path dir = Paths.get(dirPath);
         checkNotExistOrNotDirectory(dir);
         try {

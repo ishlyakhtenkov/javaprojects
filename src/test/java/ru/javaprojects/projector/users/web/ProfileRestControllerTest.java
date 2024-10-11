@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.users.model.token.PasswordResetToken;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
@@ -77,8 +77,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .param(EMAIL_PARAM, passwordResetToken.getUser().getEmail())
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        PasswordResetToken updatedToken = passwordResetTokenRepository.findByUserEmailIgnoreCase(passwordResetToken.getUser().getEmail())
-                .orElseThrow();
+        PasswordResetToken updatedToken = passwordResetTokenRepository
+                .findByUserEmailIgnoreCase(passwordResetToken.getUser().getEmail()).orElseThrow();
         assertTrue(updatedToken.getExpiryDate().after(new Date()));
         Locale locale = LocaleContextHolder.getLocale();
         String passwordResetUrlLinkText = messageSource.getMessage("password-reset.message-link-text", null, locale);
@@ -92,7 +92,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void forgotPasswordNotFound() throws Exception {
+    void forgotPasswordWhenEmailNotFound() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_FORGOT_PASSWORD_URL)
                 .param(EMAIL_PARAM, NOT_EXISTING_EMAIL)
                 .with(csrf()))
@@ -105,7 +105,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(PROFILE_FORGOT_PASSWORD_URL));
         assertTrue(passwordResetTokenRepository.findByUserEmailIgnoreCase(NOT_EXISTING_EMAIL).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
@@ -116,11 +117,12 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertTrue(passwordResetTokenRepository.findByUserEmailIgnoreCase(ADMIN_MAIL).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
-    void forgotPasswordUserDisabled() throws Exception {
+    void forgotPasswordWhenUserDisabled() throws Exception {
         perform(MockMvcRequestBuilders.post(PROFILE_FORGOT_PASSWORD_URL)
                 .param(EMAIL_PARAM, DISABLED_USER_MAIL)
                 .with(csrf()))
@@ -134,8 +136,10 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemInstance(PROFILE_FORGOT_PASSWORD_URL));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         assertEquals(simpleDateFormat.format(disabledUserPasswordResetToken.getExpiryDate()),
-                simpleDateFormat.format(passwordResetTokenRepository.findByUserEmailIgnoreCase(DISABLED_USER_MAIL).orElseThrow().getExpiryDate()));
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+                simpleDateFormat.format(passwordResetTokenRepository.findByUserEmailIgnoreCase(DISABLED_USER_MAIL)
+                        .orElseThrow().getExpiryDate()));
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
@@ -151,7 +155,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void changePasswordWhenIncorrectCurrentPassword() throws Exception {
+    void changePasswordWhenWrongCurrentPassword() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
                 .param(CURRENT_PASSWORD_PARAM, INCORRECT_PASSWORD)
                 .param(NEW_PASSWORD_PARAM, NEW_PASSWORD)
@@ -168,7 +172,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void changePasswordUnAuthorized() throws Exception {
+    void changePasswordUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
                 .param(CURRENT_PASSWORD_PARAM, user.getPassword())
                 .param(NEW_PASSWORD_PARAM, NEW_PASSWORD)

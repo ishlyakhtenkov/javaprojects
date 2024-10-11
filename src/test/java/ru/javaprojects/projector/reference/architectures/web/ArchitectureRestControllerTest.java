@@ -22,10 +22,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.*;
 import static ru.javaprojects.projector.reference.architectures.web.ArchitectureController.ARCHITECTURES_URL;
-import static ru.javaprojects.projector.reference.architectures.web.ArchitectureControllerTest.ARCHITECTURES_TEST_DATA_FILES_PATH;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
@@ -34,7 +33,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
     private static final String ARCHITECTURES_URL_SLASH = ARCHITECTURES_URL + "/";
 
     @Value("${content-path.architectures}")
-    private String contentPath;
+    private String architectureFilesPath;
 
     @Autowired
     private ArchitectureService architectureService;
@@ -44,7 +43,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
 
     @Override
     public Path getContentPath() {
-        return Paths.get(contentPath);
+        return Paths.get(architectureFilesPath);
     }
 
     @Override
@@ -64,7 +63,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void deleteWhenReferenced() throws Exception {
+    void deleteWhenArchitectureInUse() throws Exception {
         perform(MockMvcRequestBuilders.delete(ARCHITECTURES_URL_SLASH + ARCHITECTURE1_ID)
                 .with(csrf()))
                 .andExpect(status().isConflict())
@@ -75,7 +74,6 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
                 .andExpect(problemDetail(messageSource.getMessage("architecture.is-referenced", null,
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(ARCHITECTURES_URL_SLASH + ARCHITECTURE1_ID));
-
         assertDoesNotThrow(() -> architectureService.get(ARCHITECTURE1_ID));
         assertTrue(Files.exists(Paths.get(architecture1.getLogo().getFileLink())));
     }
@@ -96,7 +94,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
     }
 
     @Test
-    void deleteUnAuthorized() throws Exception {
+    void deleteUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.delete(ARCHITECTURES_URL_SLASH + ARCHITECTURE2_ID)
                 .with(csrf()))
                 .andExpect(status().isFound())

@@ -12,10 +12,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.common.mail.MailSender;
-import ru.javaprojects.projector.users.model.token.RegisterToken;
+import ru.javaprojects.projector.users.error.TokenException;
 import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.model.token.RegisterToken;
 import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.RegisterTo;
@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
-import static ru.javaprojects.projector.CommonTestData.ACTION_ATTRIBUTE;
-import static ru.javaprojects.projector.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.CommonTestData.ACTION_ATTRIBUTE;
+import static ru.javaprojects.projector.common.CommonTestData.NAME_PARAM;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
@@ -83,8 +83,8 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email", null,
-                        LocaleContextHolder.getLocale())));
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
+                        null, LocaleContextHolder.getLocale())));
         RegisterToken createdToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
         assertTrue(createdToken.getExpiryDate().after(new Date()));
         assertEquals(newRegisterTo.getName(), createdToken.getName());
@@ -96,19 +96,23 @@ class RegisterControllerTest extends AbstractControllerTest {
         String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmRegisterUrl, createdToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
-        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject, emailText);
+        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject,
+                emailText);
     }
 
     @Test
-    void registerWhenRegisterTokenExists() throws Exception {
+    void registerWhenRegisterTokenForThatEmailAlreadyExists() throws Exception {
         RegisterTo newRegisterTo = getNewRegisterTo();
+        newRegisterTo.setEmail(registerToken.getEmail());
+        MultiValueMap<String, String> registerToParams = getRegisterToParams();
+        registerToParams.set(EMAIL_PARAM, registerToken.getEmail());
         perform(MockMvcRequestBuilders.post(REGISTER_URL)
-                .params(getRegisterToParams())
+                .params(registerToParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email", null,
-                        LocaleContextHolder.getLocale())));
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
+                        null, LocaleContextHolder.getLocale())));
         RegisterToken updatedToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
         assertTrue(updatedToken.getExpiryDate().after(new Date()));
         assertEquals(newRegisterTo.getName(), updatedToken.getName());
@@ -120,7 +124,8 @@ class RegisterControllerTest extends AbstractControllerTest {
         String link = String.format(CONFIRMATION_LINK_TEMPLATE, confirmRegisterUrl, updatedToken.getToken(),
                 confirmRegisterUrlLinkText);
         String emailText = confirmRegisterMessageText + link;
-        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject, emailText);
+        Mockito.verify(mailSender, Mockito.times(1)).sendEmail(newRegisterTo.getEmail(), confirmRegisterMessageSubject,
+                emailText);
     }
 
     @Test
@@ -139,10 +144,12 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .params(newToInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(REGISTER_TO_ATTRIBUTE, EMAIL_PARAM, NAME_PARAM, PASSWORD_PARAM))
+                .andExpect(model().attributeHasFieldErrors(REGISTER_TO_ATTRIBUTE, EMAIL_PARAM, NAME_PARAM,
+                        PASSWORD_PARAM))
                 .andExpect(view().name(REGISTER_PAGE_VIEW));
         assertTrue(tokenRepository.findByEmailIgnoreCase(newToInvalidParams.get(EMAIL_PARAM).get(0)).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
@@ -156,7 +163,8 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(model().attributeHasFieldErrorCode(REGISTER_TO_ATTRIBUTE, EMAIL_PARAM, DUPLICATE_ERROR_CODE))
                 .andExpect(view().name(REGISTER_PAGE_VIEW));
         assertTrue(tokenRepository.findByEmailIgnoreCase(newToParams.get(EMAIL_PARAM).get(0)).isEmpty());
-        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString());
     }
 
     @Test
@@ -186,7 +194,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void confirmRegisterTokenNotFound() throws Exception {
+    void confirmRegisterWhenTokenNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
                 .param(TOKEN_PARAM, UUID.randomUUID().toString())
                 .with(csrf()))
@@ -195,7 +203,7 @@ class RegisterControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void confirmRegisterTokenExpired() throws Exception {
+    void confirmRegisterWhenTokenExpired() throws Exception {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
                 .param(TOKEN_PARAM, expiredRegisterToken.getToken())
                 .with(csrf()))

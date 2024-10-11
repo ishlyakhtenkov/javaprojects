@@ -14,9 +14,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.users.service.UserService;
 
 import java.nio.file.Files;
@@ -29,21 +29,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.CommonTestData.ENABLED_PARAM;
-import static ru.javaprojects.projector.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.users.UserTestData.*;
+import static ru.javaprojects.projector.common.CommonTestData.ENABLED_PARAM;
+import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.users.UserTestData.ADMIN_ID;
+import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.AVATARS_TEST_DATA_FILES_PATH;
+import static ru.javaprojects.projector.users.UserTestData.INVALID_PASSWORD;
+import static ru.javaprojects.projector.users.UserTestData.NEW_PASSWORD;
+import static ru.javaprojects.projector.users.UserTestData.PASSWORD_PARAM;
+import static ru.javaprojects.projector.users.UserTestData.USER_ID;
+import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
+import static ru.javaprojects.projector.users.UserTestData.admin;
+import static ru.javaprojects.projector.users.UserTestData.user;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
-import static ru.javaprojects.projector.users.web.UserManagementControllerTest.AVATARS_TEST_DATA_FILES_PATH;
 
 class UserManagementRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
     private static final String USERS_CHANGE_PASSWORD_URL = USERS_URL + "/change-password/";
 
     @Value("${content-path.avatars}")
-    private String contentPath;
+    private String avatarFilesPath;
 
     @Autowired
     private UserService service;
@@ -56,7 +64,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
 
     @Override
     public Path getContentPath() {
-        return Paths.get(contentPath);
+        return Paths.get(avatarFilesPath);
     }
 
     @Override
@@ -110,7 +118,8 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
         sessionRegistry.registerNewSession(Objects.requireNonNull(userSession2).getId(), new AuthUser(user));
         assertFalse(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
 
-        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID).with(user(new AuthUser(admin)))
+        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID)
+                .with(user(new AuthUser(admin)))
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
@@ -135,7 +144,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
     }
 
     @Test
-    void enableUnAuthorized() throws Exception {
+    void enableUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID)
                 .param(ENABLED_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -211,7 +220,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
     }
 
     @Test
-    void deleteUnAuthorized() throws Exception {
+    void deleteUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.delete(USERS_URL_SLASH + USER_ID)
                 .with(csrf()))
                 .andExpect(status().isFound())
@@ -275,7 +284,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
     }
 
     @Test
-    void changePasswordUnAuthorized() throws Exception {
+    void changePasswordUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(USERS_CHANGE_PASSWORD_URL + USER_ID)
                 .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))

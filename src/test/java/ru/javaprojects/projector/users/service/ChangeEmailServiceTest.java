@@ -59,7 +59,7 @@ class ChangeEmailServiceTest {
     }
 
     @Test
-    void changeEmailDuplicateEmail() {
+    void changeEmailDuplicate() {
         IllegalRequestDataException exception =
                 assertThrows(IllegalRequestDataException.class, () -> changeEmailService.changeEmail(USER_ID, ADMIN_MAIL));
         assertEquals("change-email.already-in-use", exception.getMessageCode());

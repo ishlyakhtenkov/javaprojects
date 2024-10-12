@@ -138,7 +138,7 @@ public class ProjectUtil {
                         project.getDockerCompose().getFileName()));
             }
             project.getDescriptionElements().stream()
-                    .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew())
+                    .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew() && de.getImage() != null)
                     .forEach(de -> {
                         String fileNameWithPrefix = de.getImage().getFileLink()
                                 .substring(de.getImage().getFileLink().lastIndexOf('/') + 1);

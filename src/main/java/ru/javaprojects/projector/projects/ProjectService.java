@@ -174,7 +174,7 @@ public class ProjectService {
                 .forEach(deTo -> uploadDeImage(deTo, project.getName()));
         oldDeImages.values().stream()
                 .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
-                .forEach(oldDe -> FileUtil.deleteFile(oldDe.getImage().getFileLink()));
+                .forEach(oldDeImage -> FileUtil.deleteFile(oldDeImage.getImage().getFileLink()));
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {

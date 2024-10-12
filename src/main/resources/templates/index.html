@@ -75,42 +75,6 @@
 
     <ownScript>
         <script src="/js/common.js?v=1"></script>
-        <script>
-            setupTooltips();
-
-            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
-
-            function setupTooltips() {
-                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-            }
-
-            function likeProject(likeBtn, id) {
-                if (authUser != null) {
-                    let likeIcon = $(likeBtn).find('i');
-                    let likeCounter = $(likeBtn).find('span');
-                    let liked = likeIcon.attr('class').includes('fa-regular');
-                    $.ajax({
-                        url: `/projects/${id}/like`,
-                        type: "PATCH",
-                        data: { id: id, liked: liked },
-                    }).done(function() {
-                        likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
-                        likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
-                    }).fail(function(data) {
-                        likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
-                        handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
-                    });
-                } else  {
-                    $('.like-btn').popover('hide');
-                    $(likeBtn).popover('toggle');
-                }
-            }
-
-            $('.like-btn').on('shown.bs.popover', () => {
-                $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
-            });
-        </script>
+        <script src="/js/index.js?v=1"></script>
     </ownScript>
 </th:block>

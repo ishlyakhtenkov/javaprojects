@@ -37,6 +37,8 @@ public abstract class TokenService<T extends Token> {
     }
 
     protected void sendEmail(String to, String token) {
+        Assert.notNull(to, "to must not be null");
+        Assert.notNull(token, "token must not be null");
         Locale locale = LocaleContextHolder.getLocale();
         String linkText = messageSource.getMessage(messageCodePrefix + ".message-link-text", null, locale);
         String messageSubject = messageSource.getMessage(messageCodePrefix + ".message-subject", null, locale);

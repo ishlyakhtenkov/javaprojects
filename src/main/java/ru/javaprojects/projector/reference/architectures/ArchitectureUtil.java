@@ -1,7 +1,7 @@
 package ru.javaprojects.projector.reference.architectures;
 
 import lombok.experimental.UtilityClass;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.util.AppUtil;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 
@@ -9,7 +9,7 @@ import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 public class ArchitectureUtil {
     public static Architecture createNewFromTo(ArchitectureTo architectureTo, String architectureFilesPath) {
         return new Architecture(null, architectureTo.getName(), architectureTo.getDescription(),
-                Util.createFile(architectureTo::getLogo, architectureFilesPath, architectureTo.getName() + "/"));
+                AppUtil.createFile(architectureTo::getLogo, architectureFilesPath, architectureTo.getName() + "/"));
     }
 
     public static ArchitectureTo asTo(Architecture architecture) {
@@ -23,7 +23,8 @@ public class ArchitectureUtil {
         architecture.setName(architectureTo.getName());
         architecture.setDescription(architectureTo.getDescription());
         if (architectureTo.getLogo() != null && !architectureTo.getLogo().isEmpty()) {
-            architecture.setLogo(Util.createFile(architectureTo::getLogo, architectureFilesPath, architectureTo.getName() + "/"));
+            architecture.setLogo(AppUtil.createFile(architectureTo::getLogo, architectureFilesPath,
+                    architectureTo.getName() + "/"));
         } else if (!architecture.getName().equalsIgnoreCase(architectureOldName)) {
             architecture.getLogo().setFileLink(architectureFilesPath + normalizePath(architecture.getName() + "/" +
                     architecture.getLogo().getFileName()));

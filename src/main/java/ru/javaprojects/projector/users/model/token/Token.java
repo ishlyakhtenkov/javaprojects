@@ -17,7 +17,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Token extends BaseEntity {
-
     @NotBlank
     @Column(name = "token", nullable = false)
     protected String token;

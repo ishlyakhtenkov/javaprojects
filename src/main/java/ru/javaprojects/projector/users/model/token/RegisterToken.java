@@ -21,7 +21,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class RegisterToken extends Token {
-
     @Email
     @NotBlank
     @NoHtml

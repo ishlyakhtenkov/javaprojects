@@ -56,6 +56,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
     }
 
     public PasswordResetToken checkToken(String token) {
+        Assert.notNull(token, "token must not be null");
         PasswordResetToken passwordResetToken = getAndCheckToken(token);
         checkUserDisabled(passwordResetToken);
         return passwordResetToken;

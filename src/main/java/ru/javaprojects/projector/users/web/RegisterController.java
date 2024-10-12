@@ -49,8 +49,8 @@ public class RegisterController {
         log.info("register {}", registerTo);
         checkNew(registerTo);
         service.register(registerTo);
-        redirectAttributes.addFlashAttribute("action", messageSource.getMessage("register.check-your-email", null,
-                LocaleContextHolder.getLocale()));
+        redirectAttributes.addFlashAttribute("action",
+                messageSource.getMessage("register.check-your-email", null, LocaleContextHolder.getLocale()));
         return "redirect:/login";
     }
 
@@ -58,8 +58,8 @@ public class RegisterController {
     public String confirmRegister(@RequestParam String token, RedirectAttributes redirectAttributes) {
         log.info("confirm register by token={}", token);
         service.confirmRegister(token);
-        redirectAttributes.addFlashAttribute("action", messageSource.getMessage("register.email-confirmed", null,
-                LocaleContextHolder.getLocale()));
+        redirectAttributes.addFlashAttribute("action",
+                messageSource.getMessage("register.email-confirmed", null, LocaleContextHolder.getLocale()));
         return "redirect:/login";
     }
 }

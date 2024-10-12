@@ -7,6 +7,6 @@ public enum ElementType {
 
     @Override
     public String toString() {
-        return StringUtils.capitalize(name().replace('_', ' ').toLowerCase());
+        return StringUtils.capitalize(name().toLowerCase());
     }
 }

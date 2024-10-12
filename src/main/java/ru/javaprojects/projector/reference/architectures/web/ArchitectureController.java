@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
@@ -63,7 +63,9 @@ public class ArchitectureController {
                                  RedirectAttributes redirectAttributes) {
         boolean isNew = architectureTo.isNew();
         if (result.hasErrors()) {
-            Util.keepInputtedFile(architectureTo.getLogo(), Util.IS_IMAGE_FILE,  () -> architectureTo.setLogo(null));
+            if (architectureTo.getLogo() != null) {
+                architectureTo.getLogo().keepInputtedFile(FileTo.IS_IMAGE_FILE, () -> architectureTo.setLogo(null));
+            }
             if (!isNew) {
                 model.addAttribute("architectureName", service.get(architectureTo.getId()).getName());
             }

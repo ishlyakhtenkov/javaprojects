@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.LocalizedException;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.util.AppUtil;
 
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class UIExceptionHandler {
     public @ResponseBody ProblemDetail maxUploadSizeException(HttpServletRequest req, MaxUploadSizeExceededException e) {
         log.warn("MaxUploadSizeExceededException at request {}: {}", req.getRequestURI(), e.toString());
         ErrorResponse.Builder builder = ErrorResponse.builder(e, HttpStatus.UNPROCESSABLE_ENTITY,
-                Util.getRootCause(e).getLocalizedMessage());
+                AppUtil.getRootCause(e).getLocalizedMessage());
         return builder.build().getBody();
     }
 
@@ -47,7 +47,7 @@ public class UIExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
-        Throwable rootCause = Util.getRootCause(e);
+        Throwable rootCause = AppUtil.getRootCause(e);
         String message = rootCause.getLocalizedMessage();
         if (e.getClass().isAssignableFrom(DataIntegrityViolationException.class)) {
             Optional<String> messageCode = DbConstraintMessageCodes.getMessageCode(message);

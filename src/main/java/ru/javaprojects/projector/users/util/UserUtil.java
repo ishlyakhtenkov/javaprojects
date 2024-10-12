@@ -3,7 +3,7 @@ package ru.javaprojects.projector.users.util;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.UserTo;
@@ -37,7 +37,8 @@ public class UserUtil {
         user.setName(userTo.getName());
         user.setRoles(userTo.getRoles());
         if (!user.getEmail().equalsIgnoreCase(oldEmail) && user.getAvatar() != null) {
-            user.getAvatar().setFileLink(avatarFilesPath + normalizePath(user.getEmail() + "/" + user.getAvatar().getFileName()));
+            user.getAvatar().setFileLink(avatarFilesPath + normalizePath(user.getEmail() + "/" +
+                    user.getAvatar().getFileName()));
         }
         return user;
     }
@@ -45,7 +46,7 @@ public class UserUtil {
     public static User updateFromTo(User user, ProfileTo profileTo, String avatarFilesPath) {
         user.setName(profileTo.getName());
         if (profileTo.getAvatar() != null && !profileTo.getAvatar().isEmpty()) {
-            user.setAvatar(Util.createFile(profileTo::getAvatar, avatarFilesPath, user.getEmail() + "/"));
+            user.setAvatar(AppUtil.createFile(profileTo::getAvatar, avatarFilesPath, user.getEmail() + "/"));
         }
         return user;
     }

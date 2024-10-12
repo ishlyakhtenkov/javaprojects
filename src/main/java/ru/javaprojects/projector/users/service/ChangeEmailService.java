@@ -58,6 +58,7 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
 
     @Transactional
     public void confirmChangeEmail(String token, long userId) {
+        Assert.notNull(token, "token must not be null");
         ChangeEmailToken changeEmailToken = getAndCheckToken(token);
         User user = changeEmailToken.getUser();
         if (user.id() != userId) {

@@ -34,8 +34,8 @@ public class ArchitectureService {
     public Architecture getByName(String name) {
         Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Not found architecture with name =" + name, "notfound.architecture",
-                        new Object[]{name}));
+                .orElseThrow(() -> new NotFoundException("Not found architecture with name =" + name,
+                        "notfound.architecture",  new Object[]{name}));
     }
 
     public Architecture create(ArchitectureTo architectureTo) {
@@ -66,7 +66,8 @@ public class ArchitectureService {
                 FileUtil.deleteFile(oldLogoFileLink);
             }
         } else if (!architecture.getName().equalsIgnoreCase(oldName)) {
-            FileUtil.moveFile(oldLogoFileLink, architectureFilesPath + FileUtil.normalizePath(architecture.getName()));
+            FileUtil.moveFile(oldLogoFileLink, architectureFilesPath +
+                    FileUtil.normalizePath(architecture.getName()));
         }
     }
 

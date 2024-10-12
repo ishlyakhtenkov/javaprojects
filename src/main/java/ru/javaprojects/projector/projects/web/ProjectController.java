@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.javaprojects.projector.common.util.TreeNode;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.model.Like;
@@ -90,7 +90,7 @@ public class ProjectController {
     }
 
     private List<Comment> sortCommentsAsTree(List<Comment> comments) {
-        List<CommentTreeNode> roots = Util.makeTree(comments, CommentTreeNode::new);
+        List<CommentTreeNode> roots = AppUtil.makeTree(comments, CommentTreeNode::new);
         List<Comment> sortedComments = new ArrayList<>();
         roots.forEach(root -> {
             sortedComments.add(root.comment);

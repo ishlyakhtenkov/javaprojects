@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
-import static ru.javaprojects.projector.common.util.Util.createFile;
+import static ru.javaprojects.projector.common.util.AppUtil.createFile;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
 @Component

@@ -22,7 +22,7 @@ public class UserManagementRestController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@PathVariable long id, @RequestParam boolean enabled) {
-        log.info((enabled ? "enable" : "disable") + " user with id={}", id);
+        log.info("{} user with id={}", enabled ? "enable" : "disable", id);
         if (id == AuthUser.authId()) {
             throw new IllegalRequestDataException("Forbidden to disable yourself, userId=" + id,
                     "user.forbidden-disable-yourself", null);

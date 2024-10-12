@@ -187,8 +187,8 @@ public class ProjectService {
                     }
                 });
 
-        updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getLogo().getFileLink(), project.getName(),
-                projectOldName, LOGO_DIR);
+        updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getLogo().getFileLink(),
+                project.getName(), projectOldName, LOGO_DIR);
         updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getCardImage().getFileLink(),
                 project.getName(), projectOldName, CARD_IMG_DIR);
         updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink,
@@ -197,8 +197,8 @@ public class ProjectService {
         return project;
     }
 
-    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink, String projectName,
-                                              String projectOldName, String dirName) {
+    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink,
+                                              String projectName, String projectOldName, String dirName) {
         if (fileTo != null && !fileTo.isEmpty()) {
             if (oldFileLink != null && !oldFileLink.equalsIgnoreCase(currentFileLink)) {
                 FileUtil.deleteFile(oldFileLink);
@@ -250,8 +250,8 @@ public class ProjectService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
                 new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
         if (comment.getAuthor().id() == userId) {
-            throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId + ", commentId=" + commentId,
-                    "comment.forbidden-like-yourself", null);
+            throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId +
+                    ", commentId=" + commentId, "comment.forbidden-like-yourself", null);
         }
         userService.get(userId);
         likeRepository.findByObjectIdAndUserId(commentId, userId).ifPresentOrElse(like -> {

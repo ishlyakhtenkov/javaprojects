@@ -33,7 +33,8 @@ public class UniqueEmailValidator implements org.springframework.validation.Vali
                     .ifPresent(dbUser -> {
                         if (user.isNew() || !Objects.equals(user.getId(), dbUser.getId())) {
                             errors.rejectValue("email", DUPLICATE_ERROR_CODE,
-                                    messageSource.getMessage("duplicate.email", null, LocaleContextHolder.getLocale()));
+                                    messageSource.getMessage("duplicate.email", null,
+                                            LocaleContextHolder.getLocale()));
                         }
                     });
         }

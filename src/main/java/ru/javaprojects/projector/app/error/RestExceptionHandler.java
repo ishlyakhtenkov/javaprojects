@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.LocalizedException;
 import ru.javaprojects.projector.common.error.NotFoundException;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.users.error.UserDisabledException;
 
 import java.util.LinkedHashMap;
@@ -81,7 +81,7 @@ public class RestExceptionHandler {
             }
             return createProblemDetail(e, status, message);
         } else {
-            Throwable root = Util.getRootCause(e);
+            Throwable root = AppUtil.getRootCause(e);
             log.error("Exception at request {}: {}", req.getRequestURI(), root);
             return createProblemDetail(e, HttpStatus.INTERNAL_SERVER_ERROR, root.getLocalizedMessage());
         }

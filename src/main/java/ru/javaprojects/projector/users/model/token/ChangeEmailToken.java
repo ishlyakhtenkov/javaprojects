@@ -22,14 +22,12 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class ChangeEmailToken extends UserToken {
-
     @Email
     @NotBlank
     @NoHtml
     @Size(max = 128)
     @Column(name = "new_email", nullable = false)
     private String newEmail;
-
 
     public ChangeEmailToken(Long id, String token, Date expiryDate, String newEmail, User user) {
         super(id, token, expiryDate, user);

@@ -46,7 +46,7 @@ public class JacksonObjectMapper extends ObjectMapper {
         return MAPPER;
     }
 
-    private class StringTrimModule extends SimpleModule {
+    private static class StringTrimModule extends SimpleModule {
         public StringTrimModule() {
             addDeserializer(String.class, new StdScalarDeserializer<>(String.class) {
                 @Override

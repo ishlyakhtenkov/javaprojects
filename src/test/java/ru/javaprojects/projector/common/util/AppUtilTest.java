@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UtilTest {
+class AppUtilTest {
     private static final String FILES_PATH = "/content/inputted-files/";
     private static final String DIR = "files/";
     private static final String ORIGINAL_FILE_NAME = "New project logo.png";
@@ -34,7 +34,7 @@ class UtilTest {
         File expected = new File(FileUtil.normalizePath(ORIGINAL_FILE_NAME), FILES_PATH +
                 FileUtil.normalizePath(DIR + ORIGINAL_FILE_NAME));
         Supplier<FileTo> fileToExtractor = () -> new FileTo(null, null, INPUTTED_FILE, null);
-        File created = Util.createFile(fileToExtractor, FILES_PATH, DIR);
+        File created = AppUtil.createFile(fileToExtractor, FILES_PATH, DIR);
         Assertions.assertThat(created).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -43,13 +43,13 @@ class UtilTest {
         File expected = new File(FileUtil.normalizePath(ORIGINAL_FILE_NAME), FILES_PATH +
                 FileUtil.normalizePath(DIR + ORIGINAL_FILE_NAME));
         Supplier<FileTo> fileToExtractor = () -> new FileTo(ORIGINAL_FILE_NAME, null, null, new byte[] {1, 2, 3, 4});
-        File created = Util.createFile(fileToExtractor, FILES_PATH, DIR);
+        File created = AppUtil.createFile(fileToExtractor, FILES_PATH, DIR);
         Assertions.assertThat(created).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void makeTree() {
-        assertEquals(treeNodes, Util.makeTree(nodes, TestTreeNode::new));
+        assertEquals(treeNodes, AppUtil.makeTree(nodes, TestTreeNode::new));
     }
 
     private record TestTreeNode(Node node, List<TestTreeNode> subNodes) implements TreeNode<Node, TestTreeNode> {

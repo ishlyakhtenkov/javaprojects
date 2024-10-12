@@ -45,6 +45,7 @@ public class RegisterService extends TokenService<RegisterToken> {
 
     @Transactional
     public void confirmRegister(String token) {
+        Assert.notNull(token, "token must not be null");
         RegisterToken registerToken = getAndCheckToken(token);
         userRepository.save(new User(null, registerToken.getEmail(), registerToken.getName(), registerToken.getPassword(),
                 true, Set.of(Role.USER)));

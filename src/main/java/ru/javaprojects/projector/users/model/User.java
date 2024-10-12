@@ -24,7 +24,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPassword {
-
     @Email
     @NotBlank
     @NoHtml

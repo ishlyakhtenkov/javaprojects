@@ -13,7 +13,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.app.AuthUser;
-import ru.javaprojects.projector.common.util.Util;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.ChangeEmailService;
 import ru.javaprojects.projector.users.service.PasswordResetService;
@@ -58,8 +58,8 @@ public class ProfileController {
         }
         log.info("reset password by token={}", passwordResetTo.getToken());
         passwordResetService.resetPassword(passwordResetTo);
-        redirectAttributes.addFlashAttribute("action", messageSource.getMessage("password-reset.success-reset", null,
-                LocaleContextHolder.getLocale()));
+        redirectAttributes.addFlashAttribute("action",
+                messageSource.getMessage("password-reset.success-reset", null, LocaleContextHolder.getLocale()));
         return "redirect:/login";
     }
 
@@ -81,7 +81,9 @@ public class ProfileController {
     public String update(@Valid ProfileTo profileTo, BindingResult result, RedirectAttributes redirectAttributes) {
         profileTo.setId(AuthUser.authId());
         if (result.hasErrors()) {
-            Util.keepInputtedFile(profileTo.getAvatar(), Util.IS_IMAGE_FILE,  () -> profileTo.setAvatar(null));
+            if (profileTo.getAvatar() != null) {
+                profileTo.getAvatar().keepInputtedFile(FileTo.IS_IMAGE_FILE, () -> profileTo.setAvatar(null));
+            }
             return "profile/profile-edit-form";
         }
         log.info("update {}", profileTo);
@@ -99,8 +101,8 @@ public class ProfileController {
     public String confirmChangeEmail(@RequestParam String token, RedirectAttributes redirectAttributes) {
         log.info("confirm change email for user with id={} by token={}", AuthUser.authId(), token);
         changeEmailService.confirmChangeEmail(token, AuthUser.authId());
-        redirectAttributes.addFlashAttribute("action", messageSource.getMessage("change-email.email-confirmed", null,
-                LocaleContextHolder.getLocale()));
+        redirectAttributes.addFlashAttribute("action",
+                messageSource.getMessage("change-email.email-confirmed", null, LocaleContextHolder.getLocale()));
         return "redirect:/profile";
     }
 }

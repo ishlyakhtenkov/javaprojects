@@ -7,6 +7,6 @@ public enum Usage {
 
     @Override
     public String toString() {
-        return StringUtils.capitalize(name().replace('_', ' ').toLowerCase());
+        return StringUtils.capitalize(name().toLowerCase());
     }
 }

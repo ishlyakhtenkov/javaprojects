@@ -12,12 +12,21 @@ import ru.javaprojects.projector.common.validation.NoHtml;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileTo {
+    public static Predicate<MultipartFile> IS_IMAGE_FILE =
+            inputtedFile -> Objects.requireNonNull(inputtedFile.getContentType()).contains("image/");
+
+    public static Predicate<MultipartFile> IS_YAML_FILE =
+            inputtedFile -> Objects.requireNonNull(inputtedFile.getOriginalFilename()).endsWith(".yaml") ||
+                    Objects.requireNonNull(inputtedFile.getOriginalFilename()).endsWith(".yml");
+
     @Nullable
     @NoHtml
     @Size(max = 128)
@@ -55,19 +64,33 @@ public class FileTo {
                 (inputtedFileBytes == null || inputtedFileBytes.length == 0 || fileName == null || fileName.isBlank());
     }
 
-    public void keepInputtedFile() {
-        try {
-            setInputtedFileBytes(getInputtedFile().getBytes());
-            setFileName(getInputtedFile().getOriginalFilename());
-            setInputtedFile(null);
-            setFileLink(null);
-        } catch (IOException e) {
-            throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
-                    new Object[]{getInputtedFile().getOriginalFilename()});
+    public void keepInputtedFile(Predicate<MultipartFile> keepCondition, Runnable notKeptAction) {
+        if (inputtedFile != null && !inputtedFile.isEmpty()) {
+            if (keepCondition.test(inputtedFile)) {
+                keepInputtedFile();
+            } else {
+                notKeptAction.run();
+            }
+        }
+    }
+
+    private void keepInputtedFile() {
+        if (inputtedFile != null) {
+            try {
+                setInputtedFileBytes(inputtedFile.getBytes());
+                setFileName(inputtedFile.getOriginalFilename());
+                setInputtedFile(null);
+                setFileLink(null);
+            } catch (IOException e) {
+                throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                        new Object[]{inputtedFile.getOriginalFilename()});
+            }
+        } else {
+            throw new IllegalRequestDataException("Inputted file must not be null", "file.failed-to-upload", null);
         }
     }
 
     public String getRealFileName() {
-        return inputtedFile != null && !inputtedFile.isEmpty() ? inputtedFile.getOriginalFilename() : getFileName();
+        return inputtedFile != null && !inputtedFile.isEmpty() ? inputtedFile.getOriginalFilename() : fileName;
     }
 }

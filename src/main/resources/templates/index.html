@@ -5,11 +5,11 @@
 <!--/*@thymesVar id="commentsTotal" type="java.util.Map"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Home',appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css',
+<th:block th:replace="~{fragments/main::page(title='home',appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css',
             activeMenuItem=${'projectsDropdown'})}">
     <appMain>
         <span th:if="${projects.isEmpty()}">
-            <h5 class="alert alert-warning mt-2">No projects found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{no-projects-found}">No projects found.</h5>
         </span>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3 px-xl-5">
@@ -18,10 +18,10 @@
                     <div class="ratio" style="--bs-aspect-ratio: 50%;">
                         <img th:src="@{${project.cardImage.fileLink}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
                     </div>
-                    <div>
+                    <div th:title="#{architecture}">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                              class="float-end bg-light rounded-circle p-2"
-                             data-bs-toggle="tooltip" th:title="${project.architecture.name + ' architecture'}"
+                             data-bs-toggle="tooltip" th:title="${project.architecture.name}"
                              onmouseenter="$(this).removeClass('p-2').addClass('p-1')"
                              onmouseleave="$(this).removeClass('p-1').addClass('p-2')"
                              width="48" height="48"
@@ -35,7 +35,7 @@
                         <span class="card-text" th:text="${project.shortDescription}">Short description</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
-                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" title="Comments"
+                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
@@ -43,12 +43,12 @@
                                 <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
-                                   data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
-                                   data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true">
-                                    <i class="fa-heart" title="Like"
+                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{only-for-auth-users}+ '</div>'"
+                                  th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
+                                    <i class="fa-heart" th:title="#{like}"
                                        th:classappend="${likedProjectsIds == null || !likedProjectsIds.contains(project.id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
-                                    <span class="text-secondary small" title="Like" th:text="${project.likes.size()}"></span>
+                                    <span class="text-secondary small" th:title="#{like}" th:text="${project.likes.size()}"></span>
                                 </a>
                             </div>
                             <div class="col-4 text-end">
@@ -64,7 +64,8 @@
                                type="button" target="_blank" class="me-1 mb-1" style="text-decoration: none"
                                th:title="${technology.name}">
                                 <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
-                                     width="24" height="24" />
+                                     width="24" height="24" onmouseenter="$(this).addClass('opacity-75')"
+                                     onmouseleave="$(this).removeClass('opacity-75')" />
                             </a>
                         </div>
                     </div>

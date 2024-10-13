@@ -2,17 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title='profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
-                <li class="breadcrumb-item">
+            <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-home me-1"></i>Home
+                        <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="#{profile}">Profile</li>
             </ol>
         </nav>
 
@@ -31,30 +31,32 @@
                                         <div class="mb-1 position-relative">
                                             <span class="h4" th:text="${user.name}" id="userName">Name</span>
                                             <span th:if="${authUser.isAdmin()}" class="badge rounded-pill bg-danger-subtle text-dark"
-                                                  style="position: absolute; margin-top: -5px;">Admin</span>
+                                                  style="position: absolute; margin-top: -5px;" th:text="#{admin}">Admin</span>
                                         </div>
                                         <div th:text="${user.email}" class="mb-1">Email</div>
-                                        <div class="small" th:text="'Registered: ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}" style="font-style: italic">Registered</div>
+                                        <div class="small" th:text="#{registered} + ': ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"
+                                             style="font-style: italic">Registered</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-2 col-sm-1 ps-0 text-end">
                                 <button type="button"
                                         class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
-                                        title="Edit" data-bs-toggle="dropdown" aria-expanded="false">
+                                        th:title="#{edit}" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a type="button" class="dropdown-item" th:href="@{/profile/edit}">Edit profile</a></li>
+                                    <li><a type="button" class="dropdown-item" th:href="@{/profile/edit}"
+                                           th:text="#{edit-profile}">Edit profile</a></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#changePasswordModal">Change password</button></li>
+                                                data-bs-target="#changePasswordModal" th:text="#{change-password}">Change password</button></li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="btn-toolbar float-end" style="margin-top: -31px; position: relative">
                             <form th:action="@{/logout}" method="post">
-                                <button class="btn btn-sm btn-outline-secondary ms-2" type="submit">Logout</button>
+                                <button class="btn btn-sm btn-outline-secondary ms-2" type="submit" th:text="#{logout}">Logout</button>
                             </form>
                         </div>
                     </div>
@@ -67,7 +69,7 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header bg-light">
-                        <h5 class="modal-title">Change password</h5>
+                        <h5 class="modal-title" th:text="#{change-password}">Change password</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form onsubmit="return false;">
@@ -77,7 +79,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="currentPassword" required
                                            placeholder="Current password" />
-                                    <label for="currentPassword" class="text-muted">Current password</label>
+                                    <label for="currentPassword" class="text-muted" th:text="#{current-password}">Current password</label>
                                 </div>
                             </div>
                             <div class="input-group mt-3">
@@ -85,7 +87,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="password" required
                                            placeholder="New password" />
-                                    <label for="password" class="text-muted">New password</label>
+                                    <label for="password" class="text-muted" th:text="#{new-password}">New password</label>
                                 </div>
                             </div>
                             <div class="input-group mt-3">
@@ -93,14 +95,14 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="repeatPassword" required
                                            placeholder="Repeat password" />
-                                    <label for="repeatPassword" class="text-muted">Repeat password</label>
+                                    <label for="repeatPassword" class="text-muted" th:text="#{repeat-password}">Repeat password</label>
                                 </div>
                             </div>
                             <span id="passwordMatchError" class="text-danger text-start"></span>
                         </div>
                         <div class="float-end pe-3 pb-3">
-                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary" onclick="changePassword()" id="confirmBtn">Change</button>
+                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+                            <button type="submit" class="btn btn-primary" onclick="changePassword()" id="confirmBtn" th:text="#{change}">Change</button>
                         </div>
                     </form>
                 </div>
@@ -115,5 +117,6 @@
         <script src="/js/common.js?v=1"></script>
         <script src="/js/profile.js?v=1"></script>
         <script src="/js/check-passwords-match.js?v=1"></script>
+        <script src="/js/messages.js?v=1"></script>
     </ownScript>
 </th:block>

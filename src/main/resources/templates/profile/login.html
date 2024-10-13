@@ -3,17 +3,17 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="error" type="java.lang.String"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Sign in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title='sign-in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
-                <li class="breadcrumb-item">
+            <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-home me-1"></i>Home
+                        <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">Login</li>
+                <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="#{login}">Login</li>
             </ol>
         </nav>
 
@@ -22,7 +22,7 @@
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
                 <div class="card shadow-sm" style="border-radius: 1rem;">
                     <div class="card-body p-4 pt-3 text-center">
-                        <h3>Sign in</h3>
+                        <h3 th:text="#{sign-in}">Sign in</h3>
                         <div th:if="${error != null}">
                             <p th:text="${error}" class="alert alert-danger col-12 p-2 text-center">
                                 Bad credentials
@@ -34,7 +34,7 @@
                                 <div class="form-floating">
                                     <input type="text" id="emailInput" name="username" class="form-control" required
                                            placeholder="E-mail"/>
-                                    <label for="emailInput" class="text-muted">E-mail</label>
+                                    <label for="emailInput" class="text-muted" th:text="#{email}">E-mail</label>
                                 </div>
                             </div>
                             <div class="input-group mt-3">
@@ -42,20 +42,20 @@
                                 <div class="form-floating">
                                     <input type="password" id="passwordInput" name="password" class="form-control" required
                                            placeholder="Password" />
-                                    <label for="passwordInput" class="text-muted">Password</label>
+                                    <label for="passwordInput" class="text-muted" th:text="#{password}">Password</label>
                                 </div>
                             </div>
                             <div class="form-check text-start mt-2">
                                 <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                                <label class="form-check-label" for="rememberMe" th:text="#{remember-me}">Remember me</label>
                             </div>
                             <div class="row mt-1">
                                 <div class="col-7 col-lg-6 my-auto">
                                     <button class="btn btn-sm btn-link" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#forgotPasswordModal">Forgot your password?</button>
+                                            data-bs-target="#forgotPasswordModal" th:text="#{forgot-password}">Forgot your password?</button>
                                 </div>
                                 <div class="col-5 col-lg-6 d-grid">
-                                    <button class="btn btn-primary py-2" type="submit">Sign in</button>
+                                    <button class="btn btn-primary py-2" type="submit" th:text="#{sign-in}">Sign in</button>
                                 </div>
                             </div>
                         </form>
@@ -64,14 +64,14 @@
                             <div class="col-5">
                                 <hr>
                             </div>
-                            <div class="col-2 mt-1">
+                            <div class="col-2 mt-1" th:text="#{or}">
                                 OR
                             </div>
                             <div class="col-5">
                                 <hr>
                             </div>
                         </div>
-                        <p class="mt-1 mb-3">
+                        <p class="mt-1 mb-3" th:text="#{sign-in-with-soc-net}">
                             Sign in with social networks
                         </p>
                         <a th:href="@{/oauth2/authorization/google}" type="button" class="btn btn-secondary me-3" title="Google">
@@ -92,7 +92,7 @@
                             <i class="fa-brands fa-gitlab"></i>
                         </a>
                         <p class="mt-3 mb-0" style="font-size:0.8em">
-                            New here? <a th:href="@{/register}">Create an account</a>
+                            <span th:text="#{new-here}">New here?</span> <a th:href="@{/register}" th:text="#{create-account}">Create an account</a>
                         </p>
                     </div>
                 </div>
@@ -104,27 +104,27 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Forgot your password?</h5>
+                        <h5 class="modal-title" th:text="#{forgot-password}">Forgot your password?</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form id="forgotPasswordForm" onsubmit="return false;">
                         <div class="modal-body">
-                            <span class="mb-1">Reset your password in three easy steps!</span>
+                            <span class="mb-1" th:text="#{reset-password.three-steps}">Reset your password in three easy steps!</span>
                             <ol class="list-unstyled">
-                                <li><span class="text-primary text-medium">1. </span>Enter your email address below</li>
-                                <li><span class="text-primary text-medium">2. </span>Our system will send you a temporary link</li>
-                                <li><span class="text-primary text-medium">3. </span>Use the link to reset your password</li>
+                                <li><span class="text-primary text-medium">1. </span><span th:text="#{reset-password.first-step}">Enter your email address below</span></li>
+                                <li><span class="text-primary text-medium">2. </span><span th:text="#{reset-password.second-step}">Our system will send you a temporary link</span></li>
+                                <li><span class="text-primary text-medium">3. </span><span th:text="#{reset-password.third-step}">Use the link to reset your password</span></li>
                             </ol>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="email" required placeholder="Email" />
-                                    <label for="email" class="text-muted">Email</label>
+                                    <label for="email" class="text-muted" th:text="#{email}">Email</label>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-warning" onclick="forgotPassword()">Reset password</button>
+                            <button type="submit" class="btn btn-warning" onclick="forgotPassword()" th:text="#{reset-password}">Reset password</button>
                         </div>
                     </form>
                 </div>

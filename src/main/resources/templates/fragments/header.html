@@ -20,23 +20,26 @@
             <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                  aria-expanded="false" id="management">
-                Management
+                <span th:text="#{management}">Management</span>
               </a>
               <ul class="dropdown-menu w-50">
-                <li><a class="dropdown-item" th:href="@{/management/users}" id="users">Users</a></li>
-                <li><a class="dropdown-item" th:href="@{/management/projects}" id="projects">Projects</a></li>
+                <li><a class="dropdown-item" th:href="@{/management/users}" id="users" th:text="#{users}">Users</a></li>
+                <li><a class="dropdown-item" th:href="@{/management/projects}" id="projects"
+                       th:text="#{projects}">Projects</a></li>
                 <li class="dropend">
-                  <a class="dropdown-item dropdown-toggle" id="reference" style="cursor: pointer;">Reference</a>
+                  <a class="dropdown-item dropdown-toggle" id="reference" style="cursor: pointer;" th:text="#{reference}">Reference</a>
                   <ul class="dropdown-menu dropdown-submenu">
-                    <li><a class="dropdown-item" th:href="@{/management/reference/technologies}" id="technologies">Technologies</a></li>
-                    <li><a class="dropdown-item" th:href="@{/management/reference/architectures}" id="architectures">Architectures</a></li>
+                    <li><a class="dropdown-item" th:href="@{/management/reference/technologies}" id="technologies"
+                           th:text="#{technologies}">Technologies</a></li>
+                    <li><a class="dropdown-item" th:href="@{/management/reference/architectures}" id="architectures"
+                           th:text="#{architectures}">Architectures</a></li>
                   </ul>
                 </li>
               </ul>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="projectsDropdown">
-                Projects
+                <span th:text="#{projects}">Projects</span>
               </a>
               <ul class="dropdown-menu">
                 <li th:each="project : ${enabledProjects}">
@@ -46,12 +49,57 @@
               </ul>
             </li>
             <li class="nav-item d-lg-none">
-              <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/login}">Login</a>
-              <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}">Profile</a>
+              <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/login}" th:text="#{login}">Login</a>
+              <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}" th:text="#{profile}">Profile</a>
+            </li>
+            <li class="nav-item dropdown d-lg-none">
+              <button type="button"
+                      class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                      title="Language" data-bs-toggle="dropdown" aria-expanded="false">
+                <img th:src="@{'/images/' + ${#locale.language == 'en' ? 'en-flag.svg' : 'ru-flag.svg'}}"
+                     alt="Flag logo" width="20" height="20" />
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="icon-link dropdown-item" type="button" onclick="changeLocale('ru')">
+                    <img th:src="@{/images/ru-flag.svg}" alt="Ru flag logo" width="20" height="20" />
+                    <span>Русский</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="icon-link dropdown-item" type="button" onclick="changeLocale('en')">
+                    <img th:src="@{/images/en-flag.svg}" alt="En flag logo" width="20" height="20" />
+                    <span>English</span>
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
+          <div class="nav-item dropdown me-3 d-none d-lg-block">
+            <button type="button"
+                    class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
+                    th:title="#{language}" data-bs-toggle="dropdown" aria-expanded="false">
+              <img th:src="@{'/images/' + ${#locale.language == 'en' ? 'en-flag.svg' : 'ru-flag.svg'}}" alt="Flag logo" width="20" height="20"
+                   onmouseenter="$(this).addClass('opacity-75')"
+                   onmouseleave="$(this).removeClass('opacity-75')" />
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="icon-link dropdown-item" type="button" onclick="changeLocale('ru')">
+                  <img th:src="@{/images/ru-flag.svg}" alt="Ru flag logo" width="20" height="20" />
+                  <span>Русский</span>
+                </a>
+              </li>
+              <li>
+                <a class="icon-link dropdown-item" type="button" onclick="changeLocale('en')">
+                  <img th:src="@{/images/en-flag.svg}" alt="En flag logo" width="20" height="20" />
+                  <span>English</span>
+                </a>
+              </li>
+            </ul>
+          </div>
           <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button"
-             class="btn btn-outline-warning d-none d-lg-block px-3 ">Login</a>
+             class="btn btn-outline-warning d-none d-lg-block px-3" th:text="#{login}">Login</a>
           <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" id="profileButton"
              class="d-none d-lg-block rounded-circle" style="width: 40px; height: 40px;"
              th:classappend="${authUser?.user.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"

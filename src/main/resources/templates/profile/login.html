@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="error" type="java.lang.String"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='sign-in',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title=#{sign-in},appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">

@@ -20,7 +20,7 @@
             <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                  aria-expanded="false" id="management">
-                <span th:text="#{management}">Management</span>
+                <span th:text="#{label.management}">Management</span>
               </a>
               <ul class="dropdown-menu w-50">
                 <li><a class="dropdown-item" th:href="@{/management/users}" id="users" th:text="#{users}">Users</a></li>

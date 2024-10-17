@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="technologies" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Technologies',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{technologies},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
@@ -14,7 +14,9 @@
                 <div class="col-sm-5 text-start">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb"  style="font-size: 1.5em;">
-                            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-gears me-1"></i>Technologies</li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="fa-solid fa-gears me-1"></i><span th:text="#{technologies}"></span>
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -23,10 +25,10 @@
                         <form class="d-flex" role="search" th:action="@{/management/reference/technologies}" method="get">
                             <div class="input-group">
                                 <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
-                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search technologies..." aria-label="Search">
+                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{search-technologies} + '...'" aria-label="Search">
                             </div>
                         </form>
-                        <a th:href="@{/management/reference/technologies/add}" type="button" title="Add technology"
+                        <a th:href="@{/management/reference/technologies/add}" type="button" th:title="#{add-technology}"
                            class="btn btn-outline-primary ms-2"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -35,19 +37,19 @@
 
         <!-- Technologies table -->
         <span th:if="${technologies.isEmpty()}">
-            <h5 class="alert alert-warning mt-2">No technologies found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{no-technologies-found} + '.'">No technologies found.</h5>
         </span>
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
                 <thead class="table-light thead-border-top-none">
                 <tr>
-                    <th class="col-3 border-right-none">Name</th>
-                    <th class="col-1 text-center border-right-none">Logo</th>
-                    <th class="col-3 border-right-none">Official website</th>
-                    <th class="col-2 border-right-none">Usage</th>
-                    <th class="col-2 border-right-none">Priority</th>
-                    <th class="col-1 text-center">Actions</th>
+                    <th class="col-3 border-right-none" th:text="#{name}">Name</th>
+                    <th class="col-1 text-center border-right-none" th:text="#{logo}">Logo</th>
+                    <th class="col-3 border-right-none" th:text="#{off-website}">Official website</th>
+                    <th class="col-2 border-right-none" th:text="#{usage}">Usage</th>
+                    <th class="col-2 border-right-none" th:text="#{priority}">Priority</th>
+                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -62,18 +64,19 @@
                            th:utext="${technology.name + ' website<i class=''fa-solid fa-arrow-right-long ms-1''></i> '}"
                            target="_blank">Site url</a>
                     </td>
-                    <td th:text="${technology.usage}"></td>
-                    <td th:text="${technology.priority}"></td>
+                    <td th:text="#{${technology.usage.name.toLowerCase()}}"></td>
+                    <td th:text="#{${technology.priority.name.toLowerCase()}}"></td>
                     <td class="text-center">
-                        <a th:href="@{'/management/reference/technologies/edit/' + ${technology.id}}" type="button" title="Edit technology"
+                        <a th:href="@{'/management/reference/technologies/edit/' + ${technology.id}}" type="button" th:title="#{edit-technology}"
                            class="btn-link link-underline-opacity-0 link-success">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete technology"
-                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this technology?"
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{delete-technology}"
+                           data-bs-toggle="popover" data-bs-trigger="focus"
                            th:data-name="${technology.name}"
-                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${technology.name} + '\' onclick=\'deleteTechnology(this, ' + ${technology.id} + ')\'>Delete</button></div>'">
+                           th:data-bs-title="#{delete-this-technology} + '?'"
+                           th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
+                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${technology.name} + '&quot; onclick=&quot;deleteTechnology(this, ' + ${technology.id} + ')&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
@@ -100,7 +103,7 @@
         </div>
         <div th:if="${!technologies.isEmpty()}" class="row">
             <div class="col text-center text-md-end">
-                Show <span sd:page-size-selector="javascript"></span> entries
+                <span th:text="#{show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{entries}">entries</span>
             </div>
         </div>
     </appMain>

@@ -6,7 +6,7 @@
 <!--/*@thymesVar id="users" type="java.util.List"*/-->
 <!--/*@thymesVar id="onlineUsersIds" type="java.util.Set"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Users',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{users},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
@@ -16,7 +16,9 @@
                 <div class="col-sm-4 text-start">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb"  style="font-size: 1.5em;">
-                            <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-people-group me-1"></i>Users</li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="fas fa-people-group me-1"></i><span th:text="#{users}"></span>
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -25,10 +27,10 @@
                         <form class="d-flex" role="search" th:action="@{/management/users}" method="get">
                             <div class="input-group">
                                 <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
-                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" placeholder="Search users..." aria-label="Search">
+                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{search-users} + '...'" aria-label="Search">
                             </div>
                         </form>
-                        <a th:href="@{/management/users/add}" type="button" title="Add user"
+                        <a th:href="@{/management/users/add}" type="button" th:title="#{add-user}"
                            class="btn btn-outline-primary ms-2"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -37,20 +39,20 @@
 
         <!-- Users table -->
         <span th:if="${users.isEmpty()}">
-            <h5 class="alert alert-warning mt-2">No users found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{no-users-found} + '.'"></h5>
         </span>
 
         <div th:if="${!users.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
                 <thead class="table-light thead-border-top-none">
                 <tr>
-                    <th class="col-3 border-right-none">Name</th>
-                    <th class="col-3 border-right-none">Email</th>
-                    <th class="col-1 border-right-none text-center">Avatar</th>
-                    <th class="col-1 border-right-none">Roles</th>
-                    <th class="col-2 border-right-none">Registered</th>
-                    <th class="col-1 text-center border-right-none">Online</th>
-                    <th class="col-1 text-center">Actions</th>
+                    <th class="col-3 border-right-none" th:text="#{name}">Name</th>
+                    <th class="col-3 border-right-none" th:text="#{email}">Email</th>
+                    <th class="col-1 border-right-none text-center" th:text="#{avatar}">Avatar</th>
+                    <th class="col-1 border-right-none" th:text="#{roles}">Roles</th>
+                    <th class="col-2 border-right-none" th:text="#{registered}">Registered</th>
+                    <th class="col-1 text-center border-right-none" th:text="#{online}">Online</th>
+                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -66,17 +68,17 @@
                     </td>
                     <td th:text="${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}"></td>
                     <td  th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
-                    <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id) ? 'online' : 'offline'}"
+                    <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id)} ? #{online} : #{offline}"
                         th:classappend="${onlineUsersIds.contains(user.id) ? 'text-success' : 'text-danger'}">
                         <span><i class="fa-solid fa-circle-dot"></i></span>
                     </td>
                     <td class="text-center">
-                        <a th:href="@{'/management/users/edit/' + ${user.id}}" type="button" title="Edit user"
+                        <a th:href="@{'/management/users/edit/' + ${user.id}}" type="button" th:title="#{edit-user}"
                            class="btn-link link-underline-opacity-0 link-success">
                             <i class="fa-solid fa-user-pen"></i>
                         </a>
                         <a type="button" class="btn-link link-underline-opacity-0 link-warning ms-3"
-                           title="Change user password" data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                           th:title="#{change-user-password}" data-bs-toggle="modal" data-bs-target="#changePasswordModal"
                            th:data-name="${user.name}"
                            th:data-id="${user.id}">
                             <i class="fa-solid fa-key"></i>
@@ -84,14 +86,15 @@
                         <span class="form-switch tiny ms-3">
                             <input type="checkbox" role="switch" class="form-check-input"
                                    style="cursor: pointer; margin-top: 6px;" th:checked="${user.enabled}"
-                                   th:data-name="${user.name}" th:title="${(user.enabled ? 'Disable' : 'Enable') + ' user'}"
+                                   th:data-name="${user.name}" th:title="${user.enabled} ? #{disable-user} : #{enable-user}"
                                    th:onclick="|enableUser(this, '${user.id}')|" />
                         </span>
-                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete user"
-                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this user?"
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{delete-user}"
+                           data-bs-toggle="popover" data-bs-trigger="focus"
                            th:data-name="${user.name}"
-                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${user.name} + '\' onclick=\'deleteUser(this, ' + ${user.id} + ')\'>Delete</button></div>'">
+                           th:data-bs-title="#{delete-this-user} + '?'"
+                           th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
+                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${user.name} + '&quot; onclick=&quot;deleteUser(this, ' + ${user.id} + ')&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-user-xmark"></i>
                         </a>
                     </td>
@@ -118,7 +121,7 @@
         </div>
         <div th:if="${!users.isEmpty()}" class="row">
             <div class="col text-center text-md-end">
-                Show <span sd:page-size-selector="javascript"></span> entries
+                <span th:text="#{show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{entries}">entries</span>
             </div>
         </div>
 
@@ -139,7 +142,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="password" required
                                            placeholder="New password" />
-                                    <label for="password" class="text-muted">New password</label>
+                                    <label for="password" class="text-muted" th:text="#{new-password}">New password</label>
                                 </div>
                             </div>
                             <div class="input-group mt-2">
@@ -147,14 +150,14 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="repeatPassword" required
                                            placeholder="Repeat password" />
-                                    <label for="repeatPassword" class="text-muted">Repeat password</label>
+                                    <label for="repeatPassword" class="text-muted" th:text="#{repeat-password}">Repeat password</label>
                                 </div>
                             </div>
                             <span id="passwordMatchError" class="text-danger text-start"></span>
                         </div>
                         <div class="float-end pe-3 pb-3">
-                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary" onclick="changePassword()" id="confirmBtn">Change</button>
+                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+                            <button type="submit" class="btn btn-primary" onclick="changePassword()" id="confirmBtn" th:text="#{change}">Change</button>
                         </div>
                     </form>
                 </div>

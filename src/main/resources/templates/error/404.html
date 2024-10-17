@@ -6,9 +6,9 @@
         <div class="text-center">
             <h1 class="display-1 fw-bold">404</h1>
             <p class="fs-3">
-                <span class="text-danger">Opps!</span> Not Found.
+                <span class="text-danger" th:text="#{opps} + '!'">Opps!</span> <span th:text="#{not-found} + '.'"></span>
             </p>
-            <p class="lead">
+            <p class="lead" th:text="#{page-not-found}">
                 The page was not found
             </p>
         </div>

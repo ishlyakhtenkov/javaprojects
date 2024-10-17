@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="commentsTotal" type="java.util.Map"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='home',appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css',
+<th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css',
             activeMenuItem=${'projectsDropdown'})}">
     <appMain>
         <span th:if="${projects.isEmpty()}">

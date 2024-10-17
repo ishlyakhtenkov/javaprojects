@@ -16,7 +16,7 @@ function forgotPassword() {
             forgotPasswordModal.modal('toggle');
             emailSentModal.modal('toggle');
         }).fail(function(data) {
-            handleError(data, 'Failed to reset password');
+            handleError(data, getMessage('user.failed-to-reset-password'));
         });
     }
 }

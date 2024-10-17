@@ -4,9 +4,9 @@ function deleteProject(delButton, id) {
         url: `/management/projects/${id}`,
         type: "DELETE"
     }).done(function() {
-        deleteTableRow(id, `Project ${name} has been deleted`);
+        deleteTableRow(id, getMessage('project.deleted', [name]));
     }).fail(function(data) {
-        handleError(data, `Failed to delete project ${name}`);
+        handleError(data, getMessage('project.failed-to-delete', [name]));
     });
 }
 
@@ -18,10 +18,10 @@ function enableProject(checkbox, id) {
         type: "PATCH",
         data: "enabled=" + enabled
     }).done(function() {
-        successToast(`Project ${name} has been ${enabled ? 'enabled' : 'disabled'}`);
-        $(checkbox).prop('title', `${enabled ? 'Disable' : 'Enable'} project`);
+        successToast(getMessage(enabled ? 'project.enabled' : 'project.disabled', [name]));
+        $(checkbox).prop('title', getMessage(enabled ? 'project.disable' : 'project.enable'));
     }).fail(function(data) {
         $(checkbox).prop('checked', !enabled);
-        handleError(data, `Failed to ${enabled ? 'enable' : 'disable'} project ${name}`);
+        handleError(data, getMessage(enabled ? 'project.failed-to-enable' : 'project.failed-to-disable', [name]));
     });
 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="registerTo" type="ru.javaprojects.projector.users.to.RegisterTo"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='register',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title=#{register},appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">

@@ -4,8 +4,8 @@ function deleteTechnology(delButton, id) {
         url: `/management/reference/technologies/${id}`,
         type: "DELETE"
     }).done(function() {
-        deleteTableRow(id, `Technology ${name} has been deleted`);
+        deleteTableRow(id, getMessage('technology.deleted', [name]));
     }).fail(function(data) {
-        handleError(data, `Failed to delete technology ${name}`);
+        handleError(data, getMessage('technology.failed-to-delete', [name]));
     });
 }

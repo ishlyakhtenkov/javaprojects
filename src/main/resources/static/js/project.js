@@ -67,13 +67,13 @@ function reply(replyBtn) {
         $('#replyCommentDiv').remove();
         let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
         let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
-            .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
+            .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
             .attr('rows', '2');
 
         let sendReplyBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
-            .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html('Send');
+            .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html(getMessage('button.send'));
         let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
-            .attr('type', 'button').attr('id', 'cancelReplyBtn').html('Cancel');
+            .attr('type', 'button').attr('id', 'cancelReplyBtn').html(getMessage('button.cancel'));
         div.append(textArea);
         div.append(sendReplyBtn);
         div.append(cancelReplyBtn);
@@ -142,7 +142,7 @@ function postComment(parentId, text, successCallBack) {
         }).done((comment) => {
             successCallBack(comment);
         }).fail(function(data) {
-            handleError(data, `Failed to add comment`);
+            handleError(data, getMessage('comment.failed-to-add'));
         });
 
     }
@@ -192,7 +192,7 @@ function generateCommentDiv(comment, isReply) {
 
     let buttonsDiv = $('<div></div>').addClass('comment-actions');
     let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none with-popover')
-        .attr('type', 'button').attr('title', 'Like');
+        .attr('type', 'button').attr('title', getMessage('button.like'));
     let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
     let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
     likeBtn.append(likeSymbol);
@@ -204,7 +204,7 @@ function generateCommentDiv(comment, isReply) {
     let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
         .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
     let replySymbol = $('<i></i>').addClass('fa-solid fa-share fa-rotate-270 small');
-    let replySpan = $('<span></span>').addClass('text-secondary small').text(' Reply').css('margin-left', '-3px');
+    let replySpan = $('<span></span>').addClass('text-secondary small').text(` ${getMessage('button.reply')}`).css('margin-left', '-3px');
     replyBtn.on('click', () => {
         reply(replyBtn);
     })
@@ -212,7 +212,7 @@ function generateCommentDiv(comment, isReply) {
     replyBtn.append(replySpan);
 
     let editBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
-        .attr('type', 'button').attr('title', 'Edit').attr('id', `editBtn-${comment.id}`);
+        .attr('type', 'button').attr('title', getMessage('button.edit')).attr('id', `editBtn-${comment.id}`);
     let editSymbol = $('<i></i>').addClass('fa-solid fa-pencil text-secondary small');
     editBtn.on('click', () => {
         edit(editBtn);
@@ -222,10 +222,10 @@ function generateCommentDiv(comment, isReply) {
     let deleteCommentBtn = $('<a></a>').addClass('delete-comment-btn btn-link text-decoration-none ms-2')
         .attr('type', 'button').attr('id', `deleteCommentBtn-${comment.id}`)
         .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus')
-        .attr('data-bs-title', 'Delete comment?')
-        .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>Cancel</a><a type='button' class='btn btn-sm btn-danger del-com'>Delete</a></div>"`)
+        .attr('data-bs-title', `${getMessage('comment.delete')}?`)
+        .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>${getMessage('button.cancel')}</a><a type='button' class='btn btn-sm btn-danger del-com'>${getMessage('button.delete')}</a></div>"`)
         .attr('data-bs-html', 'true')
-    let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger small');
+    let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger small').attr('title', getMessage('button.delete'));
     deleteCommentBtn.append(deleteSymbol);
     deleteCommentBtn.on('shown.bs.popover', (event) => {
         $('.del-com').on('click', () => deleteComment($(event.target).attr('id').replace('deleteCommentBtn-', '')));
@@ -265,7 +265,7 @@ function like(likeBtn, commentId) {
             likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
         }).fail(function(data) {
             likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
-            handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+            handleError(data, getMessage(liked ? 'comment.failed-to-like' : 'comment.failed-to-dislike'));
         });
     } else  {
         $('.with-popover').popover('hide');
@@ -287,7 +287,7 @@ function likeProject(likeBtn, id) {
             likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
         }).fail(function(data) {
             likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
-            handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+            handleError(data, getMessage(liked ? 'project.failed-to-like' : 'project.failed-to-dislike'));
         });
     } else  {
         $('.with-popover').popover('hide');
@@ -304,10 +304,10 @@ function deleteComment(id) {
     }).done(function() {
         let commentDiv = $(`#comment-${id}`);
         commentDiv.find('.comment-text').addClass('text-secondary').css('font-style', 'italic')
-            .text('Comment has been deleted');
+            .text(getMessage('comment.deleted'));
         commentDiv.find('.comment-actions').remove();
     }).fail(function(data) {
-        handleError(data, `Failed to delete comment`);
+        handleError(data, getMessage('comment.failed-to-delete'));
     });
 }
 
@@ -334,13 +334,13 @@ function edit(editBtn) {
         .css('margin-left', commentDiv.css('margin-left'))
         .attr('id', `editCommentDiv-${commentId}`);
     let textArea = $('<textarea></textarea>').addClass('form-control bg-light pb-4')
-        .attr('id', 'editComment').css('resize', 'none').attr('placeholder', 'Leave a comment here')
+        .attr('id', 'editComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
         .attr('rows', '2').text(text);
 
     let sendEditBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
-        .attr('type', 'button').attr('id', 'sendEditBtn').html('Send');
+        .attr('type', 'button').attr('id', 'sendEditBtn').html(getMessage('button.send'));
     let cancelEditBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
-        .attr('type', 'button').attr('id', 'cancelEditBtn').html('Cancel');
+        .attr('type', 'button').attr('id', 'cancelEditBtn').html(getMessage('button.cancel'));
     div.append(textArea);
     div.append(sendEditBtn);
     div.append(cancelEditBtn);
@@ -372,7 +372,7 @@ function edit(editBtn) {
             commentDiv.attr('hidden', false);
             $('#newCommentDiv').removeClass('opacity-50');
         }).fail(function(data) {
-            handleError(data, `Failed to update comment`);
+            handleError(data, getMessage('comment.failed-to-update'));
         });
     });
 }

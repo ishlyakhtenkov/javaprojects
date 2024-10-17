@@ -18,7 +18,7 @@ function previewFile() {
 function deleteFile() {
     filePreviewDiv.attr('hidden', true);
     fileInputDiv.html('<div class="input-group custom-file-button">' +
-        '<label class="input-group-text bg-light w-25" for="fileInput">Logo</label>' +
+        `<label class="input-group-text bg-light w-25" for="fileInput">${getMessage('label.logo')}</label>` +
         '<input type="file" accept="image/*" id="fileInput" name="logo.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewFile()" /></div>').attr('hidden', false);
 }

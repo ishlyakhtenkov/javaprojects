@@ -17,7 +17,7 @@ function checkPasswordsMatch() {
     if (repeatPasswordValue.length && passwordValue !== repeatPasswordValue) {
         password.addClass('is-invalid');
         repeatPassword.addClass('is-invalid');
-        passwordMatchError.html(`<li>${getMessage('passwords-not-match')}</li>`);
+        passwordMatchError.html(`<li>${getMessage('user.passwords-not-match')}</li>`);
         confirmButton.prop('disabled', true);
     }
     else {

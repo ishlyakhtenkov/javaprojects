@@ -4,8 +4,8 @@ function deleteArchitecture(delButton, id) {
         url: `/management/reference/architectures/${id}`,
         type: "DELETE"
     }).done(function() {
-        deleteTableRow(id, `Architecture ${name} has been deleted`);
+        deleteTableRow(id, getMessage('architecture.deleted', [name]));
     }).fail(function(data) {
-        handleError(data, `Failed to delete architecture ${name}`);
+        handleError(data, getMessage('architecture.failed-to-delete', [name]));
     });
 }

@@ -19,9 +19,9 @@ function changePassword() {
             data: { currentPassword: currentPassword, newPassword: password },
         }).done(function () {
             changePasswordModal.modal('toggle');
-            successToast('Password has been changed');
+            successToast(getMessage('user.password-changed'));
         }).fail(function(data) {
-            handleError(data, 'Failed to change password');
+            handleError(data, getMessage('user.failed-to-change-password'));
         });
     }
 }

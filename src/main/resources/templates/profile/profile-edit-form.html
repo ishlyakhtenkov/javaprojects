@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="profileTo" type="ru.javaprojects.projector.users.to.ProfileTo"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title=#{profile},appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
@@ -84,7 +84,7 @@
 
                                     <div class="btn-toolbar float-end mt-sm-3 pt-sm-1">
                                         <button class="btn btn btn-secondary" type="button" onclick="cancel()" th:text="#{cancel}">Cancel</button>
-                                        <button class="btn btn btn-primary ms-2" type="submit" th:text="#{save}" style="min-width: 70px;">Save</button>
+                                        <button class="btn btn btn-primary ms-2" type="submit" th:text="#{save}" style="min-width: 72px;">Save</button>
                                     </div>
                                 </div>
                             </div>

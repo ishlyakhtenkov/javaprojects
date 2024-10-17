@@ -8,7 +8,7 @@ changePasswordModal.on('show.bs.modal', function(e) {
     $(e.currentTarget).find('#changePasswordModalUserId').val($(e.relatedTarget).data('id'));
     let userName = $(e.relatedTarget).data('name');
     $(e.currentTarget).find('#changePasswordModalUserName').val(userName);
-    $(e.currentTarget).find('#changePasswordModalLabel').text(`Change password for ${userName}`);
+    $(e.currentTarget).find('#changePasswordModalLabel').text(getMessage('user.change-password-for', [userName]));
 });
 
 function changePassword() {
@@ -23,9 +23,9 @@ function changePassword() {
             data: "password=" + password
         }).done(function () {
             changePasswordModal.modal('toggle');
-            successToast(`Password for ${name} has been changed`);
+            successToast(getMessage('user.password-changed-for', [name]));
         }).fail(function (data) {
-            handleError(data, `Failed to change password for ${name}`);
+            handleError(data, getMessage('user.failed-to-change-password-for', [name]));
         });
     }
 }
@@ -38,14 +38,14 @@ function enableUser(checkbox, id) {
         type: "PATCH",
         data: "enabled=" + enabled
     }).done(function() {
-        successToast(`User ${name} has been ${enabled ? 'enabled' : 'disabled'}`);
-        $(checkbox).prop('title', `${enabled ? 'Disable' : 'Enable'} user`);
+        successToast(getMessage(enabled ? 'user.enabled' : 'user.disabled', [name]));
+        $(checkbox).prop('title', getMessage(enabled ? 'user.disable' : 'user.enable'));
         if (!enabled) {
             $(`#row-${id}`).find('.online-circle').removeClass('text-success').addClass('text-danger').prop('title', 'offline');
         }
     }).fail(function(data) {
         $(checkbox).prop('checked', !enabled);
-        handleError(data, `Failed to ${enabled ? 'enable' : 'disable'} user ${name}`);
+        handleError(data, getMessage(enabled ? 'user.failed-to-enable' : 'user.failed-to-disable', [name]));
     });
 }
 
@@ -55,8 +55,8 @@ function deleteUser(delButton, id) {
         url: `/management/users/${id}`,
         type: "DELETE"
     }).done(function() {
-        deleteTableRow(id, `User ${name} has been deleted`);
+        deleteTableRow(id, getMessage('user.deleted', [name]));
     }).fail(function(data) {
-        handleError(data, `Failed to delete user ${name}`);
+        handleError(data, getMessage('user.failed-to-delete', [name]));
     });
 }

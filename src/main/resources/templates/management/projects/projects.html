@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Projects',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{projects},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!--Add button -->
@@ -14,13 +14,15 @@
                 <div class="col-7 text-start">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb"  style="font-size: 1.5em;">
-                            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-layer-group me-1"></i>Projects</li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="fa-solid fa-layer-group me-1"></i><span th:text="#{projects}"></span>
+                            </li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-5">
                     <div class="float-end">
-                        <a th:href="@{/management/projects/add}" type="button" title="Add project"
+                        <a th:href="@{/management/projects/add}" type="button" th:title="#{add-project}"
                            class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -29,19 +31,19 @@
 
         <!-- Projects table -->
         <span th:if="${projects.isEmpty()}">
-            <h5 class="alert alert-warning mt-2">No projects found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{no-projects-found} + '.'">No projects found.</h5>
         </span>
 
         <div th:if="${!projects.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
                 <thead class="table-light thead-border-top-none">
                 <tr>
-                    <th class="col-3 border-right-none">Name</th>
-                    <th class="col-1 text-center border-right-none">Logo</th>
-                    <th class="col-2 border-right-none">Dev period</th>
-                    <th class="col-3 border-right-none">Architecture</th>
-                    <th class="col-2 border-right-none">Priority</th>
-                    <th class="col-1 text-center">Actions</th>
+                    <th class="col-3 border-right-none" th:text="#{name}">Name</th>
+                    <th class="col-1 text-center border-right-none" th:text="#{logo}">Logo</th>
+                    <th class="col-2 border-right-none" th:text="#{dev-period}">Dev period</th>
+                    <th class="col-3 border-right-none" th:text="#{architecture}">Architecture</th>
+                    <th class="col-2 border-right-none" th:text="#{priority}">Priority</th>
+                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -52,27 +54,29 @@
                     </td>
                     <td th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></td>
                     <td th:text="${project.architecture.name}"></td>
-                    <td th:text="${project.priority}"></td>
+                    <td th:text="#{${project.priority.name.toLowerCase()}}"></td>
                     <td class="text-center">
-                        <a th:href="@{'/management/projects/' + ${project.id}}" type="button" title="Show project"
+                        <a th:href="@{'/management/projects/' + ${project.id}}" type="button" th:title="#{show-project}"
                            class="btn-link link-underline-opacity-0 link-secondary">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </a>
-                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" type="button" title="Edit project"
+                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" type="button" th:title="#{edit-project}"
                            class="btn-link link-underline-opacity-0 link-success ms-3">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                         <span class="form-switch tiny ms-3">
                             <input type="checkbox" role="switch" class="form-check-input"
                                    style="cursor: pointer; margin-top: 6px;" th:checked="${project.enabled}"
-                                   th:data-name="${project.name}" th:title="${(project.enabled ? 'Disable' : 'Enable') + ' project'}"
+                                   th:data-name="${project.name}"
+                                   th:title="${project.enabled} ? #{disable-project} : #{enable-project}"
                                    th:onclick="|enableProject(this, '${project.id}')|" />
                         </span>
-                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete project"
-                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this project?"
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{delete-project}"
+                           data-bs-toggle="popover" data-bs-trigger="focus"
                            th:data-name="${project.name}"
-                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${project.name} + '\' onclick=\'deleteProject(this, ' + ${project.id} + ')\'>Delete</button></div>'">
+                           th:data-bs-title="#{delete-this-project} + '?'"
+                           th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
+                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${project.name} + '&quot; onclick=&quot;deleteProject(this, ' + ${project.id} + ')&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='profile',appMain=~{::appMain}, ownScript=~{::ownScript})}">
+<th:block th:replace="~{fragments/main::page(title=#{profile},appMain=~{::appMain}, ownScript=~{::ownScript})}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
@@ -117,6 +117,5 @@
         <script src="/js/common.js?v=1"></script>
         <script src="/js/profile.js?v=1"></script>
         <script src="/js/check-passwords-match.js?v=1"></script>
-        <script src="/js/messages.js?v=1"></script>
     </ownScript>
 </th:block>

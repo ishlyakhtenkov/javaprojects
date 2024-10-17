@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="architectures" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title='Architectures',appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{architectures},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!--Add button -->
@@ -13,13 +13,15 @@
                 <div class="col-7 text-start">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb"  style="font-size: 1.5em;">
-                            <li class="breadcrumb-item active" aria-current="page"><i class="fa-solid fa-cubes me-1"></i>Architectures</li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <i class="fa-solid fa-cubes me-1"></i><span th:text="#{architectures}"></span>
+                            </li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-5">
                     <div class="float-end">
-                        <a th:href="@{/management/reference/architectures/add}" type="button" title="Add architecture"
+                        <a th:href="@{/management/reference/architectures/add}" type="button" th:title="#{add-architecture}"
                            class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -28,17 +30,17 @@
 
         <!-- Architectures table -->
         <span th:if="${architectures.isEmpty()}">
-            <h5 class="alert alert-warning mt-2">No architectures found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{no-architectures-found} + '.'">No architectures found.</h5>
         </span>
 
         <div th:if="${!architectures.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
                 <thead class="table-light thead-border-top-none">
                 <tr>
-                    <th class="col-2 border-right-none">Name</th>
-                    <th class="col-1 text-center border-right-none">Logo</th>
-                    <th class="col-9 border-right-none">Description</th>
-                    <th class="col-1 text-center">Actions</th>
+                    <th class="col-2 border-right-none" th:text="#{name}">Name</th>
+                    <th class="col-1 text-center border-right-none" th:text="#{logo}">Logo</th>
+                    <th class="col-9 border-right-none" th:text="#{description}">Description</th>
+                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -50,14 +52,15 @@
                     <td class="text-wrap" th:text="${architecture.description}"></td>
                     <td class="text-center">
                         <a th:href="@{'/management/reference/architectures/edit/' + ${architecture.id}}" type="button"
-                           title="Edit architecture" class="btn-link link-underline-opacity-0 link-success">
+                           th:title="#{edit-architecture}" class="btn-link link-underline-opacity-0 link-success">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" title="Delete architecture"
-                           data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Delete this architecture?"
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{delete-architecture}"
+                           data-bs-toggle="popover" data-bs-trigger="focus"
                            th:data-name="${architecture.name}"
-                           th:attr="data-bs-content='<div class=\'text-center\'><button class=\'btn btn-sm btn-secondary me-2\'>Cancel</button>' +
-                             '<button class=\'btn btn-sm btn-danger\' data-name=\'' + ${architecture.name} + '\' onclick=\'deleteArchitecture(this, ' + ${architecture.id} + ')\'>Delete</button></div>'">
+                           th:data-bs-title="#{delete-this-architecture} + '?'"
+                           th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
+                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${architecture.name} + '&quot; onclick=&quot;deleteArchitecture(this, ' + ${architecture.id} + ')&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

@@ -26,7 +26,7 @@ function csrfSafeMethod(method) {
 
 function successToast(message) {
     $.toast({
-        heading: 'Success',
+        heading: getMessage('label.success'),
         text: message,
         showHideTransition: 'slide',
         position: 'bottom-right',
@@ -37,7 +37,7 @@ function successToast(message) {
 
 function failToast(message) {
     $.toast({
-        heading: 'Error',
+        heading: getMessage('label.error'),
         text: message,
         showHideTransition: 'slide',
         position: 'bottom-right',

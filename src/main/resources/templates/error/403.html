@@ -6,9 +6,9 @@
         <div class="text-center">
             <h1 class="display-1 fw-bold">403</h1>
             <p class="fs-3">
-                <span class="text-danger">Opps!</span> Access denied.
+                <span class="text-danger" th:text="#{opps} + '!'">Opps!</span> <span th:text="#{access-denied} + '.'"></span>
             </p>
-            <p class="lead">
+            <p class="lead" th:text="#{not-permission-to-access}">
                 You do not have permission to access this page
             </p>
         </div>

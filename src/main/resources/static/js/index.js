@@ -25,7 +25,7 @@ function likeProject(likeBtn, id) {
             likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
         }).fail(function(data) {
             likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
-            handleError(data, `Failed to ${liked ? 'like' : 'dislike'} project`);
+            handleError(data,  getMessage(liked ? 'project.failed-to-like' : 'project.failed-to-dislike'));
         });
     } else  {
         $('.like-btn').popover('hide');

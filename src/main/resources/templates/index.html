@@ -9,7 +9,7 @@
             activeMenuItem=${'projectsDropdown'})}">
     <appMain>
         <span th:if="${projects.isEmpty()}">
-            <h5 class="alert alert-warning mt-2" th:text="#{no-projects-found}">No projects found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{project.no-projects-found}">No projects found.</h5>
         </span>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3 px-xl-5">
@@ -35,7 +35,7 @@
                         <span class="card-text" th:text="${project.shortDescription}">Short description</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
-                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comments}"
+                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
@@ -43,7 +43,7 @@
                                 <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
-                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{only-for-auth-users}+ '</div>'"
+                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
                                     <i class="fa-heart" th:title="#{like}"
                                        th:classappend="${likedProjectsIds == null || !likedProjectsIds.contains(project.id) ?

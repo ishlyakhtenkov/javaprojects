@@ -9,7 +9,7 @@
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/management/reference/technologies}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-gears me-1"></i><span th:text="#{technologies}"></span>
+                        <i class="fas fa-gears me-1"></i><span th:text="#{technology.technologies}"></span>
                     </a>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${technologyTo.isNew()} ? #{add} : #{edit}">Add/Edit</li>
@@ -21,7 +21,7 @@
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${technologyTo.isNew()} ? #{new-technology} :
+                        <h3 class="text-center" th:text="${technologyTo.isNew()} ? #{technology.new} :
                             ${technologyName == null ? technologyTo.name : technologyName}">Create/Edit technology</h3>
                     </div>
                     <form th:action="@{/management/reference/technologies}" method="post" th:object="${technologyTo}" enctype="multipart/form-data">
@@ -54,9 +54,9 @@
                                        th:title="#{check-url}" id="urlCheck" target="_blank">
                                         <i class="fa-solid fa-up-right-from-square ms-1"></i>
                                     </a>
-                                    <input type="url" id="urlInput" th:field="*{url}"
+                                    <input type="text" id="urlInput" th:field="*{url}"
                                            th:class="${#fields.hasErrors('url')} ? 'form-control is-invalid' : 'form-control'"
-                                           required th:placeholder="#{off-website}" />
+                                           required th:placeholder="#{technology.off-website}" />
                                 </div>
                                 <span th:if="${#fields.hasErrors('url')}">
                                     <ul>
@@ -68,9 +68,9 @@
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text d-inline-block text-truncate w-25"
-                                          th:text="#{usage}">Usage</span>
+                                          th:text="#{technology.usage}">Usage</span>
                                     <select class="form-control selectpicker border" data-style="btn-white"
-                                            th:field="*{usage}" th:title="#{usage}" required>
+                                            th:field="*{usage}" th:title="#{technology.usage}" required>
                                         <option th:each="usage : ${usages}"
                                                 th:value="${usage.name}"
                                                 th:text="#{${usage.name.toLowerCase()}}">
@@ -92,7 +92,7 @@
                                             th:field="*{priority}" th:title="#{priority}" required>
                                         <option th:each="priority : ${priorities}"
                                                 th:value="${priority.name}"
-                                                th:text="#{${priority.name.toLowerCase()}}">
+                                                th:text="#{'priority.' + ${priority.name.toLowerCase()}}">
                                         </option>
                                     </select>
                                 </div>
@@ -123,7 +123,7 @@
                                 <div th:if="${technologyTo.logo == null ||
                                     (technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null)}"
                                      class="input-group custom-file-button">
-                                    <label class="input-group-text bg-light w-25" for="fileInput">Logo</label>
+                                    <label class="input-group-text bg-light w-25" for="fileInput" th:text="#{logo}">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                            class="form-control text-muted"
                                            th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"

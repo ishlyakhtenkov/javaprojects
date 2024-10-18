@@ -3,7 +3,6 @@ package ru.javaprojects.projector.reference.architectures.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -37,9 +36,6 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
 
     @Autowired
     private ArchitectureService architectureService;
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Override
     public Path getContentPath() {
@@ -88,7 +84,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(ARCHITECTURES_URL_SLASH + NOT_EXISTING_ID));
     }

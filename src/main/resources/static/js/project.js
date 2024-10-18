@@ -71,9 +71,9 @@ function reply(replyBtn) {
             .attr('rows', '2');
 
         let sendReplyBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
-            .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html(getMessage('button.send'));
+            .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html(getMessage('comment.send'));
         let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
-            .attr('type', 'button').attr('id', 'cancelReplyBtn').html(getMessage('button.cancel'));
+            .attr('type', 'button').attr('id', 'cancelReplyBtn').html(getMessage('cancel'));
         div.append(textArea);
         div.append(sendReplyBtn);
         div.append(cancelReplyBtn);
@@ -192,7 +192,7 @@ function generateCommentDiv(comment, isReply) {
 
     let buttonsDiv = $('<div></div>').addClass('comment-actions');
     let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none with-popover')
-        .attr('type', 'button').attr('title', getMessage('button.like'));
+        .attr('type', 'button').attr('title', getMessage('like'));
     let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
     let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
     likeBtn.append(likeSymbol);
@@ -204,7 +204,7 @@ function generateCommentDiv(comment, isReply) {
     let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
         .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
     let replySymbol = $('<i></i>').addClass('fa-solid fa-share fa-rotate-270 small');
-    let replySpan = $('<span></span>').addClass('text-secondary small').text(` ${getMessage('button.reply')}`).css('margin-left', '-3px');
+    let replySpan = $('<span></span>').addClass('text-secondary small').text(` ${getMessage('comment.reply')}`).css('margin-left', '-3px');
     replyBtn.on('click', () => {
         reply(replyBtn);
     })
@@ -212,7 +212,7 @@ function generateCommentDiv(comment, isReply) {
     replyBtn.append(replySpan);
 
     let editBtn = $('<a></a>').addClass('btn-link text-decoration-none ms-2')
-        .attr('type', 'button').attr('title', getMessage('button.edit')).attr('id', `editBtn-${comment.id}`);
+        .attr('type', 'button').attr('title', getMessage('edit')).attr('id', `editBtn-${comment.id}`);
     let editSymbol = $('<i></i>').addClass('fa-solid fa-pencil text-secondary small');
     editBtn.on('click', () => {
         edit(editBtn);
@@ -223,9 +223,9 @@ function generateCommentDiv(comment, isReply) {
         .attr('type', 'button').attr('id', `deleteCommentBtn-${comment.id}`)
         .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus')
         .attr('data-bs-title', `${getMessage('comment.delete')}?`)
-        .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>${getMessage('button.cancel')}</a><a type='button' class='btn btn-sm btn-danger del-com'>${getMessage('button.delete')}</a></div>"`)
+        .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>${getMessage('cancel')}</a><a type='button' class='btn btn-sm btn-danger del-com'>${getMessage('delete')}</a></div>"`)
         .attr('data-bs-html', 'true')
-    let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger small').attr('title', getMessage('button.delete'));
+    let deleteSymbol = $('<i></i>').addClass('fa-solid fa-trash-can text-danger small').attr('title', getMessage('delete'));
     deleteCommentBtn.append(deleteSymbol);
     deleteCommentBtn.on('shown.bs.popover', (event) => {
         $('.del-com').on('click', () => deleteComment($(event.target).attr('id').replace('deleteCommentBtn-', '')));
@@ -338,9 +338,9 @@ function edit(editBtn) {
         .attr('rows', '2').text(text);
 
     let sendEditBtn = $('<a></a>').addClass('btn btn-link text-decoration-none float-end pe-2').css('margin-top', '-35px')
-        .attr('type', 'button').attr('id', 'sendEditBtn').html(getMessage('button.send'));
+        .attr('type', 'button').attr('id', 'sendEditBtn').html(getMessage('comment.send'));
     let cancelEditBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
-        .attr('type', 'button').attr('id', 'cancelEditBtn').html(getMessage('button.cancel'));
+        .attr('type', 'button').attr('id', 'cancelEditBtn').html(getMessage('cancel'));
     div.append(textArea);
     div.append(sendEditBtn);
     div.append(cancelEditBtn);

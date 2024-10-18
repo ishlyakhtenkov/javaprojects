@@ -39,3 +39,5 @@ content-path:
   architectures: ./content/architectures/
   projects: ./content/projects/
   avatars: ./content/avatars/
+
+default-locale: en

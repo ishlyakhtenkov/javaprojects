@@ -5,8 +5,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -59,10 +58,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
 
     @Value("${change-email.confirm-url}")
     private String changeEmailConfirmUrl;
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private UserService userService;
 
@@ -104,8 +100,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
                 .param(TOKEN_PARAM, NOT_EXISTING_TOKEN)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("password-reset.token-not-found", null,
-                        LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("reset-password.token-not-found", null, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -113,8 +110,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
                 .param(TOKEN_PARAM, expiredPasswordResetToken.getToken())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("reset-password.token-expired", null, getLocale()), TokenException.class));
     }
 
     @Test
@@ -131,9 +128,10 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_RESET_PASSWORD_URL)
                 .param(TOKEN_PARAM, disabledUserPasswordResetToken.getToken())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("user.disabled",
-                        new Object[]{disabledUserPasswordResetToken.getUser().getEmail()},
-                        LocaleContextHolder.getLocale()), UserDisabledException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("user.disabled",
+                                new Object[]{disabledUserPasswordResetToken.getUser().getEmail()}, getLocale()),
+                        UserDisabledException.class));
     }
 
     @Test
@@ -144,8 +142,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("password-reset.success-reset",
-                        null, LocaleContextHolder.getLocale())));
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("reset-password.success",
+                        null, getLocale())));
         assertTrue(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(passwordResetToken.getUser().id()).getPassword()));
         assertTrue(passwordResetTokenRepository.findByToken(passwordResetToken.getToken()).isEmpty());
     }
@@ -156,8 +154,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .param(TOKEN_PARAM, NOT_EXISTING_TOKEN)
                 .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("password-reset.token-not-found", null,
-                        LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("reset-password.token-not-found", null, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -166,8 +165,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .param(TOKEN_PARAM, expiredPasswordResetToken.getToken())
                 .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("password-reset.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("reset-password.token-expired", null, getLocale()), TokenException.class));
         assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD,
                 userService.get(expiredPasswordResetToken.getUser().id()).getPassword()));
     }
@@ -178,9 +177,10 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .param(TOKEN_PARAM, disabledUserPasswordResetToken.getToken())
                 .param(PASSWORD_PARAM, NEW_PASSWORD)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("user.disabled",
-                        new Object[]{disabledUserPasswordResetToken.getUser().getEmail()},
-                        LocaleContextHolder.getLocale()), UserDisabledException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("user.disabled",
+                                new Object[]{disabledUserPasswordResetToken.getUser().getEmail()}, getLocale()),
+                        UserDisabledException.class));
         assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD,
                 userService.get(disabledUserPasswordResetToken.getUser().id()).getPassword()));
     }
@@ -247,7 +247,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("change-email.email-confirmed",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
         User updated = userService.get(USER2_ID);
         assertEquals(changeEmailToken.getNewEmail(), updated.getEmail());
@@ -272,8 +272,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_CONFIRM_CHANGE_EMAIL_URL)
                 .param(TOKEN_PARAM, UUID.randomUUID().toString())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("change-email.token-not-found", null,
-                        LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("change-email.token-not-found", null, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -282,8 +283,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_CONFIRM_CHANGE_EMAIL_URL)
                 .param(TOKEN_PARAM, expiredChangeEmailToken.getToken())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("change-email.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("change-email.token-expired", null, getLocale()), TokenException.class));
         assertNotEquals(expiredChangeEmailToken.getNewEmail(), userService.get(ADMIN_ID).getEmail());
     }
 
@@ -293,8 +294,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.get(PROFILE_CONFIRM_CHANGE_EMAIL_URL)
                 .param(TOKEN_PARAM, changeEmailToken.getToken())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("change-email.token-not-belongs", null,
-                        LocaleContextHolder.getLocale()), TokenException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("change-email.token-not-belongs", null, getLocale()), TokenException.class));
         assertNotEquals(changeEmailToken.getNewEmail(), userService.get(ADMIN_ID).getEmail());
     }
 
@@ -330,7 +331,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
-                       null, LocaleContextHolder.getLocale())));
+                       null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
@@ -352,14 +353,14 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated.confirm-email",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
 
         ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
         assertTrue(createdToken.getExpiryDate().after(new Date()));
-        Locale locale = LocaleContextHolder.getLocale();
+        Locale locale = getLocale();
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
         String changeEmailMessageText = messageSource.getMessage("change-email.message-text", null, locale);
@@ -381,7 +382,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(updatedProfileUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
@@ -400,7 +401,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(PROFILE_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
         assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());

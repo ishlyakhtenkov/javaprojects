@@ -5,8 +5,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -44,10 +43,7 @@ class RegisterControllerTest extends AbstractControllerTest {
 
     @MockBean
     private MailSender mailSender;
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private RegisterTokenRepository tokenRepository;
 
@@ -84,12 +80,12 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         RegisterToken createdToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
         assertTrue(createdToken.getExpiryDate().after(new Date()));
         assertEquals(newRegisterTo.getName(), createdToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newRegisterTo.getPassword(), createdToken.getPassword()));
-        Locale locale = LocaleContextHolder.getLocale();
+        Locale locale = getLocale();
         String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
@@ -112,12 +108,12 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
-                        null, LocaleContextHolder.getLocale())));
+                        null, getLocale())));
         RegisterToken updatedToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
         assertTrue(updatedToken.getExpiryDate().after(new Date()));
         assertEquals(newRegisterTo.getName(), updatedToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newRegisterTo.getPassword(), updatedToken.getPassword()));
-        Locale locale = LocaleContextHolder.getLocale();
+        Locale locale = getLocale();
         String confirmRegisterUrlLinkText = messageSource.getMessage("register.message-link-text", null, locale);
         String confirmRegisterMessageSubject = messageSource.getMessage("register.message-subject", null, locale);
         String confirmRegisterMessageText = messageSource.getMessage("register.message-text", null, locale);
@@ -175,7 +171,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.email-confirmed", null,
-                        LocaleContextHolder.getLocale())));
+                        getLocale())));
         assertTrue(tokenRepository.findByToken(registerToken.getToken()).isEmpty());
         User created = userService.getByEmail(registerToken.getEmail());
         User newUser = getNewUser();
@@ -198,8 +194,8 @@ class RegisterControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
                 .param(TOKEN_PARAM, UUID.randomUUID().toString())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("register.token-not-found", null,
-                        LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("register.token-not-found", null, getLocale()), NotFoundException.class));
     }
 
     @Test
@@ -207,8 +203,8 @@ class RegisterControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(CONFIRM_REGISTER_URL)
                 .param(TOKEN_PARAM, expiredRegisterToken.getToken())
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("register.token-expired", null,
-                        LocaleContextHolder.getLocale()), TokenException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("register.token-expired", null, getLocale()), TokenException.class));
         assertThrows(NotFoundException.class, () -> userService.getByEmail(expiredRegisterToken.getEmail()));
     }
 }

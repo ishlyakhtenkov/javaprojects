@@ -3,8 +3,6 @@ package ru.javaprojects.projector.users.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -50,10 +49,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
 
     @Value("${content-path.avatars}")
     private String avatarFilesPath;
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private UserService service;
 
@@ -154,7 +150,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(USERS_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.created",
-                        new Object[]{newUser.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newUser.getName()}, getLocale())));
         User created = service.getByEmail(newUser.getEmail());
         newUser.setId(created.id());
         USER_MATCHER.assertMatch(created, newUser);
@@ -226,8 +222,9 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
     @WithUserDetails(ADMIN_MAIL)
     void showEditPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(USERS_EDIT_URL + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -255,7 +252,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(USERS_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
-                        new Object[]{updatedUser.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedUser.getName()}, getLocale())));
         USER_MATCHER.assertMatch(service.get(USER_ID), updatedUser);
         assertTrue(Files.exists(Paths.get(updatedUser.getAvatar().getFileLink())));
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
@@ -279,7 +276,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(USERS_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
-                        new Object[]{updated.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updated.getName()}, getLocale())));
         USER_MATCHER.assertMatch(service.get(DISABLED_USER_ID), updated);
     }
 
@@ -295,7 +292,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(USERS_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("user.updated",
-                        new Object[]{updatedUser.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedUser.getName()}, getLocale())));
         USER_MATCHER.assertMatch(service.get(USER_ID), updatedUser);
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
     }
@@ -308,8 +305,9 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
         perform(MockMvcRequestBuilders.post(USERS_UPDATE_URL)
                 .params(updatedParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test

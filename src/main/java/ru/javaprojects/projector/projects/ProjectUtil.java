@@ -76,7 +76,7 @@ public class ProjectUtil {
         if (deTo.getType() == ElementType.IMAGE) {
             if (deTo.getImage() == null || deTo.getImage().isEmpty()) {
                 throw new IllegalRequestDataException("Description element image file is not present",
-                        "description-element.image-not-present", null);
+                        "project.description-elements.image-not-present", null);
             }
             setImageFileAttributes(deTo, project.getName());
         }

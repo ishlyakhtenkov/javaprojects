@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{users},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{user.users},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/management/users}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-people-group me-1"></i><span th:text="#{users}"></span>
+                        <i class="fas fa-people-group me-1"></i><span th:text="#{user.users}"></span>
                     </a>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="#{add}">Add</li>
@@ -20,7 +20,7 @@
             <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="#{new-user}">New user</h3>
+                        <h3 class="text-center" th:text="#{user.new}">New user</h3>
                     </div>
                     <form th:action="@{/management/users/create}" method="post" th:object="${user}">
                         <div class="card-body p-4 pt-4 pb-3 text-center">
@@ -31,7 +31,7 @@
                                             <input type="text" id="nameInput" th:field="*{name}"
                                                    th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                                    required placeholder="Name" />
-                                            <label for="nameInput" class="text-muted" th:text="#{name}">Name</label>
+                                            <label for="nameInput" class="text-muted" th:text="#{user.name}">Name</label>
                                         </div>
                                     </div>
                                     <span th:if="${#fields.hasErrors('name')}">
@@ -48,7 +48,7 @@
                                             <input type="text" id="emailInput" th:field="*{email}"
                                                    th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
                                                    required placeholder="Email" />
-                                            <label for="emailInput" class="text-muted" th:text="#{email}">Email</label>
+                                            <label for="emailInput" class="text-muted" th:text="#{user.email}">Email</label>
                                         </div>
                                     </div>
                                     <span th:if="${#fields.hasErrors('email')}">
@@ -63,13 +63,13 @@
                                         <span class="input-group-text"><i class="fa-solid fa-chess fa-fw"></i></span>
                                         <div class="form-floating">
                                             <select class="form-control selectpicker border px-0 pt-2" data-style="btn-white"
-                                                     id="selector" multiple th:field="*{roles}" th:title="#{roles}" required>
+                                                     id="selector" multiple th:field="*{roles}" th:title="#{user.roles}" required>
                                                 <option th:each="role : ${roles}"
                                                         th:value="${role.name}"
                                                         th:text="${role}">
                                                 </option>
                                             </select>
-                                            <label hidden for="selector" class="selector-label text-muted" th:text="#{roles}">Roles</label>
+                                            <label hidden for="selector" class="selector-label text-muted" th:text="#{user.roles}">Roles</label>
                                         </div>
                                     </div>
                                     <span th:if="${#fields.hasErrors('roles')}">
@@ -86,7 +86,7 @@
                                             <input type="password" id="password" th:field="*{password}"
                                                    th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
                                                    required placeholder="Password" />
-                                            <label for="password" class="text-muted" th:text="#{password}">Password</label>
+                                            <label for="password" class="text-muted" th:text="#{user.password}">Password</label>
                                         </div>
                                     </div>
                                     <span th:if="${#fields.hasErrors('password')}">
@@ -102,7 +102,7 @@
                                         <div class="form-floating">
                                             <input type="password" id="repeatPassword" class="form-control" required
                                                    placeholder="Repeat password" />
-                                            <label for="repeatPassword" class="text-muted" th:text="#{repeat-password}">Repeat Password</label>
+                                            <label for="repeatPassword" class="text-muted" th:text="#{user.repeat-password}">Repeat Password</label>
                                         </div>
                                     </div>
                                     <span id="passwordMatchError" class="text-danger text-start"></span>
@@ -110,7 +110,7 @@
                                 <div class="form-check form-switch text-start">
                                     <input type="checkbox" th:field="*{enabled}" class="form-check-input" style="cursor: pointer;"
                                            checked id="flexSwitchCheckDefault">
-                                    <label class="form-check-label" for="flexSwitchCheckDefault" th:text="#{enabled}">Enabled</label>
+                                    <label class="form-check-label" for="flexSwitchCheckDefault" th:text="#{user.enabled}">Enabled</label>
                                 </div>
                         </div>
                         <div class="card-footer text-end pe-4 py-2">

@@ -3,6 +3,7 @@ package ru.javaprojects.projector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -26,6 +27,9 @@ public class AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    protected MessageSource messageSource;
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return mockMvc.perform(builder);
@@ -53,11 +57,11 @@ public class AbstractControllerTest {
             return new ExceptionResultMatchers();
         }
 
-        public ResultMatcher message(String message, Class<?> exceptionClass) {
+        public ResultMatcher message(String reasonPhrase, String message, Class<?> exceptionClass) {
             return result -> {
                 Map<String, Object> model = Objects.requireNonNull(result.getModelAndView()).getModel();
                 assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), result.getResponse().getStatus());
-                assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), model.get("typeMessage"));
+                assertEquals(reasonPhrase, model.get("reasonPhrase"));
                 assertEquals(message, model.get("message"));
                 assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), model.get("status"));
                 assertEquals("error/exception", result.getModelAndView().getViewName());

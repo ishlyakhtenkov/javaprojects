@@ -31,10 +31,10 @@
                                         <div class="mb-1 position-relative">
                                             <span class="h4" th:text="${user.name}" id="userName">Name</span>
                                             <span th:if="${authUser.isAdmin()}" class="badge rounded-pill bg-danger-subtle text-dark"
-                                                  style="position: absolute; margin-top: -5px;" th:text="#{admin}">Admin</span>
+                                                  style="position: absolute; margin-top: -5px;" th:text="#{user.role.admin}">Admin</span>
                                         </div>
                                         <div th:text="${user.email}" class="mb-1">Email</div>
-                                        <div class="small" th:text="#{registered} + ': ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"
+                                        <div class="small" th:text="#{user.registered} + ': ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"
                                              style="font-style: italic">Registered</div>
                                     </div>
                                 </div>
@@ -47,9 +47,9 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a type="button" class="dropdown-item" th:href="@{/profile/edit}"
-                                           th:text="#{edit-profile}">Edit profile</a></li>
+                                           th:text="#{profile.edit-profile}">Edit profile</a></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#changePasswordModal" th:text="#{change-password}">Change password</button></li>
+                                                data-bs-target="#changePasswordModal" th:text="#{profile.change-password}">Change password</button></li>
                                 </ul>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header bg-light">
-                        <h5 class="modal-title" th:text="#{change-password}">Change password</h5>
+                        <h5 class="modal-title" th:text="#{profile.change-password}">Change password</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form onsubmit="return false;">
@@ -79,7 +79,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="currentPassword" required
                                            placeholder="Current password" />
-                                    <label for="currentPassword" class="text-muted" th:text="#{current-password}">Current password</label>
+                                    <label for="currentPassword" class="text-muted" th:text="#{user.current-password}">Current password</label>
                                 </div>
                             </div>
                             <div class="input-group mt-3">
@@ -87,7 +87,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="password" required
                                            placeholder="New password" />
-                                    <label for="password" class="text-muted" th:text="#{new-password}">New password</label>
+                                    <label for="password" class="text-muted" th:text="#{user.new-password}">New password</label>
                                 </div>
                             </div>
                             <div class="input-group mt-3">
@@ -95,7 +95,7 @@
                                 <div class="form-floating">
                                     <input type="password" class="form-control" id="repeatPassword" required
                                            placeholder="Repeat password" />
-                                    <label for="repeatPassword" class="text-muted" th:text="#{repeat-password}">Repeat password</label>
+                                    <label for="repeatPassword" class="text-muted" th:text="#{user.repeat-password}">Repeat password</label>
                                 </div>
                             </div>
                             <span id="passwordMatchError" class="text-danger text-start"></span>

@@ -48,13 +48,13 @@ visibilityCheckbox.on('click', () => {
 });
 
 shortDescriptionInput.on('keyup', () => {
-    characterCounter.text(`${128 - shortDescriptionInput.val().length} ${getMessage('label.characters-left')}`);
+    characterCounter.text(`${128 - shortDescriptionInput.val().length} ${getMessage('info.characters-left')}`);
 });
 
 function deleteLogoFile() {
     logoFilePreviewDiv.attr('hidden', true);
     logoFileInputDiv.html('<div class="input-group custom-file-button">' +
-        `<label class="input-group-text bg-light project-card-label">${getMessage('label.logo')}</label>` +
+        `<label class="input-group-text bg-light project-card-label">${getMessage('logo')}</label>` +
         '<input type="file" accept="image/*" id="logoFileInput" name="logo.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewLogoFile()" /></div>').attr('hidden', false);
 }
@@ -77,7 +77,7 @@ function previewLogoFile() {
 function deleteDockerFile() {
     dockerFilePreviewDiv.attr('hidden', true);
     dockerFileInputDiv.html('<div class="input-group custom-file-button">' +
-        `<label class="input-group-text d-inline-block text-truncate bg-light project-card-label">${getMessage('label.docker-compose-file')}</label>` +
+        `<label class="input-group-text d-inline-block text-truncate bg-light project-card-label">${getMessage('project.docker-compose-file')}</label>` +
         '<input type="file" accept=".yaml,.yml" id="dockerFileInput" name="dockerCompose.inputtedFile" ' +
         'class="form-control text-muted" onchange="previewDockerFile()" /></div>').attr('hidden', false);
 }
@@ -285,7 +285,7 @@ function addNewElement(type) {
             .attr('placeholder', `${type}`).addClass('form-control lh-base')
             .addClass(`${type === 'Title' ? 'fw-medium' : ''}`)
             .css('white-space', 'pre-wrap').css('height', `${type === 'Title' ? '65px' : '120px'}`);
-        let label = $('<label></label>').addClass('text-muted').html(getMessage(`label.${type.toLowerCase()}`));
+        let label = $('<label></label>').addClass('text-muted').html(getMessage(`project.description-elements.${type.toLowerCase()}`));
         formDiv.append(getElementActionsBtnHtml(type));
         formDiv.append(newElementText);
         formDiv.append(label);
@@ -294,7 +294,7 @@ function addNewElement(type) {
     } else if (type === 'Image') {
         newElementInputContentDiv.addClass('border rounded-2 ps-3 pe-2 pb-1');
 
-        let label = $('<div></div>').addClass('text-start text-muted tiny').html(getMessage(`label.${type.toLowerCase()}`));
+        let label = $('<div></div>').addClass('text-start text-muted tiny').html(getMessage(`project.description-elements.${type.toLowerCase()}`));
 
         let flexDiv = $('<div></div>').addClass('d-flex align-items-start');
 
@@ -307,7 +307,7 @@ function addNewElement(type) {
             .attr('name', `descriptionElementTos[${newElementContainerIndex}].image.inputtedFile`)
             .attr('hidden', true).addClass('element-image-input').change(function () {previewImage($(this))});
 
-        let changeImageBtn = $('<button></button>').attr('type', 'button').attr('title', getMessage('label.change-image'))
+        let changeImageBtn = $('<button></button>').attr('type', 'button').attr('title', getMessage('change-image'))
             .attr('hidden', true)
             .addClass('change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1')
             .html(`<i class="fa-solid fa-pencil"></i>`).click(function () {$(this).siblings('input').click()});
@@ -317,7 +317,7 @@ function addNewElement(type) {
             .css('height', '150px').css('width', '300px');
 
         let chooseImageBtn = $('<button></button>').attr('type', 'button')
-            .addClass('btn btn-outline-secondary').html(getMessage('label.choose-image'))
+            .addClass('btn btn-outline-secondary').html(getMessage('choose-image'))
             .click(function () {$(this).parent().siblings('input').click()});
 
         emptyImageDiv.append(chooseImageBtn);
@@ -338,23 +338,23 @@ function getElementActionsBtnHtml(type) {
     return `<button type="button"
                           class="${type !== 'Image' ? 'position-absolute' : ''}
                           float-end btn btn-link link-secondary opacity-75 link-underline-opacity-0 p-0 dropdown-toggle"
-                          title="${getMessage('button.edit')}" data-bs-toggle="dropdown" aria-expanded="false" style="right: 10px;">
+                          title="${getMessage('edit')}" data-bs-toggle="dropdown" aria-expanded="false" style="right: 10px;">
                           <i class="fa-solid fa-ellipsis-vertical"></i>
                         </button>
                         <ul class="dropdown-menu">
                           <li>
                             <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
-                               <i class="fa-solid fa-up-long text-warning"></i> <span>${getMessage('label.move-up')}</span>
+                               <i class="fa-solid fa-up-long text-warning"></i> <span>${getMessage('project.description-elements.move-up')}</span>
                             </button>
                           </li>
                           <li>
                              <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
-                                <i class="fa-solid fa-down-long text-warning"></i> <span>${getMessage('label.move-down')}</span>
+                                <i class="fa-solid fa-down-long text-warning"></i> <span>${getMessage('project.description-elements.move-down')}</span>
                              </button>
                           </li>
                           <li>
                              <button type="button" class="dropdown-item" onclick="deleteElement(this)">
-                                <i class="fa-solid fa-xmark text-danger"></i> <span>${getMessage('button.delete')}</span>
+                                <i class="fa-solid fa-xmark text-danger"></i> <span>${getMessage('delete')}</span>
                              </button>
                           </li>
                         </ul>`
@@ -365,7 +365,7 @@ function checkImageElementsNotEmpty() {
         if ($(this).attr('required') && !$(this).val().length) {
             console.log($(this).siblings('.empty-image-div'));
             $(this).siblings('.empty-image-div').addClass('bg-danger-subtle border-2 border-danger');
-            failToast(getMessage('label.empty-image-elements'));
+            failToast(getMessage('info.empty-image-elements'));
         }
 
     })

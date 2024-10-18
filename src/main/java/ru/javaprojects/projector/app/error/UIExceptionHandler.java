@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponse;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,32 +42,31 @@ public class UIExceptionHandler {
     public ModelAndView localizedExceptionHandler(HttpServletRequest req, LocalizedException e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
         String message = messageSource.getMessage(e.getMessageCode(), e.getMessageArgs(), locale);
-        return createExceptionModelAndView(e, message);
+        return createExceptionModelAndView(e, message, locale);
     }
 
     @ExceptionHandler(Exception.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e, Locale locale) {
         log.error("Exception at request {}: {}", req.getRequestURL(), e.toString());
-        Throwable rootCause = AppUtil.getRootCause(e);
-        String message = rootCause.getLocalizedMessage();
+        String message = messageSource.getMessage("error.unable-to-process", null, locale);
         if (e.getClass().isAssignableFrom(DataIntegrityViolationException.class)) {
             Optional<String> messageCode = DbConstraintMessageCodes.getMessageCode(message);
             if (messageCode.isPresent()) {
                 message = messageSource.getMessage(messageCode.get(), null, locale);
             }
         }
-        return createExceptionModelAndView(e, message);
+        return createExceptionModelAndView(e, message, locale);
     }
 
-    private ModelAndView createExceptionModelAndView(Exception e, String message) {
+    private ModelAndView createExceptionModelAndView(Exception e, String message, Locale locale) {
         ModelAndView mav;
-        if (e.getClass() == NoResourceFoundException.class) {
+        if (e.getClass() == NoResourceFoundException.class || e.getClass() == HttpRequestMethodNotSupportedException.class) {
             mav = new ModelAndView("error/404");
             mav.setStatus(HttpStatus.NOT_FOUND);
         } else {
             mav = new ModelAndView("error/exception",
                     Map.of("status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            "typeMessage", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                            "reasonPhrase", messageSource.getMessage("error.internal-server-error", null, locale),
                             "message", message));
             mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }

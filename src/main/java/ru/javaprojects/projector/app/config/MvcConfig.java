@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.app.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ui.ModelMap;
@@ -17,12 +18,16 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.projects.ProjectService;
 
+import java.time.Duration;
 import java.util.Locale;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MvcConfig implements WebMvcConfigurer {
     private final ProjectService projectService;
+
+    @Value("default-locale")
+    private String defaultLocale;
 
     // Add projects to view model to render on header dropdown selector
     private final HandlerInterceptor projectsInterceptor = new WebRequestHandlerInterceptorAdapter(new WebRequestInterceptor() {
@@ -65,7 +70,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Bean
     LocaleResolver localeResolver() {
-        return new CookieLocaleResolver();
+        CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+        cookieLocaleResolver.setDefaultLocale(new Locale(defaultLocale));
+        cookieLocaleResolver.setCookieMaxAge(Duration.ofDays(60));
+        return cookieLocaleResolver;
     }
 
     @Bean

@@ -5,8 +5,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -22,10 +20,10 @@ import ru.javaprojects.projector.users.service.UserService;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,10 +53,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
 
     @Autowired
     private UserService service;
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private SessionRegistry sessionRegistry;
 
@@ -99,8 +94,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-disable-yourself", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-disable-yourself", null, getLocale())))
                 .andExpect(problemInstance(USERS_URL_SLASH + ADMIN_ID));
         assertTrue(service.get(ADMIN_ID).isEnabled());
     }
@@ -138,8 +132,8 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(USERS_URL_SLASH + NOT_EXISTING_ID));
     }
 
@@ -197,8 +191,7 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-delete-yourself", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("user.forbidden-delete-yourself", null, getLocale())))
                 .andExpect(problemInstance(USERS_URL_SLASH + ADMIN_ID));
         assertDoesNotThrow(() -> service.get(ADMIN_ID));
         assertTrue(Files.exists(Paths.get(admin.getAvatar().getFileLink())));
@@ -214,8 +207,8 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(USERS_URL_SLASH + NOT_EXISTING_ID));
     }
 
@@ -261,15 +254,14 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(USERS_CHANGE_PASSWORD_URL + NOT_EXISTING_ID));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void changePasswordInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.patch(USERS_CHANGE_PASSWORD_URL + USER_ID)
                 .param(PASSWORD_PARAM, INVALID_PASSWORD)
                 .with(csrf()))

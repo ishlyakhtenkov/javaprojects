@@ -6,8 +6,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,10 +20,10 @@ import ru.javaprojects.projector.users.service.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
@@ -37,10 +35,7 @@ import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 class ProfileRestControllerTest extends AbstractControllerTest {
     private static final String PROFILE_FORGOT_PASSWORD_URL = PROFILE_URL + "/forgot-password";
     private static final String PROFILE_CHANGE_PASSWORD_URL = PROFILE_URL + "/change-password";
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
@@ -61,10 +56,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         PasswordResetToken createdToken = passwordResetTokenRepository.findByUserEmailIgnoreCase(USER_MAIL).orElseThrow();
         assertTrue(createdToken.getExpiryDate().after(new Date()));
-        Locale locale = LocaleContextHolder.getLocale();
-        String passwordResetUrlLinkText = messageSource.getMessage("password-reset.message-link-text", null, locale);
-        String passwordResetMessageSubject = messageSource.getMessage("password-reset.message-subject", null, locale);
-        String passwordResetMessageText = messageSource.getMessage("password-reset.message-text", null, locale);
+        String passwordResetUrlLinkText = messageSource.getMessage("reset-password.message-link-text", null, getLocale());
+        String passwordResetMessageSubject = messageSource.getMessage("reset-password.message-subject", null, getLocale());
+        String passwordResetMessageText = messageSource.getMessage("reset-password.message-text", null, getLocale());
         String link = String.format(CONFIRMATION_LINK_TEMPLATE, passwordResetUrl, createdToken.getToken(),
                 passwordResetUrlLinkText);
         String emailText = passwordResetMessageText + link;
@@ -80,10 +74,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         PasswordResetToken updatedToken = passwordResetTokenRepository
                 .findByUserEmailIgnoreCase(passwordResetToken.getUser().getEmail()).orElseThrow();
         assertTrue(updatedToken.getExpiryDate().after(new Date()));
-        Locale locale = LocaleContextHolder.getLocale();
-        String passwordResetUrlLinkText = messageSource.getMessage("password-reset.message-link-text", null, locale);
-        String passwordResetMessageSubject = messageSource.getMessage("password-reset.message-subject", null, locale);
-        String passwordResetMessageText = messageSource.getMessage("password-reset.message-text", null, locale);
+        String passwordResetUrlLinkText = messageSource.getMessage("reset-password.message-link-text", null, getLocale());
+        String passwordResetMessageSubject = messageSource.getMessage("reset-password.message-subject", null, getLocale());
+        String passwordResetMessageText = messageSource.getMessage("reset-password.message-text", null, getLocale());
         String link = String.format(CONFIRMATION_LINK_TEMPLATE, passwordResetUrl, updatedToken.getToken(),
                 passwordResetUrlLinkText);
         String emailText = passwordResetMessageText + link;
@@ -101,8 +94,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.user", new Object[]{NOT_EXISTING_EMAIL},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.user", new Object[]{NOT_EXISTING_EMAIL},
+                        getLocale())))
                 .andExpect(problemInstance(PROFILE_FORGOT_PASSWORD_URL));
         assertTrue(passwordResetTokenRepository.findByUserEmailIgnoreCase(NOT_EXISTING_EMAIL).isEmpty());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
@@ -132,7 +125,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemTitle(HttpStatus.FORBIDDEN.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.FORBIDDEN.value()))
                 .andExpect(problemDetail(messageSource.getMessage("user.disabled", new Object[]{DISABLED_USER_MAIL},
-                        LocaleContextHolder.getLocale())))
+                        getLocale())))
                 .andExpect(problemInstance(PROFILE_FORGOT_PASSWORD_URL));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         assertEquals(simpleDateFormat.format(disabledUserPasswordResetToken.getExpiryDate()),
@@ -165,8 +158,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("profile.incorrect-password", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("profile.incorrect-password", null, getLocale())))
                 .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
         assertFalse(PASSWORD_ENCODER.matches(NEW_PASSWORD, userService.get(USER_ID).getPassword()));
     }
@@ -185,7 +177,6 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void changePasswordInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.patch(PROFILE_CHANGE_PASSWORD_URL)
                 .param(CURRENT_PASSWORD_PARAM, user.getPassword())
                 .param(NEW_PASSWORD_PARAM, INVALID_PASSWORD)

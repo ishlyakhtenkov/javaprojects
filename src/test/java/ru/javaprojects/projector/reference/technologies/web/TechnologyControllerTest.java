@@ -3,8 +3,6 @@ package ru.javaprojects.projector.reference.technologies.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -32,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -50,9 +49,6 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
 
     @Value("${content-path.technologies}")
     private String technologyFilesPath;
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private TechnologyService technologyService;
@@ -153,7 +149,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .with(csrf()))
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
-                        new Object[]{newTechnologyTo.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newTechnologyTo.getName()}, getLocale())));
 
         Technology created = technologyService.getByName(newTechnologyTo.getName());
         newTechnology.setId(created.getId());
@@ -174,7 +170,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .with(csrf()))
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
-                        new Object[]{newTechnology.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newTechnology.getName()}, getLocale())));
         Technology created = technologyService.getByName(newTechnology.getName());
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
@@ -238,8 +234,9 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .params(newParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("technology.logo-not-present",
-                        null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("technology.logo-not-present", null, getLocale()),
+                        IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> technologyService.getByName(newParams.get(NAME_PARAM).get(0)));
     }
 
@@ -281,8 +278,9 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     @WithUserDetails(ADMIN_MAIL)
     void showEditPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(TECHNOLOGIES_EDIT_URL + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -311,7 +309,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
-                        new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedTechnology.getName()}, getLocale())));
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
@@ -330,7 +328,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
-                        new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedTechnology.getName()}, getLocale())));
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
@@ -347,7 +345,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
-                        new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedTechnology.getName()}, getLocale())));
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
@@ -367,7 +365,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
-                        new Object[]{updatedTechnology.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedTechnology.getName()}, getLocale())));
         TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
@@ -382,8 +380,9 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
                 .file(UPDATED_LOGO_FILE)
                 .params(updatedParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test

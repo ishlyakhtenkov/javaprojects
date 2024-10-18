@@ -3,8 +3,6 @@ package ru.javaprojects.projector.reference.architectures.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -48,10 +47,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
 
     @Value("${content-path.architectures}")
     private String architectureFilesPath;
-
-    @Autowired
-    private MessageSource messageSource;
-
+    
     @Autowired
     private ArchitectureService architectureService;
 
@@ -128,7 +124,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .with(csrf()))
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.created",
-                        new Object[]{newArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newArchitecture.getName()}, getLocale())));
         Architecture created = architectureService.getByName(newArchitecture.getName());
         newArchitecture.setId(created.getId());
         ARCHITECTURE_MATCHER.assertMatch(created, newArchitecture);
@@ -148,7 +144,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .with(csrf()))
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.created",
-                        new Object[]{newArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newArchitecture.getName()}, getLocale())));
         Architecture created = architectureService.getByName(newArchitecture.getName());
         newArchitecture.setId(created.getId());
         ARCHITECTURE_MATCHER.assertMatch(created, newArchitecture);
@@ -212,8 +208,9 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, ARCHITECTURES_URL)
                 .params(newParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("architecture.logo-not-present",
-                        null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("architecture.logo-not-present", null, getLocale()), 
+                        IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> architectureService.getByName(newParams.get(NAME_PARAM).get(0)));
     }
 
@@ -254,8 +251,9 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
     @WithUserDetails(ADMIN_MAIL)
     void showEditPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(ARCHITECTURES_EDIT_URL + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -284,7 +282,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
-                        new Object[]{updatedArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedArchitecture.getName()}, getLocale())));
         ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
@@ -303,7 +301,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
-                        new Object[]{updatedArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedArchitecture.getName()}, getLocale())));
         ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
@@ -320,7 +318,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
-                        new Object[]{updatedArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedArchitecture.getName()}, getLocale())));
         ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
@@ -340,7 +338,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
-                        new Object[]{updatedArchitecture.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedArchitecture.getName()}, getLocale())));
         ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
@@ -355,8 +353,9 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .file(UPDATED_LOGO_FILE)
                 .params(updatedParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test

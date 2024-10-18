@@ -26,7 +26,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
                                 @Value("${password-reset.token-expiration-time}") long tokenExpirationTime,
                                 @Value("${password-reset.confirm-url}") String confirmUrl,
                                 PasswordResetTokenRepository tokenRepository) {
-        super(mailSender, messageSource, userRepository, tokenRepository, tokenExpirationTime, confirmUrl, "password-reset");
+        super(mailSender, messageSource, userRepository, tokenRepository, tokenExpirationTime, confirmUrl, "reset-password");
     }
 
     @Transactional
@@ -37,7 +37,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
                 .orElseGet(() -> new PasswordResetToken(null, UUID.randomUUID().toString(),
                         new Date(System.currentTimeMillis() + tokenExpirationTime),
                         userRepository.findByEmailIgnoreCase(email).orElseThrow(() ->
-                        new NotFoundException("Not found user with email=" + email, "notfound.user", new Object[]{email}))));
+                        new NotFoundException("Not found user with email=" + email, "error.notfound.user", new Object[]{email}))));
         checkUserDisabled(passwordResetToken);
         if (!passwordResetToken.isNew()) {
             passwordResetToken.setToken(UUID.randomUUID().toString());

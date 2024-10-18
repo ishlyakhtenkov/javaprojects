@@ -35,7 +35,7 @@ public class ArchitectureService {
         Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new NotFoundException("Not found architecture with name =" + name,
-                        "notfound.architecture",  new Object[]{name}));
+                        "error.notfound.architecture",  new Object[]{name}));
     }
 
     public Architecture create(ArchitectureTo architectureTo) {

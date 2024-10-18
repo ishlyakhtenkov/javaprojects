@@ -39,9 +39,6 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
     private ProjectService projectService;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private LikeRepository likeRepository;
 
     @Override
@@ -79,7 +76,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID));
     }
@@ -142,7 +139,7 @@ class ProjectManagementRestControllerTest extends AbstractControllerTest impleme
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
                         LocaleContextHolder.getLocale())))
                 .andExpect(problemInstance(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID));
     }

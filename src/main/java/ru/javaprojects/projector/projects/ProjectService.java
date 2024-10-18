@@ -56,13 +56,13 @@ public class ProjectService {
     @Transactional
     public void addViewsToProject(long id) {
         Project project = repository.findForAddViewsById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
         project.setViews(project.getViews() + 1);
     }
 
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithAllInformationById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
         TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
         sortedTechnologies.addAll(project.getTechnologies());
         project.setTechnologies(sortedTechnologies);
@@ -74,7 +74,7 @@ public class ProjectService {
     public Project getByName(String name) {
         Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "notfound.project",
+                .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "error.notfound.project",
                         new Object[]{name}));
     }
 
@@ -104,7 +104,7 @@ public class ProjectService {
     @Transactional
     public void delete(long id) {
         Project project = repository.findWithDescriptionById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "notfound.entity", new Object[]{id}));
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
         repository.delete(project);
         repository.flush();
         likeRepository.deleteAllByObjectId(id);
@@ -155,7 +155,7 @@ public class ProjectService {
     public Project update(ProjectTo projectTo) {
         Assert.notNull(projectTo, "projectTo must not be null");
         Project project = repository.findWithAllInformationById(projectTo.getId()).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + projectTo.getId(), "notfound.entity",
+                new NotFoundException("Not found project with id=" + projectTo.getId(), "error.notfound.entity",
                         new Object[]{projectTo.getId()}));
         String projectOldName = project.getName();
         String oldLogoFileLink = project.getLogo().getFileLink();
@@ -248,7 +248,7 @@ public class ProjectService {
 
     public void likeComment(long commentId, boolean liked, long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
         if (comment.getAuthor().id() == userId) {
             throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId +
                     ", commentId=" + commentId, "comment.forbidden-like-yourself", null);
@@ -268,12 +268,12 @@ public class ProjectService {
     @Transactional
     public void deleteComment(long commentId, long userId, boolean byAdmin) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
         if (comment.getAuthor().id() == userId || byAdmin) {
             comment.setDeleted(true);
         } else {
             throw new IllegalRequestDataException("Forbidden to delete another user comment, commentId=" + commentId +
-                    ", userId=" + userId, "comment.forbidden-delete-another", null);
+                    ", userId=" + userId, "comment.forbidden-delete-not-belong", null);
         }
     }
 
@@ -281,12 +281,12 @@ public class ProjectService {
     public void updateComment(long commentId, String text, long userId) {
         Assert.notNull(text, "text must not be null");
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "notfound.entity", new Object[]{commentId}));
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
         if (comment.getAuthor().id() == userId) {
             comment.setText(text);
         } else {
             throw new IllegalRequestDataException("Forbidden to edit another user comment, commentId=" + commentId +
-                    ", userId=" + userId, "comment.forbidden-edit-another", null);
+                    ", userId=" + userId, "comment.forbidden-edit-not-belong", null);
         }
     }
 

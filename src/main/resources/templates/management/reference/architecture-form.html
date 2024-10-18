@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="architectureTo" type="ru.javaprojects.projector.reference.architectures.ArchitectureTo"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{architectures},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{architecture.architectures},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'architectures', 'management', 'reference'} })}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/management/reference/architectures}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fa-solid fa-cubes me-1"></i><span th:text="#{architectures}"></span>
+                        <i class="fa-solid fa-cubes me-1"></i><span th:text="#{architecture.architectures}"></span>
                     </a>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${architectureTo.isNew()} ? #{add} : #{edit}">Add/Edit</li>
@@ -20,7 +20,7 @@
             <div class="col-12 col-sm-9 col-md-7 col-xl-6 col-xxl-5">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${architectureTo.isNew()} ? #{new-architecture} :
+                        <h3 class="text-center" th:text="${architectureTo.isNew()} ? #{architecture.new} :
                             ${architectureName == null ? architectureTo.name : architectureName}">Create/Edit architecture</h3>
                     </div>
                     <form th:action="@{/management/reference/architectures}" method="post" th:object="${architectureTo}" enctype="multipart/form-data">
@@ -85,10 +85,10 @@
                                               th:class="${#fields.hasErrors('description')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Description" style="height: 220px; white-space: pre-wrap;"
                                               maxlength="400" required></textarea>
-                                    <label for="descriptionInput" class="text-muted" th:text="#{short-description}">Short description</label>
+                                    <label for="descriptionInput" class="text-muted" th:text="#{project.short-description}">Short description</label>
                                 </div>
                                 <span class="float-end text-muted tiny" id="characterCounter"
-                                       th:text="*{(400 - (description == null ? 0 : description.length()))} + ' ' + #{characters-left}">Characters left</span>
+                                       th:text="*{(400 - (description == null ? 0 : description.length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                 <span th:if="${#fields.hasErrors('description')}">
                                     <ul>
                                         <li class="text-danger text-start" th:each="err : ${#fields.errors('description')}"

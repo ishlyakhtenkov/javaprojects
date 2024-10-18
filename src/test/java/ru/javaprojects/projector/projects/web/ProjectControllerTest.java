@@ -1,9 +1,6 @@
 package ru.javaprojects.projector.projects.web;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
@@ -15,6 +12,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
 import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
@@ -25,9 +23,6 @@ import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 class ProjectControllerTest extends AbstractControllerTest {
     static final String PROJECTS_URL_SLASH = "/projects/";
     private static final String PROJECT_VIEW = "project";
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -90,8 +85,9 @@ class ProjectControllerTest extends AbstractControllerTest {
     @Test
     void showProjectPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test

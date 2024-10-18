@@ -19,12 +19,12 @@ public interface BaseRepository<T> extends JpaRepository<T, Long> {
     //  https://stackoverflow.com/a/60695301/548473 (existed delete code 204, not existed: 404)
     default void deleteExisted(long id) {
         if (delete(id) == 0) {
-            throw new NotFoundException("Entity with id=" + id + " not found", "notfound.entity", new Object[]{id});
+            throw new NotFoundException("Entity with id=" + id + " not found", "error.notfound.entity", new Object[]{id});
         }
     }
 
     default T getExisted(long id) {
         return findById(id).orElseThrow(() -> new NotFoundException("Entity with id=" + id + " not found",
-                "notfound.entity", new Object[]{id}));
+                "error.notfound.entity", new Object[]{id}));
     }
 }

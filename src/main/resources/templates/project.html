@@ -35,35 +35,35 @@
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.deploymentUrl != null}" th:href="@{${project.deploymentUrl}}" target="_blank">
                                     <img th:src="@{${'/' + project.logo.fileLink}}" alt="Logo" width="20" height="20" />
-                                    <span th:text="#{test-app}">Test application</span>
+                                    <span th:text="#{project.test-app}">Test application</span>
                                 </a>
                             </div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.openApiUrl != null}" th:href="@{${project.openApiUrl}}" target="_blank">
                                     <img th:src="@{/images/openapi.svg}" alt="OpenAPI logo" width="20" height="20" />
-                                    <span th:text="#{api-docs}">OpenAPI documentation</span>
+                                    <span th:text="#{project.api-doc}">OpenAPI documentation</span>
                                 </a>
                             </div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.backendSrcUrl != null}" th:href="@{${project.backendSrcUrl}}" target="_blank">
                                     <img th:src="@{/images/github.svg}" alt="GitHub logo" width="20" height="20" />
-                                    <span th:text="#{src-github} + (${project.frontendSrcUrl != null} ?  ' (' + #{backend} + ')' : '')"></span>
+                                    <span th:text="#{project.src-github} + (${project.frontendSrcUrl != null} ?  ' (' + #{backend} + ')' : '')"></span>
                                 </a>
                             </div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.frontendSrcUrl != null}" th:href="@{${project.frontendSrcUrl}}" target="_blank">
                                     <img th:src="@{/images/github.svg}" alt="GitHub logo" width="20" height="20" />
-                                    <span th:text="#{src-github} + ' (' + #{frontend}    + ')'">Source code on GitHub (frontend)</span>
+                                    <span th:text="#{project.src-github} + ' (' + #{frontend}    + ')'">Source code on GitHub (frontend)</span>
                                 </a>
                             </div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.dockerCompose != null}" th:href="@{${'/' + project.dockerCompose.fileLink}}" target="_blank">
                                     <img th:src="@{/images/docker.svg}" alt="Docker logo" width="20" height="20" />
-                                    <span th:text="#{docker-compose-file}">Docker compose file</span>
+                                    <span th:text="#{project.docker-compose-file}">Docker compose file</span>
                                 </a>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                             <span class="h6" th:text="${project.architecture.name}"></span>
                         <div th:text="${project.architecture.description}"></div>
 
-                        <h3 class="mt-3" th:text="#{tech-stack}">Technologies stack</h3>
+                        <h3 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h3>
                         <hr style="border: 2px solid black;">
 
                         <ul class="nav nav-tabs">
@@ -112,7 +112,7 @@
                         </div>
 
                         <div th:if="${!project.descriptionElements.isEmpty()}">
-                            <h3 class="mt-4" th:text="#{app-description}">Application description</h3>
+                            <h3 class="mt-4" th:text="#{project.app-description}">Application description</h3>
                             <hr style="border: 2px solid black;">
                         </div>
 
@@ -132,7 +132,7 @@
 
                         <div class="row mt-3">
                             <div class="col-8">
-                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comments}"
+                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary small commentsCounter" th:text="${comments.size()}"></span>
@@ -140,7 +140,7 @@
                                 <a type="button" th:title="#{like}" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3 with-popover"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
-                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{only-for-auth-users}+ '</div>'"
+                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                    th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
                                     <i class="fa-heart" th:title="#{like}" th:classappend="${liked == null || !liked ? 'fa-regular' : 'fa-solid'}"></i>
                                     <span class="text-secondary small" th:title="#{like}" th:text="${project.likes.size()}"></span>
@@ -161,18 +161,18 @@
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <div class="card-body text-start">
-                        <span class="h3" th:text="#{comments}">Comments</span>
+                        <span class="h3" th:text="#{comment.comments}">Comments</span>
                         <span class="h3 text-secondary ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
 
 
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
                             <textarea class="form-control bg-light new-comment with-popover pb-4" id="newCommentInput"
-                                      style="resize: none" th:placeholder="#{leave-comment-here}" rows="2"
+                                      style="resize: none" th:placeholder="#{comment.leave-comment-here}" rows="2"
                                       data-bs-toggle="popover" data-bs-trigger="manual"
                                       data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
                                       data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true" ></textarea>
                             <a type="button" id="sendNewBtn" hidden class="btn btn-link text-decoration-none float-end pe-2"
-                               title="Send" style="margin-top: -35px;" th:text="#{send}"
+                               title="Send" style="margin-top: -35px;" th:text="#{comment.send}"
                                onclick="postComment(null, $('#newCommentInput').val(), postNewCommentSuccess)">Send</a>
                         </div>
 
@@ -194,7 +194,7 @@
                                     </div>
                                 </div>
                                 <div class="comment-text" style="white-space: pre-wrap;"
-                                     th:text="${commentEntry.getKey().deleted} ? #{comment-deleted} : ${commentEntry.getKey().text}"
+                                     th:text="${commentEntry.getKey().deleted} ? #{comment.deleted} : ${commentEntry.getKey().text}"
                                      th:classappend="${commentEntry.getKey().deleted ? 'text-secondary' : ''}"
                                      th:styleappend="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
 
@@ -202,7 +202,7 @@
                                     <a type="button" th:title="#{like}" th:onclick="|like(this, '${commentEntry.getKey().id}')|"
                                        class="like-btn btn-link link-danger text-decoration-none with-popover"
                                        data-bs-toggle="popover" data-bs-trigger="manual"
-                                       th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{only-for-auth-users}+ '</div>'"
+                                       th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                        th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
                                         <i class="fa-heart" th:title="#{like}"
                                            th:classappend="${likedCommentsIds == null || !likedCommentsIds.contains(commentEntry.getKey().id) ?
@@ -213,12 +213,12 @@
                                     <a type="button" class="reply-btn btn-link text-decoration-none ms-1 with-popover"
                                        th:id="${'replyBtn-' + commentEntry.getKey().id}"
                                        data-bs-toggle="popover" data-bs-trigger="manual"
-                                       th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{only-for-auth-users}+ '</div>'"
+                                       th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                        th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
                                        data-bs-html="true"
                                        onclick="reply($(this))">
                                         <i class="fa-solid fa-share fa-rotate-270 small"></i>
-                                        <span class="text-secondary small" style="margin-left: -3px;" th:text="#{reply}">Reply</span>
+                                        <span class="text-secondary small" style="margin-left: -3px;" th:text="#{comment.reply}">Reply</span>
                                     </a>
 
                                     <a th:if="${authUser != null && commentEntry.getKey().author.id == authUser.id}"
@@ -231,7 +231,7 @@
                                        tabindex="0" type="button" class="delete-comment-btn btn-link text-decoration-none ms-1"
                                        th:id="${'deleteCommentBtn-' + commentEntry.getKey().id}"
                                        data-bs-toggle="popover" data-bs-trigger="focus"
-                                       th:data-bs-title="#{delete-comment} + '?'"
+                                       th:data-bs-title="#{comment.delete} + '?'"
                                        th:data-bs-content="'<div class=&quot;text-center&quot;><a type=&quot;button&quot; class=&quot;btn btn-sm  btn-secondary me-2&quot;>' + #{cancel} + '</a><a type=&quot;button&quot; class=&quot;btn btn-sm btn-danger del-com&quot;>' + #{delete} + '</a></div>'"
                                        data-bs-html="true">
                                         <i th:title="#{delete}" class="fa-solid fa-trash-can text-danger small"></i>

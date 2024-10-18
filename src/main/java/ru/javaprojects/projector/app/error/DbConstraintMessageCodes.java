@@ -11,10 +11,10 @@ public class DbConstraintMessageCodes {
     private static final Map<String, String> dbConstraintsMap = new HashMap<>();
 
     static {
-        dbConstraintsMap.put("users_unique_email_idx", "duplicate.email");
-        dbConstraintsMap.put("technologies_unique_name_idx", "duplicate.technology-name");
-        dbConstraintsMap.put("architectures_unique_name_idx", "duplicate.architecture-name");
-        dbConstraintsMap.put("projects_unique_name_idx", "duplicate.project-name");
+        dbConstraintsMap.put("users_unique_email_idx", "error.duplicate.email");
+        dbConstraintsMap.put("technologies_unique_name_idx", "error.duplicate.technology-name");
+        dbConstraintsMap.put("architectures_unique_name_idx", "error.duplicate.architecture-name");
+        dbConstraintsMap.put("projects_unique_name_idx", "error.duplicate.project-name");
         dbConstraintsMap.put("foreign key(architecture_id) references", "architecture.is-referenced");
         dbConstraintsMap.put("foreign key(technology_id) references", "technology.is-referenced");
     }

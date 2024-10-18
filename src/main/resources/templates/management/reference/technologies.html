@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="technologies" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{technologies},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{technology.technologies},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
@@ -15,7 +15,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb"  style="font-size: 1.5em;">
                             <li class="breadcrumb-item active" aria-current="page">
-                                <i class="fa-solid fa-gears me-1"></i><span th:text="#{technologies}"></span>
+                                <i class="fa-solid fa-gears me-1"></i><span th:text="#{technology.technologies}"></span>
                             </li>
                         </ol>
                     </nav>
@@ -25,10 +25,10 @@
                         <form class="d-flex" role="search" th:action="@{/management/reference/technologies}" method="get">
                             <div class="input-group">
                                 <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
-                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{search-technologies} + '...'" aria-label="Search">
+                                <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{technology.search} + '...'" aria-label="Search">
                             </div>
                         </form>
-                        <a th:href="@{/management/reference/technologies/add}" type="button" th:title="#{add-technology}"
+                        <a th:href="@{/management/reference/technologies/add}" type="button" th:title="#{technology.add}"
                            class="btn btn-outline-primary ms-2"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
 
         <!-- Technologies table -->
         <span th:if="${technologies.isEmpty()}">
-            <h5 class="alert alert-warning mt-2" th:text="#{no-technologies-found} + '.'">No technologies found.</h5>
+            <h5 class="alert alert-warning mt-2" th:text="#{technology.no-technologies-found} + '.'">No technologies found.</h5>
         </span>
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
@@ -46,8 +46,8 @@
                 <tr>
                     <th class="col-3 border-right-none" th:text="#{name}">Name</th>
                     <th class="col-1 text-center border-right-none" th:text="#{logo}">Logo</th>
-                    <th class="col-3 border-right-none" th:text="#{off-website}">Official website</th>
-                    <th class="col-2 border-right-none" th:text="#{usage}">Usage</th>
+                    <th class="col-3 border-right-none" th:text="#{technology.off-website}">Official website</th>
+                    <th class="col-2 border-right-none" th:text="#{technology.usage}">Usage</th>
                     <th class="col-2 border-right-none" th:text="#{priority}">Priority</th>
                     <th class="col-1 text-center" th:text="#{actions}">Actions</th>
                 </tr>
@@ -65,16 +65,16 @@
                            target="_blank">Site url</a>
                     </td>
                     <td th:text="#{${technology.usage.name.toLowerCase()}}"></td>
-                    <td th:text="#{${technology.priority.name.toLowerCase()}}"></td>
+                    <td th:text="#{'priority.' + ${technology.priority.name.toLowerCase()}}"></td>
                     <td class="text-center">
-                        <a th:href="@{'/management/reference/technologies/edit/' + ${technology.id}}" type="button" th:title="#{edit-technology}"
+                        <a th:href="@{'/management/reference/technologies/edit/' + ${technology.id}}" type="button" th:title="#{technology.edit}"
                            class="btn-link link-underline-opacity-0 link-success">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{delete-technology}"
+                        <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{technology.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"
                            th:data-name="${technology.name}"
-                           th:data-bs-title="#{delete-this-technology} + '?'"
+                           th:data-bs-title="#{technology.delete-this} + '?'"
                            th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
                              '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${technology.name} + '&quot; onclick=&quot;deleteTechnology(this, ' + ${technology.id} + ')&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
@@ -103,7 +103,7 @@
         </div>
         <div th:if="${!technologies.isEmpty()}" class="row">
             <div class="col text-center text-md-end">
-                <span th:text="#{show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{entries}">entries</span>
+                <span th:text="#{info.show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{info.entries}">entries</span>
             </div>
         </div>
     </appMain>

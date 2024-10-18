@@ -3,8 +3,6 @@ package ru.javaprojects.projector.projects.web;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -21,10 +19,10 @@ import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.to.CommentTo;
 
 import java.util.Comparator;
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,9 +39,6 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     private static final String PROJECTS_COMMENTS_URL = PROJECTS_URL_SLASH + "%d/comments";
     private static final String PROJECTS_COMMENTS_URL_SLASH_ID = PROJECTS_URL_SLASH + "%d/comments/%d";
     private static final String PROJECTS_LIKE_COMMENT_URL = PROJECTS_COMMENTS_URL_SLASH_ID + "/like";
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private ProjectService projectService;
@@ -113,8 +108,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_LIKE_PROJECT_URL, NOT_EXISTING_ID)));
         assertTrue(() -> likeRepository.findByObjectIdAndUserId(NOT_EXISTING_ID, USER2_ID).isEmpty());
     }
@@ -160,8 +155,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL, NOT_EXISTING_ID)));
     }
 
@@ -179,8 +174,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL, PROJECT1_ID)));
         assertEquals(project1.getComments().size(),
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getComments().size());
@@ -189,7 +184,6 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void createCommentInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
         CommentTo newCommentTo = getNewCommentTo();
         newCommentTo.setText(HTML_TEXT);
         perform(MockMvcRequestBuilders.post(String.format(PROJECTS_COMMENTS_URL, PROJECT1_ID))
@@ -201,7 +195,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         MethodArgumentNotValidException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(jsonPath("$.invalid_params.text").value("Should not be html"))
+                .andExpect(jsonPath("$.invalid_params.text").value("Should not be HTML"))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL, PROJECT1_ID)));
         assertEquals(project1.getComments().size(),
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getComments().size());
@@ -255,8 +249,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-like-yourself", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-like-yourself", null, getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_LIKE_COMMENT_URL, PROJECT1_ID, PROJECT1_COMMENT3_ID)));
         assertEquals(project1Comment3.getLikes().size(),
                 commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow().getLikes().size());
@@ -298,8 +291,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_LIKE_COMMENT_URL, PROJECT1_ID, NOT_EXISTING_ID)));
         assertTrue(() -> likeRepository.findByObjectIdAndUserId(NOT_EXISTING_ID, USER_ID).isEmpty());
     }
@@ -340,8 +333,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-delete-another", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-delete-not-belong", null, getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID,
                         PROJECT1_COMMENT1_ID)));
         Comment comment = commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow();
@@ -372,8 +364,8 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID, NOT_EXISTING_ID)));
     }
 
@@ -416,8 +408,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-edit-another", null,
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("comment.forbidden-edit-not-belong", null, getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID,
                         PROJECT1_COMMENT1_ID)));
         Comment updated = commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow();
@@ -435,15 +426,14 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         NotFoundException.class))
                 .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
-                .andExpect(problemDetail(messageSource.getMessage("notfound.entity", new Object[]{NOT_EXISTING_ID},
-                        LocaleContextHolder.getLocale())))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID, NOT_EXISTING_ID)));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void updateCommentInvalid() throws Exception {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
         perform(MockMvcRequestBuilders.put(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID,
                         PROJECT1_COMMENT3_ID))
                 .param(TEXT_PARAM, HTML_TEXT)
@@ -453,7 +443,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                         ConstraintViolationException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("updateComment.text: Should not be html"))
+                .andExpect(problemDetail("updateComment.text: Should not be HTML"))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID,
                         PROJECT1_COMMENT3_ID)));
         COMMENT_MATCHER.assertMatch(commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow(), project1Comment3);

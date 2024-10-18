@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="projectTo" type="ru.javaprojects.projector.projects.to.ProjectTo"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{projects},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{project.projects},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/management/projects}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-layer-group me-1"></i><span th:text="#{projects}"></span>
+                        <i class="fas fa-layer-group me-1"></i><span th:text="#{project.projects}"></span>
                     </a>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${projectTo.isNew()} ? #{add} : #{edit}">Add/Edit</li>
@@ -20,7 +20,7 @@
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h3 class="text-center" th:text="${projectTo.isNew()} ? #{new-project} :
+                        <h3 class="text-center" th:text="${projectTo.isNew()} ? #{project.new} :
                             ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h3>
                     </div>
                     <form th:action="@{/management/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
@@ -72,7 +72,7 @@
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text d-inline-block text-truncate project-card-label"
-                                              th:text="#{dev-start}">Dev start date</span>
+                                              th:text="#{project.dev-start}">Dev start date</span>
                                         <input type="date" id="startDate" name="startDate" th:value="${projectTo.startDate}"
                                                class="form-control date-input" th:classappend="${projectTo.startDate == null ? 'text-muted' : ''}" required />
                                     </div>
@@ -80,7 +80,7 @@
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text d-inline-block text-truncate project-card-label"
-                                              th:text="#{dev-end}">Dev end date</span>
+                                              th:text="#{project.dev-end}">Dev end date</span>
                                         <input type="date" name="endDate" th:value="${projectTo.endDate}"
                                                class="form-control date-input" th:classappend="${projectTo.endDate == null ? 'text-muted' : ''}" required />
                                     </div>
@@ -94,19 +94,19 @@
                                                 th:field="*{priority}" th:title="#{priority}" required>
                                             <option th:each="priority : ${priorities}"
                                                     th:value="${priority.name}"
-                                                    th:text="#{${priority.name.toLowerCase()}}">
+                                                    th:text="#{'priority.' + ${priority.name.toLowerCase()}}">
                                             </option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text project-card-label" th:text="#{visibility}">Visibility</span>
+                                        <span class="input-group-text project-card-label" th:text="#{project.visibility}">Visibility</span>
                                         <span class="form-control">
                                             <div class="form-switch">
                                                 <input type="checkbox" role="switch" th:field="*{enabled}" class="form-check-input me-1"
                                                        style="cursor: pointer;" id="visibilityCheckbox" />
-                                                <span th:text="${projectTo.enabled} ? #{visible-to-users} : #{not-visible-to-users}"
+                                                <span th:text="${projectTo.enabled} ? #{project.visible-to-users} : #{project.not-visible-to-users}"
                                                       id="visibilityCheckboxDesc"></span>
                                             </div>
                                         </span>
@@ -149,7 +149,7 @@
                                 <div class="col-lg-6 mb-3">
                                     <div th:hidden="${projectTo.dockerCompose?.fileLink == null && projectTo.dockerCompose?.inputtedFileBytes == null}"
                                          class="input-group" id="dockerFilePreviewDiv">
-                                        <span class="input-group-text d-inline-block text-truncate project-card-label" th:text="#{docker-compose-file}">Docker file</span>
+                                        <span class="input-group-text d-inline-block text-truncate project-card-label" th:text="#{project.docker-compose-file}">Docker file</span>
                                         <div class="form-control py-1 text-start">
                                             <a th:href="@{${projectTo.dockerCompose?.getSrc()}}" id="dockerComposeFileRef"
                                                class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -169,7 +169,7 @@
                                             (projectTo.dockerCompose.fileLink == null && projectTo.dockerCompose.inputtedFileBytes == null)}"
                                              class="input-group custom-file-button">
                                             <label class="input-group-text d-inline-block text-truncate bg-light project-card-label"
-                                                   th:text="#{docker-compose-file}">Docker file</label>
+                                                   th:text="#{project.docker-compose-file}">Docker file</label>
                                             <input type="file" accept=".yaml,.yml" th:field="*{dockerCompose.inputtedFile}"
                                                    class="form-control text-muted"
                                                    id="dockerFileInput" onchange="previewDockerFile()"/>
@@ -185,7 +185,7 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{deploy} + ' URL'">Deployment URL</span>
+                                    <span class="input-group-text project-card-label" th:text="#{project.deploy} + ' URL'">Deployment URL</span>
                                     <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}"
                                        class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="deploymentUrlCheck" target="_blank">
@@ -193,7 +193,7 @@
                                     </a>
                                     <input type="url" id="deploymentUrlInput" th:field="*{deploymentUrl}" class="url"
                                            th:classappend="${#fields.hasErrors('deploymentUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                           th:placeholder="#{deploy} + ' URL'" />
+                                           th:placeholder="#{project.deploy} + ' URL'" />
                                 </div>
                                 <span th:if="${#fields.hasErrors('deploymentUrl')}">
                                     <ul>
@@ -204,12 +204,12 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{open-api} + ' URL'">Open API URL</span>
+                                    <span class="input-group-text project-card-label" th:text="#{project.open-api} + ' URL'">Open API URL</span>
                                     <a th:hidden="${projectTo.openApiUrl == null}" th:href="${projectTo.openApiUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="openApiUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                                     <input type="url" id="openApiUrlInput" th:field="*{openApiUrl}" class="url"
                                            th:classappend="${#fields.hasErrors('openApiUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                           th:placeholder="#{open-api} + ' URL'" />
+                                           th:placeholder="#{project.open-api} + ' URL'" />
                                 </div>
                                 <span th:if="${#fields.hasErrors('openApiUrl')}">
                                     <ul>
@@ -255,7 +255,7 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="border rounded-2 ps-3 pe-4 pb-3 h-100">
-                                        <div class="text-start text-muted tiny" th:text="#{card-image}">Card image</div>
+                                        <div class="text-start text-muted tiny" th:text="#{project.card-image}">Card image</div>
 
                                         <div class="d-flex align-items-start">
                                             <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
@@ -299,13 +299,13 @@
                                 </div>
                                 <div class="col-lg-8 mb-3">
                                     <div class="border rounded-2 px-3 pb-3 h-100">
-                                        <div class="text-start text-muted tiny" th:text="#{technologies}">Technologies</div>
+                                        <div class="text-start text-muted tiny" th:text="#{technology.technologies}">Technologies</div>
 
                                         <div id="technologiesPreviewDiv">
                                             <select class="form-control selectpicker border mt-1" data-style="btn-white"
                                                     id="technologiesSelector" data-dropup-auto="false"
                                                     name="technologiesIds" multiple
-                                                    th:title="#{technologies}" required data-live-search="true">
+                                                    th:title="#{technology.technologies}" required data-live-search="true">
                                                 <option th:each="technology : ${technologies}"
                                                         th:value="${technology.id}"
                                                         th:text="${technology.name}"
@@ -331,12 +331,12 @@
                             <div class="mb-2">
                                 <div class="form-floating">
                                     <span class="position-absolute text-muted tiny" style="right: 10px;" id="characterCounter"
-                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length()))} + ' ' + #{characters-left}">Characters left</span>
+                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                     <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
                                               th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Short description" style="height: 90px; white-space: pre-wrap;"
                                               maxlength="128" required></textarea>
-                                    <label for="shortDescriptionInput" class="text-muted" th:text="#{short-description}">Short description</label>
+                                    <label for="shortDescriptionInput" class="text-muted" th:text="#{project.short-description}">Short description</label>
                                 </div>
                                 <span th:if="${#fields.hasErrors('shortDescription')}">
                                     <ul>
@@ -348,7 +348,7 @@
 
                             <!-- Description block -->
 
-                            <div class="fw-bold text-info-emphasis mb-2" th:text="#{description-elements}">Description elements</div>
+                            <div class="fw-bold text-info-emphasis mb-2" th:text="#{project.description-elements}">Description elements</div>
                             <div id="elementsBlock">
                                 <div th:each="element, itemStat : ${projectTo.descriptionElementTos}"
                                      th:id="${'elementContainer-' + itemStat.index}" class="element-container mb-1">
@@ -445,17 +445,17 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <button type="button" class="dropdown-item" onclick="addNewElement('Title')" th:text="#{title}">
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Title')" th:text="#{project.description-elements.title}">
                                             Title
                                         </button>
                                     </li>
                                     <li>
-                                        <button type="button" class="dropdown-item" onclick="addNewElement('Paragraph')" th:text="#{paragraph}">
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Paragraph')" th:text="#{project.description-elements.paragraph}">
                                             Paragraph
                                         </button>
                                     </li>
                                     <li>
-                                        <button type="button" class="dropdown-item" onclick="addNewElement('Image')" th:text="#{image}">
+                                        <button type="button" class="dropdown-item" onclick="addNewElement('Image')" th:text="#{project.description-elements.image}">
                                             Image
                                         </button>
                                     </li>
@@ -501,12 +501,12 @@
         <ul class="dropdown-menu">
             <li>
                 <button type="button" class="dropdown-item" onclick="moveElementUp(this)">
-                    <i class="fa-solid fa-up-long text-warning"></i> <span th:text="#{move-up}">Move up</span>
+                    <i class="fa-solid fa-up-long text-warning"></i> <span th:text="#{project.description-elements.move-up}">Move up</span>
                 </button>
             </li>
             <li>
                 <button type="button" class="dropdown-item" onclick="moveElementDown(this)">
-                    <i class="fa-solid fa-down-long text-warning"></i> <span th:text="#{move-down}">Move down</span>
+                    <i class="fa-solid fa-down-long text-warning"></i> <span th:text="#{project.description-elements.move-down}">Move down</span>
                 </button>
             </li>
             <li>

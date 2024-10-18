@@ -20,26 +20,26 @@
             <li sec:authorize="hasRole('ADMIN')" class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                  aria-expanded="false" id="management">
-                <span th:text="#{label.management}">Management</span>
+                <span th:text="#{management}">Management</span>
               </a>
               <ul class="dropdown-menu w-50">
-                <li><a class="dropdown-item" th:href="@{/management/users}" id="users" th:text="#{users}">Users</a></li>
+                <li><a class="dropdown-item" th:href="@{/management/users}" id="users" th:text="#{user.users}">Users</a></li>
                 <li><a class="dropdown-item" th:href="@{/management/projects}" id="projects"
-                       th:text="#{projects}">Projects</a></li>
+                       th:text="#{project.projects}">Projects</a></li>
                 <li class="dropend">
                   <a class="dropdown-item dropdown-toggle" id="reference" style="cursor: pointer;" th:text="#{reference}">Reference</a>
                   <ul class="dropdown-menu dropdown-submenu">
                     <li><a class="dropdown-item" th:href="@{/management/reference/technologies}" id="technologies"
-                           th:text="#{technologies}">Technologies</a></li>
+                           th:text="#{technology.technologies}">Technologies</a></li>
                     <li><a class="dropdown-item" th:href="@{/management/reference/architectures}" id="architectures"
-                           th:text="#{architectures}">Architectures</a></li>
+                           th:text="#{architecture.architectures}">Architectures</a></li>
                   </ul>
                 </li>
               </ul>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="projectsDropdown">
-                <span th:text="#{projects}">Projects</span>
+                <span th:text="#{project.projects}">Projects</span>
               </a>
               <ul class="dropdown-menu">
                 <li th:each="project : ${enabledProjects}">

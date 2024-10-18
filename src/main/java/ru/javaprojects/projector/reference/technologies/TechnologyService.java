@@ -50,7 +50,7 @@ public class TechnologyService {
     public Technology getByName(String name) {
         Assert.notNull(name, "name must not be null");
         return repository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Not found technology with name =" + name, "notfound.technology",
+                .orElseThrow(() -> new NotFoundException("Not found technology with name =" + name, "error.notfound.technology",
                         new Object[]{name}));
     }
 

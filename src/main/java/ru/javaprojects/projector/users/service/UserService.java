@@ -41,7 +41,7 @@ public class UserService {
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->
-                new NotFoundException("Not found user with email=" + email, "notfound.user", new Object[]{email}));
+                new NotFoundException("Not found user with email=" + email, "error.notfound.user", new Object[]{email}));
     }
 
     public User get(long id) {

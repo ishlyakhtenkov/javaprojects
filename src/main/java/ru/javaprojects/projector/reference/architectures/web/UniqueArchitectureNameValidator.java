@@ -9,6 +9,6 @@ import ru.javaprojects.projector.reference.architectures.ArchitectureRepository;
 @Component
 public class UniqueArchitectureNameValidator extends UniqueNameValidator<Architecture, ArchitectureRepository> {
     public UniqueArchitectureNameValidator(ArchitectureRepository repository, MessageSource messageSource) {
-        super(repository, messageSource, "duplicate.architecture-name");
+        super(repository, messageSource, "error.duplicate.architecture-name");
     }
 }

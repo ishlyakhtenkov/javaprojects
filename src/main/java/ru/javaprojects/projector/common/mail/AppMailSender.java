@@ -34,7 +34,7 @@ public class AppMailSender implements MailSender {
             mimeMessageHelper.setText(text, true);
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new MailException("Failed to send mail (" + subject + "): " + e.getMessage(), "mail.failed-to-send",
+            throw new MailException("Failed to send mail (" + subject + "): " + e.getMessage(), "error.mail.failed-to-send",
                     new Object[]{subject});
         }
     }

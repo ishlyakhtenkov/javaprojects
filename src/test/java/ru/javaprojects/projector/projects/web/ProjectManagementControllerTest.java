@@ -5,8 +5,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -37,6 +35,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMatchers.exception;
@@ -62,9 +61,6 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
 
     @Value("${content-path.projects}")
     private String projectFilesPath;
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private ProjectService projectService;
@@ -127,8 +123,9 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
     @WithUserDetails(ADMIN_MAIL)
     void showProjectManagementPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(MANAGEMENT_PROJECTS_URL_SLASH + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -184,8 +181,9 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
     @WithUserDetails(ADMIN_MAIL)
     void showEditPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(MANAGEMENT_PROJECTS_EDIT_URL + NOT_EXISTING_ID))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test
@@ -220,7 +218,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .with(csrf()))
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
@@ -255,7 +253,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .with(csrf()))
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
@@ -289,7 +287,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .with(csrf()))
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                            new Object[]{newProject.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{newProject.getName()}, getLocale())));
             Project created = projectService.getByName(newProject.getName());
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
@@ -325,7 +323,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                        new Object[]{newProject.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{newProject.getName()}, getLocale())));
         Project created = projectService.getByName(newProject.getName());
         newProject.setId(created.getId());
         created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
@@ -455,8 +453,9 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("project.logo-not-present",
-                        null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("project.logo-not-present", null, getLocale()),
+                        IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getCardImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
@@ -473,8 +472,9 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("project.card-image-not-present",
-                        null, LocaleContextHolder.getLocale()), IllegalRequestDataException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("project.card-image-not-present", null, getLocale()),
+                        IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
@@ -498,7 +498,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .with(csrf()))
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
-                            new Object[]{newProjectTo.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
@@ -583,7 +583,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(status().isFound())
                     .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + updatedProject.getId()))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                            new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{updatedProject.getName()}, getLocale())));
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "descriptionElements.id",
@@ -623,7 +623,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(status().isFound())
                     .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + updatedProject.getId()))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                            new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "comments", "descriptionElements.id",
                     "descriptionElements.project");
@@ -663,7 +663,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(status().isFound())
                     .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                            new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "comments", "descriptionElements.id",
                     "descriptionElements.project");
@@ -708,7 +708,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                        new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedProject.getName()}, getLocale())));
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "comments", "descriptionElements.project");
         assertEquals(project1.getLikes(), project.getLikes());
@@ -743,7 +743,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                     .andExpect(status().isFound())
                     .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID))
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                            new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                            new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "comments", "descriptionElements.id",
                      "descriptionElements.project");
@@ -773,7 +773,7 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(MANAGEMENT_PROJECTS_URL_SLASH + PROJECT1_ID))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.updated",
-                        new Object[]{updatedProject.getName()}, LocaleContextHolder.getLocale())));
+                        new Object[]{updatedProject.getName()}, getLocale())));
 
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "comments", "descriptionElements.project");
@@ -804,8 +804,9 @@ class ProjectManagementControllerTest extends AbstractControllerTest implements 
                 .file((MockMultipartFile) getNewDeForProjectUpdate().getImage().getInputtedFile())
                 .params(updatedParams)
                 .with(csrf()))
-                .andExpect(exception().message(messageSource.getMessage("notfound.entity",
-                        new Object[]{NOT_EXISTING_ID}, LocaleContextHolder.getLocale()), NotFoundException.class));
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
+                        NotFoundException.class));
     }
 
     @Test

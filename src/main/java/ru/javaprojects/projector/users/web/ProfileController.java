@@ -59,7 +59,7 @@ public class ProfileController {
         log.info("reset password by token={}", passwordResetTo.getToken());
         passwordResetService.resetPassword(passwordResetTo);
         redirectAttributes.addFlashAttribute("action",
-                messageSource.getMessage("password-reset.success-reset", null, LocaleContextHolder.getLocale()));
+                messageSource.getMessage("reset-password.success", null, LocaleContextHolder.getLocale()));
         return "redirect:/login";
     }
 

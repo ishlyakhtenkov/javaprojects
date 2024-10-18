@@ -55,10 +55,10 @@
                                 <div class="col-12 col-sm-7 ps-sm-0">
                                     <div class="mb-3 mt-3 mt-sm-0">
                                         <div class="input-group">
-                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{name}">Name</span>
+                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{user.name}">Name</span>
                                             <input type="text" id="nameInput" th:field="*{name}"
                                                    th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
-                                                   required th:placeholder="#{name}" />
+                                                   required th:placeholder="#{user.name}" />
                                         </div>
                                         <span th:if="${#fields.hasErrors('name')}">
                                             <ul>
@@ -69,10 +69,10 @@
                                     </div>
                                     <div class="mb-3">
                                         <div class="input-group">
-                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{email}">Email</span>
+                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{user.email}">Email</span>
                                             <input type="text" id="emailInput" th:field="*{email}"
                                                    th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
-                                                   required th:placeholder="#{email}" />
+                                                   required th:placeholder="#{user.email}" />
                                         </div>
                                         <span th:if="${#fields.hasErrors('email')}">
                                             <ul>

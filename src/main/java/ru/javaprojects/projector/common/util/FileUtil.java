@@ -33,7 +33,7 @@ public class FileUtil {
             upload(multipartFile.getBytes(), dirPath, fileName);
         } catch (IOException e) {
             throw new FileException("Failed to upload file: " + fileName +
-                    ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
+                    ": " + e.getMessage(), "error.file.failed-to-upload", new Object[]{fileName});
         }
     }
 
@@ -42,14 +42,14 @@ public class FileUtil {
         Assert.notNull(dirPath, DIR_PATH_MUST_NOT_BE_NULL);
         Assert.notNull(fileName, FILE_NAME_MUST_NOT_BE_NULL);
         if (fileBytes.length == 0) {
-            throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
+            throw new IllegalRequestDataException("File must not be empty: " + fileName, "error.file.must-not-be-empty",
                     new Object[]{fileName});
         }
         try (OutputStream outStream = Files.newOutputStream(Files.createDirectories(Paths.get(dirPath)).resolve(fileName))) {
             outStream.write(fileBytes);
         } catch (IOException e) {
             throw new FileException("Failed to upload file: " + fileName +
-                    ": " + e.getMessage(), "file.failed-to-upload", new Object[]{fileName});
+                    ": " + e.getMessage(), "error.file.failed-to-upload", new Object[]{fileName});
         }
     }
 
@@ -62,7 +62,7 @@ public class FileUtil {
         } else if (fileTo.getInputtedFileBytes() != null && fileTo.getInputtedFileBytes().length != 0) {
             upload(fileTo.getInputtedFileBytes(), dirPath, fileName);
         } else {
-            throw new IllegalRequestDataException("File must not be empty: " + fileName, "file.must-not-be-empty",
+            throw new IllegalRequestDataException("File must not be empty: " + fileName, "error.file.must-not-be-empty",
                     new Object[]{fileName});
         }
     }
@@ -85,7 +85,7 @@ public class FileUtil {
                 deleteEmptyParentDirs(file);
             }
         } catch (IOException ex) {
-            throw new FileException("Failed to move " + filePath + " to " + dirPath, "file.failed-to-move", null);
+            throw new FileException("Failed to move " + filePath + " to " + dirPath, "error.file.failed-to-move", null);
         }
     }
 
@@ -97,7 +97,7 @@ public class FileUtil {
             Files.delete(file);
             deleteEmptyParentDirs(file);
         } catch (IOException ex) {
-            throw new FileException("Failed to delete file: " + filePath, "file.failed-to-delete", new Object[]{filePath});
+            throw new FileException("Failed to delete file: " + filePath, "error.file.failed-to-delete", new Object[]{filePath});
         }
     }
 
@@ -124,7 +124,7 @@ public class FileUtil {
                 }
             });
         } catch (IOException e) {
-            throw new FileException("Failed to delete dir: " + dirPath + ": " + e.getMessage(), "file.failed-to-delete-dir",
+            throw new FileException("Failed to delete dir: " + dirPath + ": " + e.getMessage(), "error.file.failed-to-delete-dir",
                     new Object[]{dir.getFileName()});
         }
     }

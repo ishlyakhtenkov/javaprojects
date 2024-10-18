@@ -9,6 +9,6 @@ import ru.javaprojects.projector.projects.model.Project;
 @Component
 public class UniqueProjectNameValidator extends UniqueNameValidator<Project, ProjectRepository> {
     public UniqueProjectNameValidator(ProjectRepository repository, MessageSource messageSource) {
-        super(repository, messageSource, "duplicate.project-name");
+        super(repository, messageSource, "error.duplicate.project-name");
     }
 }

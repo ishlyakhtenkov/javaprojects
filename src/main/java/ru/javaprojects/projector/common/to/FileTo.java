@@ -82,11 +82,11 @@ public class FileTo {
                 setInputtedFile(null);
                 setFileLink(null);
             } catch (IOException e) {
-                throw new IllegalRequestDataException(e.getMessage(), "file.failed-to-upload",
+                throw new IllegalRequestDataException(e.getMessage(), "error.file.failed-to-upload",
                         new Object[]{inputtedFile.getOriginalFilename()});
             }
         } else {
-            throw new IllegalRequestDataException("Inputted file must not be null", "file.failed-to-upload", null);
+            throw new IllegalRequestDataException("Inputted file must not be null", "error.file.failed-to-upload", null);
         }
     }
 

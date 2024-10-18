@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <th:block th:fragment="page">
-<!--    <html xmlns:th="http://www.thymeleaf.org" lang="en" data-bs-theme="dark">-->
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,6 +19,11 @@
         <link rel="stylesheet" th:href="@{/css/main.css?v=1}" />
         <link rel="stylesheet" th:href="@{${ownCss != null ? '/css/' + ownCss : ''}}" />
     </head>
+    <script>
+        let systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        const theme = localStorage.getItem('bs-theme') != null ? localStorage.getItem('bs-theme') : systemTheme;
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    </script>
     <body>
     <div class="app">
         <div th:replace="~{fragments/header :: header}"></div>
@@ -37,6 +41,7 @@
     <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script src="/webjars/jquery-toast-plugin/1.3.2/dist/jquery.toast.min.js"></script>
     <script src="/webjars/bootstrap-select/1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script src="/js/main.js?v=1"></script>
     <script src="/js/messages.js?v=1"></script>
     <script>
         $([[${activeMenuItem}]]).addClass('active');
@@ -45,12 +50,6 @@
         const authUser = [[${authUser}]];
         const locale = [[${#locale}]];
     </script>
-    <script>
-        function changeLocale(locale) {
-            window.location.replace('?lang=' + locale);
-        }
-    </script>
     <th:block th:insert="${ownScript}?: ~{}"/>
-<!--    </html>-->
 </th:block>
 </html>

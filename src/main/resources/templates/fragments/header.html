@@ -75,13 +75,20 @@
               </ul>
             </li>
           </ul>
-          <div class="nav-item dropdown me-3 d-none d-lg-block">
+
+          <button type="button" class="btn btn-link link-underline-opacity-0 p-0 me-3"
+                  onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')"
+                  onclick="setTheme($(this))">
+            <i class="" id="themeSwitcherIcon"></i>
+          </button>
+
+          <div class="nav-item dropdown me-2 d-none d-lg-block" style="padding-bottom: 4px;">
             <button type="button"
                     class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
-                    th:title="#{language}" data-bs-toggle="dropdown" aria-expanded="false">
-              <img th:src="@{'/images/' + ${#locale.language == 'en' ? 'en-flag.svg' : 'ru-flag.svg'}}" alt="Flag logo" width="20" height="20"
-                   onmouseenter="$(this).addClass('opacity-75')"
-                   onmouseleave="$(this).removeClass('opacity-75')" />
+                    th:title="#{language}" data-bs-toggle="dropdown" aria-expanded="false"
+                    onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')">
+              <img th:src="@{'/images/' + ${#locale.language == 'en' ? 'en-flag.svg' : 'ru-flag.svg'}}" alt="Flag logo"
+                   width="20" height="20" />
             </button>
             <ul class="dropdown-menu">
               <li>

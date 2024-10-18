@@ -29,7 +29,7 @@
                               th:text="${project.name}">Project name</span>
                     </div>
                     <div class="card-body text-start">
-                        <span th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}" class="tiny text-secondary float-end"></span>
+                        <span th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}" class="tiny text-secondary-emphasis float-end"></span>
                         <div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -69,14 +69,14 @@
                         </div>
 
                         <h3 class="mt-3" th:text="#{architecture}">Architecture</h3>
-                        <hr style="border: 2px solid black;">
+                        <hr style="border: 2px solid;">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                              width="40" height="40" class="bg-light border border-light-subtle rounded-circle p-1" />
                             <span class="h6" th:text="${project.architecture.name}"></span>
                         <div th:text="${project.architecture.description}"></div>
 
                         <h3 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h3>
-                        <hr style="border: 2px solid black;">
+                        <hr style="border: 2px solid">
 
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
@@ -90,20 +90,20 @@
                         </ul>
                         <div class="tab-content px-3 border-start pb-2">
                             <div class="tab-pane fade show active" id="backendTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
-                                <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2"
+                                <span th:each="technology : ${project.technologies}" class="badge bg-body-tertiary me-2 mt-2"
                                       th:if="${technology.usage == T(ru.javaprojects.projector.reference.technologies.model.Usage).BACKEND}">
                                     <a type="button" th:href="@{${technology.url}}" target="_blank"
-                                       class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark">
+                                       class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis">
                                         <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                              width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                     </a>
                                 </span>
                             </div>
                             <div class="tab-pane fade" id="frontendTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
-                                <span th:each="technology : ${project.technologies}" class="badge text-bg-light me-2 mt-2"
+                                <span th:each="technology : ${project.technologies}" class="badge bg-body-tertiary me-2 mt-2"
                                       th:if="${technology.usage == T(ru.javaprojects.projector.reference.technologies.model.Usage).FRONTEND}">
                                     <a type="button" th:href="@{${technology.url}}" target="_blank"
-                                       class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark">
+                                       class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis">
                                         <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                              width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                     </a>
@@ -113,7 +113,7 @@
 
                         <div th:if="${!project.descriptionElements.isEmpty()}">
                             <h3 class="mt-4" th:text="#{project.app-description}">Application description</h3>
-                            <hr style="border: 2px solid black;">
+                            <hr style="border: 2px solid;">
                         </div>
 
                         <div th:each="element : ${project.descriptionElements}">
@@ -135,7 +135,7 @@
                                 <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
-                                    <span class="text-secondary small commentsCounter" th:text="${comments.size()}"></span>
+                                    <span class="text-secondary-emphasis small commentsCounter" th:text="${comments.size()}"></span>
                                 </a>
                                 <a type="button" th:title="#{like}" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3 with-popover"
@@ -143,12 +143,12 @@
                                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                    th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
                                     <i class="fa-heart" th:title="#{like}" th:classappend="${liked == null || !liked ? 'fa-regular' : 'fa-solid'}"></i>
-                                    <span class="text-secondary small" th:title="#{like}" th:text="${project.likes.size()}"></span>
+                                    <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likes.size()}"></span>
                                 </a>
                             </div>
                             <div class="col-4 text-end">
                                 <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
-                                <span class="text-secondary small" th:text="${project.views}"></span>
+                                <span class="text-secondary-emphasis small" th:text="${project.views}"></span>
                             </div>
                         </div>
                     </div>
@@ -162,11 +162,11 @@
                 <div class="card shadow">
                     <div class="card-body text-start">
                         <span class="h3" th:text="#{comment.comments}">Comments</span>
-                        <span class="h3 text-secondary ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
+                        <span class="h3 text-secondary-emphasis ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
 
 
                         <div class="col-12 col-md-6 mt-3" id="newCommentDiv">
-                            <textarea class="form-control bg-light new-comment with-popover pb-4" id="newCommentInput"
+                            <textarea class="form-control bg-light-subtle new-comment with-popover pb-4" id="newCommentInput"
                                       style="resize: none" th:placeholder="#{comment.leave-comment-here}" rows="2"
                                       data-bs-toggle="popover" data-bs-trigger="manual"
                                       data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
@@ -189,13 +189,13 @@
                                          width="40" height="40" />
                                     <div class="ms-2 ">
                                         <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
-                                        <div class="text-secondary tiny" style="margin-top: -3px;"
+                                        <div class="text-secondary-emphasis tiny" style="margin-top: -3px;"
                                              th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                     </div>
                                 </div>
                                 <div class="comment-text" style="white-space: pre-wrap;"
                                      th:text="${commentEntry.getKey().deleted} ? #{comment.deleted} : ${commentEntry.getKey().text}"
-                                     th:classappend="${commentEntry.getKey().deleted ? 'text-secondary' : ''}"
+                                     th:classappend="${commentEntry.getKey().deleted ? 'text-secondary-emphasis' : ''}"
                                      th:styleappend="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
 
                                 <div th:if="${!commentEntry.getKey().deleted}" class="comment-actions">
@@ -207,7 +207,7 @@
                                         <i class="fa-heart" th:title="#{like}"
                                            th:classappend="${likedCommentsIds == null || !likedCommentsIds.contains(commentEntry.getKey().id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
-                                        <span class="text-secondary small" th:title="#{like}" th:text="${commentEntry.getKey().likes.size()}"></span>
+                                        <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${commentEntry.getKey().likes.size()}"></span>
                                     </a>
 
                                     <a type="button" class="reply-btn btn-link text-decoration-none ms-1 with-popover"
@@ -218,7 +218,7 @@
                                        data-bs-html="true"
                                        onclick="reply($(this))">
                                         <i class="fa-solid fa-share fa-rotate-270 small"></i>
-                                        <span class="text-secondary small" style="margin-left: -3px;" th:text="#{comment.reply}">Reply</span>
+                                        <span class="text-secondary-emphasis small" style="margin-left: -3px;" th:text="#{comment.reply}">Reply</span>
                                     </a>
 
                                     <a th:if="${authUser != null && commentEntry.getKey().author.id == authUser.id}"

@@ -8,7 +8,7 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-light px-2 rounded-top-1 border-top border-start border-end border-secondary-subtle"
+        <div class="bg-light-subtle px-2 rounded-top-1 border-top border-start border-end border-light-subtle"
              th:classappend="${technologies.isEmpty() ? 'rounded-1 border-bottom' : ''}">
             <div class="row row-cols-1 row-cols-sm-2 align-items-center">
                 <div class="col-sm-5 text-start">
@@ -24,7 +24,7 @@
                     <div class="btn-toolbar justify-content-start justify-content-sm-end">
                         <form class="d-flex" role="search" th:action="@{/management/reference/technologies}" method="get">
                             <div class="input-group">
-                                <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
+                                <span class="input-group-text" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
                                 <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{technology.search} + '...'" aria-label="Search">
                             </div>
                         </form>
@@ -42,14 +42,14 @@
 
         <div th:if="${!technologies.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-light thead-border-top-none">
+                <thead class="thead-border-top-none">
                 <tr>
-                    <th class="col-3 border-right-none" th:text="#{name}">Name</th>
-                    <th class="col-1 text-center border-right-none" th:text="#{logo}">Logo</th>
-                    <th class="col-3 border-right-none" th:text="#{technology.off-website}">Official website</th>
-                    <th class="col-2 border-right-none" th:text="#{technology.usage}">Usage</th>
-                    <th class="col-2 border-right-none" th:text="#{priority}">Priority</th>
-                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
+                    <th class="col-3 border-right-none bg-light-subtle" th:text="#{name}">Name</th>
+                    <th class="col-1 text-center border-right-none bg-light-subtle" th:text="#{logo}">Logo</th>
+                    <th class="col-3 border-right-none bg-light-subtle" th:text="#{technology.off-website}">Official website</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{technology.usage}">Usage</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{priority}">Priority</th>
+                    <th class="col-1 text-center bg-light-subtle" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>

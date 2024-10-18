@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="card-body d-flex flex-column pb-0" style="margin-top: -39px;">
-                        <span class="tiny text-secondary mb-2" th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}"></span>
+                        <span class="tiny text-secondary-emphasis mb-2" th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}"></span>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>
                         <span class="card-text" th:text="${project.shortDescription}">Short description</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
@@ -38,7 +38,7 @@
                                 <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
-                                    <span class="text-secondary small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
+                                    <span class="text-secondary-emphasis small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
                                 </a>
                                 <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"
@@ -48,12 +48,12 @@
                                     <i class="fa-heart" th:title="#{like}"
                                        th:classappend="${likedProjectsIds == null || !likedProjectsIds.contains(project.id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
-                                    <span class="text-secondary small" th:title="#{like}" th:text="${project.likes.size()}"></span>
+                                    <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likes.size()}"></span>
                                 </a>
                             </div>
                             <div class="col-4 text-end">
                                 <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
-                                <span class="text-secondary small" th:text="${project.views}"></span>
+                                <span class="text-secondary-emphasis small" th:text="${project.views}"></span>
                             </div>
                         </div>
                         <a th:href="@{'/projects/' + ${project.id}}" class="stretched-link"></a>

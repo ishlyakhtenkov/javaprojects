@@ -123,7 +123,7 @@
                                 <div th:if="${technologyTo.logo == null ||
                                     (technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null)}"
                                      class="input-group custom-file-button">
-                                    <label class="input-group-text bg-light w-25" for="fileInput" th:text="#{logo}">Logo</label>
+                                    <label class="input-group-text w-25" for="fileInput" th:text="#{logo}">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                            class="form-control text-muted"
                                            th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"

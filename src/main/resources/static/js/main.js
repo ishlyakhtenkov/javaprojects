@@ -2,11 +2,11 @@ setUpThemeSwitch(theme);
 
 function setUpThemeSwitch(theme) {
     if (theme === 'dark') {
-        $('#themeSwitcherIcon').removeClass('fa-regular fa-moon text-light')
+        $('#themeSwitcherIcon').removeClass('fa-solid fa-star text-light')
             .addClass('fa-regular fa-sun text-warning').parent().attr('title', 'Switch to light theme');
     } else {
         $('#themeSwitcherIcon').removeClass('fa-regular fa-sun text-warning')
-            .addClass('fa-regular fa-moon text-light').parent().attr('title', 'Switch to dark theme');
+            .addClass('fa-solid fa-star text-secondary').parent().attr('title', 'Switch to dark theme');
     }
 }
 

@@ -10,7 +10,7 @@
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
-        <div class="bg-light px-2 rounded-top-1 border-top border-start border-end border-secondary-subtle"
+        <div class="bg-light-subtle px-2 rounded-top-1 border-top border-start border-end border-light-subtle"
              th:classappend="${users.isEmpty() ? 'rounded-1 border-bottom' : ''}">
             <div class="row row-cols-1 row-cols-sm-2 align-items-center">
                 <div class="col-sm-4 text-start">
@@ -26,7 +26,7 @@
                     <div class="btn-toolbar justify-content-start justify-content-sm-end">
                         <form class="d-flex" role="search" th:action="@{/management/users}" method="get">
                             <div class="input-group">
-                                <span class="input-group-text bg-light" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
+                                <span class="input-group-text" id="searchUsers"><i class="fa-solid fa-magnifying-glass fa-fw"></i></span>
                                 <input class="form-control" th:name="keyword" th:value="${param.keyword}" type="search" th:placeholder="#{user.search} + '...'" aria-label="Search">
                             </div>
                         </form>
@@ -44,15 +44,15 @@
 
         <div th:if="${!users.isEmpty()}" class="table-responsive text-nowrap">
             <table class="table table-hover table-bordered">
-                <thead class="table-light thead-border-top-none">
+                <thead class="thead-border-top-none">
                 <tr>
-                    <th class="col-3 border-right-none" th:text="#{user.name}">Name</th>
-                    <th class="col-3 border-right-none" th:text="#{user.email}">Email</th>
-                    <th class="col-1 border-right-none text-center" th:text="#{user.avatar}">Avatar</th>
-                    <th class="col-1 border-right-none" th:text="#{user.roles}">Roles</th>
-                    <th class="col-2 border-right-none" th:text="#{user.registered}">Registered</th>
-                    <th class="col-1 text-center border-right-none" th:text="#{user.online}">Online</th>
-                    <th class="col-1 text-center" th:text="#{actions}">Actions</th>
+                    <th class="col-3 border-right-none bg-light-subtle" th:text="#{user.name}">Name</th>
+                    <th class="col-3 border-right-none bg-light-subtle" th:text="#{user.email}">Email</th>
+                    <th class="col-1 border-right-none bg-light-subtle text-center" th:text="#{user.avatar}">Avatar</th>
+                    <th class="col-1 border-right-none bg-light-subtle" th:text="#{user.roles}">Roles</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{user.registered}">Registered</th>
+                    <th class="col-1 text-center border-right-none bg-light-subtle" th:text="#{user.online}">Online</th>
+                    <th class="col-1 text-center bg-light-subtle" th:text="#{actions}">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -129,7 +129,7 @@
         <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
-                    <div class="modal-header bg-light">
+                    <div class="modal-header bg-light-subtle">
                         <h1 class="modal-title fs-5" id="changePasswordModalLabel">Change password for user</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

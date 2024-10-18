@@ -5,7 +5,7 @@
 
 <div th:fragment="header">
   <header class="fixed-top">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-lg container-fluid">
         <a class="navbar-brand" th:href="@{/}">
           <img th:src="@{/images/projector-logo.svg}" alt="Logo" width="32" height="32" class="d-inline-block align-text-top">
@@ -79,7 +79,7 @@
           <button type="button" class="btn btn-link link-underline-opacity-0 p-0 me-3"
                   onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')"
                   onclick="setTheme($(this))">
-            <i class="" id="themeSwitcherIcon"></i>
+            <i id="themeSwitcherIcon"></i>
           </button>
 
           <div class="nav-item dropdown me-2 d-none d-lg-block" style="padding-bottom: 4px;">

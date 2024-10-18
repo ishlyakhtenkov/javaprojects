@@ -22,7 +22,7 @@
 
         <div class="row d-flex justify-content-center align-items-center mt-3">
             <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
-                <div class="card shadow-sm rounded-4 bg-light-subtle">
+                <div class="card shadow rounded-4">
                     <form th:action="@{/profile}" method="post" th:object="${profileTo}" enctype="multipart/form-data">
                         <input type="hidden" th:field="*{id}">
                         <input type="hidden" th:if="${profileTo.avatar?.fileName != null}" th:field="*{avatar.fileName}">
@@ -55,7 +55,7 @@
                                 <div class="col-12 col-sm-7 ps-sm-0">
                                     <div class="mb-3 mt-3 mt-sm-0">
                                         <div class="input-group">
-                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{user.name}">Name</span>
+                                            <span class="input-group-text" style="min-width: 68px;" th:text="#{user.name}">Name</span>
                                             <input type="text" id="nameInput" th:field="*{name}"
                                                    th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                                    required th:placeholder="#{user.name}" />
@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <div class="input-group">
-                                            <span class="input-group-text bg-secondary-subtle" style="min-width: 68px;" th:text="#{user.email}">Email</span>
+                                            <span class="input-group-text" style="min-width: 68px;" th:text="#{user.email}">Email</span>
                                             <input type="text" id="emailInput" th:field="*{email}"
                                                    th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
                                                    required th:placeholder="#{user.email}" />

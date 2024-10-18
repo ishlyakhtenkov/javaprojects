@@ -54,7 +54,7 @@ shortDescriptionInput.on('keyup', () => {
 function deleteLogoFile() {
     logoFilePreviewDiv.attr('hidden', true);
     logoFileInputDiv.html('<div class="input-group custom-file-button">' +
-        `<label class="input-group-text bg-light project-card-label">${getMessage('logo')}</label>` +
+        `<label class="input-group-text project-card-label">${getMessage('logo')}</label>` +
         '<input type="file" accept="image/*" id="logoFileInput" name="logo.inputtedFile" ' +
         'class="form-control text-muted" required onchange="previewLogoFile()" /></div>').attr('hidden', false);
 }
@@ -77,7 +77,7 @@ function previewLogoFile() {
 function deleteDockerFile() {
     dockerFilePreviewDiv.attr('hidden', true);
     dockerFileInputDiv.html('<div class="input-group custom-file-button">' +
-        `<label class="input-group-text d-inline-block text-truncate bg-light project-card-label">${getMessage('project.docker-compose-file')}</label>` +
+        `<label class="input-group-text d-inline-block text-truncate project-card-label">${getMessage('project.docker-compose-file')}</label>` +
         '<input type="file" accept=".yaml,.yml" id="dockerFileInput" name="dockerCompose.inputtedFile" ' +
         'class="form-control text-muted" onchange="previewDockerFile()" /></div>').attr('hidden', false);
 }

@@ -49,8 +49,7 @@
     display: none;
 }
 .custom-file-button:hover label {
-    background-color: #dde0e3;
-    cursor: pointer;
+    cursor: auto;
 }
 
 .mb-10px {

@@ -66,7 +66,7 @@ function reply(replyBtn) {
 
         $('#replyCommentDiv').remove();
         let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
-        let textArea = $('<textarea></textarea>').addClass('form-control bg-light reply-comment pb-4')
+        let textArea = $('<textarea></textarea>').addClass('form-control bg-light-subtle reply-comment pb-4')
             .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
             .attr('rows', '2');
 
@@ -178,7 +178,7 @@ function generateCommentDiv(comment, isReply) {
         .attr('width', '40').attr('height', '40');
     let nameAndTimeDiv = $('<div></div>').addClass('ms-2');
     let nameSpan = $('<span></span>').addClass('h6').html(`${comment.author.name}`);
-    let timeDiv = $('<div></div>').addClass('text-secondary tiny').css('margin-top', '-3px')
+    let timeDiv = $('<div></div>').addClass('text-secondary-emphasis tiny').css('margin-top', '-3px')
         .html(formatDateTime(comment.created));
     nameAndTimeDiv.append(nameSpan);
     nameAndTimeDiv.append(timeDiv);
@@ -194,7 +194,7 @@ function generateCommentDiv(comment, isReply) {
     let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none with-popover')
         .attr('type', 'button').attr('title', getMessage('like'));
     let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
-    let likeCounter = $('<span></span>').addClass('text-secondary small').text(` ${comment.likes.length}`);
+    let likeCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${comment.likes.length}`);
     likeBtn.append(likeSymbol);
     likeBtn.append(likeCounter);
     likeBtn.on('click', () => {
@@ -204,7 +204,7 @@ function generateCommentDiv(comment, isReply) {
     let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
         .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
     let replySymbol = $('<i></i>').addClass('fa-solid fa-share fa-rotate-270 small');
-    let replySpan = $('<span></span>').addClass('text-secondary small').text(` ${getMessage('comment.reply')}`).css('margin-left', '-3px');
+    let replySpan = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${getMessage('comment.reply')}`).css('margin-left', '-3px');
     replyBtn.on('click', () => {
         reply(replyBtn);
     })
@@ -303,7 +303,7 @@ function deleteComment(id) {
         type: "DELETE"
     }).done(function() {
         let commentDiv = $(`#comment-${id}`);
-        commentDiv.find('.comment-text').addClass('text-secondary').css('font-style', 'italic')
+        commentDiv.find('.comment-text').addClass('text-secondary-emphasis').css('font-style', 'italic')
             .text(getMessage('comment.deleted'));
         commentDiv.find('.comment-actions').remove();
     }).fail(function(data) {
@@ -333,7 +333,7 @@ function edit(editBtn) {
     let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 py-1 editCommentDiv')
         .css('margin-left', commentDiv.css('margin-left'))
         .attr('id', `editCommentDiv-${commentId}`);
-    let textArea = $('<textarea></textarea>').addClass('form-control bg-light pb-4')
+    let textArea = $('<textarea></textarea>').addClass('form-control bg-light-subtle pb-4')
         .attr('id', 'editComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
         .attr('rows', '2').text(text);
 

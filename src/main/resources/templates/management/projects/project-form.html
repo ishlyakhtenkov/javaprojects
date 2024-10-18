@@ -132,7 +132,7 @@
                                     <div id="logoFileInputDiv">
                                         <div th:if="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
                                              class="input-group custom-file-button">
-                                            <label class="input-group-text bg-light project-card-label" th:text="#{logo}">Logo</label>
+                                            <label class="input-group-text project-card-label" th:text="#{logo}">Logo</label>
                                             <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                                    class="form-control text-muted"
                                                    th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"
@@ -168,7 +168,7 @@
                                         <div th:if="${projectTo.dockerCompose == null ||
                                             (projectTo.dockerCompose.fileLink == null && projectTo.dockerCompose.inputtedFileBytes == null)}"
                                              class="input-group custom-file-button">
-                                            <label class="input-group-text d-inline-block text-truncate bg-light project-card-label"
+                                            <label class="input-group-text d-inline-block text-truncate project-card-label"
                                                    th:text="#{project.docker-compose-file}">Docker file</label>
                                             <input type="file" accept=".yaml,.yml" th:field="*{dockerCompose.inputtedFile}"
                                                    class="form-control text-muted"
@@ -317,9 +317,9 @@
                                             </select>
 
                                             <span th:each="technology : ${technologies}" th:if="${projectTo.technologiesIds?.contains(technology.id)}"
-                                                  class="badge text-bg-light me-2 mt-2" th:id="${'techSpan-' + technology.id}">
+                                                  class="badge bg-body-tertiary me-2 mt-2" th:id="${'techSpan-' + technology.id}">
                                                 <a type="button" th:href="@{${technology.url}}" target="_blank"
-                                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark">
+                                                   class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis">
                                                     <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
                                                          width="32" height="32" th:text="${technology.name}" class="align-bottom"/>
                                                 </a>
@@ -378,7 +378,7 @@
                                                       th:styleappend="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE} ?
                                                       'height: 65px;' : 'height: 120px;'"
                                                       required></textarea>
-                                            <label class="text-muted" th:text="#{${element.type.name.toLowerCase()}}"></label>
+                                            <label class="text-muted" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}"></label>
                                         </div>
                                         <span th:if="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')}">
                                             <ul>
@@ -393,7 +393,7 @@
                                          th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
                                         <div th:replace="~{:: element-actions-btn(addClass='float-end')}"></div>
 
-                                        <div class="text-start text-muted tiny" th:text="#{${element.type.name.toLowerCase()}}">Type</div>
+                                        <div class="text-start text-muted tiny" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}">Type</div>
                                         <div class="d-flex align-items-start">
                                             <input type="hidden" th:id="${'elementFileName-' + itemStat.index}"
                                                    th:if="${element.image?.fileName != null}"

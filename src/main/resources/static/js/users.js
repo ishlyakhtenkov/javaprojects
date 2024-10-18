@@ -1,7 +1,7 @@
 const changePasswordModal = $('#changePasswordModal');
 
 changePasswordModal.on('show.bs.modal', function(e) {
-    $(e.currentTarget).find('#password').val('');
+    $(e.currentTarget).find('#password').val('').removeClass('is-invalid');
     $(e.currentTarget).find('#repeatPassword').val('').removeClass('is-invalid');
     $(e.currentTarget).find('#passwordMatchError').text('');
     $(e.currentTarget).find('#confirmBtn').prop('disabled', false);

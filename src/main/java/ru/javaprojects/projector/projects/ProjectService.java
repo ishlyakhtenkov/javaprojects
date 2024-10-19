@@ -53,6 +53,11 @@ public class ProjectService {
         return repository.getExisted(id);
     }
 
+    public Project getWithAuthor(long id) {
+        return repository.findWithAuthorById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
+    }
+
     @Transactional
     public void addViewsToProject(long id) {
         Project project = repository.findForAddViewsById(id).orElseThrow(() ->
@@ -61,7 +66,7 @@ public class ProjectService {
     }
 
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
-        Project project = repository.findWithAllInformationById(id).orElseThrow(() ->
+        Project project = repository.findWithAllInformationAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
         TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
         sortedTechnologies.addAll(project.getTechnologies());
@@ -78,16 +83,23 @@ public class ProjectService {
                         new Object[]{name}));
     }
 
+    public Project getByAuthorAndName(long authorId, String name) {
+        Assert.notNull(name, "name must not be null");
+        return repository.findByAuthor_IdAndName(authorId, name)
+                .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "error.notfound.project",
+                        new Object[]{name}));
+    }
+
     public List<Project> getAll() {
-        return repository.findAllWithArchitectureByOrderByName();
+        return repository.findAllWithArchitectureAndAuthorByOrderByName();
     }
 
     public List<Project> getAllEnabled() {
         return repository.findAllByEnabledIsTrueOrderByName();
     }
 
-    public List<Project> getAllEnabledWithArchitectureAndTechnologiesAndLikes() {
-        List<Project> projects = repository.findAllWithArchAndTechnologiesAndLikesByEnabledIsTrue();
+    public List<Project> getAllEnabledWithAllInformation() {
+        List<Project> projects = repository.findAllWithAllInformationByEnabledIsTrue();
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {
             Comparator<Technology> technologyComparator = Comparator
@@ -102,32 +114,42 @@ public class ProjectService {
     }
 
     @Transactional
-    public void delete(long id) {
-        Project project = repository.findWithDescriptionById(id).orElseThrow(() ->
+    public void delete(long id, long userId, boolean byAdmin) {
+        Project project = repository.findWithDescriptionAndAuthorById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
-        repository.delete(project);
-        repository.flush();
-        likeRepository.deleteAllByObjectId(id);
-        likeRepository.flush();
-        FileUtil.deleteFile(project.getLogo().getFileLink());
-        FileUtil.deleteFile(project.getCardImage().getFileLink());
-        if (project.getDockerCompose() != null) {
-            FileUtil.deleteFile(project.getDockerCompose().getFileLink());
+        if (project.getAuthor().id() == userId || byAdmin) {
+            repository.delete(project);
+            repository.flush();
+            likeRepository.deleteAllByObjectId(id);
+            likeRepository.flush();
+            FileUtil.deleteFile(project.getLogo().getFileLink());
+            FileUtil.deleteFile(project.getCardImage().getFileLink());
+            if (project.getDockerCompose() != null) {
+                FileUtil.deleteFile(project.getDockerCompose().getFileLink());
+            }
+            project.getDescriptionElements().stream()
+                    .filter(de -> de.getType() == IMAGE && de.getImage() != null)
+                    .forEach(de -> FileUtil.deleteFile(de.getImage().getFileLink()));
+        } else {
+            throw new IllegalRequestDataException("Forbidden to delete another user project, projectId=" + id +
+                    ", userId=" + userId, "project.forbidden-delete-not-belong", null);
         }
-        project.getDescriptionElements().stream()
-                .filter(de -> de.getType() == IMAGE && de.getImage() != null)
-                .forEach(de -> FileUtil.deleteFile(de.getImage().getFileLink()));
     }
 
 
     @Transactional
-    public void enable(long id, boolean enabled) {
-        Project project = get(id);
-        project.setEnabled(enabled);
+    public void enable(long id, boolean enabled, long userId, boolean byAdmin) {
+        Project project = getWithAuthor(id);
+        if (project.getAuthor().id() == userId || byAdmin) {
+            project.setEnabled(enabled);
+        } else {
+            throw new IllegalRequestDataException("Forbidden to enable/disable another user project, projectId=" + id +
+                    ", userId=" + userId, "project.forbidden-enable-not-belong", null);
+        }
     }
 
     @Transactional
-    public Project create(ProjectTo projectTo) {
+    public Project create(ProjectTo projectTo, long userId) {
         Assert.notNull(projectTo, "projectTo must not be null");
         if (projectTo.getLogo() == null || projectTo.getLogo().isEmpty()) {
             throw new IllegalRequestDataException("Project logo file is not present",
@@ -137,26 +159,32 @@ public class ProjectService {
             throw new IllegalRequestDataException("Project card image file is not present",
                     "project.card-image-not-present", null);
         }
-        Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo));
+        User author = userService.get(userId);
+        Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo, author));
 
-        uploadFile(projectTo.getLogo(), project.getName(), LOGO_DIR, projectTo.getLogo().getRealFileName());
-        uploadFile(projectTo.getCardImage(), project.getName(), CARD_IMG_DIR, projectTo.getCardImage().getRealFileName());
+        uploadFile(projectTo.getLogo(), author.getEmail(), project.getName(), LOGO_DIR, projectTo.getLogo().getRealFileName());
+        uploadFile(projectTo.getCardImage(), author.getEmail(), project.getName(), CARD_IMG_DIR, projectTo.getCardImage().getRealFileName());
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
-            uploadFile(projectTo.getDockerCompose(), project.getName(), DOCKER_DIR,
+            uploadFile(projectTo.getDockerCompose(), author.getEmail(), project.getName(), DOCKER_DIR,
                     projectTo.getDockerCompose().getRealFileName());
         }
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.getImage() != null)
-                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
+                .forEach(deTo -> uploadDeImage(deTo, author.getEmail(), project.getName()));
         return project;
     }
 
     @Transactional
-    public Project update(ProjectTo projectTo) {
+    public Project update(ProjectTo projectTo, long userId, boolean byAdmin) {
         Assert.notNull(projectTo, "projectTo must not be null");
-        Project project = repository.findWithAllInformationById(projectTo.getId()).orElseThrow(() ->
+        Project project = repository.findWithAllInformationAndDescriptionById(projectTo.getId()).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + projectTo.getId(), "error.notfound.entity",
                         new Object[]{projectTo.getId()}));
+        if (project.getAuthor().id() != userId && !byAdmin) {
+            throw new IllegalRequestDataException("Forbidden to edit another user project, projectId=" + projectTo.getId() +
+                    ", userId=" + userId, "project.forbidden-edit-not-belong", null);
+        }
+        String authorEmail = project.getAuthor().getEmail();
         String projectOldName = project.getName();
         String oldLogoFileLink = project.getLogo().getFileLink();
         String oldCardImageFileLink = project.getCardImage().getFileLink();
@@ -171,7 +199,7 @@ public class ProjectService {
 
         projectTo.getDescriptionElementTos().stream()
                 .filter(deTo -> deTo.getType() == IMAGE && deTo.isNew() && deTo.getImage() != null)
-                .forEach(deTo -> uploadDeImage(deTo, project.getName()));
+                .forEach(deTo -> uploadDeImage(deTo, authorEmail, project.getName()));
         oldDeImages.values().stream()
                 .filter(oldDeImage -> !project.getDescriptionElements().contains(oldDeImage))
                 .forEach(oldDeImage -> FileUtil.deleteFile(oldDeImage.getImage().getFileLink()));
@@ -179,50 +207,54 @@ public class ProjectService {
                 .filter(deTo -> deTo.getType() == IMAGE && !deTo.isNew())
                 .forEach(deTo -> {
                     if (deTo.getImage() != null && !deTo.getImage().isEmpty()) {
-                        uploadDeImage(deTo, project.getName());
+                        uploadDeImage(deTo, authorEmail, project.getName());
                         FileUtil.deleteFile(oldDeImages.get(deTo.getId()).getImage().getFileLink());
                     } else if (!project.getName().equalsIgnoreCase(projectOldName)) {
                         FileUtil.moveFile(oldDeImages.get(deTo.getId()).getImage().getFileLink(), projectFilesPath +
-                                FileUtil.normalizePath(project.getName() + DESCRIPTION_IMG_DIR));
+                                FileUtil.normalizePath(authorEmail + "/" + project.getName() + DESCRIPTION_IMG_DIR));
                     }
                 });
 
         updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getLogo().getFileLink(),
-                project.getName(), projectOldName, LOGO_DIR);
+                authorEmail, project.getName(), projectOldName, LOGO_DIR);
         updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getCardImage().getFileLink(),
-                project.getName(), projectOldName, CARD_IMG_DIR);
+                authorEmail, project.getName(), projectOldName, CARD_IMG_DIR);
         updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink,
                 projectTo.getDockerCompose() != null ? projectTo.getDockerCompose().getFileLink() : null,
-                project.getName(), projectOldName, DOCKER_DIR);
+                authorEmail, project.getName(), projectOldName, DOCKER_DIR);
         return project;
     }
 
     private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink,
-                                              String projectName, String projectOldName, String dirName) {
+                                              String authorEmail, String projectName, String projectOldName, String dirName) {
         if (fileTo != null && !fileTo.isEmpty()) {
             if (oldFileLink != null && !oldFileLink.equalsIgnoreCase(currentFileLink)) {
                 FileUtil.deleteFile(oldFileLink);
             }
-            FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(projectName + dirName),
+            FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
                     FileUtil.normalizePath(fileTo.getRealFileName()));
         } else if (!projectName.equalsIgnoreCase(projectOldName)) {
-            FileUtil.moveFile(oldFileLink, projectFilesPath + FileUtil.normalizePath(projectName + dirName));
+            FileUtil.moveFile(oldFileLink, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName));
         }
     }
 
-    private void uploadDeImage(DescriptionElementTo deTo, String projectName) {
+    private void uploadDeImage(DescriptionElementTo deTo, String authorEmail, String projectName) {
         FileTo image = deTo.getImage();
         String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
-        uploadFile(image, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
+        uploadFile(image, authorEmail, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
     }
 
-    private void uploadFile(FileTo fileTo, String projectName, String dirName, String fileName) {
-        FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(projectName + dirName),
+    private void uploadFile(FileTo fileTo, String authorEmail, String projectName, String dirName, String fileName) {
+        FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
                 FileUtil.normalizePath(fileName));
     }
 
     public void likeProject(long id, boolean liked, long userId) {
-        get(id);
+        Project project = getWithAuthor(id);
+        if (project.getAuthor().id() == userId) {
+            throw new IllegalRequestDataException("Forbidden to like yourself project, userId=" + userId +
+                    ", projectId=" + id, "project.forbidden-like-yourself", null);
+        }
         userService.get(userId);
         likeRepository.findByObjectIdAndUserId(id, userId).ifPresentOrElse(like -> {
             if (!liked) {
@@ -237,12 +269,12 @@ public class ProjectService {
 
     public Comment createComment(CommentTo commentTo, long userId) {
         Assert.notNull(commentTo, "commentTo must not be null");
-        User user = userService.get(userId);
+        User author = userService.get(userId);
         get(commentTo.getProjectId());
         if (commentTo.getParentId() != null) {
             commentRepository.getExisted(commentTo.getParentId());
         }
-        return commentRepository.save(new Comment(null, commentTo.getProjectId(), user, commentTo.getParentId(),
+        return commentRepository.save(new Comment(null, commentTo.getProjectId(), author, commentTo.getParentId(),
                 commentTo.getText()));
     }
 

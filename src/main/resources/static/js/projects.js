@@ -1,7 +1,7 @@
 function deleteProject(delButton, id) {
     let name = delButton.dataset.name;
     $.ajax({
-        url: `/management/projects/${id}`,
+        url: `/projects/${id}`,
         type: "DELETE"
     }).done(function() {
         deleteTableRow(id, getMessage('project.deleted', [name]));
@@ -14,7 +14,7 @@ function enableProject(checkbox, id) {
     let enabled = checkbox.checked;
     let name = checkbox.dataset.name;
     $.ajax({
-        url: `/management/projects/${id}`,
+        url: `/projects/${id}`,
         type: "PATCH",
         data: "enabled=" + enabled
     }).done(function() {

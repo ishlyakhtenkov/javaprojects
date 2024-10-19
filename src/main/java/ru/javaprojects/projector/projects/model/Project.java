@@ -18,6 +18,7 @@ import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
+import ru.javaprojects.projector.users.model.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "projects", uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "projects_unique_name_idx"))
+@Table(name = "projects", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"},
+        name = "projects_unique_author_name_idx"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -141,9 +143,15 @@ public class Project extends BaseEntity implements HasIdAndName {
     @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views) {
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
+                   User author) {
         super(id);
         this.name = name;
         this.shortDescription = shortDescription;
@@ -160,24 +168,25 @@ public class Project extends BaseEntity implements HasIdAndName {
         this.frontendSrcUrl = frontendSrcUrl;
         this.openApiUrl = openApiUrl;
         this.views = views;
+        this.author = author;
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies, int views) {
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
+                   User author, Set<Technology> technologies) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views);
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author);
         this.technologies = technologies;
     }
 
     public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
                    LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                   Set<Technology> technologies, Set<DescriptionElement> descriptionElements, int views, Set<Like> likes,
-                   List<Comment> comments) {
+                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
+                   User author, Set<Technology> technologies, Set<DescriptionElement> descriptionElements,
+                   Set<Like> likes, List<Comment> comments) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, technologies, views);
+                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author, technologies);
         this.descriptionElements = descriptionElements;
         this.likes = likes;
         this.comments = comments;

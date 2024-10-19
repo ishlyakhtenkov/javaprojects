@@ -15,6 +15,7 @@ import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
+import ru.javaprojects.projector.users.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -57,15 +58,15 @@ public class ProjectUtil {
                 project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos);
     }
 
-    public Project createNewFromTo(ProjectTo projectTo) {
+    public Project createNewFromTo(ProjectTo projectTo, User author) {
         String name = projectTo.getName();
         File dockerCompose = (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) ?
-                createFile(projectTo::getDockerCompose, projectFilesPath, name + DOCKER_DIR) : null;
+                createFile(projectTo::getDockerCompose, projectFilesPath, author.getEmail() + "/" + name + DOCKER_DIR) : null;
         Project project = new Project(null, name, projectTo.getShortDescription(), projectTo.isEnabled(),
                 projectTo.getPriority(), projectTo.getStartDate(), projectTo.getEndDate(), projectTo.getArchitecture(),
-                createFile(projectTo::getLogo, projectFilesPath, name + LOGO_DIR), dockerCompose,
-                createFile(projectTo::getCardImage, projectFilesPath, name + CARD_IMG_DIR), projectTo.getDeploymentUrl(),
-                projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0);
+                createFile(projectTo::getLogo, projectFilesPath, author.getEmail() + "/"  + name + LOGO_DIR), dockerCompose,
+                createFile(projectTo::getCardImage, projectFilesPath, author.getEmail() + "/"  + name + CARD_IMG_DIR), projectTo.getDeploymentUrl(),
+                projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0, author);
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
         projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));
@@ -78,7 +79,7 @@ public class ProjectUtil {
                 throw new IllegalRequestDataException("Description element image file is not present",
                         "project.description-elements.image-not-present", null);
             }
-            setImageFileAttributes(deTo, project.getName());
+            setImageFileAttributes(deTo, project.getName(), project.getAuthor().getEmail());
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
                 deTo.getImage() != null ? new File(deTo.getImage().getFileName(), deTo.getImage().getFileLink()) : null);
@@ -86,6 +87,7 @@ public class ProjectUtil {
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
         String projectOldName = project.getName();
+        String authorEmail = project.getAuthor().getEmail();
         project.setName(projectTo.getName());
         project.setShortDescription(projectTo.getShortDescription());
         project.setEnabled(projectTo.isEnabled());
@@ -118,23 +120,23 @@ public class ProjectUtil {
                 .forEach(project::addDescriptionElement);
 
         if (projectTo.getLogo() != null && !projectTo.getLogo().isEmpty()) {
-            project.setLogo(createFile(projectTo::getLogo, projectFilesPath, projectTo.getName() + LOGO_DIR));
+            project.setLogo(createFile(projectTo::getLogo, projectFilesPath, authorEmail + "/"  + projectTo.getName() + LOGO_DIR));
         }
         if (projectTo.getCardImage() != null && !projectTo.getCardImage().isEmpty()) {
-            project.setCardImage(createFile(projectTo::getCardImage, projectFilesPath, projectTo.getName() + CARD_IMG_DIR));
+            project.setCardImage(createFile(projectTo::getCardImage, projectFilesPath, authorEmail + "/"  + projectTo.getName() + CARD_IMG_DIR));
         }
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             project.setDockerCompose(createFile(projectTo::getDockerCompose, projectFilesPath,
-                    projectTo.getName() + DOCKER_DIR));
+                    authorEmail + "/"  + projectTo.getName() + DOCKER_DIR));
         }
 
         if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            project.getLogo().setFileLink(projectFilesPath + normalizePath(project.getName() + LOGO_DIR +
+            project.getLogo().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + LOGO_DIR +
                     project.getLogo().getFileName()));
-            project.getCardImage().setFileLink(projectFilesPath + normalizePath(project.getName() + CARD_IMG_DIR +
+            project.getCardImage().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + CARD_IMG_DIR +
                     project.getCardImage().getFileName()));
             if (project.getDockerCompose() != null) {
-                project.getDockerCompose().setFileLink(projectFilesPath + normalizePath(project.getName() + DOCKER_DIR +
+                project.getDockerCompose().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + DOCKER_DIR +
                         project.getDockerCompose().getFileName()));
             }
             project.getDescriptionElements().stream()
@@ -143,7 +145,7 @@ public class ProjectUtil {
                         String fileNameWithPrefix = de.getImage().getFileLink()
                                 .substring(de.getImage().getFileLink().lastIndexOf('/') + 1);
                         String newFileLink =
-                                projectFilesPath + normalizePath(project.getName() + DESCRIPTION_IMG_DIR + fileNameWithPrefix);
+                                projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + DESCRIPTION_IMG_DIR + fileNameWithPrefix);
                         de.getImage().setFileLink(newFileLink);
                     });
         }
@@ -153,7 +155,7 @@ public class ProjectUtil {
     private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
         de.setIndex(deTo.getIndex());
         if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !deTo.getImage().isEmpty()) {
-            setImageFileAttributes(deTo, project.getName());
+            setImageFileAttributes(deTo, project.getName(), project.getAuthor().getEmail());
             de.getImage().setFileName(deTo.getImage().getFileName());
             de.getImage().setFileLink(deTo.getImage().getFileLink());
         } else {
@@ -161,10 +163,10 @@ public class ProjectUtil {
         }
     }
 
-    private void setImageFileAttributes(DescriptionElementTo deTo, String projectName) {
+    private void setImageFileAttributes(DescriptionElementTo deTo, String projectName, String authorEmail) {
         String fileName = deTo.getImage().getRealFileName();
         String uniquePrefix = UUID.randomUUID().toString();
-        String fileLink = projectFilesPath + normalizePath(projectName + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
+        String fileLink = projectFilesPath + normalizePath(authorEmail + "/" + projectName + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
                 fileName);
         deTo.getImage().setFileName(fileName);
         deTo.getImage().setFileLink(fileLink);

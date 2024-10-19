@@ -1,14 +1,43 @@
 package ru.javaprojects.projector.projects.web;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import ru.javaprojects.projector.common.validation.UniqueNameValidator;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.projects.repository.ProjectRepository;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.to.ProjectTo;
+
+import java.util.Objects;
 
 @Component
-public class UniqueProjectNameValidator extends UniqueNameValidator<Project, ProjectRepository> {
-    public UniqueProjectNameValidator(ProjectRepository repository, MessageSource messageSource) {
-        super(repository, messageSource, "error.duplicate.project-name");
+@AllArgsConstructor
+public class UniqueProjectNameValidator implements org.springframework.validation.Validator {
+    public static final String DUPLICATE_ERROR_CODE = "Duplicate";
+
+    private final ProjectRepository repository;
+    private final MessageSource messageSource;
+
+    @Override
+    public boolean supports(@NonNull Class<?> clazz) {
+        return ProjectTo.class.isAssignableFrom(clazz);
+    }
+
+    @Override
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
+        ProjectTo project = ((ProjectTo) target);
+        if (StringUtils.hasText(project.getName())) {
+            repository.findByAuthor_IdAndName(AuthUser.authId(), project.getName())
+                    .ifPresent(dbProject -> {
+                        if (project.isNew() || !Objects.equals(project.getId(), dbProject.getId())) {
+                            errors.rejectValue("name", DUPLICATE_ERROR_CODE,
+                                    messageSource.getMessage("error.duplicate.project-name", null,
+                                            LocaleContextHolder.getLocale()));
+                        }
+                    });
+        }
     }
 }

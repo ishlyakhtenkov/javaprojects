@@ -2,7 +2,7 @@ setUpThemeSwitch(theme);
 
 function setUpThemeSwitch(theme) {
     if (theme === 'dark') {
-        $('#themeSwitcherIcon').removeClass('fa-solid fa-star text-light')
+        $('#themeSwitcherIcon').removeClass('fa-solid fa-star text-secondary')
             .addClass('fa-regular fa-sun text-warning').parent().attr('title', 'Switch to light theme');
     } else {
         $('#themeSwitcherIcon').removeClass('fa-regular fa-sun text-warning')

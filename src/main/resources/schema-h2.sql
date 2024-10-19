@@ -108,9 +108,11 @@ CREATE TABLE projects
     frontend_src_url         VARCHAR(512),
     open_api_url             VARCHAR(512),
     views                    INTEGER      DEFAULT 0 NOT NULL,
-    FOREIGN KEY (architecture_id) REFERENCES architectures (id)
+    user_id                  BIGINT       NOT NULL,
+    FOREIGN KEY (architecture_id) REFERENCES architectures (id),
+    FOREIGN KEY (user_id)         REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX projects_unique_name_idx ON projects (name);
+CREATE UNIQUE INDEX projects_unique_author_name_idx ON projects (user_id, name);
 
 CREATE TABLE project_technology
 (

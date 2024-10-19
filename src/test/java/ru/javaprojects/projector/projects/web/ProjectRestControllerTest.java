@@ -3,6 +3,8 @@ package ru.javaprojects.projector.projects.web;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -10,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.javaprojects.projector.AbstractControllerTest;
+import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.projects.ProjectService;
@@ -18,6 +21,9 @@ import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.to.CommentTo;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -26,19 +32,21 @@ import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaprojects.projector.common.CommonTestData.HTML_TEXT;
-import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.common.CommonTestData.*;
 import static ru.javaprojects.projector.common.util.JsonUtil.writeValue;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_URL_SLASH;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ProjectRestControllerTest extends AbstractControllerTest {
+class ProjectRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String PROJECTS_LIKE_PROJECT_URL = PROJECTS_URL_SLASH + "%d/like";
     private static final String PROJECTS_COMMENTS_URL = PROJECTS_URL_SLASH + "%d/comments";
     private static final String PROJECTS_COMMENTS_URL_SLASH_ID = PROJECTS_URL_SLASH + "%d/comments/%d";
     private static final String PROJECTS_LIKE_COMMENT_URL = PROJECTS_COMMENTS_URL_SLASH_ID + "/like";
+
+    @Value("${content-path.projects}")
+    private String projectFilesPath;
 
     @Autowired
     private ProjectService projectService;
@@ -48,6 +56,16 @@ class ProjectRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Override
+    public Path getContentPath() {
+        return Paths.get(projectFilesPath);
+    }
+
+    @Override
+    public Path getTestDataFilesPath() {
+        return Paths.get(PROJECTS_TEST_DATA_FILES_PATH);
+    }
 
     @Test
     @WithUserDetails(USER2_MAIL)
@@ -62,7 +80,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(USER_MAIL)
+    @WithUserDetails(ADMIN_MAIL)
     void likeProjectWhenAlreadyLiked() throws Exception {
         perform(MockMvcRequestBuilders.patch(String.format(PROJECTS_LIKE_PROJECT_URL, PROJECT1_ID))
                 .param(LIKED_PARAM, String.valueOf(true))
@@ -70,11 +88,11 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         assertEquals(project1.getLikes().size(),
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
-        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, USER_ID).orElseThrow());
+        assertDoesNotThrow(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, ADMIN_ID).orElseThrow());
     }
 
     @Test
-    @WithUserDetails(USER_MAIL)
+    @WithUserDetails(ADMIN_MAIL)
     void dislikeProject() throws Exception {
         perform(MockMvcRequestBuilders.patch(String.format(PROJECTS_LIKE_PROJECT_URL, PROJECT1_ID))
                 .param(LIKED_PARAM, String.valueOf(false))
@@ -82,7 +100,7 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         assertEquals(project1.getLikes().size() - 1,
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getLikes().size());
-        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, USER_ID).isEmpty());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT1_ID, ADMIN_ID).isEmpty());
     }
 
     @Test
@@ -95,6 +113,24 @@ class ProjectRestControllerTest extends AbstractControllerTest {
         assertEquals(project2.getLikes().size(),
                 projectService.getWithAllInformation(PROJECT2_ID, Comparator.naturalOrder()).getLikes().size());
         assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT2_ID, USER2_ID).isEmpty());
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void likeYourselfProject() throws Exception {
+        perform(MockMvcRequestBuilders.patch(String.format(PROJECTS_LIKE_PROJECT_URL, PROJECT3_ID))
+                .param(LIKED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-like-yourself", null, getLocale())))
+                .andExpect(problemInstance(String.format(PROJECTS_LIKE_PROJECT_URL, PROJECT3_ID)));
+        assertEquals(project3.getLikes().size(),
+                projectService.getWithAllInformation(PROJECT3_ID, Comparator.naturalOrder()).getLikes().size());
+        assertTrue(() -> likeRepository.findByObjectIdAndUserId(PROJECT3_ID, USER_ID).isEmpty());
     }
 
     @Test
@@ -459,5 +495,164 @@ class ProjectRestControllerTest extends AbstractControllerTest {
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         COMMENT_MATCHER.assertMatch(commentRepository.findById(PROJECT1_COMMENT1_ID).orElseThrow(), project1Comment1);
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void deleteProject() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
+        assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+        assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER2_MAIL)
+    void deleteProjectNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-delete-not-belong", null,
+                        getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID));
+        assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
+        assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+        assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void deleteProjectNotBelongsByAdmin() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
+        assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+        assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void deleteProjectNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + NOT_EXISTING_ID)
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        NotFoundException.class))
+                .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + NOT_EXISTING_ID));
+    }
+
+    @Test
+    void deleteProjectUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.delete(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
+        assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
+        assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void enableProject() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertFalse(projectService.get(PROJECT1_ID).isEnabled());
+
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+    }
+
+    @Test
+    @WithUserDetails(USER2_MAIL)
+    void enableProjectNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        IllegalRequestDataException.class))
+                .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-enable-not-belong", null,
+                        getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID));
+        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void enableProjectNotBelongsByAdmin() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertFalse(projectService.get(PROJECT1_ID).isEnabled());
+
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(true))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void enableProjectNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + NOT_EXISTING_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
+                        NotFoundException.class))
+                .andExpect(problemTitle(HttpStatus.NOT_FOUND.getReasonPhrase()))
+                .andExpect(problemStatus(HttpStatus.NOT_FOUND.value()))
+                .andExpect(problemDetail(messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID},
+                        LocaleContextHolder.getLocale())))
+                .andExpect(problemInstance(PROJECTS_URL_SLASH + NOT_EXISTING_ID));
+    }
+
+    @Test
+    void enableProjectUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(result ->
+                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
     }
 }

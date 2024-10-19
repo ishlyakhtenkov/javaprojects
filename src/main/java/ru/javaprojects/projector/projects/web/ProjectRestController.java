@@ -9,22 +9,34 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.common.validation.ValidationUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.to.CommentTo;
-import ru.javaprojects.projector.app.AuthUser;
 
 @RestController
-@RequestMapping(value = ProjectRestController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ProjectController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 @Slf4j
 @Validated
 public class ProjectRestController {
-    static final String PROJECTS_URL = "/projects";
-
     private final ProjectService service;
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) {
+        log.info("delete project with id={}", id);
+        service.delete(id, AuthUser.authId(), AuthUser.isAdmin());
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void enable(@PathVariable long id, @RequestParam boolean enabled) {
+        log.info("{} project with id={}", enabled ? "enable" : "disable", id);
+        service.enable(id, enabled, AuthUser.authId(), AuthUser.isAdmin());
+    }
 
     @PatchMapping("/{id}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)

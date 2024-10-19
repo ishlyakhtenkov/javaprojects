@@ -13,23 +13,25 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ProjectRepository extends NamedRepository<Project> {
 
-    @EntityGraph(attributePaths = "architecture")
-    List<Project> findAllWithArchitectureByOrderByName();
+    @EntityGraph(attributePaths = {"architecture", "author"})
+    List<Project> findAllWithArchitectureAndAuthorByOrderByName();
 
     List<Project> findAllByEnabledIsTrueOrderByName();
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "likes"})
-    List<Project> findAllWithArchAndTechnologiesAndLikesByEnabledIsTrue();
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
+    List<Project> findAllWithAllInformationByEnabledIsTrue();
 
-    @EntityGraph(attributePaths = {"architecture", "technologies"})
-    Optional<Project> findWithArchitectureAndTechnologiesById(long id);
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author", "descriptionElements"})
+    Optional<Project> findWithAllInformationAndDescriptionById(long id);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "descriptionElements", "likes"})
-    Optional<Project> findWithAllInformationById(long id);
-
-    @EntityGraph(attributePaths = {"descriptionElements"})
-    Optional<Project> findWithDescriptionById(long id);
+    @EntityGraph(attributePaths = {"author", "descriptionElements"})
+    Optional<Project> findWithDescriptionAndAuthorById(long id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Project> findForAddViewsById(long id);
+
+    Optional<Project> findByAuthor_IdAndName(long authorId, String name);
+
+    @EntityGraph(attributePaths = "author")
+    Optional<Project> findWithAuthorById(long id);
 }

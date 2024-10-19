@@ -35,7 +35,7 @@
                         <span class="card-text" th:text="${project.shortDescription}">Short description</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
-                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
+                                <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary-emphasis small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
@@ -56,7 +56,7 @@
                                 <span class="text-secondary-emphasis small" th:text="${project.views}"></span>
                             </div>
                         </div>
-                        <a th:href="@{'/projects/' + ${project.id}}" class="stretched-link"></a>
+                        <a th:href="@{'/projects/' + ${project.id} + '/view'}" class="stretched-link"></a>
                     </div>
                     <div class="card-footer" style="height: 78px; position: relative; z-index: 2">
                         <div class="text-truncate-container">

@@ -146,7 +146,7 @@
                         <!-- Description block -->
                         <div class="fw-bold text-info-emphasis my-2" th:text="#{project.description-elements}">Description elements</div>
                         <div th:each="element : ${project.descriptionElements}" class="border rounded-2 mb-1 px-3 pb-1">
-                            <div class="text-start text-muted tiny" th:text="#{${element.type.name.toLowerCase()}}">Type</div>
+                            <div class="text-start text-muted tiny" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}">Type</div>
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"
                                   th:text="${element.text}" class="h6"></span>
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}"
@@ -159,8 +159,8 @@
                         </div>
                     </div>
                     <div class="card-footer text-end">
-                        <button class="btn btn-secondary px-3" type="button" onclick="cancel()" th:text="#{close}">Close</button>
-                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" class="btn btn-warning px-4 ms-1" type="button" th:text="#{edit}">Edit</a>
+                        <button class="btn btn-secondary px-3" type="button" onclick="cancelProjectPage()" th:text="#{close}">Close</button>
+                        <a th:href="@{'/projects/edit/' + ${project.id}}" class="btn btn-warning px-4 ms-1" type="button" th:text="#{edit}">Edit</a>
                     </div>
                 </div>
             </div>
@@ -186,7 +186,20 @@
         <script src="/js/common.js?v=1"></script>
         <script src="/js/cancel-button.js?v=1"></script>
         <script>
+            if (sessionStorage.getItem('projectPagePrevUrl') == null) {
+                sessionStorage.setItem('projectPagePrevUrl', sessionStorage.getItem('prevUrl'));
+            }
             sessionStorage.removeItem('prevUrl');
+
+            function cancelProjectPage() {
+                let projectPagePrevUrl = sessionStorage.getItem('projectPagePrevUrl');
+                if (projectPagePrevUrl) {
+                    sessionStorage.removeItem('projectPagePrevUrl');
+                } else {
+                    projectPagePrevUrl = window.location.origin;
+                }
+                window.location.href = projectPagePrevUrl;
+            }
         </script>
     </ownScript>
 </th:block>

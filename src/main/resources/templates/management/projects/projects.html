@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-5">
                     <div class="float-end">
-                        <a th:href="@{/management/projects/add}" type="button" th:title="#{project.add}"
+                        <a th:href="@{/projects/add}" type="button" th:title="#{project.add}"
                            class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i></a>
                     </div>
                 </div>
@@ -56,11 +56,11 @@
                     <td th:text="${project.architecture.name}"></td>
                     <td th:text="#{'priority.' + ${project.priority.name.toLowerCase()}}"></td>
                     <td class="text-center">
-                        <a th:href="@{'/management/projects/' + ${project.id}}" type="button" th:title="#{project.show}"
+                        <a th:href="@{'/projects/' + ${project.id} + '/data'}" type="button" th:title="#{project.show}"
                            class="btn-link link-underline-opacity-0 link-secondary">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </a>
-                        <a th:href="@{'/management/projects/edit/' + ${project.id}}" type="button" th:title="#{project.edit}"
+                        <a th:href="@{'/projects/edit/' + ${project.id}}" type="button" th:title="#{project.edit}"
                            class="btn-link link-underline-opacity-0 link-success ms-3">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>

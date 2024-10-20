@@ -17,7 +17,7 @@
 
         <!-- Create/Edit architecture card -->
         <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-12 col-sm-9 col-md-7 col-xl-6 col-xxl-5">
+            <div class="col-12 col-sm-10 col-md-8 col-xl-6 col-xxl-5">
                 <div class="card shadow">
                     <div class="card-header">
                         <h3 class="text-center" th:text="${architectureTo.isNew()} ? #{architecture.new} :
@@ -33,7 +33,7 @@
 
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text w-25" th:text="#{name}">Name</span>
+                                    <span class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{name}">Name</span>
                                     <input type="text" id="nameInput" th:field="*{name}"
                                            th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                            required th:placeholder="#{name}" />
@@ -48,7 +48,7 @@
 
                             <div th:hidden="${architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null}"
                                  class="input-group" id="filePreviewDiv">
-                                <span class="input-group-text w-25" th:text="#{logo}">Logo</span>
+                                <span class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{logo}">Logo</span>
                                 <div class="form-control py-1 text-start">
                                     <img th:src="@{${architectureTo.logo.getSrc()}}"
                                          width="24" height="24" alt="" />
@@ -65,7 +65,7 @@
                                 <div th:if="${architectureTo.logo == null ||
                                     (architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null)}"
                                      class="input-group custom-file-button">
-                                    <label class="input-group-text w-25" th:text="#{logo}">Logo</label>
+                                    <label class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{logo}">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                            class="form-control text-muted"
                                            th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"

@@ -18,7 +18,7 @@
 
         <!-- Create/Edit technology card -->
         <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-12 col-sm-8 col-md-6 col-xl-5 col-xxl-4">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
                 <div class="card shadow">
                     <div class="card-header">
                         <h3 class="text-center" th:text="${technologyTo.isNew()} ? #{technology.new} :
@@ -34,7 +34,7 @@
 
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text w-25" th:text="#{name}">Name</span>
+                                    <span class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{name}">Name</span>
                                     <input type="text" id="nameInput" th:field="*{name}"
                                            th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                            required th:placeholder="#{name}" />
@@ -48,7 +48,7 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text w-25">URL</span>
+                                    <span class="input-group-text text-start d-inline-block text-truncate w-25">URL</span>
                                     <a th:hidden="${technologyTo.url == null}" th:href="${technologyTo.url}"
                                        class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="urlCheck" target="_blank">
@@ -67,7 +67,7 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text d-inline-block text-truncate w-25"
+                                    <span class="input-group-text text-start d-inline-block text-truncate w-25"
                                           th:text="#{technology.usage}">Usage</span>
                                     <select class="form-control selectpicker border" data-style="btn-white"
                                             th:field="*{usage}" th:title="#{technology.usage}" required>
@@ -86,7 +86,7 @@
                             </div>
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text d-inline-block text-truncate w-25"
+                                    <span class="input-group-text text-start d-inline-block text-truncate w-25"
                                           th:text="#{priority}">Priority</span>
                                     <select class="form-control selectpicker border" data-style="btn-white"
                                             th:field="*{priority}" th:title="#{priority}" required>
@@ -106,7 +106,7 @@
 
                             <div th:hidden="${technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null}"
                                  class="input-group" id="filePreviewDiv">
-                                <span class="input-group-text w-25" th:text="#{logo}">Logo</span>
+                                <span class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{logo}">Logo</span>
                                 <div class="form-control py-1 text-start">
                                     <img th:src="@{${technologyTo.logo.getSrc()}}"
                                          width="24" height="24" alt="" />
@@ -123,7 +123,7 @@
                                 <div th:if="${technologyTo.logo == null ||
                                     (technologyTo.logo.fileLink == null && technologyTo.logo.inputtedFileBytes == null)}"
                                      class="input-group custom-file-button">
-                                    <label class="input-group-text w-25" for="fileInput" th:text="#{logo}">Logo</label>
+                                    <label class="input-group-text text-start d-inline-block text-truncate w-25" for="fileInput" th:text="#{logo}">Logo</label>
                                     <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                            class="form-control text-muted"
                                            th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"

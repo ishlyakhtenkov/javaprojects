@@ -20,38 +20,41 @@
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
-                    <div class="card-header">
-                        <h3 class="text-center" th:text="${project.name}">Name</h3>
+                    <div class="card-header text-center py-3">
+                        <h3 th:text="${project.name}">Name</h3>
                     </div>
                     <div class="card-body text-start">
                         <div class="input-group mb-3">
-                            <span class="input-group-text project-card-label" th:text="#{name}">Name</span>
+                            <span class="input-group-text project-form-label" th:text="#{name}">Name</span>
                             <span class="form-control" th:text="${project.name}"></span>
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text project-card-label" th:text="#{architecture}">Architecture</span>
+                                    <span class="input-group-text project-form-label" th:text="#{architecture}">Architecture</span>
                                     <span class="form-control" th:text="${project.architecture.name}"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text d-inline-block text-truncate project-card-label" th:text="#{project.dev-period-}">Dev period</span>
-                                    <span class="form-control" th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></span>
+                                    <span class="input-group-text project-form-label" th:text="#{project.dev-period}">Dev period</span>
+                                    <span class="form-control" th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy')} +
+                                    ' - ' + ${#temporals.format(project.endDate, 'dd.MM.yyyy')} + ' (' +
+                                    ${T(java.time.temporal.ChronoUnit).DAYS.between(project.startDate, project.endDate)} +
+                                    ' ' + #{project.days} + ')'"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text project-card-label" th:text="#{priority}">Priority</span>
+                                    <span class="input-group-text project-form-label" th:text="#{priority}">Priority</span>
                                     <span class="form-control" th:text="#{'priority.' + ${project.priority.name.toLowerCase()}}"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text project-card-label" th:text="#{project.visibility}">Visibility</span>
+                                    <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                     <span class="form-control"
                                           th:utext="${project.enabled ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> Visible to users' :
                                           '<i class=&quot;text-danger me-1 fa-solid fa-eye-slash&quot;></i> Not visible to users'}">
@@ -62,7 +65,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text project-card-label" th:text="#{logo}">Logo</span>
+                                    <span class="input-group-text project-form-label" th:text="#{logo}">Logo</span>
                                     <span class="form-control">
                                         <img th:src="@{${project.logo != null ? ('/' + project.logo.fileLink) : ''}}"
                                              width="24" height="24" id="filePreview"/>
@@ -72,7 +75,7 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
-                                    <span class="input-group-text d-inline-block text-truncate project-card-label"
+                                    <span class="input-group-text project-form-label"
                                           th:text="#{project.docker-compose-file}">Docker compose</span>
                                     <span class="form-control">
                                         <a th:if="${project.dockerCompose != null}" th:href="@{${'/' + project.dockerCompose.fileLink}}"
@@ -84,7 +87,7 @@
                             </div>
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text project-card-label" th:text="#{project.deploy} + ' URL'">Deploy URL</span>
+                            <span class="input-group-text project-form-label" th:text="#{project.deploy} + ' URL'">Deploy URL</span>
                             <span class="form-control">
                                 <a th:href="@{${project.deploymentUrl}}" th:text="${project.deploymentUrl}"
                                    class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -92,7 +95,7 @@
                             </span>
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text project-card-label" th:text="#{project.open-api}   + ' URL'">Open API URL</span>
+                            <span class="input-group-text project-form-label" th:text="#{project.open-api}   + ' URL'">Open API URL</span>
                             <span class="form-control">
                                 <a th:href="@{${project.openApiUrl}}" th:text="${project.openApiUrl}"
                                    class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -100,7 +103,7 @@
                             </span>
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text project-card-label" th:text="#{backend} + ' src URL'">Backend src URL</span>
+                            <span class="input-group-text project-form-label" th:text="#{backend} + ' ' + #{project.src} + ' URL'">Backend src URL</span>
                             <span class="form-control">
                                 <a th:href="@{${project.backendSrcUrl}}" th:text="${project.backendSrcUrl}"
                                    class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -108,8 +111,8 @@
                             </span>
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text d-inline-block text-truncate project-card-label"
-                                  th:text="#{frontend} + ' src URL'">Frontend src URL</span>
+                            <span class="input-group-text project-form-label"
+                                  th:text="#{frontend} + ' ' + #{project.src} + ' URL'">Frontend src URL</span>
                             <span class="form-control">
                                 <a th:href="@{${project.frontendSrcUrl}}" th:text="${project.frontendSrcUrl}"
                                    class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -118,8 +121,8 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-4 mb-3">
-                                <div class="border rounded-2 px-3 pb-3 text-center h-100">
-                                    <div class="text-start text-muted tiny" th:text="#{project.card-image}">Card image</div>
+                                <div class="border rounded-2 px-3 pb-3 h-100">
+                                    <div class="text-muted tiny" th:text="#{project.card-image}">Card image</div>
                                     <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
                                          style="max-width: 100%; max-height: 165px; cursor: zoom-in;" class="rounded-2 mt-1"
                                          th:data-filename="${project.cardImage.fileName}" onclick="showLargerImage($(this))"/>

@@ -19,9 +19,9 @@
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
-                    <div class="card-header">
-                        <h3 class="text-center" th:text="${projectTo.isNew()} ? #{project.new} :
-                            ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h3>
+                    <div class="card-header text-center py-3">
+                        <h2 th:text="${projectTo.isNew()} ? #{project.new} :
+                            ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h2>
                     </div>
                     <form th:action="@{/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
                         <div class="card-body text-start">
@@ -41,7 +41,7 @@
 
                             <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{name}">Name</span>
+                                    <span class="input-group-text project-form-label" th:text="#{name}">Name</span>
                                     <input type="text" id="nameInput" th:field="*{name}"
                                            th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
                                            required th:placeholder="#{name}" />
@@ -56,7 +56,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text project-card-label" th:text="#{architecture}">Architecture</span>
+                                        <span class="input-group-text project-form-label" th:text="#{architecture}">Architecture</span>
                                         <select class="form-control selectpicker border" data-style="btn-white"
                                                 name="architecture" th:title="#{architecture}" required>
                                             <option th:each="architecture : ${architectures}"
@@ -71,7 +71,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text d-inline-block text-truncate project-card-label"
+                                        <span class="input-group-text project-form-label"
                                               th:text="#{project.dev-start}">Dev start date</span>
                                         <input type="date" id="startDate" name="startDate" th:value="${projectTo.startDate}"
                                                class="form-control date-input" th:classappend="${projectTo.startDate == null ? 'text-muted' : ''}" required />
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text d-inline-block text-truncate project-card-label"
+                                        <span class="input-group-text project-form-label"
                                               th:text="#{project.dev-end}">Dev end date</span>
                                         <input type="date" name="endDate" th:value="${projectTo.endDate}"
                                                class="form-control date-input" th:classappend="${projectTo.endDate == null ? 'text-muted' : ''}" required />
@@ -89,7 +89,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text project-card-label" th:text="#{priority}">Priority</span>
+                                        <span class="input-group-text project-form-label" th:text="#{priority}">Priority</span>
                                         <select class="form-control selectpicker border" data-style="btn-white"
                                                 th:field="*{priority}" th:title="#{priority}" required>
                                             <option th:each="priority : ${priorities}"
@@ -101,12 +101,12 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text project-card-label" th:text="#{project.visibility}">Visibility</span>
+                                        <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                         <span class="form-control">
-                                            <div class="form-switch">
+                                            <div class="form-switch text-truncate w-100">
                                                 <input type="checkbox" role="switch" th:field="*{enabled}" class="form-check-input me-1"
                                                        style="cursor: pointer;" id="visibilityCheckbox" />
-                                                <span th:text="${projectTo.enabled} ? #{project.visible-to-users} : #{project.not-visible-to-users}"
+                                                <span class="text-muted" th:text="${projectTo.enabled} ? #{project.visible-to-users} : #{project.not-visible-to-users}"
                                                       id="visibilityCheckboxDesc"></span>
                                             </div>
                                         </span>
@@ -117,7 +117,7 @@
                                 <div class="col-lg-6 mb-3">
                                     <div th:hidden="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
                                          class="input-group" id="logoFilePreviewDiv">
-                                        <span class="input-group-text project-card-label" th:text="#{logo}">Logo</span>
+                                        <span class="input-group-text project-form-label" th:text="#{logo}">Logo</span>
                                         <div class="form-control py-1 text-start">
                                             <img th:src="@{${projectTo.logo?.getSrc()}}"
                                                  width="24" height="24" alt="" id="logoFilePreview" />
@@ -132,7 +132,7 @@
                                     <div id="logoFileInputDiv">
                                         <div th:if="${projectTo.logo?.fileLink == null && projectTo.logo?.inputtedFileBytes == null}"
                                              class="input-group custom-file-button">
-                                            <label class="input-group-text project-card-label" th:text="#{logo}">Logo</label>
+                                            <label class="input-group-text project-form-label" th:text="#{logo}">Logo</label>
                                             <input type="file" accept="image/*" th:field="*{logo.inputtedFile}"
                                                    class="form-control text-muted"
                                                    th:classappend="${#fields.hasErrors('logo')} ? 'is-invalid' : ''"
@@ -149,7 +149,7 @@
                                 <div class="col-lg-6 mb-3">
                                     <div th:hidden="${projectTo.dockerCompose?.fileLink == null && projectTo.dockerCompose?.inputtedFileBytes == null}"
                                          class="input-group" id="dockerFilePreviewDiv">
-                                        <span class="input-group-text d-inline-block text-truncate project-card-label" th:text="#{project.docker-compose-file}">Docker file</span>
+                                        <span class="input-group-text project-form-label" th:text="#{project.docker-compose-file}">Docker file</span>
                                         <div class="form-control py-1 text-start">
                                             <a th:href="@{${projectTo.dockerCompose?.getSrc()}}" id="dockerComposeFileRef"
                                                class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -168,7 +168,7 @@
                                         <div th:if="${projectTo.dockerCompose == null ||
                                             (projectTo.dockerCompose.fileLink == null && projectTo.dockerCompose.inputtedFileBytes == null)}"
                                              class="input-group custom-file-button">
-                                            <label class="input-group-text d-inline-block text-truncate project-card-label"
+                                            <label class="input-group-text project-form-label"
                                                    th:text="#{project.docker-compose-file}">Docker file</label>
                                             <input type="file" accept=".yaml,.yml" th:field="*{dockerCompose.inputtedFile}"
                                                    class="form-control text-muted"
@@ -185,7 +185,7 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{project.deploy} + ' URL'">Deployment URL</span>
+                                    <span class="input-group-text project-form-label" th:text="#{project.deploy} + ' URL'">Deployment URL</span>
                                     <a th:hidden="${projectTo.deploymentUrl == null}" th:href="${projectTo.deploymentUrl}"
                                        class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="deploymentUrlCheck" target="_blank">
@@ -204,7 +204,7 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{project.open-api} + ' URL'">Open API URL</span>
+                                    <span class="input-group-text project-form-label" th:text="#{project.open-api} + ' URL'">Open API URL</span>
                                     <a th:hidden="${projectTo.openApiUrl == null}" th:href="${projectTo.openApiUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="openApiUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                                     <input type="url" id="openApiUrlInput" th:field="*{openApiUrl}" class="url"
@@ -220,12 +220,12 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text project-card-label" th:text="#{backend} + ' src URL'">Backend src URL</span>
+                                    <span class="input-group-text project-form-label" th:text="#{backend} + ' ' + #{project.src} + ' URL'">Backend src URL</span>
                                     <a th:hidden="${projectTo.backendSrcUrl == null}" th:href="${projectTo.backendSrcUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="backendSrcUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                                     <input type="url" id="backendSrcUrlInput" th:field="*{backendSrcUrl}" class="url"
                                            th:classappend="${#fields.hasErrors('backendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                           th:placeholder="#{backend} + ' src URL'" />
+                                           th:placeholder="#{backend} + ' ' + #{project.src} + ' URL'" />
                                 </div>
                                 <span th:if="${#fields.hasErrors('backendSrcUrl')}">
                                     <ul>
@@ -236,13 +236,13 @@
                             </div>
                             <div class="mb-3 align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text d-inline-block text-truncate project-card-label"
-                                          th:text="#{frontend} + ' src URL'">Frontend src URL</span>
+                                    <span class="input-group-text project-form-label"
+                                          th:text="#{frontend} + ' ' + #{project.src} + ' URL'">Frontend src URL</span>
                                     <a th:hidden="${projectTo.frontendSrcUrl == null}" th:href="${projectTo.frontendSrcUrl}" class="url-check position-absolute mt-1" style="right: 10px; z-index: 100;"
                                        th:title="#{check-url}" id="frontendSrcUrlCheck" target="_blank"><i class="fa-solid fa-up-right-from-square ms-1"></i></a>
                                     <input type="url" id="frontendSrcUrlInput" th:field="*{frontendSrcUrl}" class="url"
                                            th:classappend="${#fields.hasErrors('frontendSrcUrl')} ? 'form-control is-invalid' : 'form-control'"
-                                           th:placeholder="#{frontend} + ' src URL'" />
+                                           th:placeholder="#{frontend} + ' ' + #{project.src} + ' URL'" />
                                 </div>
                                 <span th:if="${#fields.hasErrors('frontendSrcUrl')}">
                                     <ul>

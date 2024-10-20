@@ -18,8 +18,8 @@ $(technologiesSelector).on('changed.bs.select', (event, clickedIndex, isSelected
         let technologyFileLink = technologiesSelector.prop('options')[clickedIndex].dataset.filelink;
         let technologyUrl = technologiesSelector.prop('options')[clickedIndex].dataset.url;
 
-        let techSpan = $('<span></span>').addClass('badge text-bg-light me-2 mt-2').attr('id', `techSpan-${technologyId}`);
-        let techBtnLink = $('<a></a>').addClass('link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-dark')
+        let techSpan = $('<span></span>').addClass('badge bg-body-tertiary me-2 mt-2').attr('id', `techSpan-${technologyId}`);
+        let techBtnLink = $('<a></a>').addClass('link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis')
             .attr('type', 'button').attr('href', technologyUrl).attr('target', '_blank')
             .html(`<img src="/${technologyFileLink}" width="32" height="32" class="align-bottom" />${technologyName}`);
         techSpan.append(techBtnLink);

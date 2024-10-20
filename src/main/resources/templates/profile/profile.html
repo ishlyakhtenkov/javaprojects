@@ -59,8 +59,41 @@
                                 <button class="btn btn-sm btn-outline-secondary ms-2" type="submit" th:text="#{logout}">Logout</button>
                             </form>
                         </div>
+
+                        <div class="mt-3">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab" type="button" role="tab"
+                                            aria-controls="nav-general" aria-selected="true">Information</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualificationTab" type="button" role="tab"
+                                            aria-controls="nav-changes" aria-selected="false" onclick="getQualification()">Qualification</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#projectsTab" type="button" role="tab"
+                                            aria-controls="nav-changes" aria-selected="false" onclick="getProjects()">Projects</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content px-3 border-start pt-2 pb-2">
+                                <div class="tab-pane fade show active" id="informationTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
+
+                                </div>
+                                <div class="tab-pane fade" id="qualificationTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
+
+
+                                </div>
+                                <div class="tab-pane fade" id="projectsTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
+
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
+
             </div>
         </div>
 
@@ -117,5 +150,19 @@
         <script src="/js/common.js?v=1"></script>
         <script src="/js/profile.js?v=1"></script>
         <script src="/js/check-passwords-match.js?v=1"></script>
+
+        <script>
+            function getQualification() {
+                if ($('#qualificationTab').children().length === 0) {
+                    console.log('get qualification data');
+                }
+            }
+
+            function getProjects() {
+                if ($('#projectsTab').children().length === 0) {
+                    console.log('get projects data');
+                }
+            }
+        </script>
     </ownScript>
 </th:block>

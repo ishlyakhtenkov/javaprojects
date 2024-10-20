@@ -94,6 +94,7 @@ CREATE TABLE projects
     short_description        VARCHAR(128) NOT NULL,
     enabled                  BOOL         DEFAULT TRUE NOT NULL,
     priority                 VARCHAR(16)  NOT NULL,
+    created                  TIMESTAMP    DEFAULT now() NOT NULL,
     start_date               DATE         NOT NULL,
     end_date                 DATE         NOT NULL,
     architecture_id          BIGINT       NOT NULL,

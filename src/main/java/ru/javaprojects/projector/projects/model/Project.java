@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.URL;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
@@ -21,6 +22,7 @@ import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +54,10 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority;
+
+    @CreationTimestamp
+    @Column(name = "created", nullable = false, columnDefinition = "timestamp default now()")
+    private LocalDateTime created;
 
     @NotNull
     @Column(name = "start_date", nullable = false)
@@ -171,20 +177,20 @@ public class Project extends BaseEntity implements HasIdAndName {
         this.author = author;
     }
 
-    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
-                   User author, Set<Technology> technologies) {
+    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority,
+                   LocalDate startDate, LocalDate endDate, Architecture architecture, File logo,
+                   File dockerCompose, File cardImage, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+                   String openApiUrl, int views, User author, Set<Technology> technologies) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
                 cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author);
         this.technologies = technologies;
     }
 
-    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
-                   String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
-                   User author, Set<Technology> technologies, Set<DescriptionElement> descriptionElements,
-                   Set<Like> likes, List<Comment> comments) {
+    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority,
+                   LocalDate startDate, LocalDate endDate, Architecture architecture, File logo,
+                   File dockerCompose, File cardImage, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+                   String openApiUrl, int views, User author, Set<Technology> technologies,
+                   Set<DescriptionElement> descriptionElements, Set<Like> likes, List<Comment> comments) {
         this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
                 cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author, technologies);
         this.descriptionElements = descriptionElements;

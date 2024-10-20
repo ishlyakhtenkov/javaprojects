@@ -9,27 +9,28 @@
           activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
     <appMain>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb ms-2"  style="font-size: 1.5em;">
-                <li class="breadcrumb-item">
+            <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
+                <li class="breadcrumb-item text-truncate">
                     <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
                         <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page" th:text="${project.name}">Project name</li>
+                <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${project.name}">Project name</li>
             </ol>
         </nav>
         <div class="row d-flex justify-content-center align-items-center mt-2">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <span id="projectId" th:text="${project.id}" hidden></span>
-                    <div class="card-header text-center">
+                    <div class="card-header text-center py-3">
                         <img th:src="@{${'/' + project.logo.fileLink}}" alt="Logo" width="32" height="32"
                              class="d-inline-block align-text-bottom">
-                        <span class="h3 text-dark-emphasis ms-1" style="line-height: normal;"
+                        <span class="h2 text-dark-emphasis ms-1" style="line-height: normal;"
                               th:text="${project.name}">Project name</span>
                     </div>
                     <div class="card-body text-start">
-                        <span th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}" class="tiny text-secondary-emphasis float-end"></span>
+                        <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm:ss')}"
+                              class="tiny text-secondary-emphasis float-end" style="margin-top: -10px;">Created</span>
                         <div>
                             <div>
                                 <a class="icon-link link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -68,11 +69,20 @@
                             </div>
                         </div>
 
+                        <h3 class="mt-3" th:text="#{developer}">Developer</h3>
+                        <hr style="border: 2px solid;">
+                        <img class="rounded-circle border" th:src="@{${project.author.avatar != null ?
+                                  project.author.avatar.getSrc() : '/images/no-avatar.svg'}}" width="40" height="40"  />
+                        <span class="h6 ms-1" th:text="${project.author.name}"></span>
+                        <div th:text="#{project.development-period} + ': ' + ${#temporals.format(project.startDate, 'dd.MM.yyyy')} +
+                            ' - ' + ${#temporals.format(project.endDate, 'dd.MM.yyyy')} + ' (' +
+                            ${T(java.time.temporal.ChronoUnit).DAYS.between(project.startDate, project.endDate)} + ' ' + #{project.days} + ')'">Dev period</div>
+
                         <h3 class="mt-3" th:text="#{architecture}">Architecture</h3>
                         <hr style="border: 2px solid;">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
-                             width="40" height="40" class="bg-light border border-light-subtle rounded-circle p-1" />
-                            <span class="h6" th:text="${project.architecture.name}"></span>
+                             width="40" height="40" class="bg-light-subtle border border-light-subtle rounded-circle p-1" />
+                            <span class="h6 ms-1" th:text="${project.architecture.name}"></span>
                         <div th:text="${project.architecture.description}"></div>
 
                         <h3 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h3>

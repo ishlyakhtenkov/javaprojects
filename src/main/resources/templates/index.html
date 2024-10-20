@@ -20,7 +20,7 @@
                     </div>
                     <div th:title="#{architecture}">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
-                             class="float-end bg-light rounded-circle p-2"
+                             class="float-end bg-light-subtle rounded-circle p-2"
                              data-bs-toggle="tooltip" th:title="${project.architecture.name}"
                              onmouseenter="$(this).removeClass('p-2').addClass('p-1')"
                              onmouseleave="$(this).removeClass('p-1').addClass('p-2')"
@@ -38,7 +38,7 @@
                                 <div class="pt-3 pb-2 px-3" style="position: relative; z-index: 2; margin-left: -8px;">
                                     <span class="h6" th:text="${project.author.name}" >Author name</span>
                                     <div class="tiny text-secondary-emphasis" style="margin-top: -3px;"
-                                         th:text="${#temporals.format(project.endDate, 'dd.MM.yyyy')}">End date</div>
+                                         th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                 </div>
                             </div>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>

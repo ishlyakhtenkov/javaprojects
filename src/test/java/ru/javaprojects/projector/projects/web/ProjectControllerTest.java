@@ -356,7 +356,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -391,7 +391,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -425,7 +425,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -462,7 +462,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
                 "author.registered", "descriptionElements.id", "descriptionElements.project",
-                "descriptionElements.image.fileLink");
+                "descriptionElements.image.fileLink", "created");
         actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -619,7 +619,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
@@ -720,7 +720,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));

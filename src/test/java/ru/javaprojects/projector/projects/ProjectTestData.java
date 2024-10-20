@@ -182,6 +182,7 @@ public class ProjectTestData {
     }
 
     static {
+        project1.setCreated(parseLocalDateTime("2021-07-02 11:24:54"));
         project1.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project1.setDescriptionElements(new TreeSet<>(Set.of(de1, de2, de3, de4, de5, de6)));
         project1.setLikes(Set.of(project1Like1, project1Like2, project1Like3, project1Like4));
@@ -210,6 +211,7 @@ public class ProjectTestData {
             Set.of(project2Comment1Like1));
 
     static {
+        project2.setCreated(parseLocalDateTime("2022-09-27 21:15:11"));
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project2.setLikes(Set.of(project2Like1, project2Like2));
         project2.setComments(List.of(project2Comment1));
@@ -223,6 +225,7 @@ public class ProjectTestData {
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7, user);
 
     static {
+        project3.setCreated(parseLocalDateTime("2023-01-05 13:55:21"));
         project3.getTechnologies().addAll(Set.of(technology1, technology2));
     }
 
@@ -331,7 +334,7 @@ public class ProjectTestData {
 
     public static Project getUpdated(String projectFilesPath) {
         String updatedName = "updatedProjectName";
-        return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
+        Project updated = new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
                 new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName + LOGO_DIR +
                         UPDATED_LOGO_FILE.getOriginalFilename())),
@@ -345,10 +348,12 @@ public class ProjectTestData {
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4, getUpdatedDe6(),
                 updatedDe5, getNewDeForProjectUpdate())), project1.getLikes(),
                 project1.getComments());
+        updated.setCreated(project1.getCreated());
+        return updated;
     }
 
     public static Project getUpdatedWithOldName(String projectFilesPath) {
-        return new Project(PROJECT1_ID, project1.getName(), "updated project description", false, LOW,
+        Project updated = new Project(PROJECT1_ID, project1.getName(), "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
                 new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
                         LOGO_DIR + UPDATED_LOGO_FILE.getOriginalFilename())),
@@ -361,12 +366,14 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4,
                 updatedDe6WhenProjectNameNotUpdated, updatedDe5,
-                newDeForProjectUpdateWithoutNameChanging)),  project1.getLikes(), project1.getComments());
+                newDeForProjectUpdateWithoutNameChanging)), project1.getLikes(), project1.getComments());
+        updated.setCreated(project1.getCreated());
+        return updated;
     }
 
     public static Project getUpdatedWithOldFiles(String projectFilesPath) {
         String updatedName = "updatedProjectName";
-        return new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
+        Project updated = new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2,
                 new File(project1.getLogo().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
                         LOGO_DIR + project1.getLogo().getFileName())),
@@ -379,6 +386,8 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4, updatedDe6,
                 updatedDe5)), project1.getLikes(), project1.getComments());
+        updated.setCreated(project1.getCreated());
+        return updated;
     }
 
     public static MultiValueMap<String, String> getUpdatedParams(String projectFilesPath) {

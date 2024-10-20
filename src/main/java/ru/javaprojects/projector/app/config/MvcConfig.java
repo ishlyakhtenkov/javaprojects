@@ -16,7 +16,6 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import ru.javaprojects.projector.app.AuthUser;
-import ru.javaprojects.projector.projects.ProjectService;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -24,28 +23,9 @@ import java.util.Locale;
 @Configuration
 @RequiredArgsConstructor
 public class MvcConfig implements WebMvcConfigurer {
-    private final ProjectService projectService;
 
     @Value("default-locale")
     private String defaultLocale;
-
-    // Add projects to view model to render on header dropdown selector
-    private final HandlerInterceptor projectsInterceptor = new WebRequestHandlerInterceptorAdapter(new WebRequestInterceptor() {
-        @Override
-        public void postHandle(WebRequest request, ModelMap model) {
-            if (model != null) {
-                model.addAttribute("enabledProjects", projectService.getAllEnabled());
-            }
-        }
-
-        @Override
-        public void afterCompletion(WebRequest request, Exception ex) {
-        }
-
-        @Override
-        public void preHandle(WebRequest request) {
-        }
-    });
 
     // Add authUser to view model
     private final HandlerInterceptor authInterceptor = new WebRequestHandlerInterceptorAdapter(new WebRequestInterceptor() {
@@ -87,7 +67,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor()).excludePathPatterns("/js/**", "/webjars/**", "/css/**", "/images/**");
         registry.addInterceptor(authInterceptor).excludePathPatterns("/js/**", "/webjars/**", "/css/**", "/images/**");
-        registry.addInterceptor(projectsInterceptor).excludePathPatterns("/js/**", "/webjars/**", "/css/**", "/images/**");
     }
 
     @Override

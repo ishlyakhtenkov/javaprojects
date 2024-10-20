@@ -4,16 +4,17 @@
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="technologies" type="java.util.List"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{technology.technologies},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
+<th:block th:replace="~{fragments/main::page(title=#{technology.technologies},appMain=~{::appMain}, ownScript=~{::ownScript},
+            activeMenuItem=${ {'technologies', 'management', 'reference'} })}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <!-- Search field, Add button -->
         <div class="bg-light-subtle px-2 rounded-top-1 border-top border-start border-end border-light-subtle"
              th:classappend="${technologies.isEmpty() ? 'rounded-1 border-bottom' : ''}">
-            <div class="row row-cols-1 row-cols-sm-2 align-items-center">
+            <div class="row row-cols-1 row-cols-sm-2 align-items-center pb-2 pb-sm-0">
                 <div class="col-sm-5 text-start">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb"  style="font-size: 1.5em;">
+                        <ol class="breadcrumb mb-2 mb-sm-3"  style="font-size: 1.5em;">
                             <li class="breadcrumb-item active" aria-current="page">
                                 <i class="fa-solid fa-gears me-1"></i><span th:text="#{technology.technologies}"></span>
                             </li>
@@ -87,13 +88,13 @@
 
         <!-- Pagination -->
         <div th:if="${!technologies.isEmpty()}" class="row">
-            <div class="col-12 col-md-6 text-center text-md-start">
+            <div class="col-12 col-md-6">
                 <div sd:pagination-summary="" id="paginationSummary">info</div>
             </div>
 
             <div class="col-12 col-md-6 mt-3 mt-md-0">
                 <nav>
-                    <ul class="pagination justify-content-center justify-content-md-end" sd:pagination-split="7" sd:pagination="full">
+                    <ul class="pagination justify-content-md-end" sd:pagination-split="7" sd:pagination="full">
                         <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
                         <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
                         <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
@@ -102,7 +103,7 @@
             </div>
         </div>
         <div th:if="${!technologies.isEmpty()}" class="row">
-            <div class="col text-center text-md-end">
+            <div class="col text-md-end">
                 <span th:text="#{info.show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{info.entries}">entries</span>
             </div>
         </div>

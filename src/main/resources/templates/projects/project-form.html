@@ -19,9 +19,9 @@
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
-                    <div class="card-header text-center py-3">
-                        <h2 th:text="${projectTo.isNew()} ? #{project.new} :
-                            ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h2>
+                    <div class="card-header text-center">
+                        <h3 th:text="${projectTo.isNew()} ? #{project.new} :
+                            ${projectName == null ? projectTo.name : projectName}">Create/Edit project</h3>
                     </div>
                     <form th:action="@{/projects}" method="post" th:object="${projectTo}" enctype="multipart/form-data">
                         <div class="card-body text-start">

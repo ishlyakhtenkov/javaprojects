@@ -39,9 +39,9 @@
                 <thead class="thead-border-top-none">
                 <tr>
                     <th class="col-3 border-right-none bg-light-subtle" th:text="#{name}">Name</th>
-                    <th class="col-1 text-center border-right-none bg-light-subtle" th:text="#{logo}">Logo</th>
-                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{project.dev-period}">Dev period</th>
-                    <th class="col-3 border-right-none bg-light-subtle" th:text="#{architecture}">Architecture</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{project.author}">Author</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{project.published}">Published</th>
+                    <th class="col-2 border-right-none bg-light-subtle" th:text="#{architecture}">Architecture</th>
                     <th class="col-2 border-right-none bg-light-subtle" th:text="#{priority}">Priority</th>
                     <th class="col-1 text-center bg-light-subtle" th:text="#{actions}">Actions</th>
                 </tr>
@@ -49,10 +49,8 @@
                 <tbody>
                 <tr th:each="project : ${projects}" th:id="'row-' + ${project.id}" class="align-middle table-row">
                     <td th:text="${project.name}"></td>
-                    <td class="text-center py-1">
-                        <img th:src="@{'/' + ${project.logo.fileLink}}" th:alt="${project.logo.fileName}" width="32" height="32" />
-                    </td>
-                    <td th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy') + ' - ' + #temporals.format(project.endDate, 'dd.MM.yyyy')}"></td>
+                    <td th:text="${project.author.name}"></td>
+                    <td th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}"></td>
                     <td th:text="${project.architecture.name}"></td>
                     <td th:text="#{'priority.' + ${project.priority.name.toLowerCase()}}"></td>
                     <td class="text-center">

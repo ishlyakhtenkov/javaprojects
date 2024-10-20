@@ -5,8 +5,7 @@
 <!--/*@thymesVar id="likedCommentsIds" type="java.util.Set"*/-->
 <!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.app.AuthUser"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css',
-          activeMenuItem=${ {'projectsDropdown', 'project' + project.id} })}">
+<th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
@@ -69,7 +68,7 @@
                             </div>
                         </div>
 
-                        <h3 class="mt-3" th:text="#{developer}">Developer</h3>
+                        <h3 class="mt-3" th:text="#{project.developer}">Developer</h3>
                         <hr style="border: 2px solid;">
                         <img class="rounded-circle border" th:src="@{${project.author.avatar != null ?
                                   project.author.avatar.getSrc() : '/images/no-avatar.svg'}}" width="40" height="40"  />

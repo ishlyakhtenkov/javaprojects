@@ -66,8 +66,8 @@
                              class="rounded-circle border border-light-subtle" width="32" height="32" style="cursor: zoom-in;"
                              th:data-filename="${user.avatar.fileName}" onclick="showLargerImage($(this))" />
                     </td>
-                    <td th:text="${#strings.substring(user.roles, 1, #strings.length(user.roles) - 1)}"></td>
-                    <td  th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td th:text="${#strings.listJoin(#messages.setMsg(user.roles.!['user.role.' + name.toLowerCase]), ', ')}"></td>
+                    <td th:text="${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
                     <td class="text-center online-circle" th:title="${onlineUsersIds.contains(user.id)} ? #{user.online} : #{user.offline}"
                         th:classappend="${onlineUsersIds.contains(user.id) ? 'text-success' : 'text-danger'}">
                         <span><i class="fa-solid fa-circle-dot"></i></span>

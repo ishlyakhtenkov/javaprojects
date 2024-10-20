@@ -66,7 +66,7 @@
                                                      id="selector" multiple th:field="*{roles}" th:title="#{user.roles}" required>
                                                 <option th:each="role : ${roles}"
                                                         th:value="${role.name}"
-                                                        th:text="${role}">
+                                                        th:text="#{'user.role.' + ${role.name.toLowerCase()}}">
                                                 </option>
                                             </select>
                                             <label hidden for="selector" class="selector-label text-muted" th:text="#{user.roles}">Roles</label>

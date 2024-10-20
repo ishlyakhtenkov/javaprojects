@@ -21,7 +21,6 @@
                 <div class="card shadow">
                     <div class="card-header">
                         <h3 class="text-center" th:text="${userName == null ? userTo.name : userName}">User name</h3>
-<!--                        <h3 class="text-center" th:text="${userTo.name}">User name</h3>-->
                     </div>
                     <form th:action="@{/management/users/update}" method="post" th:object="${userTo}">
                         <div class="card-body p-4 text-center">
@@ -68,7 +67,7 @@
                                                 id="selector" multiple th:field="*{roles}" th:title="#{user.roles}" required>
                                             <option th:each="role : ${roles}"
                                                     th:value="${role.name}"
-                                                    th:text="${role}">
+                                                    th:text="#{'user.role.' + ${role.name.toLowerCase()}}">
                                             </option>
                                         </select>
                                         <label for="selector" class="selector-label text-muted" th:text="#{user.roles}">Roles</label>

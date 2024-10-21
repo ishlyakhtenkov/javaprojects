@@ -37,6 +37,12 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Nullable
+    @NoHtml
+    @Size(max = 4096)
+    @Column(name = "information")
+    private String information;
+
     @JsonIgnore
     @Size(min = 5, max = 128)
     @Column(name = "password", nullable = false)
@@ -77,13 +83,15 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
         this.roles = roles;
     }
 
-    public User(Long id, String email, String name, String password, boolean enabled, Set<Role> roles, File avatar) {
+    public User(Long id, String email, String name, String information, String password, boolean enabled,
+                Set<Role> roles, File avatar) {
         this(id, email, name, password, enabled, roles);
+        this.information = information;
         this.avatar = avatar;
     }
 
     public User(User user) {
-        this(user.id, user.email, user.name, user.password, user.enabled, user.roles, user.avatar);
+        this(user.id, user.email, user.name, user.information, user.password, user.enabled, user.roles, user.avatar);
     }
 
     @Override

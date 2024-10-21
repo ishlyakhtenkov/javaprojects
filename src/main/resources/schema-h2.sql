@@ -14,12 +14,13 @@ CREATE SEQUENCE global_seq START WITH 100000;
 
 CREATE TABLE users
 (
-    id         BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
-    email      VARCHAR(128) NOT NULL,
-    name       VARCHAR(32)  NOT NULL,
-    password   VARCHAR(128) NOT NULL,
-    enabled    BOOL         DEFAULT TRUE NOT NULL,
-    registered TIMESTAMP    DEFAULT now() NOT NULL,
+    id               BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    email            VARCHAR(128) NOT NULL,
+    name             VARCHAR(32)  NOT NULL,
+    information      VARCHAR(4096),
+    password         VARCHAR(128) NOT NULL,
+    enabled          BOOL         DEFAULT TRUE NOT NULL,
+    registered       TIMESTAMP    DEFAULT now() NOT NULL,
     avatar_file_name VARCHAR(128),
     avatar_file_link VARCHAR(512)
 );

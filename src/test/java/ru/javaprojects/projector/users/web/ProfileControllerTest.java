@@ -435,7 +435,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .params(updatedProfileInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(PROFILE_TO_ATTRIBUTE, NAME_PARAM, EMAIL_PARAM))
+                .andExpect(model().attributeHasFieldErrors(PROFILE_TO_ATTRIBUTE, NAME_PARAM, EMAIL_PARAM, INFORMATION_PARAM))
                 .andExpect(view().name(PROFILE_EDIT_VIEW));
 
         assertArrayEquals(UPDATED_AVATAR_FILE.getBytes(),

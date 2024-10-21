@@ -57,6 +57,7 @@ public class UserTestData {
     public static final String NEW_PASSWORD_PARAM = "newPassword";
     public static final String CURRENT_PASSWORD_PARAM = "currentPassword";
     public static final String EMAIL_PARAM = "email";
+    public static final String INFORMATION_PARAM = "information";
     public static final String TOKEN_PARAM = "token";
     public static final String KEYWORD_PARAM = "keyword";
     public static final String ROLES_PARAM = "roles";
@@ -84,13 +85,13 @@ public class UserTestData {
     public static final long DISABLED_USER_ID = 100003;
 
 
-    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "password", true, Set.of(Role.USER),
+    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "Some info", "password", true, Set.of(Role.USER),
             new File("cool_user.jpg", "./content/avatars/user@gmail.com/cool_user.jpg"));
 
-    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "admin", true, Set.of(Role.USER, Role.ADMIN),
-            new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
+    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "Java developer with 10 years of production experience.",
+            "admin", true, Set.of(Role.USER, Role.ADMIN), new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
 
-    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", "somePassword", true, Set.of(Role.USER),
+    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", null, "somePassword", true, Set.of(Role.USER),
             new File("cat.jpg", "./content/avatars/user2@gmail.com/cat.jpg"));
 
     public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password",
@@ -105,13 +106,13 @@ public class UserTestData {
 
     public static User getUpdatedUser(String avatarFilesPath) {
         String updatedEmail = "updated@gmail.com";
-        return new User(USER_ID, updatedEmail, "updatedName", user.getPassword(), user.isEnabled(),
+        return new User(USER_ID, updatedEmail, "updatedName", user.getInformation(), user.getPassword(), user.isEnabled(),
                 Set.of(Role.USER, Role.ADMIN),
                 new File(user.getAvatar().getFileName(), avatarFilesPath + updatedEmail + "/" + user.getAvatar().getFileName()));
     }
 
     public static User getUpdatedUserWithOldEMail() {
-        return new User(USER_ID, USER_MAIL, "updatedName", user.getPassword(), user.isEnabled(),
+        return new User(USER_ID, USER_MAIL, "updatedName", user.getInformation(), user.getPassword(), user.isEnabled(),
                 Set.of(Role.USER, Role.ADMIN), new File(user.getAvatar().getFileName(), user.getAvatar().getFileLink()));
     }
 
@@ -199,14 +200,14 @@ public class UserTestData {
             "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseDate("2024-08-05 21:49:01"), "some@gmail.com", admin);
 
     public static User getUpdatedUserAfterProfileUpdate(String avatarFilesPath) {
-        return new User(USER_ID, user.getEmail(), "updatedName", user.getPassword(), user.isEnabled(), user.getRoles(),
-                new File(UPDATED_AVATAR_FILE.getOriginalFilename(), avatarFilesPath +
+        return new User(USER_ID, user.getEmail(), "updatedName", "updated info", user.getPassword(), user.isEnabled(),
+                user.getRoles(),  new File(UPDATED_AVATAR_FILE.getOriginalFilename(), avatarFilesPath +
                         FileUtil.normalizePath(user.getEmail() + "/" + UPDATED_AVATAR_FILE.getOriginalFilename())));
     }
 
     public static User getUpdatedUserAfterProfileUpdateWithOldAvatar() {
-        return new User(USER_ID, user.getEmail(), "updatedName", user.getPassword(), user.isEnabled(), user.getRoles(),
-                user.getAvatar());
+        return new User(USER_ID, user.getEmail(), "updatedName", "updated info", user.getPassword(), user.isEnabled(),
+                user.getRoles(), user.getAvatar());
     }
 
     public static MultiValueMap<String, String> getUpdatedProfileParams(String avatarFilesPath) {
@@ -215,6 +216,7 @@ public class UserTestData {
         params.add(ID_PARAM, String.valueOf(USER_ID));
         params.add(NAME_PARAM, updatedProfileUser.getName());
         params.add(EMAIL_PARAM, updatedProfileUser.getEmail());
+        params.add(INFORMATION_PARAM, updatedProfileUser.getInformation());
         params.add(AVATAR_FILE_NAME_PARAM, updatedProfileUser.getAvatar().getFileName());
         params.add(AVATAR_FILE_LINK_PARAM, updatedProfileUser.getAvatar().getFileLink());
         return params;
@@ -224,6 +226,7 @@ public class UserTestData {
         MultiValueMap<String, String> params = getUpdatedProfileParams(avatarFilesPath);
         params.set(NAME_PARAM, LONG_STRING);
         params.set(EMAIL_PARAM, INVALID_EMAIL);
+        params.set(INFORMATION_PARAM, HTML_TEXT);
         return params;
     }
 }

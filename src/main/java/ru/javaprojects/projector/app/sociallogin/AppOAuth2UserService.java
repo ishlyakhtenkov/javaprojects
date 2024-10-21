@@ -48,7 +48,7 @@ public class AppOAuth2UserService extends DefaultOAuth2UserService {
                     if (avatarUrl != null) {
                         avatar = new File(clientRegistrationId + "_oAuth2_avatar", avatarUrl);
                     }
-                    return repository.save(new User(null, email, name, UUID.randomUUID().toString(), true,
+                    return repository.save(new User(null, email, name, null, UUID.randomUUID().toString(), true,
                             Set.of(Role.USER), avatar));
                 }));
         if (!user.isEnabled()) {

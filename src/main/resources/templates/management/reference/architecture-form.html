@@ -88,7 +88,7 @@
                                     <label for="descriptionInput" class="text-muted" th:text="#{project.short-description}">Short description</label>
                                 </div>
                                 <span class="float-end text-muted tiny" id="characterCounter"
-                                       th:text="*{(400 - (description == null ? 0 : description.length()))} + ' ' + #{info.characters-left}">Characters left</span>
+                                       th:text="*{(400 - (description == null ? 0 : description.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                 <span th:if="${#fields.hasErrors('description')}">
                                     <ul>
                                         <li class="text-danger text-start" th:each="err : ${#fields.errors('description')}"

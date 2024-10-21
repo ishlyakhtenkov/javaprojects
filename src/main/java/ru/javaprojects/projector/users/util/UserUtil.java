@@ -28,7 +28,8 @@ public class UserUtil {
     public static ProfileTo asProfileTo(User user) {
         String avatarFileName = user.getAvatar() != null ? user.getAvatar().getFileName() : null;
         String avatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
-        return new ProfileTo(user.getId(), user.getEmail(), user.getName(), avatarFileName, avatarFileLink);
+        return new ProfileTo(user.getId(), user.getEmail(), user.getName(), user.getInformation(), avatarFileName,
+                avatarFileLink);
     }
 
     public static User updateFromTo(User user, UserTo userTo, String avatarFilesPath) {
@@ -45,6 +46,7 @@ public class UserUtil {
 
     public static User updateFromTo(User user, ProfileTo profileTo, String avatarFilesPath) {
         user.setName(profileTo.getName());
+        user.setInformation(profileTo.getInformation());
         if (profileTo.getAvatar() != null && !profileTo.getAvatar().isEmpty()) {
             user.setAvatar(AppUtil.createFile(profileTo::getAvatar, avatarFilesPath, user.getEmail() + "/"));
         }

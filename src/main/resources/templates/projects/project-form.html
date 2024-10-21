@@ -331,7 +331,7 @@
                             <div class="mb-2">
                                 <div class="form-floating">
                                     <span class="position-absolute text-muted tiny" style="right: 10px;" id="characterCounter"
-                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.length()))} + ' ' + #{info.characters-left}">Characters left</span>
+                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                     <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
                                               th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Short description" style="height: 90px; white-space: pre-wrap;"

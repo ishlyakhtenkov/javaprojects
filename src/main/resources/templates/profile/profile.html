@@ -149,6 +149,9 @@
         <script src="/js/check-passwords-match.js?v=1"></script>
 
         <script>
+            const projectsTab = $('#projectsTab');
+            const qualificationTab = $('#qualificationTab');
+
             let href = window.location.href;
             if (href.includes('#qualification')) {
                 $('#qualificationTabBtn').click();
@@ -162,34 +165,43 @@
 
             function showQualification() {
                 window.history.replaceState(null, null, "#qualification");
-                if ($('#qualificationTab').children().length === 0) {
-                    console.log('get qualification data');
+                if (qualificationTab.children().length === 0) {
+                    getProjectsAndFillTabs();
                 }
             }
 
             function showProjects() {
                 window.history.replaceState(null, null, "#projects");
-                if ($('#projectsTab').children().length === 0) {
-                    $.ajax({
-                        url: '/projects/by-author',
-                        data: `userId=${$('#userId').text()}`
-                    }).done(projects => {
-                        if (projects.length !== 0) {
-                            let row = $('<div></div>').addClass('row justify-content-center');
-                            let column = $('<div></div>').addClass('col-12 col-md-8');
-                            row.append(column);
-                            projects.forEach(project => {
-                                column.append(generateProjectCard(project));
-                            });
-                            $('#projectsTab').append(row);
-
-                            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-                            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-                        }
-                    }).fail(function(data) {
-                        handleError(data, getMessage('project.failed-to-get-projects'));
-                    });
+                if (projectsTab.children().length === 0) {
+                    getProjectsAndFillTabs();
                 }
+            }
+
+            function getProjectsAndFillTabs() {
+                $.ajax({
+                    url: '/projects/by-author',
+                    data: `userId=${$('#userId').text()}`
+                }).done(projects => {
+                    if (projects.length !== 0) {
+                        fillProjectsTab(projects);
+                        fillQualificationTab(projects);
+                    }
+                }).fail(function(data) {
+                    handleError(data, getMessage('project.failed-to-get-projects'));
+                });
+            }
+
+            function fillProjectsTab(projects) {
+                projectsTab.empty();
+                let row = $('<div></div>').addClass('row justify-content-center');
+                let column = $('<div></div>').addClass('col-md-8');
+                row.append(column);
+                projects.forEach(project => {
+                    column.append(generateProjectCard(project));
+                });
+                projectsTab.append(row);
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             }
 
             function generateProjectCard(project) {
@@ -306,6 +318,26 @@
                 return `${formattedDate} ${formattedTime}`;
             }
 
+            function fillQualificationTab(projects) {
+                qualificationTab.empty();
+                let alreadyShown = [];
+                projects.forEach(project => {
+                    let technologies = project.technologies;
+                    technologies.forEach(technology => {
+                        if ($.inArray(technology.name, alreadyShown) === -1) {
+                            let technologySpan = $('<span></span>').addClass('badge bg-body-tertiary me-2 mt-2');
+                            let technologyLink = $('<a></a>').attr('type', 'button').attr('target', '_blank').attr('href', technology.url)
+                                .addClass('link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis');
+                            let technologyImage = $('<img>').addClass('align-bottom me-1').attr('src', `/${technology.logo.fileLink}`)
+                                .attr('width', '32').attr('height', '32');
+                            technologyLink.append(technologyImage).append(technology.name);
+                            technologySpan.append(technologyLink);
+                            qualificationTab.append(technologySpan);
+                            alreadyShown.push(technology.name);
+                        }
+                    });
+                });
+            }
         </script>
     </ownScript>
 </th:block>

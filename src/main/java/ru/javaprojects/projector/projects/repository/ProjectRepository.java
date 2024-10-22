@@ -21,6 +21,12 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByEnabledIsTrue();
 
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
+    List<Project> findAllWithAllInformationByAuthor_IdAndEnabledIsTrue(long userId);
+
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
+    List<Project> findAllWithAllInformationByAuthor_Id(long userId);
+
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author", "descriptionElements"})
     Optional<Project> findWithAllInformationAndDescriptionById(long id);
 
@@ -30,7 +36,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Project> findForAddViewsById(long id);
 
-    Optional<Project> findByAuthor_IdAndName(long authorId, String name);
+    Optional<Project> findByAuthor_IdAndName(long userId, String name);
 
     @EntityGraph(attributePaths = "author")
     Optional<Project> findWithAuthorById(long id);

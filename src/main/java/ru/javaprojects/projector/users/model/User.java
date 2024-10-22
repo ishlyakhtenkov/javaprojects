@@ -55,6 +55,7 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     private Date registered = new Date();
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

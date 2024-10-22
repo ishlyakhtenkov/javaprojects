@@ -89,27 +89,29 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3">
-                                <ul class="nav nav-tabs">
+                            <div class="mt-1">
+                                <ul class="nav nav-underline">
                                     <li class="nav-item">
-                                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab" type="button" role="tab"
-                                                aria-controls="nav-general" aria-selected="true">Information</button>
+                                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab"
+                                                type="button" role="tab" aria-controls="nav-general" aria-selected="true"
+                                                th:text="#{profile.information}">Information</button>
                                     </li>
                                     <li class="nav-item">
-                                        <button class="nav-link disabled" data-bs-toggle="tab" data-bs-target="#qualificationTab" type="button" role="tab"
-                                                aria-controls="nav-changes" aria-selected="false" aria-disabled="true">Qualification</button>
+                                        <button class="nav-link disabled" data-bs-toggle="tab" data-bs-target="#qualificationTab"
+                                                type="button" role="tab"  aria-controls="nav-changes" aria-selected="false"
+                                                aria-disabled="true" th:text="#{profile.qualification}">Qualification</button>
                                     </li>
                                     <li class="nav-item">
-                                        <button class="nav-link disabled" data-bs-toggle="tab" data-bs-target="#projectsTab" type="button" role="tab"
-                                                aria-controls="nav-changes" aria-selected="false" aria-disabled="true">Projects</button>
+                                        <button class="nav-link disabled" data-bs-toggle="tab" data-bs-target="#projectsTab"
+                                                type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
+                                                 aria-disabled="true" th:text="#{project.projects}">Projects</button>
                                     </li>
                                 </ul>
-                                <div class="tab-content border-start ps-1 pt-1 pb-2">
+                                <div class="tab-content pt-1">
                                     <div class="tab-pane fade show active" id="informationTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
                                         <textarea id="informationInput" th:field="*{information}"
-                                                  th:classappend="${#fields.hasErrors('information')} ? 'form-control lh-base is-invalid' : 'form-control lh-base border-0'"
-                                                  placeholder="Information" rows="7" style="white-space: pre-wrap;"
-                                                  maxlength="4000"></textarea>
+                                                  th:classappend="${#fields.hasErrors('information')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
+                                                  placeholder="Information" style="white-space: pre-wrap;" maxlength="4000"></textarea>
                                         <span class="float-end text-muted tiny" id="characterCounter"
                                               th:text="*{(4000 - (information == null ? 0 : information.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                         <span th:if="${#fields.hasErrors('information')}">
@@ -152,8 +154,11 @@
             const informationInput = $('#informationInput');
             const characterCounter = $('#characterCounter');
 
-            informationInput.on('keyup', () => {
-                console.log(informationInput.val());
+            informationInput.css('height', 'auto');
+            informationInput.css('height', informationInput.prop('scrollHeight') + 2 + 'px');
+
+            informationInput.on('input', (event) => {
+                $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
                 characterCounter.text(`${4000 - informationInput.val().length} ${getMessage('info.characters-left')}`);
             });
         </script>

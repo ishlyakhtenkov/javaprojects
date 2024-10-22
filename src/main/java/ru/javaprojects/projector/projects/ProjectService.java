@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.BaseEntity;
@@ -83,9 +84,9 @@ public class ProjectService {
                         new Object[]{name}));
     }
 
-    public Project getByAuthorAndName(long authorId, String name) {
+    public Project getByAuthorAndName(long userId, String name) {
         Assert.notNull(name, "name must not be null");
-        return repository.findByAuthor_IdAndName(authorId, name)
+        return repository.findByAuthor_IdAndName(userId, name)
                 .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "error.notfound.project",
                         new Object[]{name}));
     }
@@ -96,6 +97,22 @@ public class ProjectService {
 
     public List<Project> getAllEnabled() {
         return repository.findAllByEnabledIsTrueOrderByName();
+    }
+
+    public List<Project> getAllByAuthor(long userId, boolean enabledOnly) {
+        List<Project> projects = enabledOnly ? repository.findAllWithAllInformationByAuthor_IdAndEnabledIsTrue(userId) :
+                repository.findAllWithAllInformationByAuthor_Id(userId);
+        projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
+        projects.forEach(project -> {
+            Comparator<Technology> technologyComparator = Comparator
+                    .comparingInt((Technology t) -> t.getUsage().ordinal())
+                    .thenComparing(t -> t.getPriority().ordinal())
+                    .thenComparing(Comparator.naturalOrder());
+            TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
+            sortedTechnologies.addAll(project.getTechnologies());
+            project.setTechnologies(sortedTechnologies);
+        });
+        return projects;
     }
 
     public List<Project> getAllEnabledWithAllInformation() {

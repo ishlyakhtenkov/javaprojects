@@ -67,6 +67,7 @@ public class ProjectTestData {
     public static final String DOCKER_COMPOSE_FILE_AS_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
     public static final String LIKED_PARAM = "liked";
     public static final String TEXT_PARAM = "text";
+    public static final String USER_ID_PARAM = "userId";
 
     public static final long PROJECT1_ID = 100017;
     public static final long PROJECT2_ID = 100018;

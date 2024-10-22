@@ -14,7 +14,10 @@ import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.common.validation.ValidationUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
+import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.CommentTo;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = ProjectController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,5 +77,13 @@ public class ProjectRestController {
                               @NotBlank @NoHtml @Size(max = 4096) String text) {
         log.info("update comment with id={} for project with id={}", id, projectId);
         service.updateComment(id, text, AuthUser.authId());
+    }
+
+
+    @GetMapping("/by-author")
+    public List<Project> getAllByAuthor(@RequestParam long userId) {
+        log.info("get all projects by user with id={}", userId);
+        boolean enabledOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
+        return service.getAllByAuthor(userId, enabledOnly);
     }
 }

@@ -19,6 +19,7 @@
         <div class="row d-flex justify-content-center align-items-center mt-3">
             <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
                 <div class="card shadow rounded-4">
+                    <span id="userId" th:text="${user.id}" hidden></span>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-10 col-sm-11">
@@ -60,29 +61,32 @@
                             </form>
                         </div>
 
-                        <div class="mt-3">
-                            <ul class="nav nav-tabs">
+                        <div class="mt-1">
+                            <ul class="nav nav-underline">
                                 <li class="nav-item">
-                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab" type="button" role="tab"
-                                            aria-controls="nav-general" aria-selected="true">Information</button>
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab"
+                                            type="button" role="tab" aria-controls="nav-general" aria-selected="true"
+                                             onclick="showInformation()" th:text="#{profile.information}">Information</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualificationTab" type="button" role="tab"
-                                            aria-controls="nav-changes" aria-selected="false" onclick="getQualification()">Qualification</button>
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualificationTab"
+                                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
+                                             onclick="showQualification()" id="qualificationTabBtn" th:text="#{profile.qualification}">Qualification</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#projectsTab" type="button" role="tab"
-                                            aria-controls="nav-changes" aria-selected="false" onclick="getProjects()">Projects</button>
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#projectsTab"
+                                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
+                                             onclick="showProjects()" id="projectsTabBtn" th:text="#{project.projects}">Projects</button>
                                 </li>
                             </ul>
-                            <div class="tab-content px-3 border-start pt-2 pb-2">
+                            <div class="tab-content pt-1">
                                 <div class="tab-pane fade show active" id="informationTab" role="tabpanel"
                                      aria-labelledby="nav-general-tab" tabindex="0" style="white-space: pre-wrap;"
                                      th:text="${user.information}">Info</div>
                                 <div class="tab-pane fade" id="qualificationTab" role="tabpanel"
                                      aria-labelledby="nav-general-tab" tabindex="0"></div>
                                 <div class="tab-pane fade" id="projectsTab" role="tabpanel"
-                                     aria-labelledby="nav-general-tab" tabindex="0"></div>
+                                     aria-labelledby="nav-general-tab" tabindex="0" style="margin-top: -6px;"></div>
                             </div>
                         </div>
                     </div>
@@ -145,17 +149,163 @@
         <script src="/js/check-passwords-match.js?v=1"></script>
 
         <script>
-            function getQualification() {
+            let href = window.location.href;
+            if (href.includes('#qualification')) {
+                $('#qualificationTabBtn').click();
+            } else if (href.includes('#projects')) {
+                $('#projectsTabBtn').click();
+            }
+
+            function showInformation() {
+                window.history.replaceState(null, null, "#");
+            }
+
+            function showQualification() {
+                window.history.replaceState(null, null, "#qualification");
                 if ($('#qualificationTab').children().length === 0) {
                     console.log('get qualification data');
                 }
             }
 
-            function getProjects() {
+            function showProjects() {
+                window.history.replaceState(null, null, "#projects");
                 if ($('#projectsTab').children().length === 0) {
-                    console.log('get projects data');
+                    $.ajax({
+                        url: '/projects/by-author',
+                        data: `userId=${$('#userId').text()}`
+                    }).done(projects => {
+                        if (projects.length !== 0) {
+                            let row = $('<div></div>').addClass('row justify-content-center');
+                            let column = $('<div></div>').addClass('col-12 col-md-8');
+                            row.append(column);
+                            projects.forEach(project => {
+                                column.append(generateProjectCard(project));
+                            });
+                            $('#projectsTab').append(row);
+
+                            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+                        }
+                    }).fail(function(data) {
+                        handleError(data, getMessage('project.failed-to-get-projects'));
+                    });
                 }
             }
+
+            function generateProjectCard(project) {
+                let card = $('<div></div>').addClass('card project-card rounded-3 mt-3');
+                let cardImageDiv = $('<div></div>').addClass('ratio').css('--bs-aspect-ratio', '50%');
+                let cardImage = $('<img>').addClass('card-img-top rounded-top-3').css('object-fit', 'cover')
+                    .attr('src', `/${project.cardImage.fileLink}`);
+                cardImageDiv.append(cardImage);
+                card.append(cardImageDiv);
+                let architectureDiv= $('<div></div>').attr('title', getMessage('architecture'));
+                let architectureImage = $('<img>').addClass('float-end bg-light-subtle rounded-circle p-2')
+                    .attr('src', `/${project.architecture.logo.fileLink}`)
+                    .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.name)
+                    .attr('width', '48').attr('height', '48').css('margin-top', '-25px').css('margin-right', '15px')
+                    .css('z-index', '2').css('position', 'relative')
+                    .css('box-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19)')
+                    .on('mouseenter', function () {
+                        $(this).removeClass('p-2').addClass('p-1');
+                    })
+                    .on('mouseleave', function () {
+                        $(this).removeClass('p-1').addClass('p-2');
+                    });
+                architectureDiv.append(architectureImage);
+                card.append(architectureDiv);
+
+                let cardBody = $('<div></div>').addClass('card-body d-flex flex-column pb-0').css('margin-top', '-40px');
+                let authorDiv = $('<div></div>').addClass('d-flex');
+                let avatarDiv = $('<div></div>').addClass('pt-3 pb-2 ps-3').css('position', 'relative').css('z-index', '2')
+                    .css('margin-left', '-16px');
+                let avatar = $('<img>').addClass('rounded-circle border')
+                    .attr('src', `${project.author.avatar != null ? project.author.avatar.fileLink : '/images/no-avatar.svg'}`)
+                    .attr('width', '40').attr('height', '40');
+                avatarDiv.append(avatar);
+                authorDiv.append(avatarDiv);
+                let authorNameAndCreatedDiv = $('<div></div>').addClass('pt-3 pb-2 px-3').css('position', 'relative')
+                    .css('z-index', '2').css('margin-left', '-8px');
+                let authorName = $('<span></span>').addClass('h6').text(project.author.name);
+                authorNameAndCreatedDiv.append(authorName);
+                let createdDiv = $('<div></div>').addClass('tiny text-secondary-emphasis').css('margin-top', '-3px')
+                    .text(formatDateTime(project.created));
+                authorNameAndCreatedDiv.append(createdDiv);
+                authorDiv.append(authorNameAndCreatedDiv);
+                cardBody.append(authorDiv);
+
+                let name = $('<h5></h5>').addClass('card-title').text(project.name);
+                cardBody.append(name);
+
+                let description = $('<span></span>').addClass('card-text').text(project.shortDescription);
+                cardBody.append(description);
+
+                let likesCommentsViewsRow = $('<div></div>').addClass('row mt-auto pt-3 pb-1').css('position', 'relative')
+                    .css('z-index', '2');
+                let likesCommentsCol = $('<div></div>').addClass('col-8');
+                likesCommentsViewsRow.append(likesCommentsCol);
+                let commentsBtn = $('<a></a>').addClass('btn-link text-decoration-none link-info').attr('type', 'button')
+                        .attr('title', getMessage('comment.comments')).attr('href', `/projects/${project.id}/view#comments`);
+                let commentsSymbol = $('<i></i>').addClass('fa-regular fa-comments');
+                let commentsCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ???`);
+                commentsBtn.append(commentsSymbol);
+                commentsBtn.append(commentsCounter);
+                likesCommentsCol.append(commentsBtn);
+                let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none ms-3')
+                    .attr('type', 'button').attr('title', getMessage('like')).attr('data-bs-toggle', 'popover')
+                    .attr('data-bs-trigger', 'manual')
+                    .attr('data-bs-title', `"<a type='button' class='btn-close ms-2 float-end tiny'></a><div>${getMessage('info.only-for-auth-users')}</div>"`)
+                    .attr('data-bs-content', `"<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>${getMessage('login')}</a></div>"`)
+                    .attr('data-bs-html', 'true').on('click', () => failToast('need like functional'));
+                let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
+                let likeCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${project.likes.length}`);
+                likeBtn.append(likeSymbol);
+                likeBtn.append(likeCounter);
+                likesCommentsCol.append(likeBtn);
+                let viewsCol = $('<div></div>').addClass('col-4 text-end');
+                let viewsSymbol = $('<i></i>').addClass('fa-regular fa-eye').css('color', '#a1a0a0');
+                let viewsCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${project.views}`);
+                viewsCol.append(viewsSymbol);
+                viewsCol.append(viewsCounter);
+                likesCommentsViewsRow.append(viewsCol);
+                cardBody.append(likesCommentsViewsRow);
+
+                let projectLink = $('<a></a>').addClass('stretched-link').attr('href', `/projects/${project.id}/view`);
+                cardBody.append(projectLink);
+
+                card.append(cardBody);
+
+                let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '2');
+                let technologiesDiv = $('<div></div>');
+                footer.append(technologiesDiv);
+                project.technologies.forEach(technology => {
+                    let technologyLink = $('<a></a>').attr('type', 'button').attr('target', '_blank')
+                        .attr('title', technology.name).attr('href', technology.url).addClass('me-1 mb-1')
+                        .css('text-decoration', 'none');
+                    let technologyLogo = $('<img>').attr('src', `/${technology.logo.fileLink}`).attr('width', 24)
+                        .attr('height', 24)
+                        .on('mouseenter', function () {
+                            $(this).addClass('opacity-75');
+                        })
+                        .on('mouseleave', function () {
+                            $(this).removeClass('opacity-75');
+                        });
+                    technologyLink.append(technologyLogo);
+                    technologiesDiv.append(technologyLink);
+                });
+
+                card.append(footer);
+                return card;
+            }
+
+            function formatDateTime(dateTime) {
+                let dateAndTime = dateTime.split('T');
+                let dateParts =  dateAndTime[0].split('-');
+                let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+                let formattedTime = dateAndTime[1].split('.')[0];
+                return `${formattedDate} ${formattedTime}`;
+            }
+
         </script>
     </ownScript>
 </th:block>

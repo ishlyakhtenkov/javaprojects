@@ -17,6 +17,7 @@ enMessages.set('user.failed-to-enable', 'Failed to enable user "{0}"');
 enMessages.set('user.failed-to-disable', 'Failed to disable user "{0}"');
 enMessages.set('user.failed-to-delete', 'Failed to delete user "{0}"');
 
+enMessages.set('comment.comments', 'Comments');
 enMessages.set('comment.leave-comment-here', 'Leave a comment here');
 enMessages.set('comment.send', 'Send');
 enMessages.set('comment.reply', 'Reply');
@@ -46,7 +47,9 @@ enMessages.set('project.description-elements.paragraph', 'Paragraph');
 enMessages.set('project.description-elements.image', 'Image');
 enMessages.set('project.description-elements.move-up', 'Move up');
 enMessages.set('project.description-elements.move-down', 'Move down');
+enMessages.set('project.failed-to-get-projects', 'Failed to get projects');
 
+enMessages.set('architecture', 'Architecture');
 enMessages.set('architecture.deleted', 'Architecture "{0}" has been deleted');
 enMessages.set('architecture.failed-to-delete', 'Failed to delete architecture "{0}"');
 enMessages.set('technology.deleted', 'Technology "{0}" has been deleted');
@@ -56,6 +59,7 @@ enMessages.set('info.characters-left', 'characters left');
 enMessages.set('info.success', 'Success');
 enMessages.set('info.error', 'Error');
 enMessages.set('info.empty-image-elements', 'You have empty image elements');
+enMessages.set('info.only-for-auth-users', 'Only for authenticated users');
 
 enMessages.set('cancel', 'Cancel');
 enMessages.set('like', 'Like');
@@ -64,6 +68,7 @@ enMessages.set('delete', 'Delete');
 enMessages.set('change-image', 'Change image');
 enMessages.set('choose-image', 'Choose image');
 enMessages.set('logo', 'Logo');
+enMessages.set('login', 'Login');
 
 
 ruMessages.set('user.passwords-not-match', 'пароли не совпадают');
@@ -82,6 +87,7 @@ ruMessages.set('user.failed-to-enable', 'Не удалось активиров�
 ruMessages.set('user.failed-to-disable', 'Не удалось заблокировать пользователя "{0}"');
 ruMessages.set('user.failed-to-delete', 'Не удалось удалить пользователя "{0}"');
 
+ruMessages.set('comment.comments', 'Комментарии');
 ruMessages.set('comment.leave-comment-here', 'Оставьте комментарий здесь');
 ruMessages.set('comment.send', 'Отправить');
 ruMessages.set('comment.reply', 'Ответить');
@@ -111,7 +117,9 @@ ruMessages.set('project.description-elements.paragraph', 'Абзац');
 ruMessages.set('project.description-elements.image', 'Картинка');
 ruMessages.set('project.description-elements.move-up', 'Сместить вверх');
 ruMessages.set('project.description-elements.move-down', 'Сместить вниз');
+ruMessages.set('project.failed-to-get-projects', 'Не удалось загрузить проекты');
 
+ruMessages.set('architecture', 'Архитектура');
 ruMessages.set('architecture.deleted', 'Архитектура "{0}" была удалена');
 ruMessages.set('architecture.failed-to-delete', 'Не удалось удалить архитектуру "{0}"');
 ruMessages.set('technology.deleted', 'Технология "{0}" была удалена');
@@ -121,6 +129,7 @@ ruMessages.set('info.characters-left', 'символов осталось');
 ruMessages.set('info.success', 'Успешно');
 ruMessages.set('info.error', 'Ошибка');
 ruMessages.set('info.empty-image-elements', 'У вас есть пустые элементы-картинки');
+ruMessages.set('info.only-for-auth-users', 'Только для авторизованных пользователей');
 
 ruMessages.set('cancel', 'Отмена');
 ruMessages.set('like', 'Нравится');
@@ -129,6 +138,7 @@ ruMessages.set('delete', 'Удалить');
 ruMessages.set('change-image', 'Сменить картинку');
 ruMessages.set('choose-image', 'Выбрать картинку');
 ruMessages.set('logo', 'Логотип');
+ruMessages.set('login', 'Вход');
 
 
 function getMessage(messageCode, args) {

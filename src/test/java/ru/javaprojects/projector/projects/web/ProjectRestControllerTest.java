@@ -25,13 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.common.CommonTestData.*;
 import static ru.javaprojects.projector.common.util.JsonUtil.writeValue;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
@@ -654,5 +654,37 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+    }
+
+    @Test
+    void getAllByAuthorUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+                .param(USER_ID_PARAM, String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1), "author.roles", "author.password",
+                         "author.registered", "descriptionElements", "comments"));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void getAllByAuthorWhenAuthor() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+                .param(USER_ID_PARAM, String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1, project3), "author.roles",
+                        "author.password", "author.registered", "descriptionElements", "comments"));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    void getAllByAuthorWhenNotAuthor() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+                .param(USER_ID_PARAM, String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1), "author.roles", "author.password",
+                        "author.registered", "descriptionElements", "comments"));
     }
 }

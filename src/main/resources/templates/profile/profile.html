@@ -44,21 +44,20 @@
                                 <button type="button"
                                         class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
                                         th:title="#{edit}" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-pencil"></i>
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a type="button" class="dropdown-item" th:href="@{/profile/edit}"
                                            th:text="#{profile.edit-profile}">Edit profile</a></li>
                                     <li><button class="dropdown-item" data-bs-toggle="modal"
                                                 data-bs-target="#changePasswordModal" th:text="#{profile.change-password}">Change password</button></li>
+                                    <li>
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="dropdown-item" type="submit" th:text="#{logout}">Logout</button>
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
-                        </div>
-
-                        <div class="btn-toolbar float-end" style="margin-top: -31px; position: relative">
-                            <form th:action="@{/logout}" method="post">
-                                <button class="btn btn-sm btn-outline-secondary ms-2" type="submit" th:text="#{logout}">Logout</button>
-                            </form>
                         </div>
 
                         <div class="mt-1">

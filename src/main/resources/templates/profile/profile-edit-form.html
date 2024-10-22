@@ -81,11 +81,6 @@
                                             </ul>
                                         </span>
                                     </div>
-
-                                    <div class="btn-toolbar float-end mt-sm-3 pt-sm-1">
-                                        <button class="btn btn btn-secondary" type="button" onclick="cancel()" th:text="#{cancel}">Cancel</button>
-                                        <button class="btn btn btn-primary ms-2" type="submit" th:text="#{save}" style="min-width: 72px;">Save</button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -115,7 +110,7 @@
                                         <span class="float-end text-muted tiny" id="characterCounter"
                                               th:text="*{(4000 - (information == null ? 0 : information.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
                                         <span th:if="${#fields.hasErrors('information')}">
-                                            <ul>
+                                            <ul class="mb-1">
                                                 <li class="text-danger text-start" th:each="err : ${#fields.errors('information')}"
                                                     th:text="${err}"/>
                                             </ul>
@@ -127,7 +122,11 @@
                                          aria-labelledby="nav-general-tab" tabindex="0"></div>
                                 </div>
                             </div>
-
+                            <div class="text-end"
+                                 th:classappend="${#fields.hasErrors('information')} ? 'mt-2' : 'mt-3 pt-3'">
+                                <button class="btn btn btn-secondary" type="button" onclick="cancel()" th:text="#{cancel}">Cancel</button>
+                                <button class="btn btn btn-primary ms-1" type="submit" th:text="#{save}" style="min-width: 72px;">Save</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -158,6 +157,7 @@
             informationInput.css('height', informationInput.prop('scrollHeight') + 2 + 'px');
 
             informationInput.on('input', (event) => {
+                $(event.target).css('height', 'auto');
                 $(event.target).css('height', $(event.target).prop('scrollHeight') + 2 + 'px');
                 characterCounter.text(`${4000 - informationInput.val().length} ${getMessage('info.characters-left')}`);
             });

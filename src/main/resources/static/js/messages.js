@@ -60,6 +60,8 @@ enMessages.set('info.success', 'Success');
 enMessages.set('info.error', 'Error');
 enMessages.set('info.empty-image-elements', 'You have empty image elements');
 enMessages.set('info.only-for-auth-users', 'Only for authenticated users');
+enMessages.set('info.switch-to-light-theme', 'Switch to light theme');
+enMessages.set('info.switch-to-dark-theme', 'Switch to dark theme');
 
 enMessages.set('cancel', 'Cancel');
 enMessages.set('like', 'Like');
@@ -130,6 +132,8 @@ ruMessages.set('info.success', 'Успешно');
 ruMessages.set('info.error', 'Ошибка');
 ruMessages.set('info.empty-image-elements', 'У вас есть пустые элементы-картинки');
 ruMessages.set('info.only-for-auth-users', 'Только для авторизованных пользователей');
+ruMessages.set('info.switch-to-light-theme', 'Включить светлую тему');
+ruMessages.set('info.switch-to-dark-theme', 'Включить темную тему');
 
 ruMessages.set('cancel', 'Отмена');
 ruMessages.set('like', 'Нравится');

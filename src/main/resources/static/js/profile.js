@@ -76,8 +76,14 @@ function fillProjectsTab(projects) {
         column.append(generateProjectCard(project));
     });
     projectsTab.append(row);
+
+    $('.like-btn').on('shown.bs.popover', () => {
+        $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
+    });
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 }
 
 function generateProjectCard(project) {
@@ -88,28 +94,28 @@ function generateProjectCard(project) {
     previewDiv.append(preview);
     card.append(previewDiv);
     let architectureDiv= $('<div></div>').attr('title', getMessage('architecture'));
-    let architectureImage = $('<img>').addClass('float-end bg-light-subtle rounded-circle p-2')
+    let architectureImage = $('<img>').addClass('float-end bg-light-subtle border border-light-subtle rounded-circle p-1')
         .attr('src', `/${project.architecture.logo.fileLink}`)
         .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.name)
-        .attr('width', '48').attr('height', '48').css('margin-top', '-25px').css('margin-right', '15px')
+        .attr('width', '40').attr('height', '40').css('margin-top', '-20px').css('margin-right', '15px')
         .css('z-index', '2').css('position', 'relative')
         .css('box-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19)')
         .on('mouseenter', function () {
-            $(this).removeClass('p-2').addClass('p-1');
+            $(this).removeClass('p-1');
         })
         .on('mouseleave', function () {
-            $(this).removeClass('p-1').addClass('p-2');
+            $(this).addClass('p-1');
         });
     architectureDiv.append(architectureImage);
     card.append(architectureDiv);
 
-    let cardBody = $('<div></div>').addClass('card-body d-flex flex-column pb-0').css('margin-top', '-40px');
+    let cardBody = $('<div></div>').addClass('card-body d-flex flex-column pb-0').css('margin-top', '-35px');
     let authorDiv = $('<div></div>').addClass('d-flex');
     let avatarDiv = $('<div></div>').addClass('pt-3 pb-2 ps-3').css('position', 'relative').css('z-index', '2')
         .css('margin-left', '-16px');
     let avatar = $('<img>').addClass('rounded-circle border')
-        .attr('src', `${project.author.avatar != null ? project.author.avatar.fileLink : '/images/no-avatar.svg'}`)
-        .attr('width', '40').attr('height', '40');
+        .attr('src', getAvatarLink(project.author.avatar))
+        .attr('width', '40').attr('height', '40').css('object-fit', 'cover');
     avatarDiv.append(avatar);
     authorDiv.append(avatarDiv);
     let authorNameAndCreatedDiv = $('<div></div>').addClass('pt-3 pb-2 px-3').css('position', 'relative')
@@ -135,12 +141,12 @@ function generateProjectCard(project) {
     let commentsBtn = $('<a></a>').addClass('btn-link text-decoration-none link-info').attr('type', 'button')
         .attr('title', getMessage('comment.comments')).attr('href', `/projects/${project.id}/view#comments`);
     let commentsSymbol = $('<i></i>').addClass('fa-regular fa-comments');
-    let commentsCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${project.commentsCount}`);
+    let commentsCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small').text(project.commentsCount);
     commentsBtn.append(commentsSymbol);
     commentsBtn.append(commentsCounter);
     likesCommentsCol.append(commentsBtn);
     let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none ms-3')
-        .attr('type', 'button').attr('title', getMessage('like')).attr('data-bs-toggle', 'popover')
+        .attr('type', 'button').attr('data-bs-toggle', 'popover')
         .attr('data-bs-trigger', 'manual')
         .attr('data-bs-title', `"<a type='button' class='btn-close ms-2 float-end tiny'></a><div>${getMessage('info.only-for-auth-users')}</div>"`)
         .attr('data-bs-content', `"<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>${getMessage('login')}</a></div>"`)
@@ -148,14 +154,17 @@ function generateProjectCard(project) {
         .on('click', function () {
             likeProject($(this), project.id);
         });
-    let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
-    let likeCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${project.likesUserIds.length}`);
+    let likeSymbol = $('<i></i>').addClass('fa-heart')
+        .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.user.id) ? 'fa-regular' : 'fa-solid'}`)
+        .attr('title', getMessage('like'));
+    let likeCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small')
+        .attr('title', getMessage('like')).text(project.likesUserIds.length);
     likeBtn.append(likeSymbol);
     likeBtn.append(likeCounter);
     likesCommentsCol.append(likeBtn);
     let viewsCol = $('<div></div>').addClass('col-4 text-end');
     let viewsSymbol = $('<i></i>').addClass('fa-regular fa-eye').css('color', '#a1a0a0');
-    let viewsCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${project.views}`);
+    let viewsCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small').text(project.views);
     viewsCol.append(viewsSymbol);
     viewsCol.append(viewsCounter);
     likesCommentsViewsRow.append(viewsCol);
@@ -187,6 +196,10 @@ function generateProjectCard(project) {
 
     card.append(footer);
     return card;
+}
+
+function getAvatarLink(avatar) {
+    return avatar != null ? (avatar.fileLink.startsWith('https://') ? avatar.fileLink : `/${avatar.fileLink}`) : '/images/no-avatar.svg';
 }
 
 function likeProject(likeBtn, id) {

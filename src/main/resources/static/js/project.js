@@ -173,20 +173,26 @@ function postNewCommentSuccess(comment) {
 function generateCommentDiv(comment, isReply) {
     let commentDiv = $('<div></div>').addClass('comment mt-3').attr('id', `comment-${comment.id}`);
     let dFlexDiv = $('<div></div>').addClass('d-flex');
+    let avatarProfileLink = $('<a></a>').addClass('text-decoration-none link-body-emphasis').attr('href', `/profile/${comment.author.id}/view`);
     let avatar = $('<img>').addClass('rounded-circle border')
-        .attr('src', `${(comment.author.avatar.fileLink).startsWith('https://') ? comment.author.avatar.fileLink : ('/' + comment.author.avatar.fileLink)}`)
-        .attr('width', '40').attr('height', '40');
+        .attr('src', getAvatarLink(comment.author.avatar)).attr('width', '40').attr('height', '40').attr('title', comment.author.name)
+        .css('object-fit', 'cover')
+        .on('mouseenter', function() {$(this).addClass('opacity-75')})
+        .on('mouseleave', function() {$(this).removeClass('opacity-75')});
+    avatarProfileLink.append(avatar);
     let nameAndTimeDiv = $('<div></div>').addClass('ms-2');
+    let nameProfileLink = $('<a></a>').addClass('text-decoration-none link-body-emphasis').attr('href', `/profile/${comment.author.id}/view`);
     let nameSpan = $('<span></span>').addClass('h6').html(`${comment.author.name}`);
+    nameProfileLink.append(nameSpan);
     let timeDiv = $('<div></div>').addClass('text-secondary-emphasis tiny').css('margin-top', '-3px')
         .html(formatDateTime(comment.created));
-    nameAndTimeDiv.append(nameSpan);
+    nameAndTimeDiv.append(nameProfileLink);
     nameAndTimeDiv.append(timeDiv);
     if (isReply) {
         let borderSpan = $('<span></span>').addClass('my-auto border-bottom').css('margin-left', '-16px').css('width', '16px');
         dFlexDiv.append(borderSpan);
     }
-    dFlexDiv.append(avatar);
+    dFlexDiv.append(avatarProfileLink);
     dFlexDiv.append(nameAndTimeDiv);
     let textDiv = $('<div></div>').addClass('comment-text').css('white-space', 'pre-wrap').html(comment.text);
 
@@ -241,6 +247,10 @@ function generateCommentDiv(comment, isReply) {
     commentDiv.append(buttonsDiv);
 
     return commentDiv;
+}
+
+function getAvatarLink(avatar) {
+    return avatar != null ? (avatar.fileLink.startsWith('https://') ? avatar.fileLink : `/${avatar.fileLink}`) : '/images/no-avatar.svg';
 }
 
 function formatDateTime(dateTime) {

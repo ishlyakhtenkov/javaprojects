@@ -48,6 +48,7 @@ import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 class ProfileControllerTest extends AbstractControllerTest implements TestContentFilesManager {
     private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/reset-password";
     private static final String PROFILE_CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
+    private static final String PROFILE_VIEW_URL = PROFILE_URL + "/%d/view";
     private static final String PROFILE_EDIT_URL = PROFILE_URL + "/edit";
     private static final String RESET_PASSWORD_VIEW = "profile/reset-password";
     private static final String PROFILE_VIEW = "profile/profile";
@@ -220,8 +221,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void showProfilePage() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROFILE_URL))
+    void showProfilePageBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get(String.format(PROFILE_VIEW_URL, USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(view().name(PROFILE_VIEW))
                 .andExpect(model().attribute(USER_ATTRIBUTE, user))
@@ -230,12 +231,24 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     }
 
     @Test
+    @WithUserDetails(USER_MAIL)
+    void showProfilePageNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get(String.format(PROFILE_VIEW_URL, ADMIN_ID)))
+                .andExpect(status().isOk())
+                .andExpect(view().name(PROFILE_VIEW))
+                .andExpect(model().attribute(USER_ATTRIBUTE, admin))
+                .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(USER_ATTRIBUTE), admin));
+    }
+
+    @Test
     void showProfilePageUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROFILE_URL)
-                .with(csrf()))
-                .andExpect(status().isFound())
-                .andExpect(result ->
-                        assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
+        perform(MockMvcRequestBuilders.get(String.format(PROFILE_VIEW_URL, USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(view().name(PROFILE_VIEW))
+                .andExpect(model().attribute(USER_ATTRIBUTE, user))
+                .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(USER_ATTRIBUTE), user));
     }
 
     @Test

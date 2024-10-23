@@ -192,12 +192,17 @@
                                  th:id="${'comment-' + commentEntry.getKey().id}">
                                 <div class="d-flex ">
                                     <span th:if="${commentEntry.getValue() != 0}" class="my-auto border-bottom" style="margin-left: -16px; width: 16px;"></span>
-                                    <img class="rounded-circle border"
-                                         th:src="@{${commentEntry.getKey().author.avatar != null ?
+                                    <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                        <img class="rounded-circle border"
+                                             th:src="@{${commentEntry.getKey().author.avatar != null ?
                                                  commentEntry.getKey().author.avatar.getSrc() : '/images/no-avatar.svg'}}"
-                                         width="40" height="40" />
-                                    <div class="ms-2 ">
-                                        <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
+                                             width="40" height="40" style="object-fit: cover" th:title="${commentEntry.getKey().author.name}"
+                                             onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')" />
+                                    </a>
+                                    <div class="ms-2">
+                                        <a th:href="@{'/profile/' + ${commentEntry.getKey().author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                            <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
+                                        </a>
                                         <div class="text-secondary-emphasis tiny" style="margin-top: -3px;"
                                              th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
                                     </div>

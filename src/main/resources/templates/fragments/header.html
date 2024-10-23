@@ -39,7 +39,7 @@
             </li>
             <li class="nav-item d-lg-none">
               <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/login}" th:text="#{login}">Login</a>
-              <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{/profile}" th:text="#{profile}">Profile</a>
+              <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{'/profile/' + ${authUser.id} + '/view'}" th:text="#{profile}">Profile</a>
             </li>
             <li class="nav-item dropdown d-lg-none">
               <button type="button"
@@ -96,7 +96,7 @@
           </div>
           <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button"
              class="btn btn-outline-warning d-none d-lg-block px-3" th:text="#{login}">Login</a>
-          <a sec:authorize="isAuthenticated()" th:href="@{/profile}" type="button" id="profileButton"
+          <a sec:authorize="isAuthenticated()" th:href="@{'/profile/' + ${authUser.id} + '/view'}" type="button" id="profileButton"
              class="d-none d-lg-block rounded-circle" style="width: 40px; height: 40px;"
              th:classappend="${authUser?.user.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"
              th:title="${authUser != null ? authUser.user.name : ''}">

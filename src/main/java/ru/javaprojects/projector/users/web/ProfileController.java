@@ -63,10 +63,10 @@ public class ProfileController {
         return "redirect:/login";
     }
 
-    @GetMapping
-    public String profile(Model model) {
-        log.info("show profile for user with id={}", AuthUser.authId());
-        model.addAttribute("user", userService.get(AuthUser.authId()));
+    @GetMapping("/{id}/view")
+    public String profile(@PathVariable long id, Model model) {
+        log.info("show profile with id={}", id);
+        model.addAttribute("user", userService.get(id));
         return "profile/profile";
     }
 

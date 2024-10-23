@@ -10,8 +10,10 @@ import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.ElementType;
+import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
@@ -56,6 +58,21 @@ public class ProjectUtil {
                 project.getLogo().getFileName(), project.getLogo().getFileLink(), dockerComposeFileName, dockerComposeFileLink,
                 project.getPreview().getFileName(), project.getPreview().getFileLink(), project.getDeploymentUrl(),
                 project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos);
+    }
+
+    public ProjectPreviewTo asPreviewTo(Project project, int commentsCount) {
+        Set<Long> likesUserIds = project.getLikes().stream()
+                .map(Like::getUserId)
+                .collect(Collectors.toSet());
+        return new ProjectPreviewTo(project.getId(), project.getAuthor(), project.getName(), project.getAnnotation(),
+                project.getCreated(), project.isVisible(), project.getArchitecture(), project.getPreview(),
+                project.getTechnologies(), project.getViews(), likesUserIds, commentsCount);
+    }
+
+    public List<ProjectPreviewTo> asPreviewTo(List<Project> projects, Map<Long, Integer> commentsCount) {
+        return projects.stream()
+                .map(project -> asPreviewTo(project, commentsCount.get(project.getId())))
+                .toList();
     }
 
     public Project createNewFromTo(ProjectTo projectTo, User author) {

@@ -32,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.projector.common.CommonTestData.*;
+import static ru.javaprojects.projector.common.CommonTestData.HTML_TEXT;
+import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.common.util.JsonUtil.writeValue;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_URL_SLASH;
@@ -662,8 +663,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1), "author.roles", "author.password",
-                         "author.registered", "descriptionElements", "comments"));
+                .andExpect(PROJECT_PREVIEW_TO_MATCHER.contentJsonIgnoreFields(List.of(project1PreviewTo), "author.roles",
+                        "author.password", "author.registered"));
     }
 
     @Test
@@ -673,8 +674,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1, project3), "author.roles",
-                        "author.password", "author.registered", "descriptionElements", "comments"));
+                .andExpect(PROJECT_PREVIEW_TO_MATCHER.contentJsonIgnoreFields(List.of(project1PreviewTo, project3PreviewTo),
+                        "author.roles", "author.password", "author.registered"));
     }
 
     @Test
@@ -684,7 +685,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(PROJECT_MATCHER.contentJsonIgnoreFields(List.of(project1), "author.roles", "author.password",
-                        "author.registered", "descriptionElements", "comments"));
+                .andExpect(PROJECT_PREVIEW_TO_MATCHER.contentJsonIgnoreFields(List.of(project1PreviewTo), "author.roles",
+                        "author.password", "author.registered"));
     }
 }

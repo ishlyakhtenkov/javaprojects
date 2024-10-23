@@ -17,6 +17,7 @@ import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.repository.ProjectRepository;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
@@ -94,11 +95,7 @@ public class ProjectService {
         return repository.findAllWithArchitectureAndAuthorByOrderByName();
     }
 
-    public List<Project> getAllVisible() {
-        return repository.findAllByVisibleIsTrueOrderByName();
-    }
-
-    public List<Project> getAllByAuthor(long userId, boolean visibleOnly) {
+    public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {
         List<Project> projects = visibleOnly ? repository.findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(userId) :
                 repository.findAllWithAllInformationByAuthor_Id(userId);
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
@@ -111,10 +108,11 @@ public class ProjectService {
             sortedTechnologies.addAll(project.getTechnologies());
             project.setTechnologies(sortedTechnologies);
         });
-        return projects;
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
     }
 
-    public List<Project> getAllVisibleWithAllInformation() {
+    public List<ProjectPreviewTo> getAllVisibleWithAllInformation() {
         List<Project> projects = repository.findAllWithAllInformationByVisibleIsTrue();
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {
@@ -126,7 +124,8 @@ public class ProjectService {
             sortedTechnologies.addAll(project.getTechnologies());
             project.setTechnologies(sortedTechnologies);
         });
-        return projects;
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
     }
 
     @Transactional
@@ -338,8 +337,13 @@ public class ProjectService {
         }
     }
 
-    public Map<Long, Long> getTotalCommentsByProject() {
-        return commentRepository.countTotalCommentsByProject().stream()
-                .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getTotalComment));
+    public Map<Long, Integer> getCommentsCountByProjects(List<Project> projects) {
+        List<Long> projectsIds = projects.stream()
+                .map(BaseEntity::getId)
+                .toList();
+        Map<Long, Integer> commentsCountByProjects = commentRepository.countCommentsByProjects(projectsIds).stream()
+                .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getCommentsCount));
+        projectsIds.forEach(projectId -> commentsCountByProjects.computeIfAbsent(projectId, k -> 0));
+        return commentsCountByProjects;
     }
 }

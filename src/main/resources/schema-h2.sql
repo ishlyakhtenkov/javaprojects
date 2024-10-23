@@ -106,7 +106,7 @@ CREATE TABLE projects
     preview_file_name        VARCHAR(128) NOT NULL,
     preview_file_link        VARCHAR(512) NOT NULL,
     deployment_url           VARCHAR(512),
-    backend_src_url          VARCHAR(512) NOT NULL,
+    backend_src_url          VARCHAR(512),
     frontend_src_url         VARCHAR(512),
     open_api_url             VARCHAR(512),
     views                    INTEGER      DEFAULT 0 NOT NULL,

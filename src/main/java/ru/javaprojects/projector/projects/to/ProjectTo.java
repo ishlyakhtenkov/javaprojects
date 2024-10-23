@@ -74,7 +74,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @Size(max = 512)
     private String deploymentUrl;
 
-    @NotBlank
+    @Nullable
     @NoHtml
     @URL
     @Size(max = 512)

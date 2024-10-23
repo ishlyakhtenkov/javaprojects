@@ -13,6 +13,7 @@ import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 
 import java.time.LocalDate;
@@ -34,6 +35,9 @@ public class ProjectTestData {
     public static final MatcherFactory.Matcher<Project> PROJECT_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Project.class);
 
+    public static final MatcherFactory.Matcher<ProjectPreviewTo> PROJECT_PREVIEW_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(ProjectPreviewTo.class);
+
     public static final MatcherFactory.Matcher<Comment> COMMENT_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Comment.class, "created", "updated", "author.password",
                     "author.registered", "author.roles");
@@ -48,7 +52,7 @@ public class ProjectTestData {
     public static final String LIKED_PROJECTS_IDS_ATTRIBUTE = "likedProjectsIds";
     public static final String LIKED_COMMENTS_IDS_ATTRIBUTE = "likedCommentsIds";
     public static final String COMMENTS_ATTRIBUTE = "comments";
-    public static final String COMMENTS_TOTAL_ATTRIBUTE = "commentsTotal";
+    public static final String COMMENTS_COUNT_ATTRIBUTE = "commentsCount";
 
     public static final String ANNOTATION_PARAM = "annotation";
     public static final String VISIBLE_PARAM = "visible";
@@ -443,6 +447,22 @@ public class ProjectTestData {
         invalidParams.add(ID_PARAM, String.valueOf(PROJECT1_ID));
         return invalidParams;
     }
+
+    public static final ProjectPreviewTo project1PreviewTo = new ProjectPreviewTo(project1.getId(), project1.getAuthor(),
+            project1.getName(), project1.getAnnotation(), project1.getCreated(), project1.isVisible(),
+            project1.getArchitecture(), project1.getPreview(), project1.getTechnologies(), project1.getViews(),
+            Set.of(project1Like1.getUserId(), project1Like2.getUserId(), project1Like3.getUserId(),
+                    project1Like4.getUserId()), project1.getComments().size());
+
+    public static final ProjectPreviewTo project2PreviewTo = new ProjectPreviewTo(project2.getId(), project2.getAuthor(),
+            project2.getName(), project2.getAnnotation(), project2.getCreated(), project2.isVisible(),
+            project2.getArchitecture(), project2.getPreview(), project2.getTechnologies(), project2.getViews(),
+            Set.of(project2Like1.getUserId(), project2Like2.getUserId()), project2.getComments().size());
+
+    public static final ProjectPreviewTo project3PreviewTo = new ProjectPreviewTo(project3.getId(), project3.getAuthor(),
+            project3.getName(), project3.getAnnotation(), project3.getCreated(), project3.isVisible(),
+            project3.getArchitecture(), project3.getPreview(), project3.getTechnologies(), project3.getViews(),
+            Set.of(), project3.getComments().size());
 
     public static final DescriptionElement updatedDe1 = new DescriptionElement(DESCRIPTION_ELEMENT1_ID, TITLE,
             (byte) 1, "Updated App description", null, project1);

@@ -111,11 +111,11 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Column(name = "deployment_url")
     private String deploymentUrl;
 
-    @NotBlank
+    @Nullable
     @NoHtml
     @URL
     @Size(max = 512)
-    @Column(name = "backend_src_url", nullable = false)
+    @Column(name = "backend_src_url")
     private String backendSrcUrl;
 
     @Nullable

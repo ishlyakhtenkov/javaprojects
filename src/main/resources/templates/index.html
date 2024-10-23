@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
-<!--/*@thymesVar id="likedProjectsIds" type="java.util.Set"*/-->
-<!--/*@thymesVar id="commentsTotal" type="java.util.Map"*/-->
-<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
+<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.to.ProjectPreviewTo"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='index.css')}">
     <appMain>
@@ -41,13 +39,13 @@
                                 </div>
                             </div>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>
-                        <span class="card-text" th:text="${project.annotation}"Annotation</span>
+                        <span class="card-text" th:text="${project.annotation}">Annotation</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
                                 <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
-                                    <span class="text-secondary-emphasis small" th:text="${commentsTotal.getOrDefault(project.id, 0)}"></span>
+                                    <span class="text-secondary-emphasis small" th:text="${project.commentsCount}"></span>
                                 </a>
                                 <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
                                    class="like-btn btn-link link-danger text-decoration-none ms-3"
@@ -55,9 +53,9 @@
                                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
                                     <i class="fa-heart" th:title="#{like}"
-                                       th:classappend="${likedProjectsIds == null || !likedProjectsIds.contains(project.id) ?
+                                       th:classappend="${authUser == null || !project.likesUserIds.contains(authUser.id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
-                                    <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likes.size()}"></span>
+                                    <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likesUserIds.size()}"></span>
                                 </a>
                             </div>
                             <div class="col-4 text-end">

@@ -16,6 +16,7 @@ import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.CommentTo;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class ProjectRestController {
 
 
     @GetMapping("/by-author")
-    public List<Project> getAllByAuthor(@RequestParam long userId) {
+    public List<ProjectPreviewTo> getAllProjectsByAuthor(@RequestParam long userId) {
         log.info("get all projects by user with id={}", userId);
         boolean visibleOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
         return service.getAllByAuthor(userId, visibleOnly);

@@ -138,7 +138,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
         Architecture newArchitecture = getNew(architectureFilesPath);
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.add(LOGO_FILE_NAME_PARAM, logoFile.getOriginalFilename());
-        newParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(logoFile.getBytes()));
+        newParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(logoFile.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, ARCHITECTURES_URL)
                 .params((newParams))
                 .with(csrf()))
@@ -294,7 +294,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
     void updateWhenLogoIsBytesArray() throws Exception {
         Architecture updatedArchitecture = getUpdated(architectureFilesPath);
         MultiValueMap<String, String> updatedParams = getUpdatedParams(architectureFilesPath);
-        updatedParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
+        updatedParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, ARCHITECTURES_URL)
                 .params(updatedParams)
                 .with(csrf()))

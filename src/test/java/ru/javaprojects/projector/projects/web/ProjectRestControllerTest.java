@@ -506,7 +506,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
         assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
@@ -528,7 +528,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
         assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
@@ -543,7 +543,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertThrows(NotFoundException.class, () -> projectService.get(PROJECT1_ID));
         assertTrue(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
@@ -574,7 +574,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         assertDoesNotThrow(() -> projectService.get(PROJECT1_ID));
         assertFalse(likeRepository.findAllByObjectId(PROJECT1_ID).isEmpty());
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
@@ -582,58 +582,58 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void enableProject() throws Exception {
+    void revealProject() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(false))
+                .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertFalse(projectService.get(PROJECT1_ID).isEnabled());
+        assertFalse(projectService.get(PROJECT1_ID).isVisible());
 
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(true))
+                .param(VISIBLE_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+        assertTrue(projectService.get(PROJECT1_ID).isVisible());
     }
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void enableProjectNotBelongs() throws Exception {
+    void revealProjectNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(false))
+                .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-enable-not-belong", null,
+                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-reveal-not-belong", null,
                         getLocale())))
                 .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID));
-        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+        assertTrue(projectService.get(PROJECT1_ID).isVisible());
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void enableProjectNotBelongsByAdmin() throws Exception {
+    void revealProjectNotBelongsByAdmin() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(false))
+                .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertFalse(projectService.get(PROJECT1_ID).isEnabled());
+        assertFalse(projectService.get(PROJECT1_ID).isVisible());
 
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(true))
+                .param(VISIBLE_PARAM, String.valueOf(true))
                 .with(csrf()))
                 .andExpect(status().isNoContent());
-        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+        assertTrue(projectService.get(PROJECT1_ID).isVisible());
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void enableProjectNotFound() throws Exception {
+    void revealProjectNotFound() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + NOT_EXISTING_ID)
-                .param(ENABLED_PARAM, String.valueOf(false))
+                .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertEquals(Objects.requireNonNull(result.getResolvedException()).getClass(),
@@ -646,14 +646,14 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     }
 
     @Test
-    void enableProjectUnauthorized() throws Exception {
+    void revealProjectUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
-                .param(ENABLED_PARAM, String.valueOf(false))
+                .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertTrue(projectService.get(PROJECT1_ID).isEnabled());
+        assertTrue(projectService.get(PROJECT1_ID).isVisible());
     }
 
     @Test

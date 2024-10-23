@@ -24,13 +24,13 @@ VALUES ('Layered Monolith', 'A layered architecture is a way of organizing the c
                             'system into distinct layers, each of which performs a specific task or set of tasks.', 'layered_monolith.png',
         './content/architectures/layered_monolith/layered_monolith.png'); --100063
 
-INSERT INTO projects (name, short_description, enabled, priority, created, start_date, end_date, architecture_id, logo_file_name, logo_file_link,
-                      docker_compose_file_name, docker_compose_file_link, card_image_file_name, card_image_file_link,
+INSERT INTO projects (name, annotation, visible, priority, created, started, finished, architecture_id, logo_file_name, logo_file_link,
+                      docker_compose_file_name, docker_compose_file_link, preview_file_name, preview_file_link,
                       deployment_url, backend_src_url, frontend_src_url, open_api_url, user_id)
 VALUES ('Учет альбомов КД', 'Приложение используется работниками архива документов для учета альбомов конструкторской документации.',
         true, 'HIGH', '2021-07-08 07:11:25', '2021-06-12', '2021-07-01', 100063, 'album_accounting_logo.png', './content/projects/admin@gmail.com/album_accounting/logo/album_accounting_logo.png',
         'docker-compose.yaml', './content/projects/admin@gmail.com/album_accounting/docker/docker-compose.yaml',
-        'album_accounting_card_img.png','./content/projects/admin@gmail.com/album_accounting/card_img/album_accounting_card_img.png',
+        'album_accounting_preview.png','./content/projects/admin@gmail.com/album_accounting/preview/album_accounting_preview.png',
         'https://projector.ru/albumaccounting', 'https://github.com/ishlyakhtenkov/albumaccounting',
         'https://github.com/ishlyakhtenkov/angular-albumaccounting', 'https://projector.ru/albumaccounting/swagger-ui.html', 100001); --100064
 

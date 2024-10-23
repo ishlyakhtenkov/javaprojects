@@ -164,7 +164,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
         Technology newTechnology = getNew(technologyFilesPath);
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.add(LOGO_FILE_NAME_PARAM, logoFile.getOriginalFilename());
-        newParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(logoFile.getBytes()));
+        newParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(logoFile.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .params((newParams))
                 .with(csrf()))
@@ -321,7 +321,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     void updateWhenLogoIsBytesArray() throws Exception {
         Technology updatedTechnology = getUpdated(technologyFilesPath);
         MultiValueMap<String, String> updatedParams = getUpdatedParams(technologyFilesPath);
-        updatedParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
+        updatedParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, TECHNOLOGIES_URL)
                 .params(updatedParams)
                 .with(csrf()))

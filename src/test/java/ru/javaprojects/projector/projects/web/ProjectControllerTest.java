@@ -345,7 +345,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(NEW_LOGO_FILE)
                     .file(NEW_DOCKER_COMPOSE_FILE)
-                    .file(NEW_CARD_IMAGE_FILE)
+                    .file(NEW_PREVIEW_FILE)
                     .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(getNewParams())
                     .with(csrf()))
@@ -360,22 +360,22 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getImage().getFileLink())));
         }
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void createWhenLogoAndCardImageAndDockerComposeAreByteArrays() throws Exception {
+    void createWhenLogoAndPreviewAndDockerComposeAreByteArrays() throws Exception {
         UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
         MultiValueMap<String, String> newParams = getNewParams();
         newParams.add(LOGO_FILE_NAME_PARAM, NEW_LOGO_FILE.getOriginalFilename());
-        newParams.add(LOGO_FILE_AS_BYTES_PARAM,  Arrays.toString(NEW_LOGO_FILE.getBytes()));
-        newParams.add(CARD_IMAGE_FILE_NAME_PARAM, NEW_CARD_IMAGE_FILE.getOriginalFilename());
-        newParams.add(CARD_IMAGE_FILE_AS_BYTES_PARAM,  Arrays.toString(NEW_CARD_IMAGE_FILE.getBytes()));
+        newParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(NEW_LOGO_FILE.getBytes()));
+        newParams.add(PREVIEW_FILE_NAME_PARAM, NEW_PREVIEW_FILE.getOriginalFilename());
+        newParams.add(PREVIEW_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(NEW_PREVIEW_FILE.getBytes()));
         newParams.add(DOCKER_COMPOSE_FILE_NAME_PARAM, NEW_DOCKER_COMPOSE_FILE.getOriginalFilename());
-        newParams.add(DOCKER_COMPOSE_FILE_AS_BYTES_PARAM,  Arrays.toString(NEW_DOCKER_COMPOSE_FILE.getBytes()));
+        newParams.add(DOCKER_COMPOSE_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(NEW_DOCKER_COMPOSE_FILE.getBytes()));
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
             ProjectTo newProjectTo = getNewTo();
@@ -395,7 +395,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getImage().getFileLink())));
         }
     }
@@ -415,7 +415,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(NEW_LOGO_FILE)
                     .file(NEW_DOCKER_COMPOSE_FILE)
-                    .file(NEW_CARD_IMAGE_FILE)
+                    .file(NEW_PREVIEW_FILE)
                     .params(newParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
@@ -429,7 +429,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getImage().getFileLink())));
         }
     }
@@ -448,7 +448,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_LOGO_FILE)
                 .file(NEW_DOCKER_COMPOSE_FILE)
-                .file(NEW_CARD_IMAGE_FILE)
+                .file(NEW_PREVIEW_FILE)
                 .file((MockMultipartFile) newDeTo3ImageFile)
                 .file(new MockMultipartFile("descriptionElementTos[3].image.inputtedFile",
                         newDeTo3ImageFile.getOriginalFilename(), MediaType.IMAGE_PNG_VALUE, newDeTo3ImageFile.getBytes()))
@@ -466,7 +466,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
-        assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
         try (Stream<Path> pathStream = Files.list(Paths.get(projectFilesPath + "user@gmail.com/new_project_name/description/images"))) {
             long fileCounter = pathStream
                     .peek(path ->
@@ -482,7 +482,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_LOGO_FILE)
                 .file(NEW_DOCKER_COMPOSE_FILE)
-                .file(NEW_CARD_IMAGE_FILE)
+                .file(NEW_PREVIEW_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(getNewParams())
                 .with(csrf()))
@@ -491,7 +491,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
         assertThrows(NotFoundException.class, () -> projectService.getByName(getNewTo().getName()));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
     }
@@ -503,13 +503,13 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_LOGO_FILE)
                 .file(NEW_DOCKER_COMPOSE_FILE)
-                .file(NEW_CARD_IMAGE_FILE)
+                .file(NEW_PREVIEW_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, SHORT_DESCRIPTION_PARAM,
-                        START_DATE_PARAM, END_DATE_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
+                .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, ANNOTATION_PARAM,
+                        STARTED_PARAM, FINISHED_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
                         "descriptionElementTos[1].text"));
         assertArrayEquals(getNewTo().getLogo().getInputtedFile().getBytes(),
@@ -521,14 +521,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getLogo().getFileLink());
 
-        assertArrayEquals(getNewTo().getCardImage().getInputtedFile().getBytes(),
+        assertArrayEquals(getNewTo().getPreview().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getInputtedFileBytes());
-        assertEquals(getNewTo().getCardImage().getInputtedFile().getOriginalFilename(),
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getInputtedFileBytes());
+        assertEquals(getNewTo().getPreview().getInputtedFile().getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                        .getModel().get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileName());
+                        .getModel().get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                .getModel().get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileLink());
+                .getModel().get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileLink());
 
         assertArrayEquals(getNewTo().getDockerCompose().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
@@ -554,8 +554,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) + DOCKER_DIR +
                 NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())));
         assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL,
-                FileUtil.normalizePath(newInvalidParams.get(NAME_PARAM).get(0) + CARD_IMG_DIR +
-                        NEW_CARD_IMAGE_FILE.getOriginalFilename()))));
+                FileUtil.normalizePath(newInvalidParams.get(NAME_PARAM).get(0) + PREVIEW_DIR +
+                        NEW_PREVIEW_FILE.getOriginalFilename()))));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
     }
 
@@ -565,7 +565,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         MultiValueMap<String, String> newParams = getNewParams();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_DOCKER_COMPOSE_FILE)
-                .file(NEW_CARD_IMAGE_FILE)
+                .file(NEW_PREVIEW_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
@@ -573,14 +573,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         messageSource.getMessage("project.logo-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
-        assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void createWithoutCardImage() throws Exception {
+    void createWithoutPreview() throws Exception {
         MultiValueMap<String, String> newParams = getNewParams();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_LOGO_FILE)
@@ -589,7 +589,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
-                        messageSource.getMessage("project.card-image-not-present", null, getLocale()),
+                        messageSource.getMessage("project.preview-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
         assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
@@ -608,7 +608,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setDockerCompose(null);
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(NEW_LOGO_FILE)
-                    .file(NEW_CARD_IMAGE_FILE)
+                    .file(NEW_PREVIEW_FILE)
                     .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(getNewParams())
                     .with(csrf()))
@@ -622,7 +622,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(getNewDe3().getImage().getFileLink())));
         }
     }
@@ -635,7 +635,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(NEW_LOGO_FILE)
                 .file(NEW_DOCKER_COMPOSE_FILE)
-                .file(NEW_CARD_IMAGE_FILE)
+                .file(NEW_PREVIEW_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(newParams)
                 .with(csrf()))
@@ -651,14 +651,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getLogo().getFileLink());
 
-        assertArrayEquals(getNewTo().getCardImage().getInputtedFile().getBytes(),
+        assertArrayEquals(getNewTo().getPreview().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getInputtedFileBytes());
-        assertEquals(getNewTo().getCardImage().getInputtedFile().getOriginalFilename(),
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getInputtedFileBytes());
+        assertEquals(getNewTo().getPreview().getInputtedFile().getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileName());
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileLink());
+                .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileLink());
 
         assertArrayEquals(getNewTo().getDockerCompose().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
@@ -678,8 +678,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getDescriptionElementTos().get(2).getImage().getFileLink());
 
-        assertNotEquals(getNew(projectFilesPath).getShortDescription(),
-                projectService.getByName(project1.getName()).getShortDescription());
+        assertNotEquals(getNew(projectFilesPath).getAnnotation(),
+                projectService.getByName(project1.getName()).getAnnotation());
     }
 
     @Test
@@ -693,8 +693,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             Project newProject = getNew(projectFilesPath);
             newProject.getLogo().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + LOGO_DIR +
                     NEW_LOGO_FILE.getOriginalFilename()));
-            newProject.getCardImage().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() +
-                    CARD_IMG_DIR + NEW_CARD_IMAGE_FILE.getOriginalFilename()));
+            newProject.getPreview().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() +
+                    PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename()));
             newProject.getDockerCompose().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + DOCKER_DIR +
                     NEW_DOCKER_COMPOSE_FILE.getOriginalFilename()));
             String deFileLink = "./content/projects/user@gmail.com/skill_aggregator/description/images/" +
@@ -709,7 +709,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(NEW_LOGO_FILE)
                     .file(NEW_DOCKER_COMPOSE_FILE)
-                    .file(NEW_CARD_IMAGE_FILE)
+                    .file(NEW_PREVIEW_FILE)
                     .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                     .params(newParams)
                     .with(csrf()))
@@ -724,7 +724,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
-            assertTrue(Files.exists(Paths.get(created.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(deFileLink)));
         }
     }
@@ -738,7 +738,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             Project updatedProject = getUpdated(projectFilesPath);
             perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(UPDATED_LOGO_FILE)
-                    .file(UPDATED_CARD_IMAGE_FILE)
+                    .file(UPDATED_PREVIEW_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
                     .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                     .params(getUpdatedParams(projectFilesPath))
@@ -753,12 +753,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdate.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
@@ -770,12 +770,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void updateWhenLogoAndCardImageAndDockerComposeAreByteArrays() throws Exception {
+    void updateWhenLogoAndPreviewAndDockerComposeAreByteArrays() throws Exception {
         Project updatedProject = getUpdated(projectFilesPath);
         MultiValueMap<String, String> updatedParams = getUpdatedParams(projectFilesPath);
-        updatedParams.add(LOGO_FILE_AS_BYTES_PARAM, Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
-        updatedParams.add(CARD_IMAGE_FILE_AS_BYTES_PARAM, Arrays.toString(UPDATED_CARD_IMAGE_FILE.getBytes()));
-        updatedParams.add(DOCKER_COMPOSE_FILE_AS_BYTES_PARAM, Arrays.toString(UPDATED_DOCKER_COMPOSE_FILE.getBytes()));
+        updatedParams.add(LOGO_INPUTTED_FILE_BYTES_PARAM, Arrays.toString(UPDATED_LOGO_FILE.getBytes()));
+        updatedParams.add(PREVIEW_INPUTTED_FILE_BYTES_PARAM, Arrays.toString(UPDATED_PREVIEW_FILE.getBytes()));
+        updatedParams.add(DOCKER_COMPOSE_INPUTTED_FILE_BYTES_PARAM, Arrays.toString(UPDATED_DOCKER_COMPOSE_FILE.getBytes()));
         UUID preparedUuid = UUID.fromString(PREPARED_UUID_STRING);
         try (MockedStatic<UUID> uuid = Mockito.mockStatic(UUID.class)) {
             uuid.when(UUID::randomUUID).thenReturn(preparedUuid);
@@ -792,12 +792,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdate.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
@@ -818,7 +818,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             updatedParams.set(NAME_PARAM, project1.getName());
             perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(UPDATED_LOGO_FILE)
-                    .file(UPDATED_CARD_IMAGE_FILE)
+                    .file(UPDATED_PREVIEW_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
                     .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                     .params(updatedParams)
@@ -832,13 +832,13 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6WhenProjectNameNotUpdated.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdateWithoutNameChanging.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
         }
@@ -864,7 +864,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .params(updatedParams)
                 .with(csrf()))
@@ -877,10 +877,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 "author.registered", "comments", "descriptionElements.project");
         assertEquals(project1.getLikes(), project.getLikes());
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
@@ -899,7 +899,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             updatedParams.set(NAME_PARAM, project1.getName());
             perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(UPDATED_LOGO_FILE)
-                    .file(UPDATED_CARD_IMAGE_FILE)
+                    .file(UPDATED_PREVIEW_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
                     .file((MockMultipartFile) updatedDeToNew.getImage().getInputtedFile())
                     .params(updatedParams)
@@ -913,12 +913,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6WhenProjectNameNotUpdated.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdateWithoutNameChanging.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
         }
@@ -944,11 +944,11 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 "author.registered", "comments", "descriptionElements.project");
         assertEquals(project1.getLikes(), project.getLikes());
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedDe6.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
@@ -964,7 +964,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         updatedParams.set(ID_PARAM, String.valueOf(NOT_EXISTING_ID));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                 .params(updatedParams)
@@ -978,7 +978,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     void updateUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                 .params(getUpdatedParams(projectFilesPath))
@@ -996,7 +996,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     void updateNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                 .params(getUpdatedParams(projectFilesPath))
@@ -1007,7 +1007,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(projectFilesPath).getName());
         assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(newDeForProjectUpdate.getImage().getFileLink())));
     }
@@ -1021,7 +1021,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             Project updatedProject = getUpdated(projectFilesPath);
             perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(UPDATED_LOGO_FILE)
-                    .file(UPDATED_CARD_IMAGE_FILE)
+                    .file(UPDATED_PREVIEW_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
                     .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                     .params(getUpdatedParams(projectFilesPath))
@@ -1036,12 +1036,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6.getImage().getFileLink())));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdate.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));
@@ -1057,14 +1057,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         MultiValueMap<String, String> updatedInvalidParams = getUpdatedInvalidParams();
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeTo3().getImage().getInputtedFile())
                 .params(updatedInvalidParams)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, SHORT_DESCRIPTION_PARAM,
-                        START_DATE_PARAM, END_DATE_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
+                .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, ANNOTATION_PARAM,
+                        STARTED_PARAM, FINISHED_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
                         "descriptionElementTos[1].text"))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
@@ -1077,14 +1077,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getLogo().getFileLink());
 
-        assertArrayEquals(UPDATED_CARD_IMAGE_FILE.getBytes(),
+        assertArrayEquals(UPDATED_PREVIEW_FILE.getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getInputtedFileBytes());
-        assertEquals(UPDATED_CARD_IMAGE_FILE.getOriginalFilename(),
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getInputtedFileBytes());
+        assertEquals(UPDATED_PREVIEW_FILE.getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileName());
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileLink());
+                .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileLink());
 
         assertArrayEquals(UPDATED_DOCKER_COMPOSE_FILE.getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
@@ -1106,12 +1106,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), getUpdated(projectFilesPath).getName());
         assertTrue(Files.exists(Paths.get(project1.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project1.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project1.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(project1.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getLogo().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getCardImage().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
     }
@@ -1123,7 +1123,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         updatedParams.set(NAME_PARAM, project3.getName());
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                 .file(UPDATED_LOGO_FILE)
-                .file(UPDATED_CARD_IMAGE_FILE)
+                .file(UPDATED_PREVIEW_FILE)
                 .file(UPDATED_DOCKER_COMPOSE_FILE)
                 .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                 .params(updatedParams)
@@ -1141,14 +1141,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getLogo().getFileLink());
 
-        assertArrayEquals(UPDATED_CARD_IMAGE_FILE.getBytes(),
+        assertArrayEquals(UPDATED_PREVIEW_FILE.getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getInputtedFileBytes());
-        assertEquals(UPDATED_CARD_IMAGE_FILE.getOriginalFilename(),
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getInputtedFileBytes());
+        assertEquals(UPDATED_PREVIEW_FILE.getOriginalFilename(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                        .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileName());
+                        .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileName());
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
-                .get(PROJECT_TO_ATTRIBUTE)).getCardImage().getFileLink());
+                .get(PROJECT_TO_ATTRIBUTE)).getPreview().getFileLink());
 
         assertArrayEquals(UPDATED_DOCKER_COMPOSE_FILE.getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
@@ -1170,13 +1170,13 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         assertNotEquals(projectService.get(PROJECT1_ID).getName(), project3.getName());
         assertTrue(Files.exists(Paths.get(project3.getLogo().getFileLink())));
-        assertTrue(Files.exists(Paths.get(project3.getCardImage().getFileLink())));
+        assertTrue(Files.exists(Paths.get(project3.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(de3.getImage().getFileLink())));
         assertTrue(Files.exists(Paths.get(de6.getImage().getFileLink())));
         assertTrue(Files.notExists(Paths.get(projectFilesPath + FileUtil.normalizePath(project3.getName() + LOGO_DIR +
                 UPDATED_LOGO_FILE.getOriginalFilename()))));
-        assertTrue(Files.notExists(Paths.get(projectFilesPath + FileUtil.normalizePath(project3.getName() + CARD_IMG_DIR +
-                UPDATED_CARD_IMAGE_FILE.getOriginalFilename()))));
+        assertTrue(Files.notExists(Paths.get(projectFilesPath + FileUtil.normalizePath(project3.getName() + PREVIEW_DIR +
+                UPDATED_PREVIEW_FILE.getOriginalFilename()))));
         assertTrue(Files.notExists(Paths.get(projectFilesPath + FileUtil.normalizePath(project3.getName() + DOCKER_DIR +
                 UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename()))));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
@@ -1193,8 +1193,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             Project updatedProject = getUpdated(projectFilesPath);
             updatedProject.getLogo().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + LOGO_DIR +
                     UPDATED_LOGO_FILE.getOriginalFilename()));
-            updatedProject.getCardImage().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() +
-                    CARD_IMG_DIR + UPDATED_CARD_IMAGE_FILE.getOriginalFilename()));
+            updatedProject.getPreview().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() +
+                    PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename()));
             updatedProject.getDockerCompose().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + DOCKER_DIR +
                     UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename()));
             updatedProject.getDescriptionElements().stream()
@@ -1204,7 +1204,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             updatedProject.setName(project2.getName());
             perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROJECTS_URL)
                     .file(UPDATED_LOGO_FILE)
-                    .file(UPDATED_CARD_IMAGE_FILE)
+                    .file(UPDATED_PREVIEW_FILE)
                     .file(UPDATED_DOCKER_COMPOSE_FILE)
                     .file((MockMultipartFile) getNewDeToForProjectUpdate().getImage().getInputtedFile())
                     .params(updatedParams)
@@ -1219,14 +1219,14 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
-            assertTrue(Files.exists(Paths.get(updatedProject.getCardImage().getFileLink())));
+            assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedDe6.getImage().getFileLink()
                     .replace("updatedprojectname", "skill_aggregator"))));
             assertTrue(Files.exists(Paths.get(newDeForProjectUpdate.getImage().getFileLink()
                     .replace("updatedprojectname", "skill_aggregator"))));
             assertTrue(Files.notExists(Paths.get(project1.getLogo().getFileLink())));
-            assertTrue(Files.notExists(Paths.get(project1.getCardImage().getFileLink())));
+            assertTrue(Files.notExists(Paths.get(project1.getPreview().getFileLink())));
             assertTrue(Files.notExists(Paths.get(project1.getDockerCompose().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de6.getImage().getFileLink())));
             assertTrue(Files.notExists(Paths.get(de3.getImage().getFileLink())));

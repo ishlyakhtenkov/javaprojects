@@ -51,10 +51,10 @@ public class ProjectUtil {
 
         String dockerComposeFileName = project.getDockerCompose() != null ? project.getDockerCompose().getFileName() : null;
         String dockerComposeFileLink = project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
-        return new ProjectTo(project.getId(), project.getName(), project.getShortDescription(), project.isEnabled(),
-                project.getPriority(), project.getStartDate(), project.getEndDate(), project.getArchitecture(),
+        return new ProjectTo(project.getId(), project.getName(), project.getAnnotation(), project.isVisible(),
+                project.getPriority(), project.getStarted(), project.getFinished(), project.getArchitecture(),
                 project.getLogo().getFileName(), project.getLogo().getFileLink(), dockerComposeFileName, dockerComposeFileLink,
-                project.getCardImage().getFileName(), project.getCardImage().getFileLink(), project.getDeploymentUrl(),
+                project.getPreview().getFileName(), project.getPreview().getFileLink(), project.getDeploymentUrl(),
                 project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos);
     }
 
@@ -62,10 +62,10 @@ public class ProjectUtil {
         String name = projectTo.getName();
         File dockerCompose = (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) ?
                 createFile(projectTo::getDockerCompose, projectFilesPath, author.getEmail() + "/" + name + DOCKER_DIR) : null;
-        Project project = new Project(null, name, projectTo.getShortDescription(), projectTo.isEnabled(),
-                projectTo.getPriority(), projectTo.getStartDate(), projectTo.getEndDate(), projectTo.getArchitecture(),
+        Project project = new Project(null, name, projectTo.getAnnotation(), projectTo.isVisible(),
+                projectTo.getPriority(), projectTo.getStarted(), projectTo.getFinished(), projectTo.getArchitecture(),
                 createFile(projectTo::getLogo, projectFilesPath, author.getEmail() + "/"  + name + LOGO_DIR), dockerCompose,
-                createFile(projectTo::getCardImage, projectFilesPath, author.getEmail() + "/"  + name + CARD_IMG_DIR), projectTo.getDeploymentUrl(),
+                createFile(projectTo::getPreview, projectFilesPath, author.getEmail() + "/"  + name + PREVIEW_DIR), projectTo.getDeploymentUrl(),
                 projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0, author);
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
@@ -89,11 +89,11 @@ public class ProjectUtil {
         String projectOldName = project.getName();
         String authorEmail = project.getAuthor().getEmail();
         project.setName(projectTo.getName());
-        project.setShortDescription(projectTo.getShortDescription());
-        project.setEnabled(projectTo.isEnabled());
+        project.setAnnotation(projectTo.getAnnotation());
+        project.setVisible(projectTo.isVisible());
         project.setPriority(projectTo.getPriority());
-        project.setStartDate(projectTo.getStartDate());
-        project.setEndDate(projectTo.getEndDate());
+        project.setStarted(projectTo.getStarted());
+        project.setFinished(projectTo.getFinished());
         project.setArchitecture(projectTo.getArchitecture());
         project.setDeploymentUrl(projectTo.getDeploymentUrl());
         project.setBackendSrcUrl(projectTo.getBackendSrcUrl());
@@ -122,8 +122,8 @@ public class ProjectUtil {
         if (projectTo.getLogo() != null && !projectTo.getLogo().isEmpty()) {
             project.setLogo(createFile(projectTo::getLogo, projectFilesPath, authorEmail + "/"  + projectTo.getName() + LOGO_DIR));
         }
-        if (projectTo.getCardImage() != null && !projectTo.getCardImage().isEmpty()) {
-            project.setCardImage(createFile(projectTo::getCardImage, projectFilesPath, authorEmail + "/"  + projectTo.getName() + CARD_IMG_DIR));
+        if (projectTo.getPreview() != null && !projectTo.getPreview().isEmpty()) {
+            project.setPreview(createFile(projectTo::getPreview, projectFilesPath, authorEmail + "/"  + projectTo.getName() + PREVIEW_DIR));
         }
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             project.setDockerCompose(createFile(projectTo::getDockerCompose, projectFilesPath,
@@ -133,8 +133,8 @@ public class ProjectUtil {
         if (!project.getName().equalsIgnoreCase(projectOldName)) {
             project.getLogo().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + LOGO_DIR +
                     project.getLogo().getFileName()));
-            project.getCardImage().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + CARD_IMG_DIR +
-                    project.getCardImage().getFileName()));
+            project.getPreview().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + PREVIEW_DIR +
+                    project.getPreview().getFileName()));
             if (project.getDockerCompose() != null) {
                 project.getDockerCompose().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + DOCKER_DIR +
                         project.getDockerCompose().getFileName()));

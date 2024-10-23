@@ -50,21 +50,22 @@ public class ProjectTestData {
     public static final String COMMENTS_ATTRIBUTE = "comments";
     public static final String COMMENTS_TOTAL_ATTRIBUTE = "commentsTotal";
 
-    public static final String SHORT_DESCRIPTION_PARAM = "shortDescription";
-    public static final String START_DATE_PARAM = "startDate";
-    public static final String END_DATE_PARAM = "endDate";
+    public static final String ANNOTATION_PARAM = "annotation";
+    public static final String VISIBLE_PARAM = "visible";
+    public static final String STARTED_PARAM = "started";
+    public static final String FINISHED_PARAM = "finished";
     public static final String ARCHITECTURE_PARAM = "architecture";
     public static final String DEPLOYMENT_URL_PARAM = "deploymentUrl";
     public static final String BACKEND_SRC_URL_PARAM = "backendSrcUrl";
     public static final String FRONTEND_SRC_URL_PARAM = "frontendSrcUrl";
     public static final String OPEN_API_URL_PARAM = "openApiUrl";
     public static final String TECHNOLOGIES_IDS_PARAM = "technologiesIds";
-    public static final String CARD_IMAGE_FILE_NAME_PARAM = "cardImage.fileName";
-    public static final String CARD_IMAGE_FILE_LINK_PARAM = "cardImage.fileLink";
-    public static final String CARD_IMAGE_FILE_AS_BYTES_PARAM = "cardImage.inputtedFileBytes";
+    public static final String PREVIEW_FILE_NAME_PARAM = "preview.fileName";
+    public static final String PREVIEW_FILE_LINK_PARAM = "preview.fileLink";
+    public static final String PREVIEW_INPUTTED_FILE_BYTES_PARAM = "preview.inputtedFileBytes";
     public static final String DOCKER_COMPOSE_FILE_NAME_PARAM = "dockerCompose.fileName";
     public static final String DOCKER_COMPOSE_FILE_LINK_PARAM = "dockerCompose.fileLink";
-    public static final String DOCKER_COMPOSE_FILE_AS_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
+    public static final String DOCKER_COMPOSE_INPUTTED_FILE_BYTES_PARAM = "dockerCompose.inputtedFileBytes";
     public static final String LIKED_PARAM = "liked";
     public static final String TEXT_PARAM = "text";
     public static final String USER_ID_PARAM = "userId";
@@ -111,8 +112,8 @@ public class ProjectTestData {
             new File("restaurant_aggregator_logo.png",
                     "./content/projects/user@gmail.com/restaurant_aggregator/logo/restaurant_aggregator_logo.png"),
             new File("docker-compose.yaml", "./content/projects/user@gmail.com/restaurant_aggregator/docker/docker-compose.yaml"),
-            new File("restaurant_aggregator_card_img.png",
-                    "./content/projects/user@gmail.com/restaurant_aggregator/card_img/restaurant_aggregator_card_img.png"),
+            new File("restaurant_aggregator_preview.png",
+                    "./content/projects/user@gmail.com/restaurant_aggregator/preview/restaurant_aggregator_preview.png"),
             "https://projector.ru/restaurant-aggregator", "https://github.com/ishlyakhtenkov/votingsystem",
             "https://github.com/ishlyakhtenkov/angular-votingsystem",
             "https://projector.ru/restaurant-aggregator/swagger-ui.html", 12, user);
@@ -196,8 +197,8 @@ public class ProjectTestData {
             LocalDate.of(2022, JULY, 17), LocalDate.of(2022, SEPTEMBER, 23), architecture1,
             new File("skill_aggregator_logo.png", "./content/projects/admin@gmail.com/skill_aggregator/logo/skill_aggregator_logo.png"),
             new File("docker-compose.yaml", "./content/projects/admin@gmail.com/skill_aggregator/docker/docker-compose.yaml"),
-            new File("skill_aggregator_card_img.png",
-                    "./content/projects/admin@gmail.com/skill_aggregator/card_img/skill_aggregator_card_img.png"),
+            new File("skill_aggregator_preview.png",
+                    "./content/projects/admin@gmail.com/skill_aggregator/preview/skill_aggregator_preview.png"),
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
             null, null, 21, admin);
 
@@ -222,7 +223,7 @@ public class ProjectTestData {
             "The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.",
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),
             architecture1, new File("copy_maker_logo.png", "./content/projects/user@gmail.com/copy_maker/logo/copy_maker_logo.png"), null,
-            new File("copy_maker_card_img.png", "./content/projects/user@gmail.com/copy_maker/card_img/copy_maker_card_img.png"),
+            new File("copy_maker_preview.png", "./content/projects/user@gmail.com/copy_maker/preview/copy_maker_preview.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7, user);
 
     static {
@@ -233,8 +234,8 @@ public class ProjectTestData {
     public static final MockMultipartFile NEW_LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
             MediaType.IMAGE_PNG_VALUE, "new logo file content bytes".getBytes());
 
-    public static final MockMultipartFile NEW_CARD_IMAGE_FILE = new MockMultipartFile("cardImage.inputtedFile",
-            "New project card image.png", MediaType.IMAGE_PNG_VALUE, "new card image file bytes".getBytes());
+    public static final MockMultipartFile NEW_PREVIEW_FILE = new MockMultipartFile("preview.inputtedFile",
+            "New project preview.png", MediaType.IMAGE_PNG_VALUE, "new preview file bytes".getBytes());
 
     public static final MockMultipartFile NEW_DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerCompose.inputtedFile",
             "docker-compose.yaml", MediaType.TEXT_PLAIN_VALUE, "new docker compose file content bytes".getBytes());
@@ -242,16 +243,16 @@ public class ProjectTestData {
     public static final MockMultipartFile UPDATED_LOGO_FILE = new MockMultipartFile("logo.inputtedFile",
             "updated project logo.png", MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
 
-    public static final MockMultipartFile UPDATED_CARD_IMAGE_FILE = new MockMultipartFile("cardImage.inputtedFile",
-            "Updated project card image.png", MediaType.IMAGE_PNG_VALUE, "updated card image file bytes".getBytes());
+    public static final MockMultipartFile UPDATED_PREVIEW_FILE = new MockMultipartFile("preview.inputtedFile",
+            "Updated project preview.png", MediaType.IMAGE_PNG_VALUE, "updated preview file bytes".getBytes());
 
     public static final MockMultipartFile UPDATED_DOCKER_COMPOSE_FILE = new MockMultipartFile("dockerCompose.inputtedFile",
             "docker-compose-updated.yaml", MediaType.TEXT_PLAIN_VALUE, "updated docker compose file bytes".getBytes());
 
     public static ProjectTo getNewTo() {
-        return new ProjectTo(null, "New project name", "New project short description", true, HIGH,
+        return new ProjectTo(null, "New project name", "New project annotation", true, HIGH,
                 LocalDate.of(2022, MARCH, 11), LocalDate.of(2022, DECEMBER, 25), architecture1,
-                NEW_LOGO_FILE, NEW_DOCKER_COMPOSE_FILE, NEW_CARD_IMAGE_FILE, "https://newprojectname.ru",
+                NEW_LOGO_FILE, NEW_DOCKER_COMPOSE_FILE, NEW_PREVIEW_FILE, "https://newprojectname.ru",
                 "https://github.com/ishlyakhtenkov/newprojectname", null,
                 "https://newprojectname.ru/swagger-ui.html", Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID),
                 new ArrayList<>(List.of(getNewDeTo1(), getNewDeTo2(), getNewDeTo3())));
@@ -259,14 +260,14 @@ public class ProjectTestData {
 
     public static Project getNew(String contentPath) {
         ProjectTo newTo = getNewTo();
-        return new Project(null, newTo.getName(), newTo.getShortDescription(), newTo.isEnabled(), newTo.getPriority(),
-                newTo.getStartDate(), newTo.getEndDate(), newTo.getArchitecture(),
+        return new Project(null, newTo.getName(), newTo.getAnnotation(), newTo.isVisible(), newTo.getPriority(),
+                newTo.getStarted(), newTo.getFinished(), newTo.getArchitecture(),
                 new File("new_project_logo.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() + LOGO_DIR +
                         NEW_LOGO_FILE.getOriginalFilename())),
                 new File("docker-compose.yaml", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() + DOCKER_DIR +
                         NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())),
-                new File("new_project_card_image.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() +
-                        CARD_IMG_DIR + NEW_CARD_IMAGE_FILE.getOriginalFilename())),
+                new File("new_project_preview.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() +
+                        PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename())),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(), 0,
                 user, new TreeSet<>(Set.of(technology1, technology2, technology3)),
                 new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), Set.of(), List.of());
@@ -279,11 +280,11 @@ public class ProjectTestData {
         DescriptionElementTo newDeTo2 = getNewDeTo2();
         DescriptionElementTo newDeTo3 = getNewDeTo3();
         params.add(NAME_PARAM, newTo.getName());
-        params.add(SHORT_DESCRIPTION_PARAM, newTo.getShortDescription());
-        params.add(ENABLED_PARAM, String.valueOf(newTo.isEnabled()));
+        params.add(ANNOTATION_PARAM, newTo.getAnnotation());
+        params.add(VISIBLE_PARAM, String.valueOf(newTo.isVisible()));
         params.add(PRIORITY_PARAM, newTo.getPriority().name());
-        params.add(START_DATE_PARAM, newTo.getStartDate().toString());
-        params.add(END_DATE_PARAM, newTo.getEndDate().toString());
+        params.add(STARTED_PARAM, newTo.getStarted().toString());
+        params.add(FINISHED_PARAM, newTo.getFinished().toString());
         params.add(ARCHITECTURE_PARAM, String.valueOf(newTo.getArchitecture().getId()));
         params.add(DEPLOYMENT_URL_PARAM, newTo.getDeploymentUrl());
         params.add(BACKEND_SRC_URL_PARAM, newTo.getBackendSrcUrl());
@@ -309,11 +310,11 @@ public class ProjectTestData {
         DescriptionElementTo newDeTo2 = getNewDeTo2();
         DescriptionElementTo newDeTo3 = getNewDeTo3();
         params.add(NAME_PARAM, LONG_STRING);
-        params.add(SHORT_DESCRIPTION_PARAM, HTML_TEXT);
-        params.add(ENABLED_PARAM, String.valueOf(true));
+        params.add(ANNOTATION_PARAM, HTML_TEXT);
+        params.add(VISIBLE_PARAM, String.valueOf(true));
         params.add(PRIORITY_PARAM, HIGH.name());
-        params.add(START_DATE_PARAM, null);
-        params.add(END_DATE_PARAM, null);
+        params.add(STARTED_PARAM, null);
+        params.add(FINISHED_PARAM, null);
         params.add(ARCHITECTURE_PARAM, String.valueOf(architecture1.getId()));
         params.add(DEPLOYMENT_URL_PARAM, INVALID_URL);
         params.add(BACKEND_SRC_URL_PARAM, INVALID_URL);
@@ -341,8 +342,8 @@ public class ProjectTestData {
                         UPDATED_LOGO_FILE.getOriginalFilename())),
                 new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
                         DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
-                new File("updated_project_card_image.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        CARD_IMG_DIR + UPDATED_CARD_IMAGE_FILE.getOriginalFilename())),
+                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
+                        PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
@@ -360,8 +361,8 @@ public class ProjectTestData {
                         LOGO_DIR + UPDATED_LOGO_FILE.getOriginalFilename())),
                 new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
                         DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
-                new File("updated_project_card_image.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
-                        CARD_IMG_DIR + UPDATED_CARD_IMAGE_FILE.getOriginalFilename())),
+                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
+                        PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
@@ -380,8 +381,8 @@ public class ProjectTestData {
                         LOGO_DIR + project1.getLogo().getFileName())),
                 new File(project1.getDockerCompose().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
                         DOCKER_DIR + project1.getDockerCompose().getFileName())),
-                new File(project1.getCardImage().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        CARD_IMG_DIR + project1.getCardImage().getFileName())),
+                new File(project1.getPreview().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
+                        PREVIEW_DIR + project1.getPreview().getFileName())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
@@ -396,11 +397,11 @@ public class ProjectTestData {
         Project updated = getUpdated(projectFilesPath);
         params.add(ID_PARAM, String.valueOf(updated.getId()));
         params.add(NAME_PARAM, updated.getName());
-        params.add(SHORT_DESCRIPTION_PARAM, updated.getShortDescription());
-        params.add(ENABLED_PARAM, String.valueOf(updated.isEnabled()));
+        params.add(ANNOTATION_PARAM, updated.getAnnotation());
+        params.add(VISIBLE_PARAM, String.valueOf(updated.isVisible()));
         params.add(PRIORITY_PARAM, updated.getPriority().name());
-        params.add(START_DATE_PARAM, updated.getStartDate().toString());
-        params.add(END_DATE_PARAM, updated.getEndDate().toString());
+        params.add(STARTED_PARAM, updated.getStarted().toString());
+        params.add(FINISHED_PARAM, updated.getFinished().toString());
         params.add(ARCHITECTURE_PARAM, String.valueOf(updated.getArchitecture().getId()));
         params.add(DEPLOYMENT_URL_PARAM, updated.getDeploymentUrl());
         params.add(BACKEND_SRC_URL_PARAM, updated.getBackendSrcUrl());
@@ -409,8 +410,8 @@ public class ProjectTestData {
         params.add(TECHNOLOGIES_IDS_PARAM, String.valueOf(TECHNOLOGY1_ID));
         params.add(LOGO_FILE_NAME_PARAM, updated.getLogo().getFileName());
         params.add(LOGO_FILE_LINK_PARAM, updated.getLogo().getFileLink());
-        params.add(CARD_IMAGE_FILE_NAME_PARAM, updated.getCardImage().getFileName());
-        params.add(CARD_IMAGE_FILE_LINK_PARAM, updated.getCardImage().getFileLink());
+        params.add(PREVIEW_FILE_NAME_PARAM, updated.getPreview().getFileName());
+        params.add(PREVIEW_FILE_LINK_PARAM, updated.getPreview().getFileLink());
         params.add(DOCKER_COMPOSE_FILE_NAME_PARAM, updated.getDockerCompose().getFileName());
         params.add(DOCKER_COMPOSE_FILE_LINK_PARAM, updated.getDockerCompose().getFileLink());
         params.add("descriptionElementTos[0].id", String.valueOf(updatedDe2.getId()));

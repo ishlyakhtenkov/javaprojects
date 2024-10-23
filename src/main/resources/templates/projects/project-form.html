@@ -30,10 +30,10 @@
                             <input type="hidden" th:field="*{logo.fileLink}">
                             <input type="hidden" th:if="${projectTo.logo.inputtedFileBytes != null}"
                                    th:field="*{logo.inputtedFileBytes}">
-                            <input type="hidden" th:field="*{cardImage.fileName}">
-                            <input type="hidden" th:field="*{cardImage.fileLink}">
-                            <input type="hidden" th:if="${projectTo.cardImage.inputtedFileBytes != null}"
-                                   th:field="*{cardImage.inputtedFileBytes}">
+                            <input type="hidden" th:field="*{preview.fileName}">
+                            <input type="hidden" th:field="*{preview.fileLink}">
+                            <input type="hidden" th:if="${projectTo.preview.inputtedFileBytes != null}"
+                                   th:field="*{preview.inputtedFileBytes}">
                             <input type="hidden" th:field="*{dockerCompose.fileName}">
                             <input type="hidden" th:field="*{dockerCompose.fileLink}">
                             <input type="hidden" th:if="${projectTo.dockerCompose.inputtedFileBytes != null}"
@@ -72,17 +72,17 @@
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text project-form-label"
-                                              th:text="#{project.dev-start}">Dev start date</span>
-                                        <input type="date" id="startDate" name="startDate" th:value="${projectTo.startDate}"
-                                               class="form-control date-input" th:classappend="${projectTo.startDate == null ? 'text-muted' : ''}" required />
+                                              th:text="#{project.started}">Started date</span>
+                                        <input type="date" id="started" name="started" th:value="${projectTo.started}"
+                                               class="form-control date-input" th:classappend="${projectTo.started == null ? 'text-muted' : ''}" required />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text project-form-label"
-                                              th:text="#{project.dev-end}">Dev end date</span>
-                                        <input type="date" name="endDate" th:value="${projectTo.endDate}"
-                                               class="form-control date-input" th:classappend="${projectTo.endDate == null ? 'text-muted' : ''}" required />
+                                              th:text="#{project.finished}">Finished date</span>
+                                        <input type="date" name="finished" th:value="${projectTo.finished}"
+                                               class="form-control date-input" th:classappend="${projectTo.finished == null ? 'text-muted' : ''}" required />
                                     </div>
                                 </div>
                             </div>
@@ -104,9 +104,9 @@
                                         <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                         <span class="form-control">
                                             <div class="form-switch text-truncate w-100">
-                                                <input type="checkbox" role="switch" th:field="*{enabled}" class="form-check-input me-1"
+                                                <input type="checkbox" role="switch" th:field="*{visible}" class="form-check-input me-1"
                                                        style="cursor: pointer;" id="visibilityCheckbox" />
-                                                <span class="text-muted" th:text="${projectTo.enabled} ? #{project.visible-to-users} : #{project.not-visible-to-users}"
+                                                <span class="text-muted" th:text="${projectTo.visible} ? #{project.visible-to-users} : #{project.invisible-to-users}"
                                                       id="visibilityCheckboxDesc"></span>
                                             </div>
                                         </span>
@@ -255,44 +255,44 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="border rounded-2 ps-3 pe-4 pb-3 h-100">
-                                        <div class="text-start text-muted tiny" th:text="#{project.card-image}">Card image</div>
+                                        <div class="text-start text-muted tiny" th:text="#{project.preview}">Preview</div>
 
                                         <div class="d-flex align-items-start">
-                                            <input type="file" accept="image/*" th:field="*{cardImage.inputtedFile}"
+                                            <input type="file" accept="image/*" th:field="*{preview.inputtedFile}"
                                                    hidden class="element-image-input"
-                                                   th:required="${projectTo.cardImage == null ||
-                                                   (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
+                                                   th:required="${projectTo.preview == null ||
+                                                   (projectTo.preview.fileLink == null && projectTo.preview.inputtedFileBytes == null)}"
                                                    onchange="previewImage($(this))"/>
 
-                                            <img th:hidden="${projectTo.cardImage == null && (projectTo.cardImage.getSrc() == null)}"
-                                                 th:src="@{${projectTo.cardImage.getSrc()}}"
+                                            <img th:hidden="${projectTo.preview == null && (projectTo.preview.getSrc() == null)}"
+                                                 th:src="@{${projectTo.preview.getSrc()}}"
                                                  class="element-image rounded-2 mt-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 165px;"
-                                                 th:data-filename="${projectTo.cardImage.fileName}"
+                                                 th:data-filename="${projectTo.preview.fileName}"
                                                  onclick="showLargerImage($(this))" />
 
                                             <div class="empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center"
-                                                 th:classappend="${#fields.hasErrors('cardImage')} ? 'border-danger' : ''"
+                                                 th:classappend="${#fields.hasErrors('preview')} ? 'border-danger' : ''"
                                                  style="height: 150px; width: 300px;"
-                                                 th:styleappend="${projectTo.cardImage == null ||
-                                                 (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null) ? '' : 'display: none;'}">
+                                                 th:styleappend="${projectTo.preview == null ||
+                                                 (projectTo.preview.fileLink == null && projectTo.preview.inputtedFileBytes == null) ? '' : 'display: none;'}">
                                                     <button type="button" class="btn btn-outline-secondary"
                                                             onclick="$(this).parent().siblings('input').click()" th:text="#{choose-image}">
                                                         Choose image
                                                     </button>
                                             </div>
 
-                                            <button type="button" th:hidden="${projectTo.cardImage == null ||
-                                                    (projectTo.cardImage.fileLink == null && projectTo.cardImage.inputtedFileBytes == null)}"
+                                            <button type="button" th:hidden="${projectTo.preview == null ||
+                                                    (projectTo.preview.fileLink == null && projectTo.preview.inputtedFileBytes == null)}"
                                                     class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-0"
                                                     th:title="#{change-image}"
                                                     onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>
                                             </button>
                                         </div>
-                                        <span th:if="${#fields.hasErrors('cardImage')}">
+                                        <span th:if="${#fields.hasErrors('preview')}">
                                             <ul>
                                                 <li class="text-danger text-start"
-                                                    th:each="err : ${#fields.errors('cardImage')}" th:text="${err}"/>
+                                                    th:each="err : ${#fields.errors('preview')}" th:text="${err}"/>
                                             </ul>
                                         </span>
                                     </div>
@@ -331,16 +331,16 @@
                             <div class="mb-2">
                                 <div class="form-floating">
                                     <span class="position-absolute text-muted tiny" style="right: 10px;" id="characterCounter"
-                                           th:text="*{(128 - (shortDescription == null ? 0 : shortDescription.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
-                                    <textarea id="shortDescriptionInput" th:field="*{shortDescription}"
-                                              th:class="${#fields.hasErrors('shortDescription')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
-                                              placeholder="Short description" style="height: 90px; white-space: pre-wrap;"
+                                           th:text="*{(128 - (annotation == null ? 0 : annotation.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>
+                                    <textarea id="annotationInput" th:field="*{annotation}"
+                                              th:class="${#fields.hasErrors('annotation')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
+                                              placeholder="Annotation" style="height: 90px; white-space: pre-wrap;"
                                               maxlength="128" required></textarea>
-                                    <label for="shortDescriptionInput" class="text-muted" th:text="#{project.short-description}">Short description</label>
+                                    <label for="annotationInput" class="text-muted" th:text="#{project.annotation}">Annotation</label>
                                 </div>
-                                <span th:if="${#fields.hasErrors('shortDescription')}">
+                                <span th:if="${#fields.hasErrors('annotation')}">
                                     <ul>
-                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('shortDescription')}"
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('annotation')}"
                                             th:text="${err}"/>
                                     </ul>
                                 </span>

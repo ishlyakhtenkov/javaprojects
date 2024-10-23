@@ -16,13 +16,13 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @EntityGraph(attributePaths = {"architecture", "author"})
     List<Project> findAllWithArchitectureAndAuthorByOrderByName();
 
-    List<Project> findAllByEnabledIsTrueOrderByName();
+    List<Project> findAllByVisibleIsTrueOrderByName();
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
-    List<Project> findAllWithAllInformationByEnabledIsTrue();
+    List<Project> findAllWithAllInformationByVisibleIsTrue();
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
-    List<Project> findAllWithAllInformationByAuthor_IdAndEnabledIsTrue(long userId);
+    List<Project> findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(long userId);
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByAuthor_Id(long userId);

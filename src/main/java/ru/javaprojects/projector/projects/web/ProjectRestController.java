@@ -36,9 +36,9 @@ public class ProjectRestController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void enable(@PathVariable long id, @RequestParam boolean enabled) {
-        log.info("{} project with id={}", enabled ? "enable" : "disable", id);
-        service.enable(id, enabled, AuthUser.authId(), AuthUser.isAdmin());
+    public void reveal(@PathVariable long id, @RequestParam boolean visible) {
+        log.info("{} project with id={}", visible ? "reveal" : "hide", id);
+        service.reveal(id, visible, AuthUser.authId(), AuthUser.isAdmin());
     }
 
     @PatchMapping("/{id}/like")
@@ -83,7 +83,7 @@ public class ProjectRestController {
     @GetMapping("/by-author")
     public List<Project> getAllByAuthor(@RequestParam long userId) {
         log.info("get all projects by user with id={}", userId);
-        boolean enabledOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
-        return service.getAllByAuthor(userId, enabledOnly);
+        boolean visibleOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
+        return service.getAllByAuthor(userId, visibleOnly);
     }
 }

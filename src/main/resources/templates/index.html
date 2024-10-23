@@ -15,7 +15,7 @@
             <div th:each="project : ${projects}" class="col mb-4">
                 <div class="card h-100 project-card rounded-3">
                     <div class="ratio" style="--bs-aspect-ratio: 50%;">
-                        <img th:src="@{${project.cardImage.fileLink}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
+                        <img th:src="@{${project.preview.fileLink}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
                     </div>
                     <div th:title="#{architecture}">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>
-                        <span class="card-text" th:text="${project.shortDescription}">Short description</span>
+                        <span class="card-text" th:text="${project.annotation}"Annotation</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">
                                 <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"

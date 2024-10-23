@@ -4,11 +4,11 @@ const logoFilePreviewDiv = $('#logoFilePreviewDiv');
 const logoFileInputDiv = $('#logoFileInputDiv');
 const dockerFilePreviewDiv = $('#dockerFilePreviewDiv');
 const dockerFileInputDiv = $('#dockerFileInputDiv');
-const cardImageFilePreviewDiv = $('#cardImageFilePreviewDiv');
-const cardImageFileInputDiv = $('#cardImageFileInputDiv');
+const previewFilePreviewDiv = $('#previewFilePreviewDiv');
+const previewFileInputDiv = $('#previewFileInputDiv');
 const visibilityCheckbox = $('#visibilityCheckbox');
 const visibilityCheckboxDesc = $('#visibilityCheckboxDesc');
-const shortDescriptionInput = $('#shortDescriptionInput');
+const annotationInput = $('#annotationInput');
 const characterCounter = $('#characterCounter');
 
 $(technologiesSelector).on('changed.bs.select', (event, clickedIndex, isSelected, previousValue) => {
@@ -44,11 +44,11 @@ $('.date-input').on('change', (event) => {
 });
 
 visibilityCheckbox.on('click', () => {
-    visibilityCheckboxDesc.html(getMessage(visibilityCheckbox.prop('checked') === true ? 'project.visible-to-users' : 'project.not-visible-to-users'));
+    visibilityCheckboxDesc.html(getMessage(visibilityCheckbox.prop('checked') === true ? 'project.visible-to-users' : 'project.invisible-to-users'));
 });
 
-shortDescriptionInput.on('keyup', () => {
-    characterCounter.text(`${128 - shortDescriptionInput.val().length} ${getMessage('info.characters-left')}`);
+annotationInput.on('keyup', () => {
+    characterCounter.text(`${128 - annotationInput.val().length} ${getMessage('info.characters-left')}`);
 });
 
 function deleteLogoFile() {

@@ -73,7 +73,7 @@ public class ProjectController {
                 .comparingInt((Technology t) -> t.getPriority().ordinal())
                 .thenComparing(Technology::getName);
         Project project = projectService.getWithAllInformation(id, technologyComparator);
-        if (!project.isEnabled() && project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin()) {
+        if (!project.isVisible() && project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin()) {
             throw new IllegalRequestDataException("Forbidden to view disabled project, projectId=" + id +
                     ", userId=" + AuthUser.authId(), "project.forbidden-view-disabled", null);
         }
@@ -176,8 +176,8 @@ public class ProjectController {
             if (projectTo.getLogo() != null) {
                 projectTo.getLogo().keepInputtedFile(FileTo.IS_IMAGE_FILE, () -> projectTo.setLogo(null));
             }
-            if (projectTo.getCardImage() != null) {
-                projectTo.getCardImage().keepInputtedFile(FileTo.IS_IMAGE_FILE, () -> projectTo.setCardImage(null));
+            if (projectTo.getPreview() != null) {
+                projectTo.getPreview().keepInputtedFile(FileTo.IS_IMAGE_FILE, () -> projectTo.setPreview(null));
             }
             if (projectTo.getDockerCompose() != null) {
                 projectTo.getDockerCompose().keepInputtedFile(FileTo.IS_YAML_FILE, () -> projectTo.setDockerCompose(null));

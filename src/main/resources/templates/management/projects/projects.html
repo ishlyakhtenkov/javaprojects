@@ -64,10 +64,10 @@
                         </a>
                         <span class="form-switch tiny ms-3">
                             <input type="checkbox" role="switch" class="form-check-input"
-                                   style="cursor: pointer; margin-top: 6px;" th:checked="${project.enabled}"
+                                   style="cursor: pointer; margin-top: 6px;" th:checked="${project.visible}"
                                    th:data-name="${project.name}"
-                                   th:title="${project.enabled} ? #{project.disable} : #{project.enable}"
-                                   th:onclick="|enableProject(this, '${project.id}')|" />
+                                   th:title="${project.visible} ? #{project.hide} : #{project.reveal}"
+                                   th:onclick="|revealProject(this, '${project.id}')|" />
                         </span>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{project.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"

@@ -205,11 +205,11 @@
 
             function generateProjectCard(project) {
                 let card = $('<div></div>').addClass('card project-card rounded-3 mt-3');
-                let cardImageDiv = $('<div></div>').addClass('ratio').css('--bs-aspect-ratio', '50%');
-                let cardImage = $('<img>').addClass('card-img-top rounded-top-3').css('object-fit', 'cover')
-                    .attr('src', `/${project.cardImage.fileLink}`);
-                cardImageDiv.append(cardImage);
-                card.append(cardImageDiv);
+                let previewDiv = $('<div></div>').addClass('ratio').css('--bs-aspect-ratio', '50%');
+                let preview = $('<img>').addClass('card-img-top rounded-top-3').css('object-fit', 'cover')
+                    .attr('src', `/${project.preview.fileLink}`);
+                previewDiv.append(preview);
+                card.append(previewDiv);
                 let architectureDiv= $('<div></div>').attr('title', getMessage('architecture'));
                 let architectureImage = $('<img>').addClass('float-end bg-light-subtle rounded-circle p-2')
                     .attr('src', `/${project.architecture.logo.fileLink}`)
@@ -248,8 +248,8 @@
                 let name = $('<h5></h5>').addClass('card-title').text(project.name);
                 cardBody.append(name);
 
-                let description = $('<span></span>').addClass('card-text').text(project.shortDescription);
-                cardBody.append(description);
+                let annotation = $('<span></span>').addClass('card-text').text(project.annotation);
+                cardBody.append(annotation);
 
                 let likesCommentsViewsRow = $('<div></div>').addClass('row mt-auto pt-3 pb-1').css('position', 'relative')
                     .css('z-index', '2');

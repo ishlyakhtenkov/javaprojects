@@ -375,7 +375,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     void updateProfileWithoutChangingEmailWhenAvatarIsBytesArray() throws Exception {
         User updatedProfileUser = getUpdatedUserAfterProfileUpdate(avatarFilesPath);
         MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(avatarFilesPath);
-        updatedParams.add(AVATAR_FILE_BYTES_PARAM,  Arrays.toString(UPDATED_AVATAR_FILE.getBytes()));
+        updatedParams.add(AVATAR_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(UPDATED_AVATAR_FILE.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .params(updatedParams)
                 .with(csrf()))

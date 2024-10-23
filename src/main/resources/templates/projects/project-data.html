@@ -38,9 +38,9 @@
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-form-label" th:text="#{project.dev-period}">Dev period</span>
-                                    <span class="form-control" th:text="${#temporals.format(project.startDate, 'dd.MM.yyyy')} +
-                                    ' - ' + ${#temporals.format(project.endDate, 'dd.MM.yyyy')} + ' (' +
-                                    ${T(java.time.temporal.ChronoUnit).DAYS.between(project.startDate, project.endDate)} +
+                                    <span class="form-control" th:text="${#temporals.format(project.started, 'dd.MM.yyyy')} +
+                                    ' - ' + ${#temporals.format(project.finished, 'dd.MM.yyyy')} + ' (' +
+                                    ${T(java.time.temporal.ChronoUnit).DAYS.between(project.started, project.finished)} +
                                     ' ' + #{project.days} + ')'"></span>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                     <span class="form-control"
-                                          th:utext="${project.enabled ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> Visible to users' :
+                                          th:utext="${project.visible ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> Visible to users' :
                                           '<i class=&quot;text-danger me-1 fa-solid fa-eye-slash&quot;></i> Not visible to users'}">
                                     </span>
                                 </div>
@@ -122,10 +122,10 @@
                         <div class="row">
                             <div class="col-lg-4 mb-3">
                                 <div class="border rounded-2 px-3 pb-3 h-100">
-                                    <div class="text-muted tiny" th:text="#{project.card-image}">Card image</div>
-                                    <img th:src="@{${project.cardImage != null ? ('/' + project.cardImage.fileLink) : ''}}"
+                                    <div class="text-muted tiny" th:text="#{project.preview}">Preview</div>
+                                    <img th:src="@{${project.preview != null ? ('/' + project.preview.fileLink) : ''}}"
                                          style="max-width: 100%; max-height: 165px; cursor: zoom-in;" class="rounded-2 mt-1"
-                                         th:data-filename="${project.cardImage.fileName}" onclick="showLargerImage($(this))"/>
+                                         th:data-filename="${project.preview.fileName}" onclick="showLargerImage($(this))"/>
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
@@ -142,8 +142,8 @@
                             </div>
                         </div>
                         <div class="border rounded-2 px-3 pb-3">
-                            <div class="text-start text-muted tiny" th:text="#{project.short-description}">Short description</div>
-                            <div th:text="${project.shortDescription}" style="white-space: pre-wrap;"></div>
+                            <div class="text-start text-muted tiny" th:text="#{project.annotation}">Annotation</div>
+                            <div th:text="${project.annotation}" style="white-space: pre-wrap;"></div>
                         </div>
 
                         <!-- Description block -->

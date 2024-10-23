@@ -35,6 +35,11 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class Project extends BaseEntity implements HasIdAndName {
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+
     @NotBlank
     @NoHtml
     @Size(max = 64)
@@ -44,33 +49,33 @@ public class Project extends BaseEntity implements HasIdAndName {
     @NotBlank
     @NoHtml
     @Size(max = 128)
-    @Column(name = "short_description", nullable = false)
-    private String shortDescription;
+    @Column(name = "annotation", nullable = false)
+    private String annotation;
 
-    @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
-    private boolean enabled = true;
+    @CreationTimestamp
+    @Column(name = "created", nullable = false, columnDefinition = "timestamp default now()")
+    private LocalDateTime created;
+
+    @Column(name = "visible", nullable = false, columnDefinition = "bool default true")
+    private boolean visible = true;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority;
 
-    @CreationTimestamp
-    @Column(name = "created", nullable = false, columnDefinition = "timestamp default now()")
-    private LocalDateTime created;
-
-    @NotNull
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
-
-    @NotNull
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "architecture_id")
     private Architecture architecture;
+
+    @NotNull
+    @Column(name = "started", nullable = false)
+    private LocalDate started;
+
+    @NotNull
+    @Column(name = "finished", nullable = false)
+    private LocalDate finished;
 
     @NotNull
     @Embedded
@@ -94,10 +99,10 @@ public class Project extends BaseEntity implements HasIdAndName {
     @Embedded
     @Valid
     @AttributeOverrides({
-            @AttributeOverride(name = "fileName", column = @Column(name = "card_image_file_name")),
-            @AttributeOverride(name = "fileLink", column = @Column(name = "card_image_file_link"))
+            @AttributeOverride(name = "fileName", column = @Column(name = "preview_file_name")),
+            @AttributeOverride(name = "fileLink", column = @Column(name = "preview_file_link"))
     })
-    private File cardImage;
+    private File preview;
 
     @Nullable
     @NoHtml
@@ -149,26 +154,21 @@ public class Project extends BaseEntity implements HasIdAndName {
     @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User author;
-
-    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                   LocalDate endDate, Architecture architecture, File logo, File dockerCompose, File cardImage,
+    public Project(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
+                   LocalDate finished, Architecture architecture, File logo, File dockerCompose, File preview,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
                    User author) {
         super(id);
         this.name = name;
-        this.shortDescription = shortDescription;
-        this.enabled = enabled;
+        this.annotation = annotation;
+        this.visible = visible;
         this.priority = priority;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.started = started;
+        this.finished = finished;
         this.architecture = architecture;
         this.logo = logo;
         this.dockerCompose = dockerCompose;
-        this.cardImage = cardImage;
+        this.preview = preview;
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
@@ -177,22 +177,22 @@ public class Project extends BaseEntity implements HasIdAndName {
         this.author = author;
     }
 
-    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority,
-                   LocalDate startDate, LocalDate endDate, Architecture architecture, File logo,
-                   File dockerCompose, File cardImage, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+    public Project(Long id, String name, String annotation, boolean visible, Priority priority,
+                   LocalDate started, LocalDate finished, Architecture architecture, File logo,
+                   File dockerCompose, File preview, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
                    String openApiUrl, int views, User author, Set<Technology> technologies) {
-        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author);
+        this(id, name, annotation, visible, priority, started, finished, architecture, logo, dockerCompose,
+                preview, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author);
         this.technologies = technologies;
     }
 
-    public Project(Long id, String name, String shortDescription, boolean enabled, Priority priority,
-                   LocalDate startDate, LocalDate endDate, Architecture architecture, File logo,
-                   File dockerCompose, File cardImage, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+    public Project(Long id, String name, String annotation, boolean visible, Priority priority,
+                   LocalDate started, LocalDate finished, Architecture architecture, File logo,
+                   File dockerCompose, File preview, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
                    String openApiUrl, int views, User author, Set<Technology> technologies,
                    Set<DescriptionElement> descriptionElements, Set<Like> likes, List<Comment> comments) {
-        this(id, name, shortDescription, enabled, priority, startDate, endDate, architecture, logo, dockerCompose,
-                cardImage, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author, technologies);
+        this(id, name, annotation, visible, priority, started, finished, architecture, logo, dockerCompose,
+                preview, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author, technologies);
         this.descriptionElements = descriptionElements;
         this.likes = likes;
         this.comments = comments;

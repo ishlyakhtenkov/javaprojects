@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.BaseEntity;
@@ -38,7 +37,7 @@ import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 public class ProjectService {
     public static final String LOGO_DIR = "/logo/";
     public static final String DOCKER_DIR = "/docker/";
-    public static final String CARD_IMG_DIR = "/card_img/";
+    public static final String PREVIEW_DIR = "/preview/";
     public static final String DESCRIPTION_IMG_DIR = "/description/images/";
 
     private final ProjectRepository repository;
@@ -95,12 +94,12 @@ public class ProjectService {
         return repository.findAllWithArchitectureAndAuthorByOrderByName();
     }
 
-    public List<Project> getAllEnabled() {
-        return repository.findAllByEnabledIsTrueOrderByName();
+    public List<Project> getAllVisible() {
+        return repository.findAllByVisibleIsTrueOrderByName();
     }
 
-    public List<Project> getAllByAuthor(long userId, boolean enabledOnly) {
-        List<Project> projects = enabledOnly ? repository.findAllWithAllInformationByAuthor_IdAndEnabledIsTrue(userId) :
+    public List<Project> getAllByAuthor(long userId, boolean visibleOnly) {
+        List<Project> projects = visibleOnly ? repository.findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(userId) :
                 repository.findAllWithAllInformationByAuthor_Id(userId);
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {
@@ -115,8 +114,8 @@ public class ProjectService {
         return projects;
     }
 
-    public List<Project> getAllEnabledWithAllInformation() {
-        List<Project> projects = repository.findAllWithAllInformationByEnabledIsTrue();
+    public List<Project> getAllVisibleWithAllInformation() {
+        List<Project> projects = repository.findAllWithAllInformationByVisibleIsTrue();
         projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
         projects.forEach(project -> {
             Comparator<Technology> technologyComparator = Comparator
@@ -140,7 +139,7 @@ public class ProjectService {
             likeRepository.deleteAllByObjectId(id);
             likeRepository.flush();
             FileUtil.deleteFile(project.getLogo().getFileLink());
-            FileUtil.deleteFile(project.getCardImage().getFileLink());
+            FileUtil.deleteFile(project.getPreview().getFileLink());
             if (project.getDockerCompose() != null) {
                 FileUtil.deleteFile(project.getDockerCompose().getFileLink());
             }
@@ -155,13 +154,13 @@ public class ProjectService {
 
 
     @Transactional
-    public void enable(long id, boolean enabled, long userId, boolean byAdmin) {
+    public void reveal(long id, boolean visible, long userId, boolean byAdmin) {
         Project project = getWithAuthor(id);
         if (project.getAuthor().id() == userId || byAdmin) {
-            project.setEnabled(enabled);
+            project.setVisible(visible);
         } else {
-            throw new IllegalRequestDataException("Forbidden to enable/disable another user project, projectId=" + id +
-                    ", userId=" + userId, "project.forbidden-enable-not-belong", null);
+            throw new IllegalRequestDataException("Forbidden to reveal/hide another user project, projectId=" + id +
+                    ", userId=" + userId, "project.forbidden-reveal-not-belong", null);
         }
     }
 
@@ -172,15 +171,15 @@ public class ProjectService {
             throw new IllegalRequestDataException("Project logo file is not present",
                     "project.logo-not-present", null);
         }
-        if (projectTo.getCardImage() == null || projectTo.getCardImage().isEmpty()) {
-            throw new IllegalRequestDataException("Project card image file is not present",
-                    "project.card-image-not-present", null);
+        if (projectTo.getPreview() == null || projectTo.getPreview().isEmpty()) {
+            throw new IllegalRequestDataException("Project preview file is not present",
+                    "project.preview-not-present", null);
         }
         User author = userService.get(userId);
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo, author));
 
         uploadFile(projectTo.getLogo(), author.getEmail(), project.getName(), LOGO_DIR, projectTo.getLogo().getRealFileName());
-        uploadFile(projectTo.getCardImage(), author.getEmail(), project.getName(), CARD_IMG_DIR, projectTo.getCardImage().getRealFileName());
+        uploadFile(projectTo.getPreview(), author.getEmail(), project.getName(), PREVIEW_DIR, projectTo.getPreview().getRealFileName());
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             uploadFile(projectTo.getDockerCompose(), author.getEmail(), project.getName(), DOCKER_DIR,
                     projectTo.getDockerCompose().getRealFileName());
@@ -204,7 +203,7 @@ public class ProjectService {
         String authorEmail = project.getAuthor().getEmail();
         String projectOldName = project.getName();
         String oldLogoFileLink = project.getLogo().getFileLink();
-        String oldCardImageFileLink = project.getCardImage().getFileLink();
+        String oldPreviewFileLink = project.getPreview().getFileLink();
         String oldDockerComposeFileLink =
                 project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
         Map<Long, DescriptionElement> oldDeImages = project.getDescriptionElements().stream()
@@ -234,8 +233,8 @@ public class ProjectService {
 
         updateProjectFileIfNecessary(projectTo.getLogo(), oldLogoFileLink, project.getLogo().getFileLink(),
                 authorEmail, project.getName(), projectOldName, LOGO_DIR);
-        updateProjectFileIfNecessary(projectTo.getCardImage(), oldCardImageFileLink, project.getCardImage().getFileLink(),
-                authorEmail, project.getName(), projectOldName, CARD_IMG_DIR);
+        updateProjectFileIfNecessary(projectTo.getPreview(), oldPreviewFileLink, project.getPreview().getFileLink(),
+                authorEmail, project.getName(), projectOldName, PREVIEW_DIR);
         updateProjectFileIfNecessary(projectTo.getDockerCompose(), oldDockerComposeFileLink,
                 projectTo.getDockerCompose() != null ? projectTo.getDockerCompose().getFileLink() : null,
                 authorEmail, project.getName(), projectOldName, DOCKER_DIR);

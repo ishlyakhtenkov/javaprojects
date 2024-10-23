@@ -37,18 +37,18 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @NotBlank
     @NoHtml
     @Size(max = 128)
-    private String shortDescription;
+    private String annotation;
 
-    private boolean enabled;
+    private boolean visible;
 
     @NotNull
     private Priority priority;
 
     @NotNull
-    private LocalDate startDate;
+    private LocalDate started;
 
     @NotNull
-    private LocalDate endDate;
+    private LocalDate finished;
 
     @NotNull
     private Architecture architecture;
@@ -66,7 +66,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @Nullable
     @Valid
     @ImageFile
-    private FileTo cardImage;
+    private FileTo preview;
 
     @Nullable
     @NoHtml
@@ -98,22 +98,22 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @Valid
     private List<DescriptionElementTo> descriptionElementTos = new ArrayList<>();
 
-    public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                     LocalDate endDate, Architecture architecture, String logoFileName, String logoFileLink,
-                     String dockerComposeFileName, String dockerComposeFileLink, String cardImageFileName,
-                     String cardImageFileLink, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
+    public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
+                     LocalDate finished, Architecture architecture, String logoFileName, String logoFileLink,
+                     String dockerComposeFileName, String dockerComposeFileLink, String previewFileName,
+                     String previewFileLink, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
                      String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
         super(id);
         this.name = name;
-        this.shortDescription = shortDescription;
-        this.enabled = enabled;
+        this.annotation = annotation;
+        this.visible = visible;
         this.priority = priority;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.started = started;
+        this.finished = finished;
         this.architecture = architecture;
         this.logo = new FileTo(logoFileName, logoFileLink, null, null);
         this.dockerCompose = new FileTo(dockerComposeFileName, dockerComposeFileLink, null, null);
-        this.cardImage = new FileTo(cardImageFileName, cardImageFileLink, null, null);
+        this.preview = new FileTo(previewFileName, previewFileLink, null, null);
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
@@ -122,22 +122,22 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.descriptionElementTos = descriptionElementTos;
     }
 
-    public ProjectTo(Long id, String name, String shortDescription, boolean enabled, Priority priority, LocalDate startDate,
-                     LocalDate endDate, Architecture architecture, MultipartFile logoMultipartFile,
-                     MultipartFile dockerComposeMultipartFile, MultipartFile cardImageMultipartFile,
+    public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
+                     LocalDate finished, Architecture architecture, MultipartFile logoMultipartFile,
+                     MultipartFile dockerComposeMultipartFile, MultipartFile previewMultipartFile,
                      String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
                      Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
         super(id);
         this.name = name;
-        this.shortDescription = shortDescription;
-        this.enabled = enabled;
+        this.annotation = annotation;
+        this.visible = visible;
         this.priority = priority;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.started = started;
+        this.finished = finished;
         this.architecture = architecture;
         this.logo = new FileTo(null, null, logoMultipartFile, null);
         this.dockerCompose = new FileTo(null, null, dockerComposeMultipartFile, null);;
-        this.cardImage = new FileTo(null, null, cardImageMultipartFile, null);;
+        this.preview = new FileTo(null, null, previewMultipartFile, null);;
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;

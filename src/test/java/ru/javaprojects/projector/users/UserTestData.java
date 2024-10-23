@@ -54,6 +54,7 @@ public class UserTestData {
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
+    public static final String ENABLED_PARAM = "enabled";
     public static final String NEW_PASSWORD_PARAM = "newPassword";
     public static final String CURRENT_PASSWORD_PARAM = "currentPassword";
     public static final String EMAIL_PARAM = "email";
@@ -63,7 +64,7 @@ public class UserTestData {
     public static final String ROLES_PARAM = "roles";
     public static final String AVATAR_FILE_NAME_PARAM = "avatar.fileName";
     public static final String AVATAR_FILE_LINK_PARAM = "avatar.fileLink";
-    public static final String AVATAR_FILE_BYTES_PARAM = "avatar.inputtedFileBytes";
+    public static final String AVATAR_INPUTTED_FILE_BYTES_PARAM = "avatar.inputtedFileBytes";
 
     public static final String NEW_PASSWORD = "newPassword";
     public static final String NEW_EMAIL = "newEmail@gmail.com";

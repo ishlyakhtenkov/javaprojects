@@ -23,7 +23,7 @@ public class HomeController {
     @GetMapping("/")
     public String showHomePage(Model model) {
         log.info("Show home page");
-        List<Project> projects = projectService.getAllEnabledWithAllInformation();
+        List<Project> projects = projectService.getAllVisibleWithAllInformation();
         if (AuthUser.safeGet() != null) {
             long authId = AuthUser.authId();
             Set<Long> likedProjectsIds = projects.stream()

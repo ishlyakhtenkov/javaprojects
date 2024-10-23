@@ -85,7 +85,7 @@
                                               th:class="${#fields.hasErrors('description')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
                                               placeholder="Description" style="height: 220px; white-space: pre-wrap;"
                                               maxlength="400" required></textarea>
-                                    <label for="descriptionInput" class="text-muted" th:text="#{project.short-description}">Short description</label>
+                                    <label for="descriptionInput" class="text-muted" th:text="#{architecture.description}">Description</label>
                                 </div>
                                 <span class="float-end text-muted tiny" id="characterCounter"
                                        th:text="*{(400 - (description == null ? 0 : description.replaceAll('\r', '').length()))} + ' ' + #{info.characters-left}">Characters left</span>

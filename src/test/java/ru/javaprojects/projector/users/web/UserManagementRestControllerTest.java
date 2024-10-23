@@ -28,11 +28,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
-import static ru.javaprojects.projector.common.CommonTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_ID;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.AVATARS_TEST_DATA_FILES_PATH;
+import static ru.javaprojects.projector.users.UserTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.users.UserTestData.INVALID_PASSWORD;
 import static ru.javaprojects.projector.users.UserTestData.NEW_PASSWORD;
 import static ru.javaprojects.projector.users.UserTestData.PASSWORD_PARAM;

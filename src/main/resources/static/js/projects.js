@@ -10,18 +10,18 @@ function deleteProject(delButton, id) {
     });
 }
 
-function enableProject(checkbox, id) {
-    let enabled = checkbox.checked;
+function revealProject(checkbox, id) {
+    let visible = checkbox.checked;
     let name = checkbox.dataset.name;
     $.ajax({
         url: `/projects/${id}`,
         type: "PATCH",
-        data: "enabled=" + enabled
+        data: "visible=" + visible
     }).done(function() {
-        successToast(getMessage(enabled ? 'project.enabled' : 'project.disabled', [name]));
-        $(checkbox).prop('title', getMessage(enabled ? 'project.disable' : 'project.enable'));
+        successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
+        $(checkbox).prop('title', getMessage(visible ? 'project.hide' : 'project.reveal'));
     }).fail(function(data) {
-        $(checkbox).prop('checked', !enabled);
-        handleError(data, getMessage(enabled ? 'project.failed-to-enable' : 'project.failed-to-disable', [name]));
+        $(checkbox).prop('checked', !visible);
+        handleError(data, getMessage(visible ? 'project.failed-to-reveal' : 'project.failed-to-hide', [name]));
     });
 }

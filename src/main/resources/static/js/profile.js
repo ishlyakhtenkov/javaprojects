@@ -316,7 +316,7 @@ function formatDateTime(dateTime) {
     let dateAndTime = dateTime.split('T');
     let dateParts =  dateAndTime[0].split('-');
     let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-    let formattedTime = dateAndTime[1].split('.')[0];
+    let formattedTime = dateAndTime[1].substring(0, dateAndTime[1].lastIndexOf(':'));
     return `${formattedDate} ${formattedTime}`;
 }
 

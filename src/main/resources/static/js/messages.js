@@ -51,6 +51,7 @@ enMessages.set('project.description-elements.move-up', 'Move up');
 enMessages.set('project.description-elements.move-down', 'Move down');
 enMessages.set('project.failed-to-get-projects', 'Failed to get projects');
 enMessages.set('project.manage', 'Manage project');
+enMessages.set('project.author', 'Author');
 
 enMessages.set('architecture', 'Architecture');
 enMessages.set('architecture.deleted', 'Architecture "{0}" has been deleted');
@@ -126,6 +127,7 @@ ruMessages.set('project.description-elements.move-up', 'Сместить вве�
 ruMessages.set('project.description-elements.move-down', 'Сместить вниз');
 ruMessages.set('project.failed-to-get-projects', 'Не удалось загрузить проекты');
 ruMessages.set('project.manage', 'Управление проектом');
+ruMessages.set('project.author', 'Автор');
 
 ruMessages.set('architecture', 'Архитектура');
 ruMessages.set('architecture.deleted', 'Архитектура "{0}" была удалена');

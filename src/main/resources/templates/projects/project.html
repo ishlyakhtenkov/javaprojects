@@ -21,6 +21,7 @@
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <span id="projectId" th:text="${project.id}" hidden></span>
+                    <span id="projectAuthorId" th:text="${project.author.id}" hidden></span>
                     <div class="card-header text-center py-3">
                         <img th:src="@{${'/' + project.logo.fileLink}}" alt="Logo" width="32" height="32"
                              class="d-inline-block align-text-bottom">
@@ -30,7 +31,7 @@
                            th:title="#{project.invisible-to-users}"></i>
                     </div>
                     <div class="card-body text-start">
-                        <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm:ss')}"
+                        <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}"
                               class="tiny text-secondary-emphasis float-end" style="margin-top: -10px;">Created</span>
                         <div>
                             <div>
@@ -212,8 +213,10 @@
                                         <a th:href="@{'/profile/' + ${commentEntry.getKey().author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
                                             <span class="h6" th:text="${commentEntry.getKey().author.name}">Author name</span>
                                         </a>
-                                        <div class="text-secondary-emphasis tiny" style="margin-top: -3px;"
-                                             th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
+                                        <div class="text-secondary-emphasis tiny" style="margin-top: -3px;">
+                                            <span th:text="${#temporals.format(commentEntry.getKey().created, 'dd.MM.yyyy HH:mm')}"></span>
+                                            <span th:if="${project.author.id == commentEntry.getKey().author.id}" class="text-primary" th:text="#{project.author}"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="comment-text" style="white-space: pre-wrap;"

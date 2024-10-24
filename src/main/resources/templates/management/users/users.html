@@ -61,9 +61,9 @@
                     <td class="text-truncate" th:text="${user.email}"></td>
                     <td class="text-center py-1">
                         <img th:if="${user.avatar != null}"
-                             th:src="@{${user.avatar.fileLink.startsWith('https://') ? (user.avatar.fileLink) :
-                             ('/' + user.avatar.fileLink)}}"
-                             class="rounded-circle border border-light-subtle" width="32" height="32" style="cursor: zoom-in;"
+                             th:src="@{${user.avatar.getSrc()}}"
+                             class="rounded-circle border border-light-subtle" width="32" height="32"
+                             style="cursor: zoom-in; object-fit: cover;"
                              th:data-filename="${user.avatar.fileName}" onclick="showLargerImage($(this))" />
                     </td>
                     <td th:text="${#strings.listJoin(#messages.setMsg(user.roles.!['user.role.' + name.toLowerCase]), ', ')}"></td>
@@ -73,8 +73,12 @@
                         <span><i class="fa-solid fa-circle-dot"></i></span>
                     </td>
                     <td class="text-center">
+                        <a th:href="@{'/profile/' + ${user.id} + '/view'}" type="button" th:title="#{user.show-profile}"
+                           class="btn-link link-underline-opacity-0 link-secondary">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </a>
                         <a th:href="@{'/management/users/edit/' + ${user.id}}" type="button" th:title="#{user.edit}"
-                           class="btn-link link-underline-opacity-0 link-success">
+                           class="btn-link link-underline-opacity-0 link-success ms-3">
                             <i class="fa-solid fa-user-pen"></i>
                         </a>
                         <a type="button" class="btn-link link-underline-opacity-0 link-warning ms-3"

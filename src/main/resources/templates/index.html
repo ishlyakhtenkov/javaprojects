@@ -41,7 +41,7 @@
                                         <span class="h6" th:text="${project.author.name}" >Author name</span>
                                     </a>
                                     <div class="tiny text-secondary-emphasis" style="margin-top: -3px;"
-                                         th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm:ss')}">Created</div>
+                                         th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}">Created</div>
                                 </div>
                             </div>
                         <h5 class="card-title" th:text="${project.name}">Title</h5>

@@ -1,4 +1,5 @@
 const projectId = $('#projectId').text();
+const projectAuthorId = $('#projectAuthorId').text();
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 const newCommentInput = $('#newCommentInput');
@@ -184,8 +185,14 @@ function generateCommentDiv(comment, isReply) {
     let nameProfileLink = $('<a></a>').addClass('text-decoration-none link-body-emphasis').attr('href', `/profile/${comment.author.id}/view`);
     let nameSpan = $('<span></span>').addClass('h6').html(`${comment.author.name}`);
     nameProfileLink.append(nameSpan);
-    let timeDiv = $('<div></div>').addClass('text-secondary-emphasis tiny').css('margin-top', '-3px')
-        .html(formatDateTime(comment.created));
+    let timeDiv = $('<div></div>').addClass('text-secondary-emphasis tiny').css('margin-top', '-3px');
+    let timeSpan = $('<span></span>').text(formatDateTime(comment.created));
+    timeDiv.append(timeSpan);
+    if (+projectAuthorId === comment.author.id) {
+        let infoSpan = $('<span></span>').addClass('text-primary').text(' ' + getMessage('project.author'));
+        timeDiv.append(infoSpan);
+    }
+
     nameAndTimeDiv.append(nameProfileLink);
     nameAndTimeDiv.append(timeDiv);
     if (isReply) {
@@ -257,7 +264,7 @@ function formatDateTime(dateTime) {
     let dateAndTime = dateTime.split('T');
     let dateParts =  dateAndTime[0].split('-');
     let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-    let formattedTime = dateAndTime[1].split('.')[0];
+    let formattedTime = dateAndTime[1].substring(0, dateAndTime[1].lastIndexOf(':'));
     return `${formattedDate} ${formattedTime}`;
 }
 

@@ -71,14 +71,21 @@ function fillProjectsTab(projects) {
     projectsTab.empty();
     let row = $('<div></div>').addClass('row justify-content-center');
     let column = $('<div></div>').addClass('col-md-8');
+    if (authUser != null && authUser.user.id == $('#userId').text()) {
+        let addNewBtnSm = $('<a></a>').addClass('btn btn-sm btn-success float-end d-none d-sm-block')
+            .css('margin-top', '-20px').attr('href', '/projects/add').text('New');
+        let addNewBtn = $('<a></a>').addClass('btn btn-sm btn-success d-sm-none').attr('href', '/projects/add').text('New');
+        column.append(addNewBtn);
+        column.append(addNewBtnSm);
+    }
     row.append(column);
     projects.forEach(project => {
         column.append(generateProjectCard(project));
     });
     projectsTab.append(row);
 
-    $('.like-btn').on('shown.bs.popover', () => {
-        $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
+    $('.with-popover').on('shown.bs.popover', () => {
+        $('.btn-close').on('click', () => $('.with-popover').popover('hide'));
     });
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -93,7 +100,7 @@ function generateProjectCard(project) {
         .attr('src', `/${project.preview.fileLink}`);
     previewDiv.append(preview);
     card.append(previewDiv);
-    let architectureDiv= $('<div></div>').attr('title', getMessage('architecture'));
+    let architectureDiv = $('<div></div>').attr('title', getMessage('architecture'));
     let architectureImage = $('<img>').addClass('float-end bg-light-subtle border border-light-subtle rounded-circle p-1')
         .attr('src', `/${project.architecture.logo.fileLink}`)
         .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.name)
@@ -198,7 +205,7 @@ function generateProjectCard(project) {
     commentsBtn.append(commentsSymbol);
     commentsBtn.append(commentsCounter);
     likesCommentsCol.append(commentsBtn);
-    let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none ms-3')
+    let likeBtn = $('<a></a>').addClass('with-popover btn-link link-danger text-decoration-none ms-3')
         .attr('type', 'button').attr('data-bs-toggle', 'popover')
         .attr('data-bs-trigger', 'manual')
         .attr('data-bs-title', `"<a type='button' class='btn-close ms-2 float-end tiny'></a><div>${getMessage('info.only-for-auth-users')}</div>"`)
@@ -307,7 +314,7 @@ function likeProject(likeBtn, id) {
             handleError(data,  getMessage(liked ? 'project.failed-to-like' : 'project.failed-to-dislike'));
         });
     } else  {
-        $('.like-btn').popover('hide');
+        $('.with-popover').popover('hide');
         $(likeBtn).popover('toggle');
     }
 }

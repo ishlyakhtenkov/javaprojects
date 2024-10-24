@@ -9,6 +9,32 @@
             <h5 class="alert alert-warning mt-2" th:text="#{project.no-projects-found}">No projects found.</h5>
         </span>
 
+        <div th:if="${!projects.isEmpty()}" class="px-xl-5">
+            <button type="button" class="with-popover btn btn-success float-end" data-bs-toggle="popover" data-bs-trigger="manual"
+               th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
+               th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
+                    data-bs-html="true" onclick="showAddProjectPage($(this))">
+                New
+            </button>
+            <ul class="nav nav-underline">
+                <li class="nav-item">
+                    <button class="nav-link active pt-0" data-bs-toggle="tab" data-bs-target="#informationTab"
+                            type="button" role="tab" aria-controls="nav-general" aria-selected="true"
+                            onclick="showInformation()">Popular</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link pt-0" data-bs-toggle="tab" data-bs-target="#qualificationTab"
+                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
+                            onclick="showQualification()" id="qualificationTabBtn">Fresh</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link pt-0" data-bs-toggle="tab" data-bs-target="#projectsTab"
+                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
+                            onclick="showProjects()" id="projectsTabBtn">My projects</button>
+                </li>
+            </ul>
+        </div>
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3 px-xl-5">
             <div th:each="project : ${projects}" class="col mb-4">
                 <div class="card h-100 project-card rounded-3">
@@ -54,7 +80,7 @@
                                     <span class="text-secondary-emphasis small" th:text="${project.commentsCount}"></span>
                                 </a>
                                 <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
-                                   class="like-btn btn-link link-danger text-decoration-none ms-3"
+                                   class="with-popover btn-link link-danger text-decoration-none ms-3"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
                                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">

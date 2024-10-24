@@ -1,14 +1,23 @@
 setupTooltips();
 
 function setupTooltips() {
-    $('.like-btn').on('shown.bs.popover', () => {
-        $('.btn-close').on('click', () => $('.like-btn').popover('hide'));
+    $('.with-popover').on('shown.bs.popover', () => {
+        $('.btn-close').on('click', () => $('.with-popover').popover('hide'));
     });
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+}
+
+function showAddProjectPage(newBtn) {
+    if (authUser != null) {
+        window.location.href = '/projects/add';
+    } else {
+        $('.with-popover').popover('hide');
+        newBtn.popover('toggle');
+    }
 }
 
 function likeProject(likeBtn, id) {
@@ -28,7 +37,7 @@ function likeProject(likeBtn, id) {
             handleError(data,  getMessage(liked ? 'project.failed-to-like' : 'project.failed-to-dislike'));
         });
     } else  {
-        $('.like-btn').popover('hide');
+        $('.with-popover').popover('hide');
         $(likeBtn).popover('toggle');
     }
 }

@@ -110,14 +110,14 @@ function generateProjectCard(project) {
     card.append(architectureDiv);
 
     let cardBody = $('<div></div>').addClass('card-body d-flex flex-column pb-0').css('margin-top', '-35px');
-    let authorDiv = $('<div></div>').addClass('d-flex');
+    let dFlexDiv = $('<div></div>').addClass('d-flex');
     let avatarDiv = $('<div></div>').addClass('pt-3 pb-2 ps-3').css('position', 'relative').css('z-index', '2')
         .css('margin-left', '-16px');
     let avatar = $('<img>').addClass('rounded-circle border')
         .attr('src', getAvatarLink(project.author.avatar))
         .attr('width', '40').attr('height', '40').css('object-fit', 'cover');
     avatarDiv.append(avatar);
-    authorDiv.append(avatarDiv);
+    dFlexDiv.append(avatarDiv);
     let authorNameAndCreatedDiv = $('<div></div>').addClass('pt-3 pb-2 px-3').css('position', 'relative')
         .css('z-index', '2').css('margin-left', '-8px');
     let authorName = $('<span></span>').addClass('h6').text(project.author.name);
@@ -125,13 +125,60 @@ function generateProjectCard(project) {
     let createdDiv = $('<div></div>').addClass('tiny text-secondary-emphasis').css('margin-top', '-3px')
         .text(formatDateTime(project.created));
     authorNameAndCreatedDiv.append(createdDiv);
-    authorDiv.append(authorNameAndCreatedDiv);
-    cardBody.append(authorDiv);
+    dFlexDiv.append(authorNameAndCreatedDiv);
 
-    let name = $('<h5></h5>').addClass('card-title').text(project.name);
+    if (authUser !== null && project.author.id === authUser.user.id) {
+        let manageDiv = $('<div></div>').addClass('pt-4 ms-auto ps-3 pe-3').css('position', 'relative')
+            .css('z-index', '3').css('margin-right', '-16px');
+        let manageBtn = $('<button></button>').attr('type', 'button').attr('title', getMessage('project.manage'))
+            .addClass('btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle manage-dropdown')
+            .attr('data-bs-toggle', 'dropdown').attr('data-bs-auto-close', 'outside').attr('id', `manageBtn-${project.id}`);
+        let manageIcon = $('<i></i>').addClass('fa-solid fa-ellipsis');
+        manageBtn.append(manageIcon);
+        manageDiv.append(manageBtn);
+        let dropdownMenu = $('<ul></ul>').addClass('dropdown-menu');
+        let showProjectDataItem = $('<li></li>');
+        let showProjectDataLink = $('<a></a>').attr('type', 'button').addClass('dropdown-item')
+            .attr('href', `/projects/${project.id}/data`)
+            .html(`<i class="fa-solid fa-magnifying-glass fa-fw text-secondary me-2"></i>${getMessage('project.show')}`);
+        showProjectDataItem.append(showProjectDataLink);
+        dropdownMenu.append(showProjectDataItem);
+        let editProjectItem = $('<li></li>');
+        let editProjectLink = $('<a></a>').attr('type', 'button').addClass('dropdown-item')
+            .attr('href', `/projects/edit/${project.id}`)
+            .html(`<i class="fa-solid fa-pen-to-square fa-fw text-success me-2"></i>${getMessage('edit')}`);
+        editProjectItem.append(editProjectLink);
+        dropdownMenu.append(editProjectItem);
+        let revealProjectItem = $('<li></li>');
+        let revealProjectBtn = $('<button></button>').addClass('dropdown-item')
+            .html(`<i class="fa-solid ${project.visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(project.visible ? 'project.hide' : 'project.reveal')}`)
+            .on('click', (event) => {
+                revealProject(project.id, project.name, $(event.target));
+            });
+        revealProjectItem.append(revealProjectBtn);
+        dropdownMenu.append(revealProjectItem);
+        let deleteProjectItem = $('<li></li>');
+        let deleteProjectBtn = $('<button></button>').addClass('dropdown-item')
+            .html(`<i class="fa-solid fa-trash-can fa-fw text-danger me-2"></i>${getMessage('delete')}`)
+            .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus ')
+            .attr('data-bs-title', `${getMessage('project.delete')}?`)
+            .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>${getMessage('cancel')}</a><a type='button' id='delProject-${project.id}' class='btn btn-sm btn-danger'>${getMessage('delete')}</a></div>"`)
+            .attr('data-bs-html', 'true');
+        deleteProjectBtn.on('shown.bs.popover', () => {
+            $(`#delProject-${project.id}`).on('click', () => deleteProject(project.id, project.name));
+        });
+        deleteProjectItem.append(deleteProjectBtn);
+        dropdownMenu.append(deleteProjectItem);
+        manageDiv.append(dropdownMenu);
+        dFlexDiv.append(manageDiv);
+    }
+
+    cardBody.append(dFlexDiv);
+
+    let name = $('<h5></h5>').addClass('card-title').text(project.name).attr('id', `${project.id}-name-elem`);
     cardBody.append(name);
     if (!project.visible) {
-        let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-danger float-end')
+        let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning float-end')
             .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
             .css('z-index', '2');
         name.append(invisibleSymbol);
@@ -206,6 +253,41 @@ function generateProjectCard(project) {
 
 function getAvatarLink(avatar) {
     return avatar != null ? (avatar.fileLink.startsWith('https://') ? avatar.fileLink : `/${avatar.fileLink}`) : '/images/no-avatar.svg';
+}
+
+function deleteProject(id, name) {
+    $.ajax({
+        url: `/projects/${id}`,
+        type: "DELETE"
+    }).done(function() {
+        successToast(getMessage('project.deleted', [name]));
+        getProjectsAndFillTabs();
+    }).fail(function(data) {
+        handleError(data, getMessage('project.failed-to-delete', [name]));
+    });
+}
+
+function revealProject(id, name, revealBtn) {
+    $(`#manageBtn-${id}`).click();
+    let visible = !revealBtn.find('i').attr('class').includes('fa-eye-slash');
+    $.ajax({
+        url: `/projects/${id}`,
+        type: "PATCH",
+        data: "visible=" + visible
+    }).done(function() {
+        successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
+        if (!visible) {
+            let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning float-end')
+                .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
+                .css('z-index', '2');
+            $(`#${id}-name-elem`).append(invisibleSymbol);
+        } else {
+            $(`#${id}-name-elem`).find('i').remove();
+        }
+        revealBtn.html(`<i class="fa-solid ${visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(visible ? 'project.hide' : 'project.reveal')}`);
+    }).fail(function(data) {
+        handleError(data, getMessage(visible ? 'project.failed-to-reveal' : 'project.failed-to-hide', [name]));
+    });
 }
 
 function likeProject(likeBtn, id) {

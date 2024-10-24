@@ -29,8 +29,10 @@ enMessages.set('comment.failed-to-like', 'Failed to like comment');
 enMessages.set('comment.failed-to-dislike', 'Failed to dislike comment');
 enMessages.set('comment.failed-to-delete', 'Failed to delete comment');
 
-enMessages.set('project.reveal', 'Reveal project');
-enMessages.set('project.hide', 'Hide project');
+enMessages.set('project.reveal', 'Reveal');
+enMessages.set('project.hide', 'Hide');
+enMessages.set('project.show', 'Show');
+enMessages.set('project.delete', 'Delete project');
 enMessages.set('project.has-been-revealed', 'Project "{0}" has been revealed');
 enMessages.set('project.has-been-hided', 'Project "{0}" has been hided');
 enMessages.set('project.visible-to-users', 'Visible to users');
@@ -48,6 +50,7 @@ enMessages.set('project.description-elements.image', 'Image');
 enMessages.set('project.description-elements.move-up', 'Move up');
 enMessages.set('project.description-elements.move-down', 'Move down');
 enMessages.set('project.failed-to-get-projects', 'Failed to get projects');
+enMessages.set('project.manage', 'Manage project');
 
 enMessages.set('architecture', 'Architecture');
 enMessages.set('architecture.deleted', 'Architecture "{0}" has been deleted');
@@ -101,8 +104,10 @@ ruMessages.set('comment.failed-to-like', 'Не удалось дизлайкну
 ruMessages.set('comment.failed-to-dislike', 'Не удалось лайкнуть комментарий');
 ruMessages.set('comment.failed-to-delete', 'Не удалось удалить комментарий');
 
-ruMessages.set('project.reveal', 'Сделать проект видимым');
-ruMessages.set('project.hide', 'Скрыть проект');
+ruMessages.set('project.reveal', 'Сделать видимым');
+ruMessages.set('project.hide', 'Скрыть');
+ruMessages.set('project.show', 'Показать');
+ruMessages.set('project.delete', 'Удалить проект');
 ruMessages.set('project.has-been-revealed', 'Проект "{0}" стал виден пользователям');
 ruMessages.set('project.has-been-hided', 'Проект "{0}" был скрыт');
 ruMessages.set('project.visible-to-users', 'Виден пользователям');
@@ -120,6 +125,7 @@ ruMessages.set('project.description-elements.image', 'Картинка');
 ruMessages.set('project.description-elements.move-up', 'Сместить вверх');
 ruMessages.set('project.description-elements.move-down', 'Сместить вниз');
 ruMessages.set('project.failed-to-get-projects', 'Не удалось загрузить проекты');
+ruMessages.set('project.manage', 'Управление проектом');
 
 ruMessages.set('architecture', 'Архитектура');
 ruMessages.set('architecture.deleted', 'Архитектура "{0}" была удалена');

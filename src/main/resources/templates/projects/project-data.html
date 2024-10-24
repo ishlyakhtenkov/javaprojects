@@ -21,7 +21,9 @@
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <div class="card-header text-center">
-                        <h3 th:text="${project.name}">Name</h3>
+                        <span class="h3 text-dark-emphasis" th:text="${project.name}">Project name</span>
+                        <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-danger float-end"
+                           th:title="#{project.invisible-to-users}"></i>
                     </div>
                     <div class="card-body text-start">
                         <div class="input-group mb-3">
@@ -56,8 +58,8 @@
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                     <span class="form-control"
-                                          th:utext="${project.visible ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> Visible to users' :
-                                          '<i class=&quot;text-danger me-1 fa-solid fa-eye-slash&quot;></i> Not visible to users'}">
+                                          th:utext="${project.visible} ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> ' + #{project.visible-to-users} :
+                                          '<i class=&quot;text-danger me-1 fa-solid fa-eye-slash&quot;></i> ' + #{project.invisible-to-users}">
                                     </span>
                                 </div>
                             </div>

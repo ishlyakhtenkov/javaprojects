@@ -130,6 +130,12 @@ function generateProjectCard(project) {
 
     let name = $('<h5></h5>').addClass('card-title').text(project.name);
     cardBody.append(name);
+    if (!project.visible) {
+        let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-danger float-end')
+            .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
+            .css('z-index', '2');
+        name.append(invisibleSymbol);
+    }
 
     let annotation = $('<span></span>').addClass('card-text').text(project.annotation);
     cardBody.append(annotation);

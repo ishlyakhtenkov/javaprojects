@@ -73,17 +73,18 @@ public class ProjectController {
                 .comparingInt((Technology t) -> t.getPriority().ordinal())
                 .thenComparing(Technology::getName);
         Project project = projectService.getWithAllInformation(id, technologyComparator);
-        if (!project.isVisible() && project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin()) {
-            throw new IllegalRequestDataException("Forbidden to view disabled project, projectId=" + id +
-                    ", userId=" + AuthUser.authId(), "project.forbidden-view-disabled", null);
+        AuthUser authUser = AuthUser.safeGet();
+        if (!project.isVisible() && (authUser == null || project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin())) {
+            throw new IllegalRequestDataException("Forbidden to view disabled project, projectId=" + id,
+                    "project.forbidden-view-hided", null);
         }
         projectService.addViewsToProject(id);
         project.setViews(project.getViews() + 1);
 
         boolean hasFrontendTechnologies = project.getTechnologies().stream()
                 .anyMatch(technology -> technology.getUsage() == Usage.FRONTEND);
-        if (AuthUser.safeGet() != null) {
-            long authId = AuthUser.authId();
+        if (authUser != null) {
+            long authId = authUser.id();
             Set<Long> likedCommentsIds = project.getComments().stream()
                     .flatMap(comment -> comment.getLikes().stream())
                     .filter(like -> like.getUserId() == authId)

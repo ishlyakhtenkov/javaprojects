@@ -26,6 +26,8 @@
                              class="d-inline-block align-text-bottom">
                         <span class="h2 text-dark-emphasis ms-1" style="line-height: normal;"
                               th:text="${project.name}">Project name</span>
+                        <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-danger float-end"
+                           th:title="#{project.invisible-to-users}"></i>
                     </div>
                     <div class="card-body text-start">
                         <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm:ss')}"

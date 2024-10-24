@@ -140,7 +140,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void showProjectPageWhenProjectDisabledAndBelongs() throws Exception {
+    void showProjectPageWhenProjectHidedAndBelongs() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
@@ -167,16 +167,24 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void showProjectPageWhenProjectDisabledAndNotBelongs() throws Exception {
+    void showProjectPageWhenProjectHidedAndNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
-                        messageSource.getMessage("project.forbidden-view-disabled", null, getLocale()),
+                        messageSource.getMessage("project.forbidden-view-hided", null, getLocale()),
+                        IllegalRequestDataException.class));
+    }
+
+    @Test
+    void showProjectPageUnauthorizedWhenProjectHided() throws Exception {
+        perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
+                .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
+                        messageSource.getMessage("project.forbidden-view-hided", null, getLocale()),
                         IllegalRequestDataException.class));
     }
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void showProjectPageWhenProjectDisabledAndNotBelongsByAdmin() throws Exception {
+    void showProjectPageWhenProjectHidedAndNotBelongsByAdmin() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))

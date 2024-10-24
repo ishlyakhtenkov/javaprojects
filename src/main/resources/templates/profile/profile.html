@@ -35,7 +35,8 @@
                                                   class="badge rounded-pill bg-danger"
                                                   style="position: absolute; margin-top: -5px;" th:text="#{user.role.admin}">Admin</span>
                                         </div>
-                                        <div th:text="${user.email}" class="mb-1">Email</div>
+                                        <div th:if="${authUser != null && (authUser.id == user.id || authUser.isAdmin())}"
+                                             th:text="${user.email}" class="mb-1">Email</div>
                                         <div class="small text-secondary-emphasis" th:text="#{user.registered} + ': ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"
                                              style="font-style: italic">Registered</div>
                                     </div>

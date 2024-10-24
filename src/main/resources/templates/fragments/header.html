@@ -41,37 +41,15 @@
               <a sec:authorize="!isAuthenticated()" class="nav-link" th:href="@{/login}" th:text="#{login}">Login</a>
               <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{'/profile/' + ${authUser.id} + '/view'}" th:text="#{profile}">Profile</a>
             </li>
-            <li class="nav-item dropdown d-lg-none">
-              <button type="button"
-                      class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
-                      title="Language" data-bs-toggle="dropdown" aria-expanded="false">
-                <img th:src="@{'/images/' + ${#locale.language == 'en' ? 'en-flag.svg' : 'ru-flag.svg'}}"
-                     alt="Flag logo" width="20" height="20" />
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="icon-link dropdown-item" type="button" onclick="changeLocale('ru')">
-                    <img th:src="@{/images/ru-flag.svg}" alt="Ru flag logo" width="20" height="20" />
-                    <span>Русский</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="icon-link dropdown-item" type="button" onclick="changeLocale('en')">
-                    <img th:src="@{/images/en-flag.svg}" alt="En flag logo" width="20" height="20" />
-                    <span>English</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
           </ul>
 
-          <button type="button" class="btn btn-link link-underline-opacity-0 p-0 me-3"
-                  onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')"
-                  onclick="setTheme($(this))">
-            <i id="themeSwitcherIcon"></i>
-          </button>
+          <div class="nav-item dropdown me-2 " style="padding-bottom: 4px;">
+            <button type="button" class="btn btn-link link-underline-opacity-0 p-0 me-3"
+                    onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')"
+                    onclick="setTheme($(this))">
+              <i id="themeSwitcherIcon"></i>
+            </button>
 
-          <div class="nav-item dropdown me-2 d-none d-lg-block" style="padding-bottom: 4px;">
             <button type="button"
                     class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle"
                     th:title="#{language}" data-bs-toggle="dropdown" aria-expanded="false"
@@ -94,20 +72,23 @@
               </li>
             </ul>
           </div>
-          <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button"
-             class="btn btn-outline-warning d-none d-lg-block px-3" th:text="#{login}">Login</a>
-          <a sec:authorize="isAuthenticated()" th:href="@{'/profile/' + ${authUser.id} + '/view'}" type="button" id="profileButton"
-             class="d-none d-lg-block rounded-circle" style="width: 40px; height: 40px;"
-             th:classappend="${authUser?.user.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"
-             th:title="${authUser != null ? authUser.user.name : ''}">
+
+          <div class="d-none d-lg-block">
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" type="button"
+               class="btn btn-outline-warning px-3" th:text="#{login}">Login</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{'/profile/' + ${authUser.id} + '/view'}" type="button" id="profileButton"
+               class="rounded-circle" style="width: 40px; height: 40px;"
+               th:classappend="${authUser?.user.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"
+               th:title="${authUser != null ? authUser.user.name : ''}">
                 <span th:if="${authUser?.user.avatar == null}"
                       th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></span>
-                <img th:if="${authUser?.user.avatar != null}" class="rounded-circle border border-light-subtle"
-                     th:src="@{${authUser.user.avatar.getSrc()}}"
-                     width="40" height="40" style="object-fit: cover"
-                     onmouseenter="$(this).addClass('opacity-75')"
-                     onmouseleave="$(this).removeClass('opacity-75')" />
-          </a>
+              <img th:if="${authUser?.user.avatar != null}" class="rounded-circle border border-light-subtle"
+                   th:src="@{${authUser.user.avatar.getSrc()}}"
+                   width="40" height="40" style="object-fit: cover"
+                   onmouseenter="$(this).addClass('opacity-75')"
+                   onmouseleave="$(this).removeClass('opacity-75')" />
+            </a>
+          </div>
         </div>
       </div>
     </nav>

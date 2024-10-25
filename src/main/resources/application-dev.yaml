@@ -24,6 +24,11 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+  web:
+    resources:
+      static-locations: file:src/main/resources/static
+      chain:
+        cache: false
 
 register:
   confirm-url: http://localhost:8080/register/confirm

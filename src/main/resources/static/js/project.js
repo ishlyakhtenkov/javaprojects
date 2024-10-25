@@ -66,7 +66,12 @@ function reply(replyBtn) {
         }
 
         $('#replyCommentDiv').remove();
-        let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 ms-3').attr('id', 'replyCommentDiv');
+
+        let div = $('<div></div>').addClass('d-flex d-inline col-12 border-start pt-3 ps-3').attr('id', 'replyCommentDiv');
+        let borderSpan = $('<span></span>').addClass('my-auto border-bottom').css('margin-left', '-16px').css('width', '16px');
+        div.append(borderSpan);
+
+        let commentAreaDiv = $('<div></div>').addClass('col-12');
         let textArea = $('<textarea></textarea>').addClass('form-control bg-light-subtle reply-comment pb-4')
             .attr('id', 'replyComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
             .attr('rows', '2');
@@ -75,9 +80,10 @@ function reply(replyBtn) {
             .attr('type', 'button').attr('id', 'sendReplyBtn').attr('hidden', true).html(getMessage('comment.send'));
         let cancelReplyBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
             .attr('type', 'button').attr('id', 'cancelReplyBtn').html(getMessage('cancel'));
-        div.append(textArea);
-        div.append(sendReplyBtn);
-        div.append(cancelReplyBtn);
+        commentAreaDiv.append(textArea);
+        commentAreaDiv.append(sendReplyBtn);
+        commentAreaDiv.append(cancelReplyBtn);
+        div.append(commentAreaDiv);
         div.insertAfter(replyBtn.parent());
 
         $('#replyComment').on('input', (event) => {
@@ -168,6 +174,8 @@ function postNewCommentSuccess(comment) {
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
     newCommentInput.val('');
+    newCommentInput.css('height', 'auto');
+    newCommentInput.css('height', newCommentInput.prop('scrollHeight') + 2 + 'px');
     $('#sendNewBtn').attr('hidden', true);
 }
 
@@ -347,9 +355,16 @@ function edit(editBtn) {
     let text = commentDiv.find('.comment-text').text();
     commentDiv.attr('hidden', true);
 
-    let div = $('<div></div>').addClass('col-12 col-md-6 mt-3 py-1 editCommentDiv')
-        .css('margin-left', commentDiv.css('margin-left'))
-        .attr('id', `editCommentDiv-${commentId}`);
+    let div = $('<div></div>').addClass('d-flex d-inline col-12 pt-3 editCommentDiv').css('padding-bottom', '6px')
+        .css('margin-left', commentDiv.css('margin-left')).attr('id', `editCommentDiv-${commentId}`);
+
+    let isReply = commentDiv.parent().attr('class') != null;
+    if (isReply) {
+        let borderSpan = $('<span></span>').addClass('my-auto border-bottom').css('margin-left', '-16px').css('width', '16px');
+        div.append(borderSpan);
+    }
+
+    let commentAreaDiv = $('<div></div>').addClass('col-12');
     let textArea = $('<textarea></textarea>').addClass('form-control bg-light-subtle pb-4')
         .attr('id', 'editComment').css('resize', 'none').attr('placeholder', getMessage('comment.leave-comment-here'))
         .attr('rows', '2').text(text);
@@ -358,9 +373,10 @@ function edit(editBtn) {
         .attr('type', 'button').attr('id', 'sendEditBtn').html(getMessage('comment.send'));
     let cancelEditBtn = $('<a></a>').addClass('btn btn-link link-secondary text-decoration-none float-end').css('margin-top', '-35px')
         .attr('type', 'button').attr('id', 'cancelEditBtn').html(getMessage('cancel'));
-    div.append(textArea);
-    div.append(sendEditBtn);
-    div.append(cancelEditBtn);
+    commentAreaDiv.append(textArea);
+    commentAreaDiv.append(sendEditBtn);
+    commentAreaDiv.append(cancelEditBtn);
+    div.append(commentAreaDiv);
     div.insertAfter(commentDiv);
     textArea.css('height', textArea.prop('scrollHeight') + 2 + 'px');
 

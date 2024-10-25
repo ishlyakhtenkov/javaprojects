@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,11 +28,10 @@ class ProjectManagementControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name(MANAGEMENT_PROJECTS_VIEW))
-                .andExpect(result -> PROJECT_MATCHER
-                        .assertMatchIgnoreFields((List<Project>) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project3, project1, project2),
-                                "author.roles", "author.password", "author.registered", "technologies",
-                                "descriptionElements", "likes", "comments"));
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project3PreviewTo, project1PreviewTo, project2PreviewTo),
+                                "author.roles", "author.password", "author.registered", "technologies"));
     }
 
     @Test

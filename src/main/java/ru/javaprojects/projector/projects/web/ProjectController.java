@@ -195,7 +195,7 @@ public class ProjectController {
         Project project = isNew ? projectService.create(projectTo, AuthUser.authId()) :
                 projectService.update(projectTo, AuthUser.authId(), AuthUser.isAdmin());
         redirectAttributes.addFlashAttribute("action",
-                messageSource.getMessage((isNew ? "project.created" : "project.updated"),
+                messageSource.getMessage((isNew ? "project.has-been-created" : "project.updated"),
                         new Object[]{projectTo.getName()}, LocaleContextHolder.getLocale()));
         return "redirect:/projects/" + project.getId() + "/data";
     }

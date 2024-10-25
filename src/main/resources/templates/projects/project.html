@@ -191,8 +191,8 @@
                             <textarea class="form-control bg-light-subtle new-comment with-popover pb-4" id="newCommentInput"
                                       style="resize: none" th:placeholder="#{comment.leave-comment-here}" rows="2"
                                       data-bs-toggle="popover" data-bs-trigger="manual"
-                                      data-bs-title="<a type='button' class='btn-close ms-2 float-end tiny'></a><div>Only for authenticated users</div>"
-                                      data-bs-content="<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>Login</a></div>" data-bs-html="true" ></textarea>
+                                      th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
+                                      th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true"></textarea>
                             <a type="button" id="sendNewBtn" hidden class="btn btn-link text-decoration-none float-end pe-2"
                                title="Send" style="margin-top: -35px;" th:text="#{comment.send}"
                                onclick="postComment(null, $('#newCommentInput').val(), postNewCommentSuccess)">Send</a>

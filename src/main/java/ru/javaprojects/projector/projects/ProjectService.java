@@ -91,8 +91,10 @@ public class ProjectService {
                         new Object[]{name}));
     }
 
-    public List<Project> getAll() {
-        return repository.findAllWithArchitectureAndAuthorByOrderByName();
+    public List<ProjectPreviewTo> getAll() {
+        List<Project> projects = repository.findAllWithArchitectureAndLikesAndAuthorByOrderByName();
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
     }
 
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {

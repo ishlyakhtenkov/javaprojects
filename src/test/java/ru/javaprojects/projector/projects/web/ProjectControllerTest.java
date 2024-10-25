@@ -358,7 +358,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .params(getNewParams())
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
@@ -393,7 +393,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .params(newParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
@@ -427,7 +427,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .params(newParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProject.getName()}, getLocale())));
             Project created = projectService.getByName(newProject.getName());
             newProject.setId(created.getId());
@@ -463,7 +463,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .params(newParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                         new Object[]{newProject.getName()}, getLocale())));
         Project created = projectService.getByName(newProject.getName());
         newProject.setId(created.getId());
@@ -621,7 +621,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .params(getNewParams())
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByName(newProjectTo.getName());
             newProject.setId(created.getId());
@@ -722,7 +722,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .params(newParams)
                     .with(csrf()))
                     .andExpect(status().isFound())
-                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.created",
+                    .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
             Project created = projectService.getByAuthorAndName(USER_ID, newProjectTo.getName());
             newProject.setId(created.getId());

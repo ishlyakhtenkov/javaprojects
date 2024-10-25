@@ -18,6 +18,9 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     List<Project> findAllByVisibleIsTrueOrderByName();
 
+    @EntityGraph(attributePaths = {"architecture", "likes", "author"})
+    List<Project> findAllWithArchitectureAndLikesAndAuthorByOrderByName();
+
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByVisibleIsTrue();
 

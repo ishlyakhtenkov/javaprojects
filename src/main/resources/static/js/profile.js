@@ -72,9 +72,11 @@ function fillProjectsTab(projects) {
     let row = $('<div></div>').addClass('row justify-content-center');
     let column = $('<div></div>').addClass('col-md-8');
     if (authUser != null && authUser.user.id == $('#userId').text()) {
-        let addNewBtnSm = $('<a></a>').addClass('btn btn-sm btn-success float-end d-none d-sm-block')
-            .css('margin-top', '-20px').attr('href', '/projects/add').text('New');
-        let addNewBtn = $('<a></a>').addClass('btn btn-sm btn-success d-sm-none').attr('href', '/projects/add').text('New');
+        let addNewBtnSm = $('<a></a>').addClass('btn btn-sm btn-outline-success float-end d-none d-sm-block')
+            .css('margin-top', '-20px').attr('href', '/projects/add')
+            .html(`<i class="fa-solid fa-plus me-1"></i>${getMessage('project.add-new')}`);
+        let addNewBtn = $('<a></a>').addClass('btn btn-sm btn-outline-success d-sm-none').attr('href', '/projects/add')
+            .html(`<i class="fa-solid fa-plus me-1"></i>${getMessage('project.add-new')}`);
         column.append(addNewBtn);
         column.append(addNewBtnSm);
     }

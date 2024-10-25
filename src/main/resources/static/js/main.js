@@ -2,16 +2,16 @@ setUpThemeSwitch(theme);
 
 function setUpThemeSwitch(theme) {
     if (theme === 'dark') {
-        $('#themeSwitcherIcon').removeClass('fa-solid fa-star text-secondary')
-            .addClass('fa-regular fa-sun text-warning').parent().attr('title', getMessage('info.switch-to-light-theme'));
+        $('#themeSwitcherIcon').removeClass('bi bi-moon-stars-fill text-secondary')
+            .addClass('bi bi-sun-fill text-warning').parent().attr('title', getMessage('info.switch-to-light-theme'));
     } else {
-        $('#themeSwitcherIcon').removeClass('fa-regular fa-sun text-warning')
-            .addClass('fa-solid fa-star text-secondary').parent().attr('title', getMessage('info.switch-to-dark-theme'));
+        $('#themeSwitcherIcon').removeClass('bi bi-sun-fill text-warning')
+            .addClass('bi bi-moon-stars-fill text-secondary').parent().attr('title', getMessage('info.switch-to-dark-theme'));
     }
 }
 
 function setTheme(themeSwitch) {
-    let theme = themeSwitch.find('i').attr('class').includes('fa-sun') ? 'light' : 'dark';
+    let theme = themeSwitch.find('i').attr('class').includes('bi-sun-fill') ? 'light' : 'dark';
     localStorage.setItem('bs-theme', theme);
     $('html').attr('data-bs-theme', theme);
     setUpThemeSwitch(theme);

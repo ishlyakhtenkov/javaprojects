@@ -36,8 +36,8 @@
                         </div>
 
                         <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}"
-                              class="tiny text-secondary-emphasis float-end" style="margin-top: -5px;">Created</span>
-                        <div>
+                              class="tiny text-secondary-emphasis float-end" style="margin-top: -3px;">Created</span>
+                        <div class="mt-3">
                             <div>
                                 <a class="icon-link link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.deploymentUrl != null}" th:href="@{${project.deploymentUrl}}" target="_blank">
@@ -55,14 +55,14 @@
                             <div>
                                 <a class="icon-link link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.backendSrcUrl != null}" th:href="@{${project.backendSrcUrl}}" target="_blank">
-                                    <img th:src="@{/images/github.svg}" alt="GitHub logo" width="20" height="20" />
+                                    <img th:src="@{/images/git.svg}" alt="Git logo" width="20" height="20" />
                                     <span th:text="#{project.source-code} + (${project.frontendSrcUrl != null} ?  ' (' + ${#strings.toLowerCase(#messages.msg('backend'))} + ')' : '')"></span>
                                 </a>
                             </div>
                             <div>
                                 <a class="icon-link link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                                    th:if="${project.frontendSrcUrl != null}" th:href="@{${project.frontendSrcUrl}}" target="_blank">
-                                    <img th:src="@{/images/github.svg}" alt="GitHub logo" width="20" height="20" />
+                                    <img th:src="@{/images/git.svg}" alt="Git logo" width="20" height="20" />
                                     <span th:text="#{project.source-code} + ' (' + ${#strings.toLowerCase(#messages.msg('frontend'))}    + ')'">Source code (frontend)</span>
                                 </a>
                             </div>

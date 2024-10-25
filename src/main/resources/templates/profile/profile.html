@@ -32,7 +32,7 @@
                                         <div class="mb-1 position-relative">
                                             <span class="h4" th:text="${user.name}" id="userName">Name</span>
                                             <span th:if="${user.roles.contains(T(ru.javaprojects.projector.users.model.Role).ADMIN)}"
-                                                  class="badge rounded-pill bg-danger"
+                                                  class="badge rounded-pill bg-danger ms-1"
                                                   style="position: absolute; margin-top: -5px;" th:text="#{user.role.admin}">Admin</span>
                                         </div>
                                         <div th:if="${authUser != null && (authUser.id == user.id || authUser.isAdmin())}"

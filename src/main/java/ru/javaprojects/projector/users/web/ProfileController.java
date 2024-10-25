@@ -94,7 +94,7 @@ public class ProfileController {
                 "profile.updated.confirm-email";
         redirectAttributes.addFlashAttribute("action",
                 messageSource.getMessage(messageCode,  null, LocaleContextHolder.getLocale()));
-        return "redirect:/profile";
+        return "redirect:/profile/" + AuthUser.authId() + "/view";
     }
 
     @GetMapping("/change-email/confirm")
@@ -103,6 +103,6 @@ public class ProfileController {
         changeEmailService.confirmChangeEmail(token, AuthUser.authId());
         redirectAttributes.addFlashAttribute("action",
                 messageSource.getMessage("change-email.email-confirmed", null, LocaleContextHolder.getLocale()));
-        return "redirect:/profile";
+        return "redirect:/profile/" + AuthUser.authId() + "/view";
     }
 }

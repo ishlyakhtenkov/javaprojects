@@ -258,7 +258,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .param(TOKEN_PARAM, changeEmailToken.getToken())
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER2_ID)))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("change-email.email-confirmed",
                         null, getLocale())));
         assertTrue(changeEmailTokenRepository.findByToken(changeEmailToken.getToken()).isEmpty());
@@ -342,7 +342,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .params(getUpdatedProfileParams(avatarFilesPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
                        null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
@@ -364,7 +364,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .params(updatedProfileParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated.confirm-email",
                         null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
@@ -393,7 +393,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .params(updatedParams)
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
                         null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);
@@ -412,7 +412,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .params(getUpdatedProfileParams(avatarFilesPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl(PROFILE_URL))
+                .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("profile.updated",
                         null, getLocale())));
         USER_MATCHER.assertMatch(userService.get(USER_ID), updatedProfileUser);

@@ -53,6 +53,7 @@ enMessages.set('project.failed-to-get-projects', 'Failed to get projects');
 enMessages.set('project.manage', 'Manage project');
 enMessages.set('project.author', 'Author');
 enMessages.set('project.add-new', 'New');
+enMessages.set('project.link-copied', 'Link copied');
 
 enMessages.set('architecture', 'Architecture');
 enMessages.set('architecture.deleted', 'Architecture "{0}" has been deleted');
@@ -130,6 +131,7 @@ ruMessages.set('project.failed-to-get-projects', 'Не удалось загру
 ruMessages.set('project.manage', 'Управление проектом');
 ruMessages.set('project.author', 'Автор');
 ruMessages.set('project.add-new', 'Новый');
+ruMessages.set('project.link-copied', 'Ссылка скопирована');
 
 ruMessages.set('architecture', 'Архитектура');
 ruMessages.set('architecture.deleted', 'Архитектура "{0}" была удалена');

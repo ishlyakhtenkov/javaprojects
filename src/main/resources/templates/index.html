@@ -89,6 +89,28 @@
                                             'fa-regular' : 'fa-solid'}"></i>
                                     <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likesUserIds.size()}"></span>
                                 </a>
+                                <a type="button"
+                                        class="btn-link link-primary text-decoration-none ms-3"
+                                        th:title="#{project.share}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-share"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><button type="button" class="dropdown-item" th:onclick="|copyLink('${project.id}')|">
+                                        <i class="fa-solid fa-link fa-fw"></i><span class="ms-2" th:text="#{project.copy-link}"></span>
+                                    </button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="shareOnVk($(this))"
+                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                           <i class="fa-brands fa-vk fa-fw"></i><span class="ms-2" th:text="#{project.share-on-vk}"></span>
+                                    </button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="shareOnTelegram($(this))"
+                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                        <i class="fa-brands fa-telegram fa-fw"></i><span class="ms-2" th:text="#{project.share-on-telegram}"></span>
+                                    </button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="shareOnWhatsApp($(this))"
+                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                        <i class="fa-brands fa-whatsapp fa-fw"></i><span class="ms-2" th:text="#{project.share-on-whatsapp}"></span>
+                                    </button></li>
+                                </ul>
                             </div>
                             <div class="col-4 text-end">
                                 <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
@@ -97,7 +119,7 @@
                         </div>
                         <a th:href="@{'/projects/' + ${project.id} + '/view'}" class="stretched-link"></a>
                     </div>
-                    <div class="card-footer" style="height: 78px; position: relative; z-index: 2">
+                    <div class="card-footer" style="height: 78px; position: relative; z-index: 1">
                         <div class="text-truncate-container">
                             <a th:each="technology : ${project.technologies}" th:href="@{${technology.url}}"
                                type="button" target="_blank" class="me-1 mb-1" style="text-decoration: none"
@@ -120,5 +142,6 @@
         </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/index.js?v=1"></script>
+        <script src="/js/share-button.js?v=1"></script>
     </ownScript>
 </th:block>

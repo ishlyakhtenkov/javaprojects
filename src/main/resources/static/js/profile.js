@@ -125,15 +125,27 @@ function generateProjectCard(project) {
     let dFlexDiv = $('<div></div>').addClass('d-flex');
     let avatarDiv = $('<div></div>').addClass('pt-3 pb-2 ps-3').css('position', 'relative').css('z-index', '2')
         .css('margin-left', '-16px');
+    let avatarLink = $('<a></a>').addClass('text-decoration-none link-body-emphasis')
+        .attr('href', `/profile/${project.author.id}/view`).attr('title', project.author.name);
     let avatar = $('<img>').addClass('rounded-circle border')
         .attr('src', getAvatarLink(project.author.avatar))
-        .attr('width', '40').attr('height', '40').css('object-fit', 'cover');
-    avatarDiv.append(avatar);
+        .attr('width', '40').attr('height', '40').css('object-fit', 'cover')
+        .on('mouseenter', function () {
+            $(this).addClass('opacity-75');
+        })
+        .on('mouseleave', function () {
+            $(this).removeClass('opacity-75');
+        });
+    avatarLink.append(avatar);
+    avatarDiv.append(avatarLink);
     dFlexDiv.append(avatarDiv);
     let authorNameAndCreatedDiv = $('<div></div>').addClass('pt-3 pb-2 px-3').css('position', 'relative')
         .css('z-index', '2').css('margin-left', '-8px');
     let authorName = $('<span></span>').addClass('h6').text(project.author.name);
-    authorNameAndCreatedDiv.append(authorName);
+    let authorNameLink = $('<a></a>').addClass('text-decoration-none link-body-emphasis')
+        .attr('href', `/profile/${project.author.id}/view`);
+    authorNameLink.append(authorName);
+    authorNameAndCreatedDiv.append(authorNameLink);
     let createdDiv = $('<div></div>').addClass('tiny text-secondary-emphasis').css('margin-top', '-3px')
         .text(formatDateTime(project.created));
     authorNameAndCreatedDiv.append(createdDiv);
@@ -199,17 +211,17 @@ function generateProjectCard(project) {
     let annotation = $('<span></span>').addClass('card-text').text(project.annotation);
     cardBody.append(annotation);
 
-    let likesCommentsViewsRow = $('<div></div>').addClass('row mt-auto pt-3 pb-1').css('position', 'relative')
+    let likesCommentsShareViewsRow = $('<div></div>').addClass('row mt-auto pt-3 pb-1').css('position', 'relative')
         .css('z-index', '2');
-    let likesCommentsCol = $('<div></div>').addClass('col-8');
-    likesCommentsViewsRow.append(likesCommentsCol);
+    let likesCommentsShareCol = $('<div></div>').addClass('col-8');
+    likesCommentsShareViewsRow.append(likesCommentsShareCol);
     let commentsBtn = $('<a></a>').addClass('btn-link text-decoration-none link-info').attr('type', 'button')
         .attr('title', getMessage('comment.comments')).attr('href', `/projects/${project.id}/view#comments`);
     let commentsSymbol = $('<i></i>').addClass('fa-regular fa-comments');
     let commentsCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small').text(project.commentsCount);
     commentsBtn.append(commentsSymbol);
     commentsBtn.append(commentsCounter);
-    likesCommentsCol.append(commentsBtn);
+    likesCommentsShareCol.append(commentsBtn);
     let likeBtn = $('<a></a>').addClass('with-popover btn-link link-danger text-decoration-none ms-3')
         .attr('type', 'button').attr('data-bs-toggle', 'popover')
         .attr('data-bs-trigger', 'manual')
@@ -226,21 +238,56 @@ function generateProjectCard(project) {
         .attr('title', getMessage('like')).text(project.likesUserIds.length);
     likeBtn.append(likeSymbol);
     likeBtn.append(likeCounter);
-    likesCommentsCol.append(likeBtn);
+    likesCommentsShareCol.append(likeBtn);
+    let shareBtn = $('<a></a>').attr('type', 'button').addClass('btn-link link-primary text-decoration-none ms-3')
+        .attr('title', getMessage('project.share')).attr('data-bs-toggle', 'dropdown');
+    let shareSymbol = $('<i></i>').addClass('fa-solid fa-share');
+    shareBtn.append(shareSymbol);
+    let shareDropDownMenu = $('<ul></ul>').addClass('dropdown-menu');
+    let copyLinkItem = $('<li></li>');
+    let copyLinkBtn = $('<button></button>').attr('type', 'button').addClass('dropdown-item')
+        .html(`<i class="fa-solid fa-link fa-fw me-2"></i>${getMessage('project.copy-link')}`)
+        .on('click', () => copyLink(project.id));
+    copyLinkItem.append(copyLinkBtn);
+    shareDropDownMenu.append(copyLinkItem);
+    let shareOnVkItem = $('<li></li>');
+    let shareOnVkBtn = $('<button></button>').attr('type', 'button').addClass('dropdown-item')
+        .attr('data-id', project.id).attr('data-name', project.name)
+        .html(`<i class="fa-brands fa-vk fa-fw me-2"></i>${getMessage('project.share-on-vk')}`)
+        .on('click', function () {shareOnVk($(this))});
+    shareOnVkItem.append(shareOnVkBtn);
+    shareDropDownMenu.append(shareOnVkItem);
+    let shareOnTelegramItem = $('<li></li>');
+    let shareOnTelegramBtn = $('<button></button>').attr('type', 'button').addClass('dropdown-item')
+        .attr('data-id', project.id).attr('data-name', project.name)
+        .html(`<i class="fa-brands fa-telegram fa-fw me-2"></i>${getMessage('project.share-on-telegram')}`)
+        .on('click', function () {shareOnTelegram($(this))});
+    shareOnTelegramItem.append(shareOnTelegramBtn);
+    shareDropDownMenu.append(shareOnTelegramItem);
+    let shareOnWhatsAppItem = $('<li></li>');
+    let shareOnWhatsAppBtn = $('<button></button>').attr('type', 'button').addClass('dropdown-item')
+        .attr('data-id', project.id).attr('data-name', project.name)
+        .html(`<i class="fa-brands fa-whatsapp fa-fw me-2"></i>${getMessage('project.share-on-whatsapp')}`)
+        .on('click', function () {shareOnWhatsApp($(this))});
+    shareOnWhatsAppItem.append(shareOnWhatsAppBtn);
+    shareDropDownMenu.append(shareOnWhatsAppItem);
+    likesCommentsShareCol.append(shareBtn);
+    likesCommentsShareCol.append(shareDropDownMenu);
+
     let viewsCol = $('<div></div>').addClass('col-4 text-end');
     let viewsSymbol = $('<i></i>').addClass('fa-regular fa-eye').css('color', '#a1a0a0');
     let viewsCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small').text(project.views);
     viewsCol.append(viewsSymbol);
     viewsCol.append(viewsCounter);
-    likesCommentsViewsRow.append(viewsCol);
-    cardBody.append(likesCommentsViewsRow);
+    likesCommentsShareViewsRow.append(viewsCol);
+    cardBody.append(likesCommentsShareViewsRow);
 
     let projectLink = $('<a></a>').addClass('stretched-link').attr('href', `/projects/${project.id}/view`);
     cardBody.append(projectLink);
 
     card.append(cardBody);
 
-    let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '2');
+    let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '1');
     let technologiesDiv = $('<div></div>');
     footer.append(technologiesDiv);
     project.technologies.forEach(technology => {
@@ -271,10 +318,10 @@ function deleteProject(id, name) {
     $.ajax({
         url: `/projects/${id}`,
         type: "DELETE"
-    }).done(function() {
+    }).done(function () {
         successToast(getMessage('project.deleted', [name]));
         getProjectsAndFillTabs();
-    }).fail(function(data) {
+    }).fail(function (data) {
         handleError(data, getMessage('project.failed-to-delete', [name]));
     });
 }
@@ -286,7 +333,7 @@ function revealProject(id, name, revealBtn) {
         url: `/projects/${id}`,
         type: "PATCH",
         data: "visible=" + visible
-    }).done(function() {
+    }).done(function () {
         successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
         if (!visible) {
             let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
@@ -297,7 +344,7 @@ function revealProject(id, name, revealBtn) {
             $(`#${id}-name-elem`).find('i').remove();
         }
         revealBtn.html(`<i class="fa-solid ${visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(visible ? 'project.hide' : 'project.reveal')}`);
-    }).fail(function(data) {
+    }).fail(function (data) {
         handleError(data, getMessage(visible ? 'project.failed-to-reveal' : 'project.failed-to-hide', [name]));
     });
 }
@@ -310,7 +357,7 @@ function likeProject(likeBtn, id) {
         $.ajax({
             url: `/projects/${id}/like`,
             type: "PATCH",
-            data: { id: id, liked: liked },
+            data: {id: id, liked: liked},
         }).done(function() {
             likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
             likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));

@@ -54,6 +54,11 @@ enMessages.set('project.manage', 'Manage project');
 enMessages.set('project.author', 'Author');
 enMessages.set('project.add-new', 'New');
 enMessages.set('project.link-copied', 'Link copied');
+enMessages.set('project.share', 'Share');
+enMessages.set('project.copy-link', 'Copy link');
+enMessages.set('project.share-on-vk', 'Share on VK');
+enMessages.set('project.share-on-telegram', 'Share on Telegram');
+enMessages.set('project.share-on-whatsapp', 'Share on WhatsApp');
 
 enMessages.set('architecture', 'Architecture');
 enMessages.set('architecture.deleted', 'Architecture "{0}" has been deleted');
@@ -132,6 +137,11 @@ ruMessages.set('project.manage', 'Управление проектом');
 ruMessages.set('project.author', 'Автор');
 ruMessages.set('project.add-new', 'Новый');
 ruMessages.set('project.link-copied', 'Ссылка скопирована');
+ruMessages.set('project.share', 'Поделиться');
+ruMessages.set('project.copy-link', 'Скопировать ссылку');
+ruMessages.set('project.share-on-vk', 'Поделиться в VK');
+ruMessages.set('project.share-on-telegram', 'Поделиться в Telegram');
+ruMessages.set('project.share-on-whatsapp', 'Поделиться в WhatsApp');
 
 ruMessages.set('architecture', 'Архитектура');
 ruMessages.set('architecture.deleted', 'Архитектура "{0}" была удалена');

@@ -190,7 +190,7 @@ function generateProjectCard(project) {
     let name = $('<h5></h5>').addClass('card-title').text(project.name).attr('id', `${project.id}-name-elem`);
     cardBody.append(name);
     if (!project.visible) {
-        let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning float-end')
+        let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
             .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
             .css('z-index', '2');
         name.append(invisibleSymbol);
@@ -289,7 +289,7 @@ function revealProject(id, name, revealBtn) {
     }).done(function() {
         successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
         if (!visible) {
-            let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning float-end')
+            let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
                 .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
                 .css('z-index', '2');
             $(`#${id}-name-elem`).append(invisibleSymbol);

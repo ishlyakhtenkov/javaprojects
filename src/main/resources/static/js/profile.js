@@ -37,10 +37,12 @@ function changePassword() {
 
 function showInformation() {
     window.history.replaceState(null, null, "#");
+    sessionStorage.removeItem('prevUrlHash');
 }
 
 function showQualification() {
     window.history.replaceState(null, null, "#qualification");
+    sessionStorage.setItem('prevUrlHash', 'qualification');
     if (qualificationTab.children().length === 0) {
         getProjectsAndFillTabs();
     }
@@ -48,6 +50,7 @@ function showQualification() {
 
 function showProjects() {
     window.history.replaceState(null, null, "#projects");
+    sessionStorage.setItem('prevUrlHash', 'projects');
     if (projectsTab.children().length === 0) {
         getProjectsAndFillTabs();
     }

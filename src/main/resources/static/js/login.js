@@ -9,7 +9,7 @@ function forgotPassword() {
     let email = forgotPasswordModal.find('#email').val();
     if (email.length) {
         $.ajax({
-            url: "profile/forgot-password",
+            url: "/profile/forgot-password",
             type: "POST",
             data: "email=" + email
         }).done(function () {

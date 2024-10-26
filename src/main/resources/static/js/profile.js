@@ -23,7 +23,7 @@ function changePassword() {
     let repeatPassword = changePasswordModal.find('#repeatPassword').val();
     if (currentPassword.length && password.length && repeatPassword.length && password === repeatPassword) {
         $.ajax({
-            url: "profile/change-password",
+            url: "/profile/change-password",
             type: "PATCH",
             data: { currentPassword: currentPassword, newPassword: password },
         }).done(function () {

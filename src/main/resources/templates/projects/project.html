@@ -154,7 +154,7 @@
 
                         <div class="row mt-3">
                             <div class="col-8">
-                                <a th:href="@{'/projects/' + ${project.id} + '#comments'}" type="button" th:title="#{comment.comments}"
+                                <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"
                                    class="btn-link text-decoration-none link-info">
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary-emphasis small commentsCounter" th:text="${comments.size()}"></span>

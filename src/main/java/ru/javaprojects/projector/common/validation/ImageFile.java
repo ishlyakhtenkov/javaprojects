@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
 public @interface ImageFile {
-    String message() default "{error.notImageFile}";
+    String message() default "{validation.ImageFile}";
 
     Class<?>[] groups() default {};
 

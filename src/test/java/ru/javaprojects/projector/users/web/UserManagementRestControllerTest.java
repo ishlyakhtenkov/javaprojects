@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.common.CommonTestData.HOME_URL;
@@ -271,7 +272,8 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                         ConstraintViolationException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("changePassword.password: size must be between 5 and 32"))
+                .andExpect(problemDetail("changePassword.password: Password size must be between 5 and 32"))
+                .andExpect(jsonPath("$.invalid_params").value("Password size must be between 5 and 32"))
                 .andExpect(problemInstance(USERS_CHANGE_PASSWORD_URL + USER_ID));
         assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, service.get(USER_ID).getPassword()));
     }

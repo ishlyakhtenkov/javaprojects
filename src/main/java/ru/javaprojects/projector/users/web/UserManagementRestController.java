@@ -43,7 +43,8 @@ public class UserManagementRestController {
 
     @PatchMapping("/change-password/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(@PathVariable long id, @RequestParam @Size(min = 5, max = 32) String password) {
+    public void changePassword(@PathVariable long id,
+                               @RequestParam @Size(min = 5, max = 32, message = "{validation.password.Size}") String password) {
         log.info("change password for user with id={}", id);
         service.changePassword(id, password);
     }

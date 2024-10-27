@@ -20,9 +20,9 @@ public class CommentTo extends BaseTo {
     @Nullable
     private Long parentId;
 
-    @NotBlank
-    @NoHtml
-    @Size(max = 4096)
+    @NotBlank(message = "{validation.comment.text.NotBlank}")
+    @NoHtml(message = "{validation.comment.text.NoHtml}")
+    @Size(max = 4096, message = "{validation.comment.text.Size}")
     private String text;
 
     public CommentTo(Long id, Long projectId, Long parentId, String text) {

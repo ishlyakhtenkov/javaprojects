@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
 public @interface YamlFile {
-    String message() default "{error.notYmlFile}";
+    String message() default "{validation.YamlFile}";
 
     Class<?>[] groups() default {};
 

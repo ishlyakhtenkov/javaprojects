@@ -54,8 +54,9 @@ function handleError(data, title) {
     if (data.status === 422) {
         let invalidParams = data.responseJSON.invalid_params;
         if (invalidParams != null) {
+            console.log(invalidParams);
             $.each(invalidParams, function(param, errorMessage) {
-                message += `${param}: ${errorMessage}<br>`;
+                message += `${errorMessage}<br>`;
             });
         } else {
             message += data.responseJSON.detail;

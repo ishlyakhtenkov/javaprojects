@@ -232,7 +232,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                         MethodArgumentNotValidException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(jsonPath("$.invalid_params.text").value("Should not be HTML"))
+                .andExpect(jsonPath("$.invalid_params.text")
+                        .value(messageSource.getMessage("validation.comment.text.NoHtml", null, getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL, PROJECT1_ID)));
         assertEquals(project1.getComments().size(),
                 projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder()).getComments().size());
@@ -480,7 +481,9 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                         ConstraintViolationException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail("updateComment.text: Should not be HTML"))
+                .andExpect(problemDetail("updateComment.text: Comment must not be HTML"))
+                .andExpect(jsonPath("$.invalid_params")
+                        .value(messageSource.getMessage("validation.comment.text.NoHtml", null, getLocale())))
                 .andExpect(problemInstance(String.format(PROJECTS_COMMENTS_URL_SLASH_ID, PROJECT1_ID,
                         PROJECT1_COMMENT3_ID)));
         COMMENT_MATCHER.assertMatch(commentRepository.findById(PROJECT1_COMMENT3_ID).orElseThrow(), project1Comment3);

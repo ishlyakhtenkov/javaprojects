@@ -75,7 +75,9 @@ public class ProjectRestController {
     @PutMapping("/{projectId}/comments/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateComment(@PathVariable long projectId, @PathVariable long id,
-                              @NotBlank @NoHtml @Size(max = 4096) String text) {
+                              @NotBlank(message = "{validation.comment.text.NotBlank}")
+                              @NoHtml(message = "{validation.comment.text.NoHtml}")
+                              @Size(max = 4096, message = "{validation.comment.text.Size}") String text) {
         log.info("update comment with id={} for project with id={}", id, projectId);
         service.updateComment(id, text, AuthUser.authId());
     }

@@ -2,6 +2,7 @@ package ru.javaprojects.projector.app.error;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,7 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.users.error.UserDisabledException;
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @AllArgsConstructor
@@ -54,6 +52,17 @@ public class RestExceptionHandler {
             invalidParams.put(error.getField(), error.getDefaultMessage());
         }
         log.warn("BindingException: {} at request {}", invalidParams, req.getRequestURI());
+        ProblemDetail problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
+        problemDetail.setProperty("invalid_params", invalidParams);
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail constraintViolationException(ConstraintViolationException e, HttpServletRequest req) {
+        List<String> invalidParams = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .toList();
+        log.warn("ConstraintViolationException: {} at request {}", invalidParams, req.getRequestURI());
         ProblemDetail problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
         problemDetail.setProperty("invalid_params", invalidParams);
         return problemDetail;

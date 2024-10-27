@@ -30,8 +30,8 @@ public class ProfileRestController {
 
     @PatchMapping("/change-password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changePassword(@RequestParam @NotBlank String currentPassword,
-                               @RequestParam @Size(min = 5, max = 32) String newPassword) {
+    public void changePassword(@RequestParam @NotBlank(message = "{validation.password.NotBlank}") String currentPassword,
+                               @RequestParam @Size(min = 5, max = 32, message = "{validation.password.Size}") String newPassword) {
         log.info("change password for user with id={}", AuthUser.authId());
         userService.changePassword(AuthUser.authId(), currentPassword, newPassword);
     }

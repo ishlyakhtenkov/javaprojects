@@ -2,6 +2,8 @@ package ru.javaprojects.projector.reference.technologies;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,6 +34,7 @@ public class TechnologyService {
         return repository.getExisted(id);
     }
 
+    @Cacheable("technologies")
     public List<Technology> getAll() {
         return repository.findAll(Sort.by("name"));
     }
@@ -54,6 +57,7 @@ public class TechnologyService {
                         new Object[]{name}));
     }
 
+    @CacheEvict(value = "technologies", allEntries = true)
     @Transactional
     public Technology create(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
@@ -68,6 +72,7 @@ public class TechnologyService {
         return technology;
     }
 
+    @CacheEvict(value = "technologies", allEntries = true)
     @Transactional
     public void update(TechnologyTo technologyTo) {
         Assert.notNull(technologyTo, "technologyTo must not be null");
@@ -87,6 +92,7 @@ public class TechnologyService {
         }
     }
 
+    @CacheEvict(value = "technologies", allEntries = true)
     @Transactional
     public void delete(long id) {
         Technology technology = get(id);

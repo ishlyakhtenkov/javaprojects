@@ -2,6 +2,8 @@ package ru.javaprojects.projector.reference.architectures;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -23,6 +25,7 @@ public class ArchitectureService {
     @Value("${content-path.architectures}")
     private String architectureFilesPath;
 
+    @Cacheable("architectures")
     public List<Architecture> getAll() {
         return repository.findAllByOrderByName();
     }
@@ -38,6 +41,7 @@ public class ArchitectureService {
                         "error.notfound.architecture",  new Object[]{name}));
     }
 
+    @CacheEvict(value = "architectures", allEntries = true)
     public Architecture create(ArchitectureTo architectureTo) {
         Assert.notNull(architectureTo, "architectureTo must not be null");
         if (architectureTo.getLogo() == null || architectureTo.getLogo().isEmpty()) {
@@ -51,6 +55,7 @@ public class ArchitectureService {
         return architecture;
     }
 
+    @CacheEvict(value = "architectures", allEntries = true)
     @Transactional
     public void update(ArchitectureTo architectureTo) {
         Assert.notNull(architectureTo, "architectureTo must not be null");
@@ -71,6 +76,7 @@ public class ArchitectureService {
         }
     }
 
+    @CacheEvict(value = "architectures", allEntries = true)
     @Transactional
     public void delete(long id) {
         Architecture architecture = get(id);

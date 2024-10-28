@@ -1,6 +1,6 @@
 function copyLink(projectId) {
     navigator.clipboard.writeText(window.location.origin + `/projects/${projectId}/view`);
-    successToast(getMessage('project.link-copied'))
+    successToast(getMessage('info.link-copied'))
 }
 
 function shareOnVk(shareBtn) {

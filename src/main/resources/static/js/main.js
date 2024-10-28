@@ -20,3 +20,20 @@ function setTheme(themeSwitch) {
 function changeLocale(locale) {
     window.location.replace('?lang=' + locale);
 }
+
+function copyAppLink() {
+    navigator.clipboard.writeText(window.location.origin);
+    successToast(getMessage('info.link-copied'))
+}
+
+function shareAppOnVk() {
+    window.open(`https://vk.com/share.php?url=${window.location.origin}&title=${getMessage('info.app-description')}`);
+}
+
+function shareAppOnTelegram() {
+    window.open(`https://t.me/share/url?url=${window.location.origin}&text=${getMessage('info.app-description')}`);
+}
+
+function shareAppOnWhatsApp() {
+    window.open(`https://api.whatsapp.com/send?text=${getMessage('info.app-description')} ${window.location.origin}`);
+}

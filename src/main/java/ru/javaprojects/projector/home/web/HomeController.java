@@ -17,6 +17,18 @@ public class HomeController {
     public String showHomePage(Model model) {
         log.info("Show home page");
         model.addAttribute("projects", projectService.getAllVisibleWithAllInformation());
-        return "index";
+        return "home/index";
+    }
+
+    @GetMapping("/about")
+    public String showAboutPage() {
+        log.info("Show about page");
+        return "home/about";
+    }
+
+    @GetMapping("/contact")
+    public String showContactPage() {
+        log.info("Show contact page");
+        return "home/contact";
     }
 }

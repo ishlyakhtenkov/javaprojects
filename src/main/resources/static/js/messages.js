@@ -53,7 +53,6 @@ enMessages.set('project.failed-to-get-projects', 'Failed to get projects');
 enMessages.set('project.manage', 'Manage project');
 enMessages.set('project.author', 'Author');
 enMessages.set('project.add-new', 'New');
-enMessages.set('project.link-copied', 'Link copied');
 enMessages.set('project.share', 'Share');
 enMessages.set('project.copy-link', 'Copy link');
 enMessages.set('project.share-on-vk', 'Share on VK');
@@ -73,6 +72,8 @@ enMessages.set('info.empty-image-elements', 'You have empty image elements');
 enMessages.set('info.only-for-auth-users', 'Only for authenticated users');
 enMessages.set('info.switch-to-light-theme', 'Switch to light theme');
 enMessages.set('info.switch-to-dark-theme', 'Switch to dark theme');
+enMessages.set('info.link-copied', 'Link copied');
+enMessages.set('info.app-description', 'A platform for viewing and discussing projects developed by users.');
 
 enMessages.set('cancel', 'Cancel');
 enMessages.set('like', 'Like');
@@ -136,7 +137,6 @@ ruMessages.set('project.failed-to-get-projects', 'Не удалось загру
 ruMessages.set('project.manage', 'Управление проектом');
 ruMessages.set('project.author', 'Автор');
 ruMessages.set('project.add-new', 'Новый');
-ruMessages.set('project.link-copied', 'Ссылка скопирована');
 ruMessages.set('project.share', 'Поделиться');
 ruMessages.set('project.copy-link', 'Скопировать ссылку');
 ruMessages.set('project.share-on-vk', 'Поделиться в VK');
@@ -156,6 +156,9 @@ ruMessages.set('info.empty-image-elements', 'У вас есть пустые э�
 ruMessages.set('info.only-for-auth-users', 'Только для авторизованных пользователей');
 ruMessages.set('info.switch-to-light-theme', 'Включить светлую тему');
 ruMessages.set('info.switch-to-dark-theme', 'Включить темную тему');
+ruMessages.set('info.link-copied', 'Ссылка скопирована');
+ruMessages.set('info.app-description', 'Платформа для просмотра и обсуждения проектов, разработанных пользователями.');
+
 
 ruMessages.set('cancel', 'Отмена');
 ruMessages.set('like', 'Нравится');

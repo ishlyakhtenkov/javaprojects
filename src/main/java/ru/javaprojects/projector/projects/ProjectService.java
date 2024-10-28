@@ -2,6 +2,9 @@ package ru.javaprojects.projector.projects;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -91,10 +94,22 @@ public class ProjectService {
                         new Object[]{name}));
     }
 
-    public List<ProjectPreviewTo> getAll() {
-        List<Project> projects = repository.findAllWithArchitectureAndLikesAndAuthorByOrderByName();
+    public Page<ProjectPreviewTo> getAll(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
+        return getAll(repository.findAllIdsOrderByName(pageable), pageable);
+    }
+
+    public Page<ProjectPreviewTo> getAll(Pageable pageable, String keyword) {
+        Assert.notNull(pageable, "pageable must not be null");
+        Assert.notNull(keyword, "keyword must not be null");
+        return getAll(repository.findAllIdsByKeywordOrderByName(keyword, pageable), pageable);
+    }
+
+    private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
+        List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(projectsIds.getContent());
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {

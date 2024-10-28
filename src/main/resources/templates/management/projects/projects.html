@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sd="http://www.thymeleaf.org/spring-data" lang="en">
 <!--/*@thymesVar id="action" type="java.lang.String"*/-->
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.to.ProjectPreviewTo"*/-->
@@ -94,6 +95,28 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${!projects.isEmpty()}" class="row">
+            <div class="col-12 col-md-6">
+                <div sd:pagination-summary="" id="paginationSummary">info</div>
+            </div>
+
+            <div class="col-12 col-md-6 mt-3 mt-md-0">
+                <nav>
+                    <ul class="pagination justify-content-md-end" sd:pagination-split="7" sd:pagination="full">
+                        <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div th:if="${!projects.isEmpty()}" class="row">
+            <div class="col text-md-end">
+                <span th:text="#{info.show}">Show</span> <span sd:page-size-selector="javascript"></span> <span th:text="#{info.entries}">entries</span>
+            </div>
         </div>
     </appMain>
 

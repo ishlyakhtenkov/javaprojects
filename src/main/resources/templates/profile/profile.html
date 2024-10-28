@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{profile},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project-preview.css')}">
+<th:block th:replace="~{fragments/main::page(title=#{profile},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
         <span th:if="${action != null}" th:data-action="${action}" th:id="actionSpan"></span>
         <nav aria-label="breadcrumb">
@@ -65,17 +65,17 @@
                         <div class="mt-1">
                             <ul class="nav nav-underline">
                                 <li class="nav-item">
-                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab"
+                                    <button class="nav-link secondary-nav-link active" data-bs-toggle="tab" data-bs-target="#informationTab"
                                             type="button" role="tab" aria-controls="nav-general" aria-selected="true"
                                              onclick="showInformation()" th:text="#{profile.information}">Information</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#qualificationTab"
+                                    <button class="nav-link secondary-nav-link" data-bs-toggle="tab" data-bs-target="#qualificationTab"
                                             type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
                                              onclick="showQualification()" id="qualificationTabBtn" th:text="#{profile.qualification}">Qualification</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#projectsTab"
+                                    <button class="nav-link secondary-nav-link" data-bs-toggle="tab" data-bs-target="#projectsTab"
                                             type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
                                              onclick="showProjects()" id="projectsTabBtn" th:text="#{project.projects}">Projects</button>
                                 </li>

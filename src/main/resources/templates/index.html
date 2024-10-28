@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.to.ProjectPreviewTo"*/-->
 
-<th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project-preview.css')}">
+<th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
         <span th:if="${projects.isEmpty()}">
             <h5 class="alert alert-warning mt-2" th:text="#{project.no-projects-found}">No projects found.</h5>
@@ -18,17 +18,17 @@
             </button>
             <ul class="nav nav-underline">
                 <li class="nav-item">
-                    <button class="nav-link active pt-0" data-bs-toggle="tab" data-bs-target="#informationTab"
+                    <button class="nav-link secondary-nav-link active pt-0" data-bs-toggle="tab" data-bs-target="#informationTab"
                             type="button" role="tab" aria-controls="nav-general" aria-selected="true"
                             onclick="showInformation()">Popular</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link pt-0" data-bs-toggle="tab" data-bs-target="#qualificationTab"
+                    <button class="nav-link secondary-nav-link pt-0" data-bs-toggle="tab" data-bs-target="#qualificationTab"
                             type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
                             onclick="showQualification()" id="qualificationTabBtn">Fresh</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link pt-0" data-bs-toggle="tab" data-bs-target="#projectsTab"
+                    <button class="nav-link secondary-nav-link pt-0" data-bs-toggle="tab" data-bs-target="#projectsTab"
                             type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
                             onclick="showProjects()" id="projectsTabBtn">My projects</button>
                 </li>

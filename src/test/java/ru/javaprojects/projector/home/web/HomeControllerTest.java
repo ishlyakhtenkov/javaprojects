@@ -11,8 +11,7 @@ import java.util.Objects;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
-import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
-import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
+import static ru.javaprojects.projector.users.UserTestData.*;
 
 class HomeControllerTest extends AbstractControllerTest {
 
@@ -26,7 +25,7 @@ class HomeControllerTest extends AbstractControllerTest {
                 .andExpect(view().name("home/index"))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
-                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo, project2PreviewTo),
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
                                 "author.roles", "author.password", "author.registered"));
     }
 
@@ -34,6 +33,80 @@ class HomeControllerTest extends AbstractControllerTest {
     @SuppressWarnings("unchecked")
     void showHomePageUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get("/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @WithUserDetails(ADMIN_MAIL)
+    @SuppressWarnings("unchecked")
+    void showHomePageWithAuthorProjectsWhenNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get("/")
+                .param("by-author", String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    @SuppressWarnings("unchecked")
+    void showHomePageWithAuthorProjectsWhenBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get("/")
+                .param("by-author", String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void showHomePageWithAuthorProjectsUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get("/")
+                .param("by-author", String.valueOf(USER_ID)))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    @SuppressWarnings("unchecked")
+    void showHomePageWithPopularProjects() throws Exception {
+        perform(MockMvcRequestBuilders.get("/")
+                .param("popular", ""))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo, project2PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    @SuppressWarnings("unchecked")
+    void showHomePageWithPopularProjectsUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get("/")
+                .param("popular", ""))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name("home/index"))

@@ -1,45 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <!--/*@thymesVar id="projects" type="java.util.List"*/-->
 <!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.to.ProjectPreviewTo"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
-        <span th:if="${projects.isEmpty()}">
-            <h5 class="alert alert-warning mt-2" th:text="#{project.no-projects-found}">No projects found.</h5>
-        </span>
-
-        <div th:if="${!projects.isEmpty()}" class="px-xl-5">
+        <div class="px-xl-5">
             <button type="button" class="with-popover btn btn-outline-success float-end" data-bs-toggle="popover" data-bs-trigger="manual"
-               th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
-               th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
+                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
+                    th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
                     data-bs-html="true" onclick="showAddProjectPage($(this))">
                 <i class="fa-solid fa-plus me-1"></i><span th:text="#{project.add-new}"></span>
             </button>
             <ul class="nav nav-underline">
                 <li class="nav-item">
-                    <button class="nav-link secondary-nav-link active pt-0" data-bs-toggle="tab" data-bs-target="#informationTab"
-                            type="button" role="tab" aria-controls="nav-general" aria-selected="true"
-                            onclick="showInformation()">Popular</button>
+                    <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-changes"
+                            aria-selected="false" onclick="showFresh()" id="freshNav">Fresh</button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link secondary-nav-link pt-0" data-bs-toggle="tab" data-bs-target="#qualificationTab"
-                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
-                            onclick="showQualification()" id="qualificationTabBtn">Fresh</button>
+                    <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-general"
+                            aria-selected="true" id="popularNav" onclick="showPopular()">Popular</button>
                 </li>
-                <li class="nav-item">
-                    <button class="nav-link secondary-nav-link pt-0" data-bs-toggle="tab" data-bs-target="#projectsTab"
-                            type="button" role="tab" aria-controls="nav-changes" aria-selected="false"
-                            onclick="showProjects()" id="projectsTabBtn">My projects</button>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-changes"
+                            aria-selected="false" onclick="showMy()" id="myNav">My projects</button>
                 </li>
             </ul>
+        </div>
+
+        <div th:if="${projects.isEmpty()}" class="px-xl-5 mt-3">
+            <h5 class="alert alert-warning" th:text="#{project.no-projects-found}">No projects found.</h5>
         </div>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3 px-xl-5">
             <div th:each="project : ${projects}" class="col mb-4">
                 <div class="card h-100 project-card rounded-3">
                     <div class="ratio" style="--bs-aspect-ratio: 50%;">
-                        <img th:src="@{${project.preview.fileLink}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
+                        <img th:src="@{${project.preview.getSrc()}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
                     </div>
                     <div th:title="#{architecture}">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
@@ -143,5 +141,41 @@
         <script src="/js/common.js?v=1"></script>
         <script src="/js/index.js?v=1"></script>
         <script src="/js/share-project-button.js?v=1"></script>
+
+        <script>
+            let currentNav = null;
+            let urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has('popular')) {
+                currentNav = 'popularNav';
+            } else if (authUser != null && urlParams.has('by-author') && urlParams.get('by-author') ==  authUser.user.id) {
+                currentNav = 'myNav';
+            } else if (window.location.href === window.location.origin || window.location.href === window.location.origin + '/') {
+                currentNav = 'freshNav';
+            }
+
+            if (currentNav != null) {
+                $(`#${currentNav}`).addClass('active');
+            }
+
+
+            function showPopular() {
+                if (currentNav !== 'popularNav') {
+                    window.location.href = '?popular';
+                }
+            }
+
+            function showFresh() {
+                if (currentNav !== 'freshNav') {
+                    window.location.href = '/';
+                }
+            }
+
+            function showMy() {
+                if (currentNav !== 'myNav') {
+                    window.location.href = `?by-author=${authUser.user.id}`;
+                }
+            }
+        </script>
     </ownScript>
 </th:block>

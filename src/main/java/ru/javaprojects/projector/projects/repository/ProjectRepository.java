@@ -3,6 +3,7 @@ package ru.javaprojects.projector.projects.repository;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -30,8 +31,15 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @EntityGraph(attributePaths = {"architecture", "author", "likes"})
     List<Project> findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(List<Long> projectsIds);
 
+    @EntityGraph(attributePaths = {"architecture", "author", "likes", "technologies"})
+    List<Project> findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(List<Long> projectsIds);
+
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
-    List<Project> findAllWithAllInformationByVisibleIsTrue();
+    List<Project> findAllWithAllInformationByVisibleIsTrue(Sort sort);
+
+    @Query("SELECT p.id FROM Project p LEFT JOIN p.likes l LEFT JOIN p.comments c WHERE p.visible IS TRUE GROUP BY p.id " +
+            "ORDER BY (COUNT(DISTINCT l.id) + COUNT(DISTINCT c.id)) DESC")
+    List<Long> findAllIdsOrderByPopularity();
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(long userId);

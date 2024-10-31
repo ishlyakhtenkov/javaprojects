@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -62,13 +63,6 @@ public class ProjectService {
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
     }
 
-    @Transactional
-    public void addViewsToProject(long id) {
-        Project project = repository.findForAddViewsById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
-        project.setViews(project.getViews() + 1);
-    }
-
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithAllInformationAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
@@ -115,23 +109,34 @@ public class ProjectService {
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {
         List<Project> projects = visibleOnly ? repository.findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(userId) :
                 repository.findAllWithAllInformationByAuthor_Id(userId);
-        projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
-        projects.forEach(project -> {
-            Comparator<Technology> technologyComparator = Comparator
-                    .comparingInt((Technology t) -> t.getUsage().ordinal())
-                    .thenComparing(t -> t.getPriority().ordinal())
-                    .thenComparing(Comparator.naturalOrder());
-            TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
-            sortedTechnologies.addAll(project.getTechnologies());
-            project.setTechnologies(sortedTechnologies);
-        });
+        projects.sort(Comparator.comparingInt((Project p) -> p.getPriority().ordinal())
+                .thenComparing(Comparator.comparing(Project::getCreated).reversed()));
+        sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         return projectUtil.asPreviewTo(projects, commentsCountByProjects);
     }
 
-    public List<ProjectPreviewTo> getAllVisibleWithAllInformation() {
-        List<Project> projects = repository.findAllWithAllInformationByVisibleIsTrue();
-        projects.sort(Comparator.comparingInt(p -> p.getPriority().ordinal()));
+    public List<ProjectPreviewTo> getAllVisible(Sort sort) {
+        List<Project> projects = repository.findAllWithAllInformationByVisibleIsTrue(sort);
+        sortTechnologies(projects);
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+    }
+
+    public List<ProjectPreviewTo> getAllVisibleOrderByPopularity() {
+        List<Long> projectsIds = repository.findAllIdsOrderByPopularity();
+        Map<Long, Project> projectsByIds = repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds)
+                .stream()
+                .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
+        List<Project> projects = projectsIds.stream()
+                .map(projectsByIds::get)
+                .toList();
+        sortTechnologies(projects);
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+    }
+
+    private void sortTechnologies(List<Project> projects) {
         projects.forEach(project -> {
             Comparator<Technology> technologyComparator = Comparator
                     .comparingInt((Technology t) -> t.getUsage().ordinal())
@@ -141,8 +146,13 @@ public class ProjectService {
             sortedTechnologies.addAll(project.getTechnologies());
             project.setTechnologies(sortedTechnologies);
         });
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+    }
+
+    @Transactional
+    public void addViewsToProject(long id) {
+        Project project = repository.findForAddViewsById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
+        project.setViews(project.getViews() + 1);
     }
 
     @Transactional

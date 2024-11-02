@@ -31,6 +31,7 @@ public class HomeController {
         } else if (authorId != null) {
             log.info("Show home page with projects by author with id =" + authorId);
             projects = projectService.getAllByAuthor(authorId, true);
+            model.addAttribute("byAuthor", true);
         } else {
             log.info("Show home page");
             projects = projectService.getAllVisibleOrderByCreated(FIRST_PAGE).getContent();

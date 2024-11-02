@@ -18,7 +18,9 @@ function setTheme(themeSwitch) {
 }
 
 function changeLocale(locale) {
-    window.location.replace('?lang=' + locale);
+    let urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('lang', locale);
+    window.location.replace('?' + urlParams.toString());
 }
 
 function copyAppLink() {

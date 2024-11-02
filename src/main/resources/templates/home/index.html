@@ -150,7 +150,7 @@
                 currentNav = 'popularNav';
             } else if (authUser != null && urlParams.has('by-author') && urlParams.get('by-author') ==  authUser.user.id) {
                 currentNav = 'myNav';
-            } else if (window.location.href === window.location.origin || window.location.href === window.location.origin + '/') {
+            } else if (!urlParams.has('by-author')) {
                 currentNav = 'freshNav';
             }
 

@@ -44,4 +44,11 @@ public class JsonUtil {
         map.put(addName, addValue);
         return writeValue(map);
     }
+
+    public static <T> List<T> readContentFromPage(String json, Class<T> clazz) {
+        json = json.replace("{\"content\":", "");
+        int pageableIndex = json.indexOf(",\"pageable\"");
+        json = json.substring(0, pageableIndex);
+        return readValues(json, clazz);
+    }
 }

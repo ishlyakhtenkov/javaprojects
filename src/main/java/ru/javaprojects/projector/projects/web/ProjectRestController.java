@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +17,6 @@ import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.common.validation.ValidationUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
-import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 
@@ -88,5 +90,17 @@ public class ProjectRestController {
         log.info("get all projects by user with id={}", userId);
         boolean visibleOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
         return service.getAllByAuthor(userId, visibleOnly);
+    }
+
+    @GetMapping("/fresh")
+    public Page<ProjectPreviewTo> getFreshProjects(@PageableDefault Pageable pageable) {
+        log.info("get fresh projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
+        return service.getAllVisibleOrderByCreated(pageable);
+    }
+
+    @GetMapping("/popular")
+    public Page<ProjectPreviewTo> getPopularProjects(@PageableDefault Pageable pageable) {
+        log.info("get popular projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
+        return service.getAllVisibleOrderByPopularity(pageable);
     }
 }

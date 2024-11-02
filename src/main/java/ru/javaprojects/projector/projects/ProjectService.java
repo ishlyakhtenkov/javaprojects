@@ -2,10 +2,7 @@ package ru.javaprojects.projector.projects;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -34,6 +31,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -90,13 +88,13 @@ public class ProjectService {
 
     public Page<ProjectPreviewTo> getAll(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
-        return getAll(repository.findAllIdsOrderByName(pageable), pageable);
+        return getAll(repository.findAllIds(pageable), pageable);
     }
 
     public Page<ProjectPreviewTo> getAll(Pageable pageable, String keyword) {
         Assert.notNull(pageable, "pageable must not be null");
         Assert.notNull(keyword, "keyword must not be null");
-        return getAll(repository.findAllIdsByKeywordOrderByName(keyword, pageable), pageable);
+        return getAll(repository.findAllIdsByKeyword(keyword, pageable), pageable);
     }
 
     private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
@@ -116,16 +114,23 @@ public class ProjectService {
         return projectUtil.asPreviewTo(projects, commentsCountByProjects);
     }
 
-    public List<ProjectPreviewTo> getAllVisible(Sort sort) {
-        List<Project> projects = repository.findAllWithAllInformationByVisibleIsTrue(sort);
+    public Page<ProjectPreviewTo> getAllVisibleOrderByCreated(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<Long> projectsIds = repository.findAllIdsByVisibleIsTrue(PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(DESC, "created")));
+        List<Project> projects =
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdInOrderByCreatedDesc(projectsIds.getContent());
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
-    public List<ProjectPreviewTo> getAllVisibleOrderByPopularity() {
-        List<Long> projectsIds = repository.findAllIdsOrderByPopularity();
-        Map<Long, Project> projectsByIds = repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds)
+    public Page<ProjectPreviewTo> getAllVisibleOrderByPopularity(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<Long> projectsIds = repository.findAllIdsOrderByPopularity(pageable);
+        Map<Long, Project> projectsByIds = repository
+                .findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent())
                 .stream()
                 .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
         List<Project> projects = projectsIds.stream()
@@ -133,7 +138,8 @@ public class ProjectService {
                 .toList();
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
     private void sortTechnologies(List<Project> projects) {

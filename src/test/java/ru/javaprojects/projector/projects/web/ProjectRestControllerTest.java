@@ -15,11 +15,13 @@ import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.util.JsonUtil;
 import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.repository.CommentRepository;
 import ru.javaprojects.projector.projects.repository.LikeRepository;
 import ru.javaprojects.projector.projects.to.CommentTo;
+import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.projector.common.CommonTestData.HTML_TEXT;
-import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
+import static ru.javaprojects.projector.common.CommonTestData.*;
 import static ru.javaprojects.projector.common.util.JsonUtil.writeValue;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJECTS_URL_SLASH;
@@ -690,5 +691,55 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(PROJECT_PREVIEW_TO_MATCHER.contentJsonIgnoreFields(List.of(project1PreviewTo), "author.roles",
                         "author.password", "author.registered"));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void getFreshProjects() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "fresh")
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project2PreviewTo, project1PreviewTo),
+                "author.roles", "author.password", "author.registered");
+    }
+
+    @Test
+    void getFreshProjectsUnauthorized() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "fresh")
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project2PreviewTo, project1PreviewTo),
+                "author.roles", "author.password", "author.registered");
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void getPopularProjects() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "popular")
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project1PreviewTo, project2PreviewTo),
+                "author.roles", "author.password", "author.registered");
+    }
+
+    @Test
+    void getPopularProjectsUnauthorized() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "popular")
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project1PreviewTo, project2PreviewTo),
+                "author.roles", "author.password", "author.registered");
     }
 }

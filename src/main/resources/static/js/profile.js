@@ -110,7 +110,7 @@ function generateProjectCard(project) {
         .attr('src', `/${project.architecture.logo.fileLink}`)
         .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.name)
         .attr('width', '40').attr('height', '40').css('margin-top', '-20px').css('margin-right', '15px')
-        .css('z-index', '2').css('position', 'relative')
+        .css('z-index', '4').css('position', 'relative')
         .css('box-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19)')
         .on('mouseenter', function () {
             $(this).removeClass('p-1');
@@ -287,7 +287,7 @@ function generateProjectCard(project) {
 
     card.append(cardBody);
 
-    let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '1');
+    let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '1').css('min-height', '78px');
     let technologiesDiv = $('<div></div>');
     footer.append(technologiesDiv);
     project.technologies.forEach(technology => {

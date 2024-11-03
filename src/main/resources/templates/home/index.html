@@ -209,6 +209,13 @@
                             col.append(generateProjectCard(project));
                             projectsArea.append(col);
                         });
+                        $('.with-popover').on('shown.bs.popover', () => {
+                            $('.btn-close').on('click', () => $('.with-popover').popover('hide'));
+                        });
+                        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+                        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+                        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
                     } else {
                         observer.disconnect();
                         loadingDiv.remove();
@@ -362,7 +369,7 @@
 
                 card.append(cardBody);
 
-                let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '1');
+                let footer = $('<div></div>').addClass('card-footer').css('position', 'relative').css('z-index', '1').css('min-height', '78px');
                 let technologiesDiv = $('<div></div>');
                 footer.append(technologiesDiv);
                 project.technologies.forEach(technology => {

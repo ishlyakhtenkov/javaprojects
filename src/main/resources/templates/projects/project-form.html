@@ -346,6 +346,21 @@
                                 </span>
                             </div>
 
+                            <div class="mb-2 mt-3">
+                                <div class="form-floating">
+                                    <textarea id="tagsInput" th:field="*{tags}"
+                                              th:class="${#fields.hasErrors('tags')} ? 'form-control lh-base is-invalid' : 'form-control lh-base'"
+                                              placeholder="Tags" style="height: 70px; white-space: pre-wrap;"></textarea>
+                                    <label for="tagsInput" class="text-muted" th:text="#{project.tags}">Tags</label>
+                                </div>
+                                <span th:if="${#fields.hasErrors('tags')}">
+                                    <ul>
+                                        <li class="text-danger text-start" th:each="err : ${#fields.errors('tags')}"
+                                            th:text="${err}"/>
+                                    </ul>
+                                </span>
+                            </div>
+
                             <!-- Description block -->
 
                             <div class="fw-bold text-info-emphasis mb-2" th:text="#{project.description-elements}">Description elements</div>

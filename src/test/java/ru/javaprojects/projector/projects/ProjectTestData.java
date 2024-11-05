@@ -7,10 +7,7 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.projects.model.Comment;
-import ru.javaprojects.projector.projects.model.DescriptionElement;
-import ru.javaprojects.projector.projects.model.Like;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
@@ -73,6 +70,7 @@ public class ProjectTestData {
     public static final String LIKED_PARAM = "liked";
     public static final String TEXT_PARAM = "text";
     public static final String USER_ID_PARAM = "userId";
+    public static final String TAGS_PARAM = "tags";
 
     public static final long PROJECT1_ID = 100017;
     public static final long PROJECT2_ID = 100018;
@@ -107,8 +105,18 @@ public class ProjectTestData {
     public static final long PROJECT1_COMMENT4_LIKE2_ID = 100043;
     public static final long PROJECT2_COMMENT1_LIKE1_ID = 100044;
 
+    public static final long TAG1_ID = 100045;
+    public static final long TAG2_ID = 100046;
+    public static final long TAG3_ID = 100047;
+    public static final long TAG4_ID = 100048;
+
     public static final String UPDATED_COMMENT_TEXT = "updated comment text";
     public static final String PREPARED_UUID_STRING = "51bd80d0-d529-421e-a6fa-ae4f55d20d7b";
+
+    public static final Tag tag1 = new Tag(TAG1_ID, "spring");
+    public static final Tag tag2 = new Tag(TAG2_ID, "mvc");
+    public static final Tag tag3 = new Tag(TAG3_ID, "desktop");
+    public static final Tag tag4 = new Tag(TAG4_ID, "monolith");
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,
@@ -194,6 +202,7 @@ public class ProjectTestData {
         project1.setLikes(Set.of(project1Like1, project1Like2, project1Like3, project1Like4));
         project1.setComments(List.of(project1Comment1, project1Comment3, project1Comment4, project1Comment5,
                 project1Comment2, project1Comment6));
+        project1.setTags(Set.of(tag1, tag2, tag4));
     }
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
@@ -221,6 +230,7 @@ public class ProjectTestData {
         project2.getTechnologies().addAll(Set.of(technology1, technology2, technology3));
         project2.setLikes(Set.of(project2Like1, project2Like2));
         project2.setComments(List.of(project2Comment1));
+        project2.setTags(Set.of(tag1, tag2, tag3, tag4));
     }
 
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
@@ -274,7 +284,8 @@ public class ProjectTestData {
                         PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename())),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(), 0,
                 user, new TreeSet<>(Set.of(technology1, technology2, technology3)),
-                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), Set.of(), List.of());
+                new TreeSet<>(Set.of(getNewDe1(), getNewDe2(), getNewDe3())), Set.of(), List.of(),
+                Set.of(tag1, tag2, new Tag(null, "hibernate"), new Tag(null, "fullstack")));
     }
 
     public static MultiValueMap<String, String> getNewParams() {
@@ -305,6 +316,7 @@ public class ProjectTestData {
         params.add("descriptionElementTos[1].text", newDeTo2.getText());
         params.add("descriptionElementTos[2].type", newDeTo3.getType().name());
         params.add("descriptionElementTos[2].index", newDeTo3.getIndex().toString());
+        params.add(TAGS_PARAM, "spring mvc hibernate fullstack");
         return params;
     }
 
@@ -335,6 +347,7 @@ public class ProjectTestData {
         params.add("descriptionElementTos[1].text", HTML_TEXT);
         params.add("descriptionElementTos[2].type", newDeTo3.getType().name());
         params.add("descriptionElementTos[2].index", newDeTo3.getIndex().toString());
+        params.add(TAGS_PARAM, HTML_TEXT);
         return params;
     }
 
@@ -353,7 +366,7 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4, getUpdatedDe6(),
                 updatedDe5, getNewDeForProjectUpdate())), project1.getLikes(),
-                project1.getComments());
+                project1.getComments(), Set.of(tag1, tag2, new Tag(null, "hibernate")));
         updated.setCreated(project1.getCreated());
         return updated;
     }
@@ -372,7 +385,8 @@ public class ProjectTestData {
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4,
                 updatedDe6WhenProjectNameNotUpdated, updatedDe5,
-                newDeForProjectUpdateWithoutNameChanging)), project1.getLikes(), project1.getComments());
+                newDeForProjectUpdateWithoutNameChanging)), project1.getLikes(), project1.getComments(),
+                Set.of(tag1, tag2, new Tag(null, "hibernate")));
         updated.setCreated(project1.getCreated());
         return updated;
     }
@@ -391,7 +405,7 @@ public class ProjectTestData {
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
                 new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4, updatedDe6,
-                updatedDe5)), project1.getLikes(), project1.getComments());
+                updatedDe5)), project1.getLikes(), project1.getComments(), Set.of(tag1, tag2, new Tag(null, "hibernate")));
         updated.setCreated(project1.getCreated());
         return updated;
     }
@@ -439,6 +453,7 @@ public class ProjectTestData {
         params.add("descriptionElementTos[4].text", updatedDe5.getText());
         params.add("descriptionElementTos[5].type", getNewDeToForProjectUpdate().getType().name());
         params.add("descriptionElementTos[5].index", String.valueOf(getNewDeToForProjectUpdate().getIndex()));
+        params.add(TAGS_PARAM, "spring, mvc, hibernate");
         return params;
     }
 

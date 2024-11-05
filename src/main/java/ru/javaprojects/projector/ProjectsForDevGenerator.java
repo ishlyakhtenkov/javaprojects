@@ -14,7 +14,7 @@ import ru.javaprojects.projector.users.repository.UserRepository;
 
 import java.util.Set;
 
-@Component
+//@Component
 @Profile({"dev", "!test"})
 @AllArgsConstructor
 public class ProjectsForDevGenerator {

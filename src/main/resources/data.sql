@@ -1,5 +1,9 @@
+DELETE FROM comments;
+DELETE FROM likes;
 DELETE FROM description_elements;
 DELETE FROM project_technology;
+DELETE FROM project_tag;
+DELETE FROM tags;
 DELETE FROM projects;
 DELETE FROM architectures;
 DELETE FROM technologies;
@@ -113,3 +117,18 @@ VALUES (100032, 100001, 'COMMENT'),
        (100035, 100001, 'COMMENT'),
        (100035, 100002, 'COMMENT'),
        (100038, 100000, 'COMMENT');
+
+INSERT INTO tags(name)
+VALUES ('spring'),
+       ('mvc'),
+       ('desktop'),
+       ('monolith');
+
+INSERT INTO project_tag (project_id, tag_id)
+VALUES (100017, 100045),
+       (100017, 100046),
+       (100017, 100048),
+       (100018, 100045),
+       (100018, 100046),
+       (100018, 100047),
+       (100018, 100048);

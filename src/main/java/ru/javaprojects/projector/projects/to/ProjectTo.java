@@ -98,11 +98,17 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     @Valid
     private List<DescriptionElementTo> descriptionElementTos = new ArrayList<>();
 
+    @Nullable
+    @NoHtml
+    @Size(max = 4096)
+    private String tags;
+
     public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
                      LocalDate finished, Architecture architecture, String logoFileName, String logoFileLink,
                      String dockerComposeFileName, String dockerComposeFileLink, String previewFileName,
                      String previewFileLink, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
+                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos,
+                     String tags) {
         super(id);
         this.name = name;
         this.annotation = annotation;
@@ -120,6 +126,7 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.openApiUrl = openApiUrl;
         this.technologiesIds = technologiesIds;
         this.descriptionElementTos = descriptionElementTos;
+        this.tags = tags;
     }
 
     public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,

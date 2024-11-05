@@ -364,7 +364,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created", "tags.id");
+            assertTrue(created.getTags().contains(tag1));
+            assertTrue(created.getTags().contains(tag2));
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -399,7 +401,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created", "tags.id");
+            assertTrue(created.getTags().contains(tag1));
+            assertTrue(created.getTags().contains(tag2));
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -433,7 +437,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created", "tags.id");
+            assertTrue(created.getTags().contains(tag1));
+            assertTrue(created.getTags().contains(tag2));
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -470,7 +476,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
                 "author.registered", "descriptionElements.id", "descriptionElements.project",
-                "descriptionElements.image.fileLink", "created");
+                "descriptionElements.image.fileLink", "created", "tags.id");
+        assertTrue(created.getTags().contains(tag1));
+        assertTrue(created.getTags().contains(tag2));
         actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -519,7 +527,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, ANNOTATION_PARAM,
                         STARTED_PARAM, FINISHED_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
-                        "descriptionElementTos[1].text"));
+                        "descriptionElementTos[1].text", TAGS_PARAM));
         assertArrayEquals(getNewTo().getLogo().getInputtedFile().getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                         .get(PROJECT_TO_ATTRIBUTE)).getLogo().getInputtedFileBytes());
@@ -627,7 +635,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created", "tags.id");
+            assertTrue(created.getTags().contains(tag1));
+            assertTrue(created.getTags().contains(tag2));
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
@@ -728,7 +738,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "created", "tags.id");
+            assertTrue(created.getTags().contains(tag1));
+            assertTrue(created.getTags().contains(tag2));
             actions.andExpect(redirectedUrl(String.format(PROJECTS_DATA_URL, created.getId())));
             assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
@@ -758,8 +770,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -797,8 +811,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -837,8 +853,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -882,8 +900,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         new Object[]{updatedProject.getName()}, getLocale())));
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                "author.registered", "comments", "descriptionElements.project");
+                "author.registered", "comments", "descriptionElements.project", "tags.id");
         assertEquals(project1.getLikes(), project.getLikes());
+        assertTrue(project1.getTags().contains(tag1));
+        assertTrue(project1.getTags().contains(tag2));
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -918,8 +938,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -949,8 +971,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                "author.registered", "comments", "descriptionElements.project");
+                "author.registered", "comments", "descriptionElements.project", "tags.id");
         assertEquals(project1.getLikes(), project.getLikes());
+        assertTrue(project1.getTags().contains(tag1));
+        assertTrue(project1.getTags().contains(tag2));
         assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
         assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -1041,8 +1065,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));
@@ -1074,7 +1100,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(model().attributeHasFieldErrors(PROJECT_TO_ATTRIBUTE, NAME_PARAM, ANNOTATION_PARAM,
                         STARTED_PARAM, FINISHED_PARAM, DEPLOYMENT_URL_PARAM, BACKEND_SRC_URL_PARAM,
                         FRONTEND_SRC_URL_PARAM, OPEN_API_URL_PARAM, "descriptionElementTos[0].text",
-                        "descriptionElementTos[1].text"))
+                        "descriptionElementTos[1].text", TAGS_PARAM))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
         assertArrayEquals(UPDATED_LOGO_FILE.getBytes(),
                 ((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
@@ -1224,8 +1250,10 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
+            assertTrue(project1.getTags().contains(tag1));
+            assertTrue(project1.getTags().contains(tag2));
             assertTrue(Files.exists(Paths.get(updatedProject.getLogo().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getPreview().getFileLink())));
             assertTrue(Files.exists(Paths.get(updatedProject.getDockerCompose().getFileLink())));

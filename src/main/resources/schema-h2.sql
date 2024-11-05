@@ -1,5 +1,9 @@
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS description_elements;
 DROP TABLE IF EXISTS project_technology;
+DROP TABLE IF EXISTS project_tag;
+DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS architectures;
 DROP TABLE IF EXISTS technologies;
@@ -161,3 +165,19 @@ CREATE TABLE comments
     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
     FOREIGN KEY (parent_id)  REFERENCES comments (id) ON DELETE SET NULL
 );
+
+CREATE TABLE tags
+(
+    id   BIGINT      DEFAULT nextval('global_seq') PRIMARY KEY,
+    name VARCHAR(32) NOT NULL
+);
+CREATE UNIQUE INDEX tags_unique_name_idx ON tags (name);
+
+CREATE TABLE project_tag
+(
+    project_id BIGINT        NOT NULL,
+    tag_id     BIGINT        NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id)     REFERENCES tags (id)     ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX project_tag_unique_project_tag_idx ON project_tag (project_id, tag_id);

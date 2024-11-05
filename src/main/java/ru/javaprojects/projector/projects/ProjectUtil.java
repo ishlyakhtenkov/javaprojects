@@ -8,10 +8,8 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
-import ru.javaprojects.projector.projects.model.DescriptionElement;
-import ru.javaprojects.projector.projects.model.ElementType;
-import ru.javaprojects.projector.projects.model.Like;
-import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.*;
+import ru.javaprojects.projector.projects.repository.TagRepository;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
@@ -19,12 +17,10 @@ import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.common.util.AppUtil.createFile;
@@ -34,6 +30,7 @@ import static ru.javaprojects.projector.projects.ProjectService.*;
 @RequiredArgsConstructor
 public class ProjectUtil {
     private final TechnologyService technologyService;
+    private final TagRepository tagRepository;
 
     @Value("${content-path.projects}")
     private String projectFilesPath;
@@ -53,11 +50,15 @@ public class ProjectUtil {
 
         String dockerComposeFileName = project.getDockerCompose() != null ? project.getDockerCompose().getFileName() : null;
         String dockerComposeFileLink = project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
+
+        String tags = project.getTags().isEmpty() ? null : project.getTags().stream()
+                .map(Tag::getName).collect(Collectors.joining(" "));
         return new ProjectTo(project.getId(), project.getName(), project.getAnnotation(), project.isVisible(),
                 project.getPriority(), project.getStarted(), project.getFinished(), project.getArchitecture(),
                 project.getLogo().getFileName(), project.getLogo().getFileLink(), dockerComposeFileName, dockerComposeFileLink,
                 project.getPreview().getFileName(), project.getPreview().getFileLink(), project.getDeploymentUrl(),
-                project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos);
+                project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos,
+                tags);
     }
 
     public ProjectPreviewTo asPreviewTo(Project project, int commentsCount) {
@@ -87,6 +88,9 @@ public class ProjectUtil {
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
         projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));
+        if (projectTo.getTags() != null && !projectTo.getTags().isBlank()) {
+            parseTags(projectTo.getTags()).forEach(project::addTag);
+        }
         return project;
     }
 
@@ -100,6 +104,28 @@ public class ProjectUtil {
         }
         return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
                 deTo.getImage() != null ? new File(deTo.getImage().getFileName(), deTo.getImage().getFileLink()) : null);
+    }
+
+    private Set<Tag> parseTags(String tagsString) {
+        tagsString = tagsString.toLowerCase();
+        Set<String> tagNames;
+        if (tagsString.contains(",")) {
+            tagNames = Stream.of(tagsString.split(",")).map(String::trim).collect(Collectors.toSet());
+        } else {
+            tagNames = Stream.of(tagsString.split(" ")).map(String::trim).collect(Collectors.toSet());
+        }
+        Set<Tag> dbTags = tagRepository.findAllByNameIn(tagNames);
+        Set<String> dbTagsNames = dbTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+        List<Tag> newTags = tagNames.stream()
+                .filter(tag -> !dbTagsNames.contains(tag))
+                .map(tag -> new Tag(null, tag))
+                .toList();
+        Set<Tag> tags = new HashSet<>();
+        tags.addAll(dbTags);
+        tags.addAll(newTags);
+        return tags;
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -135,6 +161,16 @@ public class ProjectUtil {
                 .filter(HasId::isNew)
                 .map(deTo -> createNewFromTo(deTo, project))
                 .forEach(project::addDescriptionElement);
+
+        if (projectTo.getTags() == null || projectTo.getTags().isBlank()) {
+            project.getTags().clear();
+        } else {
+            Set<Tag> projectToTags = parseTags(projectTo.getTags());
+            project.getTags().removeIf(tag -> !projectToTags.contains(tag));
+            projectToTags.stream()
+                    .filter(tag -> !project.getTags().contains(tag))
+                    .forEach(project::addTag);
+        }
 
         if (projectTo.getLogo() != null && !projectTo.getLogo().isEmpty()) {
             project.setLogo(createFile(projectTo::getLogo, projectFilesPath, authorEmail + "/"  + projectTo.getName() + LOGO_DIR));

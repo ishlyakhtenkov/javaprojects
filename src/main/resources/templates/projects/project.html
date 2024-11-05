@@ -152,6 +152,11 @@
                             </div>
                         </div>
 
+                        <div th:if="${!project.tags.isEmpty()}" class="mt-4">
+                            <a th:each="tag : ${project.tags}" class="text-decoration-none me-2" th:text="'#' + ${tag.name}"
+                               th:href="@{'/tag/' + ${tag.id}}"></a>
+                        </div>
+
                         <div class="row mt-3">
                             <div class="col-8">
                                 <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"

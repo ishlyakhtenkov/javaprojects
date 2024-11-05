@@ -44,7 +44,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByAuthor_Id(long userId);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author", "descriptionElements"})
+    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author", "descriptionElements", "tags"})
     Optional<Project> findWithAllInformationAndDescriptionById(long id);
 
     @EntityGraph(attributePaths = {"author", "descriptionElements"})

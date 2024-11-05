@@ -154,6 +154,13 @@ public class Project extends BaseEntity implements HasIdAndName {
     @OneToMany(mappedBy = "projectId",  fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "project_tag",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
     public Project(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
                    LocalDate finished, Architecture architecture, File logo, File dockerCompose, File preview,
                    String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl, int views,
@@ -190,16 +197,21 @@ public class Project extends BaseEntity implements HasIdAndName {
                    LocalDate started, LocalDate finished, Architecture architecture, File logo,
                    File dockerCompose, File preview, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
                    String openApiUrl, int views, User author, Set<Technology> technologies,
-                   Set<DescriptionElement> descriptionElements, Set<Like> likes, List<Comment> comments) {
+                   Set<DescriptionElement> descriptionElements, Set<Like> likes, List<Comment> comments, Set<Tag> tags) {
         this(id, name, annotation, visible, priority, started, finished, architecture, logo, dockerCompose,
                 preview, deploymentUrl, backendSrcUrl, frontendSrcUrl, openApiUrl, views, author, technologies);
         this.descriptionElements = descriptionElements;
         this.likes = likes;
         this.comments = comments;
+        this.tags = tags;
     }
 
     public void addTechnology(Technology technology) {
         technologies.add(technology);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
     }
 
     public void addDescriptionElement(DescriptionElement element) {

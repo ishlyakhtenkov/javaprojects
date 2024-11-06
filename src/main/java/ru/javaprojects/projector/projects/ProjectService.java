@@ -142,6 +142,19 @@ public class ProjectService {
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
+    public Page<ProjectPreviewTo> getAllVisibleByTagOrderByCreated(String tag, Pageable pageable) {
+        Assert.notNull(tag, "tag must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<Long> projectsIds = repository.findAllIdsByTag(tag, PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(), Sort.by(DESC, "created")));
+        List<Project> projects =
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdInOrderByCreatedDesc(projectsIds.getContent());
+        sortTechnologies(projects);
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+    }
+
     private void sortTechnologies(List<Project> projects) {
         projects.forEach(project -> {
             Comparator<Technology> technologyComparator = Comparator

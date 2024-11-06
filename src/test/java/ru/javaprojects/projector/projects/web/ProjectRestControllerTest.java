@@ -742,4 +742,31 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
         PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project1PreviewTo, project2PreviewTo),
                 "author.roles", "author.password", "author.registered");
     }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void getProjectsByTag() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-tag")
+                .param(TAG_PARAM, tag1.getName())
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project2PreviewTo, project1PreviewTo),
+                "author.roles", "author.password", "author.registered");
+    }
+
+    @Test
+    void getProjectsByTagUnauthorized() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-tag")
+                .param(TAG_PARAM, tag1.getName())
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProjectPreviewTo> projects =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProjectPreviewTo.class);
+        PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects, List.of(project2PreviewTo, project1PreviewTo),
+                "author.roles", "author.password", "author.registered");
+    }
 }

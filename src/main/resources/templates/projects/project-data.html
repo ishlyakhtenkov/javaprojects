@@ -151,7 +151,7 @@
                         <div class="border rounded-2 px-3 pb-3 mt-3">
                             <div class="text-start text-muted tiny" th:text="#{project.tags}">Tags</div>
                             <a th:each="tag : ${project.tags}" class="text-decoration-none me-2" th:text="'#' + ${tag.name}"
-                               th:href="@{'/tag/' + ${tag.id}}"></a>
+                               th:href="@{'/tags/' + ${tag.name}}"></a>
                         </div>
 
                         <!-- Description block -->

@@ -117,6 +117,33 @@ class HomeControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(USER_MAIL)
+    @SuppressWarnings("unchecked")
+    void showHomePageWithProjectsByTag() throws Exception {
+        perform(MockMvcRequestBuilders.get("/tags/spring"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void showHomePageWithProjectsByTagUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get("/tags/spring"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
+                .andExpect(view().name("home/index"))
+                .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
+                        .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
+                                "author.roles", "author.password", "author.registered"));
+    }
+
+    @Test
     void showAboutPageUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get("/about"))
                 .andExpect(status().isOk())

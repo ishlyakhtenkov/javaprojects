@@ -154,7 +154,7 @@
 
                         <div th:if="${!project.tags.isEmpty()}" class="mt-4">
                             <a th:each="tag : ${project.tags}" class="text-decoration-none me-2" th:text="'#' + ${tag.name}"
-                               th:href="@{'/tag/' + ${tag.id}}"></a>
+                               th:href="@{'/tags/' + ${tag.name}}"></a>
                         </div>
 
                         <div class="row mt-3">

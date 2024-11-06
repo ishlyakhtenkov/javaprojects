@@ -103,4 +103,10 @@ public class ProjectRestController {
         log.info("get popular projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
         return service.getAllVisibleOrderByPopularity(pageable);
     }
+
+    @GetMapping("/by-tag")
+    public Page<ProjectPreviewTo> getPopularProjects(@RequestParam String tag, @PageableDefault Pageable pageable) {
+        log.info("get projects by tag={} (pageNumber={}, pageSize={})", tag, pageable.getPageNumber(), pageable.getPageSize());
+        return service.getAllVisibleByTagOrderByCreated(tag, pageable);
+    }
 }

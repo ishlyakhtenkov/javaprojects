@@ -57,4 +57,7 @@ public interface ProjectRepository extends NamedRepository<Project> {
 
     @EntityGraph(attributePaths = "author")
     Optional<Project> findWithAuthorById(long id);
+
+    @Query("SELECT p.id FROM Project p LEFT JOIN p.tags t WHERE p.visible = TRUE AND UPPER(t.name) = UPPER(:tag)")
+    Page<Long> findAllIdsByTag(String tag, Pageable pageable);
 }

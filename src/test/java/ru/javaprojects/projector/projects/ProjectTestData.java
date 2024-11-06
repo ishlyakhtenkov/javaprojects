@@ -71,6 +71,7 @@ public class ProjectTestData {
     public static final String TEXT_PARAM = "text";
     public static final String USER_ID_PARAM = "userId";
     public static final String TAGS_PARAM = "tags";
+    public static final String TAG_PARAM = "tag";
 
     public static final long PROJECT1_ID = 100017;
     public static final long PROJECT2_ID = 100018;

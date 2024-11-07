@@ -36,7 +36,7 @@ public class ProjectManagementController {
             }
             log.info("get projects (pageNumber={}, pageSize={}, keyword={})", pageable.getPageNumber(),
                     pageable.getPageSize(), keyword);
-            projects = service.getAll(pageable, keyword.trim());
+            projects = service.getAll(keyword.trim(), pageable);
         } else  {
             log.info("get projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
             projects = service.getAll(pageable);

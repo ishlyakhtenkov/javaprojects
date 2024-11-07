@@ -16,6 +16,7 @@ enMessages.set('user.failed-to-reset-password', 'Failed to reset password');
 enMessages.set('user.failed-to-enable', 'Failed to enable user "{0}"');
 enMessages.set('user.failed-to-disable', 'Failed to disable user "{0}"');
 enMessages.set('user.failed-to-delete', 'Failed to delete user "{0}"');
+enMessages.set('user.failed-to-get-profiles', 'Failed to get users');
 
 enMessages.set('comment.comments', 'Comments');
 enMessages.set('comment.leave-comment-here', 'Leave a comment here');
@@ -74,6 +75,7 @@ enMessages.set('info.switch-to-light-theme', 'Switch to light theme');
 enMessages.set('info.switch-to-dark-theme', 'Switch to dark theme');
 enMessages.set('info.link-copied', 'Link copied');
 enMessages.set('info.app-description', 'A platform for viewing and discussing projects developed by users.');
+enMessages.set('info.failed-to-get-tags', 'Failed to get tags');
 
 enMessages.set('cancel', 'Cancel');
 enMessages.set('like', 'Like');
@@ -82,6 +84,7 @@ enMessages.set('delete', 'Delete');
 enMessages.set('change-image', 'Change image');
 enMessages.set('choose-image', 'Choose image');
 enMessages.set('logo', 'Logo');
+enMessages.set('login', 'Login');
 enMessages.set('login', 'Login');
 
 
@@ -100,6 +103,7 @@ ruMessages.set('user.failed-to-reset-password', 'Не удалось сброс�
 ruMessages.set('user.failed-to-enable', 'Не удалось активировать пользователя "{0}"');
 ruMessages.set('user.failed-to-disable', 'Не удалось заблокировать пользователя "{0}"');
 ruMessages.set('user.failed-to-delete', 'Не удалось удалить пользователя "{0}"');
+ruMessages.set('user.failed-to-get-profiles', 'Не удалось загрузить профили');
 
 ruMessages.set('comment.comments', 'Комментарии');
 ruMessages.set('comment.leave-comment-here', 'Оставьте комментарий здесь');
@@ -158,6 +162,7 @@ ruMessages.set('info.switch-to-light-theme', 'Включить светлую т
 ruMessages.set('info.switch-to-dark-theme', 'Включить темную тему');
 ruMessages.set('info.link-copied', 'Ссылка скопирована');
 ruMessages.set('info.app-description', 'Платформа для просмотра и обсуждения проектов, разработанных пользователями.');
+ruMessages.set('info.failed-to-get-tags', 'Не удалось загрузить тэги');
 
 
 ruMessages.set('cancel', 'Отмена');

@@ -16,15 +16,15 @@
             <ul class="nav nav-underline" id="navs">
                 <li class="nav-item">
                     <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-changes"
-                            aria-selected="false" onclick="showFresh()" id="freshNav">Fresh</button>
+                            aria-selected="false" onclick="showFresh()" id="freshNav" th:text="#{fresh}">Fresh</button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-general"
-                            aria-selected="true" id="popularNav" onclick="showPopular()">Popular</button>
+                            aria-selected="true" id="popularNav" onclick="showPopular()" th:text="#{popular}">Popular</button>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
                     <button class="nav-link secondary-nav-link pt-0" type="button" role="tab" aria-controls="nav-changes"
-                            aria-selected="false" onclick="showMy()" id="myNav">My projects</button>
+                            aria-selected="false" onclick="showMy()" id="myNav" th:text="#{my-projects}">My projects</button>
                 </li>
             </ul>
         </div>
@@ -132,7 +132,7 @@
             </div>
         </div>
 
-        <div th:if="${hasMoreProjects != null}" class="text-center mb-3" id="loading">
+        <div th:if="${param.get('by-author') == null && projects.size() == 9}" class="text-center mb-3" id="loading">
             <div class="spinner-border">
                 <span class="visually-hidden">Loading...</span>
             </div>

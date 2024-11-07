@@ -39,12 +39,12 @@ public class ProfileTo extends BaseTo implements HasIdAndEmail {
     @ImageFile
     private FileTo avatar;
 
-    public ProfileTo(Long id, String email, String name, String information, String avatarFileName, String avatarFileLink) {
+    public ProfileTo(Long id, String email, String name, String information, FileTo avatar) {
         super(id);
         this.email = email;
         this.name = name;
         this.information = information;
-        this.avatar = new FileTo(avatarFileName, avatarFileLink, null, null);
+        this.avatar = avatar;
     }
 
     @Override

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,8 @@ import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping(value = ProjectController.PROJECTS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,9 +96,10 @@ public class ProjectRestController {
     }
 
     @GetMapping("/fresh")
-    public Page<ProjectPreviewTo> getFreshProjects(@PageableDefault Pageable pageable) {
+    public Page<ProjectPreviewTo> getFreshProjects(@PageableDefault @SortDefault(value = "created", direction = DESC)
+                                                       Pageable pageable) {
         log.info("get fresh projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisibleOrderByCreated(pageable);
+        return service.getAllVisible(pageable);
     }
 
     @GetMapping("/popular")
@@ -105,8 +109,17 @@ public class ProjectRestController {
     }
 
     @GetMapping("/by-tag")
-    public Page<ProjectPreviewTo> getPopularProjects(@RequestParam String tag, @PageableDefault Pageable pageable) {
+    public Page<ProjectPreviewTo> getProjectsByTag(@RequestParam String tag,
+                                                   @PageableDefault @SortDefault(value = "created", direction = DESC)
+                                                   Pageable pageable) {
         log.info("get projects by tag={} (pageNumber={}, pageSize={})", tag, pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisibleByTagOrderByCreated(tag, pageable);
+        return service.getAllVisibleByTag(tag.trim(), pageable);
+    }
+
+    @GetMapping("/by-keyword")
+    public Page<ProjectPreviewTo> getProjectsByKeyword(@RequestParam String keyword,
+                                                   @PageableDefault @SortDefault(value = "name") Pageable pageable) {
+        log.info("get projects by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(), pageable.getPageSize());
+        return service.getAllVisibleByKeyword(keyword.trim(), pageable);
     }
 }

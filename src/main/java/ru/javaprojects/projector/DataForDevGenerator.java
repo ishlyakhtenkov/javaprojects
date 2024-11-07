@@ -8,15 +8,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.model.Tag;
 import ru.javaprojects.projector.projects.repository.ProjectRepository;
+import ru.javaprojects.projector.projects.repository.TagRepository;
+import ru.javaprojects.projector.users.model.Role;
+import ru.javaprojects.projector.users.model.User;
+import ru.javaprojects.projector.users.repository.UserRepository;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @Profile({"dev", "!test"})
 @AllArgsConstructor
-public class ProjectsForDevGenerator {
+public class DataForDevGenerator {
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final TagRepository tagRepository;
 
     @EventListener
     @Transactional
@@ -30,6 +38,15 @@ public class ProjectsForDevGenerator {
                     null, null, null, 0, dbProject.getAuthor(), new HashSet<>(dbProject.getTechnologies()),
                     new HashSet<>(dbProject.getTags()));
             projectRepository.save(project);
+        }
+
+        for (int i = 0; i < 50; i++) {
+            User user = new User(null, "testUser" + i + "@gmail.com", "Jack Robert " + i, "password", true, Set.of(Role.USER));
+            userRepository.save(user);
+        }
+
+        for (int i = 0; i < 50; i++) {
+            tagRepository.save(new Tag(null, "spring-" + i));
         }
     }
 }

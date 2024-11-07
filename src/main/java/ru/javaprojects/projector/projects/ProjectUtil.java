@@ -70,7 +70,7 @@ public class ProjectUtil {
                 project.getTechnologies(), project.getViews(), likesUserIds, commentsCount);
     }
 
-    public List<ProjectPreviewTo> asPreviewTo(List<Project> projects, Map<Long, Integer> commentsCount) {
+    public List<ProjectPreviewTo> asPreviewTos(List<Project> projects, Map<Long, Integer> commentsCount) {
         return projects.stream()
                 .map(project -> asPreviewTo(project, commentsCount.get(project.getId())))
                 .toList();

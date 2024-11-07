@@ -51,7 +51,7 @@ public class UserManagementController {
             }
             log.info("get users by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(),
                     pageable.getPageSize());
-            users = service.getAll(pageable, keyword.trim());
+            users = service.getAll(keyword.trim(), pageable);
         } else  {
             log.info("get users (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
             users = service.getAll(pageable);

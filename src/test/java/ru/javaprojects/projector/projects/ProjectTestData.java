@@ -39,10 +39,14 @@ public class ProjectTestData {
             MatcherFactory.usingIgnoringFieldsComparator(Comment.class, "created", "updated", "author.password",
                     "author.registered", "author.roles");
 
+    public static final MatcherFactory.Matcher<Tag> TAG_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Tag.class);
+
     public static final String PROJECTS_TEST_DATA_FILES_PATH = "src/test/test-data-files/projects";
 
     public static final String PROJECT_ATTRIBUTE = "project";
     public static final String PROJECTS_ATTRIBUTE = "projects";
+    public static final String PROJECTS_PAGE_ATTRIBUTE = "projectsPage";
+    public static final String TAGS_PAGE_ATTRIBUTE = "tagsPage";
     public static final String PROJECT_TO_ATTRIBUTE = "projectTo";
     public static final String HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE = "hasFrontendTechnologies";
     public static final String LIKED_ATTRIBUTE = "liked";

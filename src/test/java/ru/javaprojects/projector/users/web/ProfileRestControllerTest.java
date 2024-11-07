@@ -7,33 +7,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.mail.MailSender;
+import ru.javaprojects.projector.common.util.JsonUtil;
 import ru.javaprojects.projector.users.error.UserDisabledException;
 import ru.javaprojects.projector.users.model.token.PasswordResetToken;
 import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
+import ru.javaprojects.projector.users.to.ProfileTo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
+import static ru.javaprojects.projector.common.CommonTestData.getPageableParams;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.service.TokenService.CONFIRMATION_LINK_TEMPLATE;
+import static ru.javaprojects.projector.users.util.UserUtil.asProfileTo;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
+    private static final String PROFILE_URL_SLASH = PROFILE_URL + "/";
     private static final String PROFILE_FORGOT_PASSWORD_URL = PROFILE_URL + "/forgot-password";
     private static final String PROFILE_CHANGE_PASSWORD_URL = PROFILE_URL + "/change-password";
     
@@ -191,5 +198,30 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.invalid_params").value("Password size must be between 5 and 32"))
                 .andExpect(problemInstance(PROFILE_CHANGE_PASSWORD_URL));
         assertFalse(PASSWORD_ENCODER.matches(INVALID_PASSWORD, userService.get(USER_ID).getPassword()));
+    }
+
+    @Test
+    @WithUserDetails(USER_MAIL)
+    void getProfilesByKeyword() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROFILE_URL_SLASH + "by-keyword")
+                .param(KEYWORD_PARAM, admin.getName())
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProfileTo> profiles =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProfileTo.class);
+        PROFILE_TO_MATCHER.assertMatch(profiles, List.of(asProfileTo(admin)));
+    }
+
+    @Test
+    void getProfilesByKeywordUnauthorized() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROFILE_URL_SLASH + "by-keyword")
+                .param(KEYWORD_PARAM, admin.getName())
+                .params(getPageableParams()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        List<ProfileTo> profiles =
+                JsonUtil.readContentFromPage(actions.andReturn().getResponse().getContentAsString(), ProfileTo.class);
+        PROFILE_TO_MATCHER.assertMatch(profiles, List.of(asProfileTo(admin)));
     }
 }

@@ -51,6 +51,7 @@ public class UserTestData {
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String ONLINE_USERS_IDS_ATTRIBUTE = "onlineUsersIds";
+    public static final String PROFILES_PAGE_ATTRIBUTE = "profilesPage";
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";

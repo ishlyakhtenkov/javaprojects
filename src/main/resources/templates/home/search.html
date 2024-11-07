@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!--/*@thymesVar id="projectsPage" type="org.springframework.data.domain.Page"*/-->
+<!--/*@thymesVar id="profilesPage" type="org.springframework.data.domain.Page"*/-->
+<!--/*@thymesVar id="tagsPage" type="org.springframework.data.domain.Page"*/-->
+<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.to.ProjectPreviewTo"*/-->
+
+<th:block th:replace="~{fragments/main::page(title=#{search},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
+    <appMain>
+        <div class="px-xl-5">
+            <button type="button" class="with-popover btn btn-outline-success float-end" data-bs-toggle="popover" data-bs-trigger="manual"
+                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
+                    th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
+                    data-bs-html="true" onclick="showAddProjectPage($(this))">
+                <i class="fa-solid fa-plus me-1"></i><span th:text="#{project.add-new}"></span>
+            </button>
+            <div class="fw-bold h5 pt-1" th:text="#{search.results} + ': ' + ${param.keyword}">Search results for:</div>
+        </div>
+
+        <div th:if="${profilesPage.getContent().isEmpty() && projectsPage.getContent().isEmpty() &&
+                        tagsPage.getContent().isEmpty()}" class="px-xl-5 mt-3">
+            <h5 class="alert alert-warning" th:text="#{search.nothing-found} + '.'">Nothing found.</h5>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center mt-3">
+            <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+                <div th:if="${!profilesPage.getContent().isEmpty()}" class="card shadow" id="foundProfiles">
+                    <div class="card-header h5" th:text="#{profile.profiles}">Profiles</div>
+                    <div class="card-body pb-0">
+                        <div id="profilesArea">
+                            <div th:each="profile : ${profilesPage.getContent()}" class="d-flex profile-div mb-3">
+                                <a th:href="@{'/profile/' + ${profile.id} + '/view'}"
+                                   class="text-decoration-none link-body-emphasis" th:title="${profile.name}">
+                                    <img class="rounded-circle border"
+                                         th:src="@{${profile.avatar != null ?
+                                                 profile.avatar.getSrc() : '/images/no-avatar.svg'}}"
+                                         width="40" height="40" style="object-fit: cover"
+                                         onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')" />
+                                </a>
+                                <div class="ms-2">
+                                    <a th:href="@{'/profile/' + ${profile.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                        <span class="h6" th:text="${profile.name}">Profile name</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:if="${profilesPage.getTotalElements() > 9}" type="button" class="icon-link text-decoration-none mb-3"
+                           onclick="loadMoreProfiles()" id="loadMoreProfilesBtn">
+                            <span th:text="#{search.show-more}">Show more</span>
+                            <i class="fa-solid fa-angle-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div th:if="${!projectsPage.getContent().isEmpty()}" class="card shadow mt-3" id="foundProjects">
+                    <div class="card-header h5" th:text="#{project.projects}">Projects</div>
+                    <div class="card-body pb-0 row justify-content-center">
+                        <div id="projectsArea" class="col-md-8">
+                            <div th:each="project : ${projectsPage.getContent()}" class="mb-3">
+                                <div class="card project-card rounded-3">
+                                    <div class="ratio" style="--bs-aspect-ratio: 50%;">
+                                        <img th:src="@{${project.preview.getSrc()}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
+                                    </div>
+                                    <div th:title="#{architecture}">
+                                        <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
+                                             class="float-end bg-light-subtle border border-light-subtle rounded-circle p-1"
+                                             data-bs-toggle="tooltip" th:title="${project.architecture.name}"
+                                             onmouseenter="$(this).removeClass('p-1')"
+                                             onmouseleave="$(this).addClass('p-1')"
+                                             width="40" height="40"
+                                             style="margin-top: -20px; margin-right: 15px; z-index: 2; position: relative;
+                             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);"/>
+                                    </div>
+
+                                    <div class="card-body d-flex flex-column pb-0" style="margin-top: -35px;">
+                                        <div class="d-flex">
+                                            <div class="pt-3 pb-2 ps-3" style="position: relative; z-index: 2; margin-left: -16px;">
+                                                <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                                    <img class="rounded-circle border" th:src="@{${project.author.avatar != null ?
+                                        project.author.avatar.getSrc() : '/images/no-avatar.svg'}}" width="40" height="40"
+                                                         style="object-fit: cover" th:title="${project.author.name}"
+                                                         onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')" />
+                                                </a>
+                                            </div>
+                                            <div class="pt-3 pb-2 ps-2 pe-3" style="position: relative; z-index: 2;">
+                                                <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                                    <span class="h6" th:text="${project.author.name}" >Author name</span>
+                                                </a>
+                                                <div class="tiny text-secondary-emphasis" style="margin-top: -3px;"
+                                                     th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}">Created</div>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title" th:text="${project.name}">Title</h5>
+                                        <span class="card-text" th:text="${project.annotation}">Annotation</span>
+                                        <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
+                                            <div class="col-8">
+                                                <a th:href="@{'/projects/' + ${project.id} + '/view#comments'}" type="button" th:title="#{comment.comments}"
+                                                   class="btn-link text-decoration-none link-info">
+                                                    <i class="fa-regular fa-comments"></i>
+                                                    <span class="text-secondary-emphasis small" th:text="${project.commentsCount}"></span>
+                                                </a>
+                                                <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
+                                                   class="with-popover btn-link link-danger text-decoration-none ms-3"
+                                                   data-bs-toggle="popover" data-bs-trigger="manual"
+                                                   th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
+                                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
+                                                    <i class="fa-heart" th:title="#{like}"
+                                                       th:classappend="${authUser == null || !project.likesUserIds.contains(authUser.id) ?
+                                            'fa-regular' : 'fa-solid'}"></i>
+                                                    <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likesUserIds.size()}"></span>
+                                                </a>
+                                                <a type="button"
+                                                   class="btn-link link-primary text-decoration-none ms-3"
+                                                   th:title="#{project.share}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa-solid fa-share"></i>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li><button type="button" class="dropdown-item" th:onclick="|copyLink('${project.id}')|">
+                                                        <i class="fa-solid fa-link fa-fw"></i><span class="ms-2" th:text="#{info.share.copy-link}"></span>
+                                                    </button></li>
+                                                    <li><button type="button" class="dropdown-item" onclick="shareOnVk($(this))"
+                                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                                        <i class="fa-brands fa-vk fa-fw"></i><span class="ms-2" th:text="#{info.share.vk}"></span>
+                                                    </button></li>
+                                                    <li><button type="button" class="dropdown-item" onclick="shareOnTelegram($(this))"
+                                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                                        <i class="fa-brands fa-telegram fa-fw"></i><span class="ms-2" th:text="#{info.share.telegram}"></span>
+                                                    </button></li>
+                                                    <li><button type="button" class="dropdown-item" onclick="shareOnWhatsApp($(this))"
+                                                                th:data-id="${project.id}" th:data-name="${project.name}">
+                                                        <i class="fa-brands fa-whatsapp fa-fw"></i><span class="ms-2" th:text="#{info.share.whatsapp}"></span>
+                                                    </button></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <i class="fa-regular fa-eye" style="color: #a1a0a0;"></i>
+                                                <span class="text-secondary-emphasis small" th:text="${project.views}"></span>
+                                            </div>
+                                        </div>
+                                        <a th:href="@{'/projects/' + ${project.id} + '/view'}" class="stretched-link"></a>
+                                    </div>
+                                    <div class="card-footer" style="height: 78px; position: relative; z-index: 1">
+                                        <div class="text-truncate-container">
+                                            <a th:each="technology : ${project.technologies}" th:href="@{${technology.url}}"
+                                               type="button" target="_blank" class="me-1 mb-1" style="text-decoration: none"
+                                               th:title="${technology.name}">
+                                                <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
+                                                     width="24" height="24" onmouseenter="$(this).addClass('opacity-75')"
+                                                     onmouseleave="$(this).removeClass('opacity-75')" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a th:if="${projectsPage.getTotalElements() > 9}" type="button" class="icon-link text-decoration-none mb-3"
+                           onclick="loadMoreProjects()" id="loadMoreProjectsBtn">
+                            <span th:text="#{search.show-more}">Show more</span>
+                            <i class="fa-solid fa-angle-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div th:if="${!tagsPage.getContent().isEmpty()}" class="card shadow" id="foundTags">
+                    <div class="card-header h5" th:text="#{project.tags}">Tags</div>
+                    <div class="card-body pb-0">
+                        <div id="tagsArea">
+                            <div th:each="tag : ${tagsPage.getContent()}" class="tag-div mb-3">
+                                <a class="text-decoration-none" th:text="'#' + ${tag.name}"
+                                   th:href="@{'/tags/' + ${tag.name}}"></a>
+                            </div>
+                        </div>
+                        <a th:if="${tagsPage.getTotalElements() > 9}" type="button" class="icon-link text-decoration-none mb-3"
+                           onclick="loadMoreTags()" id="loadMoreTagsBtn">
+                            <span th:text="#{search.show-more}">Show more</span>
+                            <i class="fa-solid fa-angle-down"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </appMain>
+
+    <ownScript>
+        <script>
+            sessionStorage.removeItem('prevUrl');
+            sessionStorage.removeItem('projectDataPagePrevUrl');
+        </script>
+        <script src="/js/common.js?v=1"></script>
+        <script src="/js/share-project-button.js?v=1"></script>
+        <script src="/js/search.js?v=1"></script>
+    </ownScript>
+</th:block>

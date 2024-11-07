@@ -3,10 +3,13 @@ package ru.javaprojects.projector.users.util;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 import ru.javaprojects.projector.common.HasEmailAndPassword;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.UserTo;
+
+import java.util.List;
 
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
@@ -28,8 +31,15 @@ public class UserUtil {
     public static ProfileTo asProfileTo(User user) {
         String avatarFileName = user.getAvatar() != null ? user.getAvatar().getFileName() : null;
         String avatarFileLink = user.getAvatar() != null ? user.getAvatar().getFileLink() : null;
-        return new ProfileTo(user.getId(), user.getEmail(), user.getName(), user.getInformation(), avatarFileName,
-                avatarFileLink);
+        FileTo avatar = (avatarFileName == null || avatarFileLink == null) ? null :
+                new FileTo(avatarFileName, avatarFileLink, null, null);
+        return new ProfileTo(user.getId(), user.getEmail(), user.getName(), user.getInformation(), avatar);
+    }
+
+    public static List<ProfileTo> asProfileTos(List<User> users) {
+        return users.stream()
+                .map(UserUtil::asProfileTo)
+                .toList();
     }
 
     public static User updateFromTo(User user, UserTo userTo, String avatarFilesPath) {

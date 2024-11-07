@@ -21,4 +21,6 @@ public interface UserRepository extends BaseRepository<User> {
             "UPPER(u.email) LIKE UPPER(CONCAT('%', :keyword, '%')) ORDER BY u.name, u.email")
     Page<User> findAllByKeyword(String keyword, Pageable pageable);
 
+    @Query("SELECT u FROM User u WHERE u.enabled = TRUE AND UPPER(u.name) LIKE UPPER(CONCAT('%', :keyword, '%'))")
+    Page<User> findAllEnabledByKeyword(String keyword, Pageable pageable);
 }

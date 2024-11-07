@@ -91,16 +91,28 @@ public class ProjectService {
         return getAll(repository.findAllIds(pageable), pageable);
     }
 
-    public Page<ProjectPreviewTo> getAll(Pageable pageable, String keyword) {
-        Assert.notNull(pageable, "pageable must not be null");
+    public Page<ProjectPreviewTo> getAll(String keyword, Pageable pageable) {
         Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
         return getAll(repository.findAllIdsByKeyword(keyword, pageable), pageable);
     }
 
     private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
         List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(projectsIds.getContent());
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+    }
+
+    public Page<ProjectPreviewTo> getAllVisibleByKeyword(String keyword, Pageable pageable) {
+        Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<Long> projectsIds = repository.findAllVisibleIdsByKeyword(keyword, pageable);
+        List<Project> projects =
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
+                        pageable.getSort());
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
@@ -111,18 +123,18 @@ public class ProjectService {
                 .thenComparing(Comparator.comparing(Project::getCreated).reversed()));
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        return projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        return projectUtil.asPreviewTos(projects, commentsCountByProjects);
     }
 
-    public Page<ProjectPreviewTo> getAllVisibleOrderByCreated(Pageable pageable) {
+    public Page<ProjectPreviewTo> getAllVisible(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
-        Page<Long> projectsIds = repository.findAllIdsByVisibleIsTrue(PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(DESC, "created")));
+        Page<Long> projectsIds = repository.findAllIdsByVisibleIsTrue(pageable);
         List<Project> projects =
-                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdInOrderByCreatedDesc(projectsIds.getContent());
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
+                        pageable.getSort());
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
@@ -130,7 +142,7 @@ public class ProjectService {
         Assert.notNull(pageable, "pageable must not be null");
         Page<Long> projectsIds = repository.findAllIdsOrderByPopularity(pageable);
         Map<Long, Project> projectsByIds = repository
-                .findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent())
+                .findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(), Sort.unsorted())
                 .stream()
                 .collect(Collectors.toMap(BaseEntity::getId, Function.identity()));
         List<Project> projects = projectsIds.stream()
@@ -138,20 +150,20 @@ public class ProjectService {
                 .toList();
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 
-    public Page<ProjectPreviewTo> getAllVisibleByTagOrderByCreated(String tag, Pageable pageable) {
+    public Page<ProjectPreviewTo> getAllVisibleByTag(String tag, Pageable pageable) {
         Assert.notNull(tag, "tag must not be null");
         Assert.notNull(pageable, "pageable must not be null");
-        Page<Long> projectsIds = repository.findAllIdsByTag(tag, PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(), Sort.by(DESC, "created")));
+        Page<Long> projectsIds = repository.findAllIdsByTag(tag, pageable);
         List<Project> projects =
-                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdInOrderByCreatedDesc(projectsIds.getContent());
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
+                        pageable.getSort());
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTo(projects, commentsCountByProjects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
     }
 

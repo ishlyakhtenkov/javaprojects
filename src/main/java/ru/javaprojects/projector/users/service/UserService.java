@@ -3,6 +3,7 @@ package ru.javaprojects.projector.users.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -19,7 +20,9 @@ import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.ProfileTo;
 import ru.javaprojects.projector.users.to.UserTo;
+import ru.javaprojects.projector.users.util.UserUtil;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,10 +76,18 @@ public class UserService {
         return repository.findAll(pageable);
     }
 
-    public Page<User> getAll(Pageable pageable, String keyword) {
-        Assert.notNull(pageable, "pageable must not be null");
+    public Page<User> getAll(String keyword, Pageable pageable) {
         Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
         return repository.findAllByKeyword(keyword, pageable);
+    }
+
+    public Page<ProfileTo> getAllEnabledProfilesByKeyword(String keyword, Pageable pageable) {
+        Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<User> usersPage = repository.findAllEnabledByKeyword(keyword, pageable);
+        List<ProfileTo> profiles = UserUtil.asProfileTos(usersPage.getContent());
+        return new PageImpl<>(profiles, pageable, usersPage.getTotalElements());
     }
 
     public void create(User user) {

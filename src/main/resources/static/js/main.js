@@ -1,3 +1,25 @@
+const searchBtn = $('#searchBtn');
+const searchForm = $('#searchForm');
+
+searchBtn.on('click', (event) => {
+    event.stopPropagation();
+    searchBtn.attr('hidden', true);
+    searchForm.attr('hidden', false);
+});
+
+searchForm.on('click', (event) => {
+    event.stopPropagation();
+});
+
+$(window).click(function() {
+    if(window.location.pathname !== '/search') {
+        searchForm.attr('hidden', true);
+        searchForm.find('input').val('');
+        searchBtn.attr('hidden', false);
+    }
+});
+
+
 setUpThemeSwitch(theme);
 
 function setUpThemeSwitch(theme) {

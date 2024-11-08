@@ -3,14 +3,11 @@ package ru.javaprojects.projector.common;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class CommonTestData {
-    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static final String HOME_URL = "/";
 
@@ -38,15 +35,7 @@ public class CommonTestData {
         return params;
     }
 
-    public static Date parseDate(String date) {
-        try {
-            return new SimpleDateFormat(DATE_TIME_PATTERN).parse(date);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
     public static LocalDateTime parseLocalDateTime(String date) {
-        return DateTimeFormatter.ofPattern(DATE_TIME_PATTERN).parse(date, LocalDateTime::from);
+        return DATE_TIME_FORMATTER.parse(date, LocalDateTime::from);
     }
 }

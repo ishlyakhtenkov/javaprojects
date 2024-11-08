@@ -27,16 +27,16 @@ VALUES ('USER', 100000),
        ('USER', 100002),
        ('USER', 100003);
 
-INSERT INTO register_tokens (token, expiry_date, email, name, password)
+INSERT INTO register_tokens (token, expiry_timestamp, email, name, password)
 VALUES ('5a99dd09-d23f-44bb-8d41-b6ff44275d01', '2024-08-06 19:35:56', 'some@gmail.com', 'someName', '{noop}somePassword'),
        ('52bde839-9779-4005-b81c-9131c9590d79', '2052-05-24 16:42:03', 'new@gmail.com', 'newName', '{noop}newPassword');
 
-INSERT INTO password_reset_tokens (token, expiry_date, user_id)
+INSERT INTO password_reset_tokens (token, expiry_timestamp, user_id)
 VALUES ('5a99dd09-d23f-44bb-8d41-b6ff44275x97', '2052-02-05 12:10:00', 100000),
        ('52bde839-9779-4005-b81c-9131c9590b41', '2022-02-06 19:35:56', 100002),
        ('54ghh534-9778-4005-b81c-9131c9590c63', '2052-04-25 13:48:14', 100003);
 
-INSERT INTO change_email_tokens (token, expiry_date, new_email, user_id)
+INSERT INTO change_email_tokens (token, expiry_timestamp, new_email, user_id)
 VALUES ('5a49dd09-g23f-44bb-8d41-b6ff44275s56', '2024-08-05 21:49:01', 'some@gmail.com', 100001),
        ('1a43dx02-x23x-42xx-8r42-x6ff44275y67', '2052-01-22 06:17:32', 'someNew@gmail.com', 100002);
 

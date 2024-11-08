@@ -13,10 +13,11 @@ import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.RegisterTo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static ru.javaprojects.projector.users.util.UserUtil.prepareToSave;
 
 @Service
@@ -35,7 +36,7 @@ public class RegisterService extends TokenService<RegisterToken> {
         RegisterToken registerToken = ((RegisterTokenRepository) tokenRepository)
                 .findByEmailIgnoreCase(registerTo.getEmail()).orElseGet(RegisterToken::new);
         registerToken.setToken(UUID.randomUUID().toString());
-        registerToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
+        registerToken.setExpiryTimestamp(LocalDateTime.now().plus(tokenExpirationTime, MILLIS));
         registerToken.setEmail(registerTo.getEmail());
         registerToken.setName(registerTo.getName());
         registerToken.setPassword(registerTo.getPassword());

@@ -18,7 +18,7 @@ import ru.javaprojects.projector.users.repository.RegisterTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.RegisterTo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -82,7 +82,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
                         null, getLocale())));
         RegisterToken createdToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         assertEquals(newRegisterTo.getName(), createdToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newRegisterTo.getPassword(), createdToken.getPassword()));
         Locale locale = getLocale();
@@ -110,7 +110,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.check-your-email",
                         null, getLocale())));
         RegisterToken updatedToken = tokenRepository.findByEmailIgnoreCase(newRegisterTo.getEmail()).orElseThrow();
-        assertTrue(updatedToken.getExpiryDate().after(new Date()));
+        assertTrue(updatedToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         assertEquals(newRegisterTo.getName(), updatedToken.getName());
         assertTrue(PASSWORD_ENCODER.matches(newRegisterTo.getPassword(), updatedToken.getPassword()));
         Locale locale = getLocale();

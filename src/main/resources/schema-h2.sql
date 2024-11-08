@@ -40,32 +40,32 @@ CREATE TABLE user_roles
 
 CREATE TABLE register_tokens
 (
-    id          BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
-    token       VARCHAR(36)  NOT NULL,
-    expiry_date TIMESTAMP    NOT NULL,
-    email       VARCHAR(128) NOT NULL,
-    name        VARCHAR(32)  NOT NULL,
-    password    VARCHAR(128) NOT NULL
+    id               BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    token            VARCHAR(36)  NOT NULL,
+    expiry_timestamp TIMESTAMP    NOT NULL,
+    email            VARCHAR(128) NOT NULL,
+    name             VARCHAR(32)  NOT NULL,
+    password         VARCHAR(128) NOT NULL
 );
 CREATE UNIQUE INDEX register_tokens_unique_email_idx ON register_tokens (email);
 
 CREATE TABLE password_reset_tokens
 (
-    id          BIGINT      DEFAULT nextval('global_seq') PRIMARY KEY,
-    token       VARCHAR(36) NOT NULL,
-    expiry_date TIMESTAMP   NOT NULL,
-    user_id     BIGINT      NOT NULL,
+    id               BIGINT      DEFAULT nextval('global_seq') PRIMARY KEY,
+    token            VARCHAR(36) NOT NULL,
+    expiry_timestamp TIMESTAMP   NOT NULL,
+    user_id          BIGINT      NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX password_reset_tokens_unique_user_idx ON password_reset_tokens (user_id);
 
 CREATE TABLE change_email_tokens
 (
-    id          BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
-    token       VARCHAR(36)  NOT NULL,
-    expiry_date TIMESTAMP    NOT NULL,
-    new_email   VARCHAR(128) NOT NULL,
-    user_id     BIGINT       NOT NULL,
+    id               BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    token            VARCHAR(36)  NOT NULL,
+    expiry_timestamp TIMESTAMP    NOT NULL,
+    new_email        VARCHAR(128) NOT NULL,
+    user_id          BIGINT       NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX change_email_tokens_unique_user_idx ON change_email_tokens (user_id);

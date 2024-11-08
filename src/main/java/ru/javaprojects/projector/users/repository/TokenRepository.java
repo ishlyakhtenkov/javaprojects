@@ -16,6 +16,6 @@ public interface TokenRepository<T extends Token> extends BaseRepository<T> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM #{#entityName} e WHERE e.expiryDate < CURRENT_TIMESTAMP")
+    @Query("DELETE FROM #{#entityName} e WHERE e.expiryTimestamp < CURRENT_TIMESTAMP")
     int deleteExpired();
 }

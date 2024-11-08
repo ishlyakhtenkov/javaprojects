@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.model.BaseEntity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
@@ -22,17 +22,17 @@ public abstract class Token extends BaseEntity {
     protected String token;
 
     @NotNull
-    @Column(name = "expiry_date", nullable = false)
-    protected Date expiryDate;
+    @Column(name = "expiry_timestamp", nullable = false)
+    protected LocalDateTime expiryTimestamp;
 
-    public Token(Long id, String token, Date expiryDate) {
+    public Token(Long id, String token, LocalDateTime expiryTimestamp) {
         super(id);
         this.token = token;
-        this.expiryDate = expiryDate;
+        this.expiryTimestamp = expiryTimestamp;
     }
 
     @Override
     public String toString() {
-        return String.format("%s[id=%d, expiryDate=%s]", getClass().getSimpleName(),id, expiryDate);
+        return String.format("%s[id=%d, expiryTimestamp=%s]", getClass().getSimpleName(),id, expiryTimestamp);
     }
 }

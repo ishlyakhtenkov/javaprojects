@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.users.model.User;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "password_reset_tokens",
@@ -18,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class PasswordResetToken extends UserToken {
 
-    public PasswordResetToken(Long id, String token, Date expiryDate, User user) {
-        super(id, token, expiryDate, user);
+    public PasswordResetToken(Long id, String token, LocalDateTime expiryTimestamp, User user) {
+        super(id, token, expiryTimestamp, user);
     }
 }

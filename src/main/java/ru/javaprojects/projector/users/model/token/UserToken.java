@@ -12,9 +12,8 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.javaprojects.projector.users.model.User;
-import ru.javaprojects.projector.users.model.token.Token;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
@@ -27,8 +26,8 @@ public abstract class UserToken extends Token {
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected User user;
 
-    public UserToken(Long id, String token, Date expiryDate, User user) {
-        super(id, token, expiryDate);
+    public UserToken(Long id, String token, LocalDateTime expiryTimestamp, User user) {
+        super(id, token, expiryTimestamp);
         this.user = user;
     }
 }

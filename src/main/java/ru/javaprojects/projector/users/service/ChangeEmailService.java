@@ -16,8 +16,10 @@ import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.UserTo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 @Service
 public class ChangeEmailService extends TokenService<ChangeEmailToken> {
@@ -46,10 +48,10 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
         });
         ChangeEmailToken changeEmailToken = ((ChangeEmailTokenRepository) tokenRepository).findByUser_Id(userId)
                 .orElseGet(() -> new ChangeEmailToken(null, UUID.randomUUID().toString(),
-                        new Date(System.currentTimeMillis() + tokenExpirationTime), newEmail, userRepository.getExisted(userId)));
+                        LocalDateTime.now().plus(tokenExpirationTime, MILLIS), newEmail, userRepository.getExisted(userId)));
         if (!changeEmailToken.isNew()) {
             changeEmailToken.setToken(UUID.randomUUID().toString());
-            changeEmailToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
+            changeEmailToken.setExpiryTimestamp(LocalDateTime.now().plus(tokenExpirationTime, MILLIS));
             changeEmailToken.setNewEmail(newEmail);
         }
         tokenRepository.saveAndFlush(changeEmailToken);

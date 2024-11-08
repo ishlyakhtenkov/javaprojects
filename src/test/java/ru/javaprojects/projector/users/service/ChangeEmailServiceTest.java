@@ -16,7 +16,7 @@ import ru.javaprojects.projector.common.mail.MailSender;
 import ru.javaprojects.projector.users.model.token.ChangeEmailToken;
 import ru.javaprojects.projector.users.repository.ChangeEmailTokenRepository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +47,7 @@ class ChangeEmailServiceTest {
     void changeEmail() {
         changeEmailService.changeEmail(USER_ID, NEW_EMAIL);
         ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         Locale locale = LocaleContextHolder.getLocale();
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);
@@ -82,7 +82,7 @@ class ChangeEmailServiceTest {
     void changeEmailWhenChangeEmailTokenExists() {
         changeEmailService.changeEmail(ADMIN_ID, NEW_EMAIL);
         ChangeEmailToken updatedToken = changeEmailTokenRepository.findByUser_Id(ADMIN_ID).orElseThrow();
-        assertTrue(updatedToken.getExpiryDate().after(new Date()));
+        assertTrue(updatedToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         assertEquals(NEW_EMAIL, updatedToken.getNewEmail());
         Locale locale = LocaleContextHolder.getLocale();
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
@@ -98,7 +98,7 @@ class ChangeEmailServiceTest {
     void changeEmailWhenSomeOneHasTokenWithThisEmail() {
         changeEmailService.changeEmail(USER_ID, NEW_EMAIL_SOMEONE_HAS_TOKEN);
         ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         Locale locale = LocaleContextHolder.getLocale();
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);

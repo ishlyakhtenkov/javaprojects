@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.validation.NoHtml;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "register_tokens",
@@ -38,8 +38,8 @@ public class RegisterToken extends Token {
     @Column(name = "password", nullable = false)
     private String password;
 
-    public RegisterToken(Long id, String token, Date expiryDate, String email, String name, String password) {
-        super(id, token, expiryDate);
+    public RegisterToken(Long id, String token, LocalDateTime expiryTimestamp, String email, String name, String password) {
+        super(id, token, expiryTimestamp);
         this.email = email;
         this.name = name;
         this.password = password;

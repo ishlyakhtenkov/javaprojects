@@ -28,7 +28,11 @@ import ru.javaprojects.projector.users.to.ProfileTo;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.context.i18n.LocaleContextHolder.getLocale;
@@ -372,7 +376,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.notExists(Paths.get(user.getAvatar().getFileLink())));
 
         ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         Locale locale = getLocale();
         String changeEmailUrlLinkText = messageSource.getMessage("change-email.message-link-text", null, locale);
         String changeEmailMessageSubject = messageSource.getMessage("change-email.message-subject", null, locale);

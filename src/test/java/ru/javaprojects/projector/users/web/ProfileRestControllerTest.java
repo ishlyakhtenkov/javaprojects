@@ -22,8 +22,7 @@ import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.ProfileTo;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,7 +62,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNoContent());
         PasswordResetToken createdToken = passwordResetTokenRepository.findByUserEmailIgnoreCase(USER_MAIL).orElseThrow();
-        assertTrue(createdToken.getExpiryDate().after(new Date()));
+        assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         String passwordResetUrlLinkText = messageSource.getMessage("reset-password.message-link-text", null, getLocale());
         String passwordResetMessageSubject = messageSource.getMessage("reset-password.message-subject", null, getLocale());
         String passwordResetMessageText = messageSource.getMessage("reset-password.message-text", null, getLocale());
@@ -81,7 +80,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
         PasswordResetToken updatedToken = passwordResetTokenRepository
                 .findByUserEmailIgnoreCase(passwordResetToken.getUser().getEmail()).orElseThrow();
-        assertTrue(updatedToken.getExpiryDate().after(new Date()));
+        assertTrue(updatedToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));
         String passwordResetUrlLinkText = messageSource.getMessage("reset-password.message-link-text", null, getLocale());
         String passwordResetMessageSubject = messageSource.getMessage("reset-password.message-subject", null, getLocale());
         String passwordResetMessageText = messageSource.getMessage("reset-password.message-text", null, getLocale());
@@ -135,10 +134,9 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andExpect(problemDetail(messageSource.getMessage("user.disabled", new Object[]{DISABLED_USER_MAIL},
                         getLocale())))
                 .andExpect(problemInstance(PROFILE_FORGOT_PASSWORD_URL));
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        assertEquals(simpleDateFormat.format(disabledUserPasswordResetToken.getExpiryDate()),
-                simpleDateFormat.format(passwordResetTokenRepository.findByUserEmailIgnoreCase(DISABLED_USER_MAIL)
-                        .orElseThrow().getExpiryDate()));
+        assertEquals(disabledUserPasswordResetToken.getExpiryTimestamp(),
+               passwordResetTokenRepository.findByUserEmailIgnoreCase(DISABLED_USER_MAIL)
+                       .orElseThrow().getExpiryTimestamp());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
     }

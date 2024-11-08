@@ -15,7 +15,7 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.validation.NoHtml;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -53,7 +53,7 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
 
     @NotNull
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
-    private Date registered = new Date();
+    private LocalDateTime registered = LocalDateTime.now();
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)

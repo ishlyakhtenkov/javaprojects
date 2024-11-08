@@ -38,7 +38,7 @@ class TokenCleanerTest {
         tokenCleaner.deleteExpiredTokens();
         assertEquals(List.of(registerToken), registerTokenRepository.findAll());
         assertEquals(List.of(passwordResetToken, disabledUserPasswordResetToken),
-                passwordResetTokenRepository.findAll(Sort.by("expiryDate")));
+                passwordResetTokenRepository.findAll(Sort.by("expiryTimestamp")));
         assertEquals(List.of(changeEmailToken), changeEmailTokenRepository.findAll());
     }
 }

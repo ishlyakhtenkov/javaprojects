@@ -10,7 +10,7 @@ import ru.javaprojects.projector.users.model.token.Token;
 import ru.javaprojects.projector.users.repository.TokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 public abstract class TokenService<T extends Token> {
@@ -52,7 +52,7 @@ public abstract class TokenService<T extends Token> {
         T dbToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new NotFoundException("Not found " + messageCodePrefix + " token=" + token,
                 messageCodePrefix + ".token-not-found", null));
-        if (new Date().after(dbToken.getExpiryDate())) {
+        if (LocalDateTime.now().isAfter(dbToken.getExpiryTimestamp())) {
             throw new TokenException(messageCodePrefix + " token=" + dbToken.getToken() + " expired",
                     messageCodePrefix + ".token-expired", null);
         }

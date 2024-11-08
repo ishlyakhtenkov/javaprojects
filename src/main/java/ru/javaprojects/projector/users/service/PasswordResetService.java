@@ -14,9 +14,10 @@ import ru.javaprojects.projector.users.repository.PasswordResetTokenRepository;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.PasswordResetTo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static ru.javaprojects.projector.app.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Service
@@ -35,13 +36,13 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
         PasswordResetToken passwordResetToken = ((PasswordResetTokenRepository) tokenRepository)
                 .findByUserEmailIgnoreCase(email)
                 .orElseGet(() -> new PasswordResetToken(null, UUID.randomUUID().toString(),
-                        new Date(System.currentTimeMillis() + tokenExpirationTime),
+                        LocalDateTime.now().plus(tokenExpirationTime, MILLIS),
                         userRepository.findByEmailIgnoreCase(email).orElseThrow(() ->
                         new NotFoundException("Not found user with email=" + email, "error.notfound.user", new Object[]{email}))));
         checkUserDisabled(passwordResetToken);
         if (!passwordResetToken.isNew()) {
             passwordResetToken.setToken(UUID.randomUUID().toString());
-            passwordResetToken.setExpiryDate(new Date(System.currentTimeMillis() + tokenExpirationTime));
+            passwordResetToken.setExpiryTimestamp(LocalDateTime.now().plus(tokenExpirationTime, MILLIS));
         }
         tokenRepository.saveAndFlush(passwordResetToken);
         sendEmail(email, passwordResetToken.getToken());

@@ -180,26 +180,26 @@ public class UserTestData {
     }
 
     public static final RegisterToken expiredRegisterToken = new RegisterToken(100004L,
-            "5a99dd09-d23f-44bb-8d41-b6ff44275d01", parseDate("2024-08-06 19:35:56"), "some@gmail.com", "someName",
+            "5a99dd09-d23f-44bb-8d41-b6ff44275d01", parseLocalDateTime("2024-08-06 19:35:56"), "some@gmail.com", "someName",
             "{noop}somePassword");
 
     public static final RegisterToken registerToken = new RegisterToken(100005L, "52bde839-9779-4005-b81c-9131c9590d79",
-            parseDate("2052-05-24 16:42:03"), "new@gmail.com", "newName", "{noop}newPassword");
+            parseLocalDateTime("2052-05-24 16:42:03"), "new@gmail.com", "newName", "{noop}newPassword");
 
     public static final PasswordResetToken passwordResetToken = new PasswordResetToken(100006L,
-            "5a99dd09-d23f-44bb-8d41-b6ff44275x97", parseDate("2052-02-05 12:10:00"), user);
+            "5a99dd09-d23f-44bb-8d41-b6ff44275x97", parseLocalDateTime("2052-02-05 12:10:00"), user);
 
     public static final PasswordResetToken expiredPasswordResetToken = new PasswordResetToken(100007L,
-            "52bde839-9779-4005-b81c-9131c9590b41", parseDate("2022-02-06 19:35:56"), user2);
+            "52bde839-9779-4005-b81c-9131c9590b41", parseLocalDateTime("2022-02-06 19:35:56"), user2);
 
     public static final PasswordResetToken disabledUserPasswordResetToken = new PasswordResetToken(100008L,
-            "54ghh534-9778-4005-b81c-9131c9590c63", parseDate("2052-04-25 13:48:14"), disabledUser);
+            "54ghh534-9778-4005-b81c-9131c9590c63", parseLocalDateTime("2052-04-25 13:48:14"), disabledUser);
 
     public static final ChangeEmailToken changeEmailToken = new ChangeEmailToken(100010L,
-            "1a43dx02-x23x-42xx-8r42-x6ff44275y67", parseDate("2052-01-22 06:17:32"), "someNew@gmail.com", user2);
+            "1a43dx02-x23x-42xx-8r42-x6ff44275y67", parseLocalDateTime("2052-01-22 06:17:32"), "someNew@gmail.com", user2);
 
     public static final ChangeEmailToken expiredChangeEmailToken = new ChangeEmailToken(100009L,
-            "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseDate("2024-08-05 21:49:01"), "some@gmail.com", admin);
+            "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseLocalDateTime("2024-08-05 21:49:01"), "some@gmail.com", admin);
 
     public static User getUpdatedUserAfterProfileUpdate(String avatarFilesPath) {
         return new User(USER_ID, user.getEmail(), "updatedName", "updated info", user.getPassword(), user.isEnabled(),

@@ -38,7 +38,7 @@
                                         </div>
                                         <div th:if="${authUser != null && (authUser.id == user.id || authUser.isAdmin())}"
                                              th:text="${user.email}" class="mb-1">Email</div>
-                                        <div class="small text-secondary-emphasis" th:text="#{user.registered} + ': ' + ${#dates.format(user.registered, 'dd.MM.yyyy HH:mm')}"
+                                        <div class="small text-secondary-emphasis" th:text="#{user.registered} + ': ' + ${#temporals.format(user.registered, 'dd.MM.yyyy HH:mm')}"
                                              style="font-style: italic">Registered</div>
                                     </div>
                                 </div>

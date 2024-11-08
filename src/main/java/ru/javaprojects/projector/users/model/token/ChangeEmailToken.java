@@ -13,7 +13,7 @@ import lombok.Setter;
 import ru.javaprojects.projector.common.validation.NoHtml;
 import ru.javaprojects.projector.users.model.User;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "change_email_tokens",
@@ -29,8 +29,8 @@ public class ChangeEmailToken extends UserToken {
     @Column(name = "new_email", nullable = false)
     private String newEmail;
 
-    public ChangeEmailToken(Long id, String token, Date expiryDate, String newEmail, User user) {
-        super(id, token, expiryDate, user);
+    public ChangeEmailToken(Long id, String token, LocalDateTime expiryTimestamp, String newEmail, User user) {
+        super(id, token, expiryTimestamp, user);
         this.newEmail = newEmail;
     }
 }

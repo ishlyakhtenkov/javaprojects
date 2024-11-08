@@ -95,6 +95,10 @@ public class User extends BaseEntity implements HasIdAndEmail, HasEmailAndPasswo
         this(user.id, user.email, user.name, user.information, user.password, user.enabled, user.roles, user.avatar);
     }
 
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
+    }
+
     @Override
     public String toString() {
         return String.format("User[id=%d, email=%s]", id, email);

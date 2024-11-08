@@ -70,7 +70,7 @@ public class UIExceptionHandler {
                             "message", message));
             mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        mav.addObject("authUser", AuthUser.safeGet());
+        mav.addObject("authUser", AuthUser.safeGet() != null ? AuthUser.authUser() : null);
         return mav;
     }
 }

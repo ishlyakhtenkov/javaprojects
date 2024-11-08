@@ -16,6 +16,7 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import ru.javaprojects.projector.app.AuthUser;
+import ru.javaprojects.projector.users.util.UserUtil;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -34,7 +35,7 @@ public class MvcConfig implements WebMvcConfigurer {
             if (model != null) {
                 AuthUser authUser = AuthUser.safeGet();
                 if (authUser != null) {
-                    model.addAttribute("authUser", authUser);
+                    model.addAttribute("authUser", authUser.getUser());
                 }
             }
         }

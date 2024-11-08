@@ -42,7 +42,7 @@ public class AuthUser extends org.springframework.security.core.userdetails.User
     }
 
     public static boolean isAdmin() {
-        return authUser().getRoles().contains(Role.ADMIN);
+        return authUser().isAdmin();
     }
 
     public long id() {

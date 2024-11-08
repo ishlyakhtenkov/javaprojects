@@ -167,7 +167,7 @@ function generateProjectCard(project) {
     authorNameAndCreatedDiv.append(createdDiv);
     dFlexDiv.append(authorNameAndCreatedDiv);
 
-    if (authUser !== null && project.author.id === authUser.user.id) {
+    if (authUser !== null && project.author.id === authUser.id) {
         let manageDiv = $('<div></div>').addClass('pt-4 ms-auto ps-3 pe-3').css('position', 'relative')
             .css('z-index', '3').css('margin-right', '-16px');
         let manageBtn = $('<button></button>').attr('type', 'button').attr('title', getMessage('project.manage'))
@@ -248,7 +248,7 @@ function generateProjectCard(project) {
             likeProject($(this), project.id);
         });
     let likeSymbol = $('<i></i>').addClass('fa-heart')
-        .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.user.id) ? 'fa-regular' : 'fa-solid'}`)
+        .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.id) ? 'fa-regular' : 'fa-solid'}`)
         .attr('title', getMessage('like'));
     let likeCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small')
         .attr('title', getMessage('like')).text(project.likesUserIds.length);

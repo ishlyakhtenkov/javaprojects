@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
+<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.users.model.User"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=#{profile},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
@@ -31,7 +32,7 @@
                                     <div class="col-12 col-sm-7 col-xxl-8 ps-sm-0 mt-3 mt-sm-1">
                                         <div class="mb-1 position-relative">
                                             <span class="h4" th:text="${user.name}" id="userName">Name</span>
-                                            <span th:if="${user.roles.contains(T(ru.javaprojects.projector.users.model.Role).ADMIN)}"
+                                            <span th:if="${user.isAdmin()}"
                                                   class="badge rounded-pill bg-danger ms-1"
                                                   style="position: absolute; margin-top: -5px;" th:text="#{user.role.admin}">Admin</span>
                                         </div>

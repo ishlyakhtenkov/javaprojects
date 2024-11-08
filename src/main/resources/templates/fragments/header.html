@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
-<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.app.AuthUser"*/-->
+<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.users.model.User"*/-->
 
 <div th:fragment="header">
   <header class="fixed-top">
@@ -92,12 +92,12 @@
                class="btn btn-outline-warning px-3" th:text="#{login}">Login</a>
             <a sec:authorize="isAuthenticated()" th:href="@{'/profile/' + ${authUser.id} + '/view'}" type="button" id="profileButton"
                class="rounded-circle" style="width: 40px; height: 40px;"
-               th:classappend="${authUser?.user.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"
-               th:title="${authUser != null ? authUser.user.name : ''}">
-                <span th:if="${authUser?.user.avatar == null}"
-                      th:text="${authUser != null ? #strings.substring(authUser.user.name, 0, 1) : ''}"></span>
-              <img th:if="${authUser?.user.avatar != null}" class="rounded-circle border border-light-subtle"
-                   th:src="@{${authUser.user.avatar.getSrc()}}"
+               th:classappend="${authUser?.avatar == null ? 'btn btn-success fw-bold border border-light-subtle pt-2' : ''}"
+               th:title="${authUser != null ? authUser.name : ''}">
+                <span th:if="${authUser?.avatar == null}"
+                      th:text="${authUser != null ? #strings.substring(authUser.name, 0, 1) : ''}"></span>
+              <img th:if="${authUser?.avatar != null}" class="rounded-circle border border-light-subtle"
+                   th:src="@{${authUser.avatar.getSrc()}}"
                    width="40" height="40" style="object-fit: cover"
                    onmouseenter="$(this).addClass('opacity-75')"
                    onmouseleave="$(this).removeClass('opacity-75')" />

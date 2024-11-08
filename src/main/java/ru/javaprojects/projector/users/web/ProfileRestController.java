@@ -13,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javaprojects.projector.app.AuthUser;
-import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
-import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.PasswordResetService;
 import ru.javaprojects.projector.users.service.UserService;
 import ru.javaprojects.projector.users.to.ProfileTo;

@@ -58,7 +58,7 @@ if (window.location.pathname.startsWith('/tags/')) {
 
     if (urlParams.has('popular')) {
         currentNav = 'popularNav';
-    } else if (authUser != null && urlParams.has('by-author') && urlParams.get('by-author') ==  authUser.user.id) {
+    } else if (authUser != null && urlParams.has('by-author') && urlParams.get('by-author') ==  authUser.id) {
         currentNav = 'myNav';
     } else if (!urlParams.has('by-author')) {
         currentNav = 'freshNav';
@@ -85,7 +85,7 @@ function showFresh() {
 
 function showMy() {
     if (currentNav !== 'myNav') {
-        window.location.href = `/?by-author=${authUser.user.id}`;
+        window.location.href = `/?by-author=${authUser.id}`;
     }
 }
 
@@ -235,7 +235,7 @@ function generateProjectCard(project) {
             likeProject($(this), project.id);
         });
     let likeSymbol = $('<i></i>').addClass('fa-heart')
-        .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.user.id) ? 'fa-regular' : 'fa-solid'}`)
+        .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.id) ? 'fa-regular' : 'fa-solid'}`)
         .attr('title', getMessage('like'));
     let likeCounter = $('<span></span>').addClass('ms-1 text-secondary-emphasis small')
         .attr('title', getMessage('like')).text(project.likesUserIds.length);

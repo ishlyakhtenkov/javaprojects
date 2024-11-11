@@ -20,4 +20,13 @@ public interface LikeRepository extends BaseRepository<Like> {
     @Modifying
     @Query("DELETE FROM Like l WHERE l.objectId=:objectId")
     void deleteAllByObjectId(long objectId);
+
+    @Query("""
+              SELECT SUM(total) FROM 
+              (SELECT COUNT(DISTINCT l.id) as total FROM Like l JOIN Project p ON l.objectId = p.id 
+              WHERE l.objectType = ru.javaprojects.projector.projects.model.ObjectType.PROJECT AND p.author.id =:userId 
+              UNION ALL 
+              SELECT COUNT(DISTINCT l.id) as total FROM Like l JOIN Comment c ON l.objectId = c.id 
+              WHERE l.objectType = ru.javaprojects.projector.projects.model.ObjectType.COMMENT AND c.author.id =:userId) q""")
+    int countLikesForAuthor(long userId);
 }

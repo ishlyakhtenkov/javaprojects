@@ -230,6 +230,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isOk())
                 .andExpect(view().name(PROFILE_VIEW))
                 .andExpect(model().attribute(USER_ATTRIBUTE, user))
+                .andExpect(model().attribute(RATING_ATTRIBUTE, USER_RATING))
                 .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(USER_ATTRIBUTE), user));
     }
@@ -241,6 +242,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isOk())
                 .andExpect(view().name(PROFILE_VIEW))
                 .andExpect(model().attribute(USER_ATTRIBUTE, admin))
+                .andExpect(model().attribute(RATING_ATTRIBUTE, ADMIN_RATING))
                 .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(USER_ATTRIBUTE), admin));
     }
@@ -251,6 +253,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isOk())
                 .andExpect(view().name(PROFILE_VIEW))
                 .andExpect(model().attribute(USER_ATTRIBUTE, user))
+                .andExpect(model().attribute(RATING_ATTRIBUTE, USER_RATING))
                 .andExpect(result -> USER_MATCHER.assertMatch((User)Objects.requireNonNull(result.getModelAndView())
                         .getModel().get(USER_ATTRIBUTE), user));
     }

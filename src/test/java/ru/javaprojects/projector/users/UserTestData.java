@@ -52,6 +52,7 @@ public class UserTestData {
     public static final String ERROR_ATTRIBUTE = "error";
     public static final String ONLINE_USERS_IDS_ATTRIBUTE = "onlineUsersIds";
     public static final String PROFILES_PAGE_ATTRIBUTE = "profilesPage";
+    public static final String RATING_ATTRIBUTE = "rating";
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
@@ -85,6 +86,9 @@ public class UserTestData {
     public static final long ADMIN_ID = 100001;
     public static final long USER2_ID = 100002;
     public static final long DISABLED_USER_ID = 100003;
+
+    public static final int USER_RATING = 6;
+    public static final int ADMIN_RATING = 6;
 
 
     public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "Some info", "password", true, Set.of(Role.USER),

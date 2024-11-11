@@ -16,6 +16,7 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.projects.ProjectService;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.repository.UserRepository;
 import ru.javaprojects.projector.users.to.ProfileTo;
@@ -37,6 +38,7 @@ public class UserService {
     private final UserRepository repository;
     private final SessionRegistry sessionRegistry;
     private final ChangeEmailService changeEmailService;
+    private final ProjectService projectService;
 
     @Value("${content-path.avatars}")
     private String avatarFilesPath;
@@ -162,5 +164,9 @@ public class UserService {
                 .filter(principal -> !sessionRegistry.getAllSessions(principal, false).isEmpty())
                 .map(principal -> ((AuthUser) principal).id())
                 .collect(Collectors.toSet());
+    }
+
+    public int getUserRating(long id) {
+        return projectService.countLikesForAuthor(id);
     }
 }

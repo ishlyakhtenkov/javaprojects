@@ -67,6 +67,7 @@ public class ProfileController {
     public String profile(@PathVariable long id, Model model) {
         log.info("show profile with id={}", id);
         model.addAttribute("user", userService.get(id));
+        model.addAttribute("rating", userService.getUserRating(id));
         return "profile/profile";
     }
 

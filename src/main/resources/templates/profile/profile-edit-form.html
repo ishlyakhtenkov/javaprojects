@@ -39,14 +39,14 @@
                                     <img th:if="${profileTo.avatar != null &&
                                            (profileTo.avatar.fileLink != null || profileTo.avatar.inputtedFileBytes != null)}"
                                          th:src="@{${profileTo.avatar.getSrc()}}"
-                                         class="img-fluid" style="width: 165px; height: 165px; border-radius: 10px;">
+                                         class="img-fluid" style="width: 165px; height: 165px; border-radius: 10px; object-fit: cover">
 
                                     <img th:if="${profileTo.avatar == null || (profileTo.avatar.fileLink == null &&
                                                 profileTo.avatar.inputtedFileBytes == null)}"
                                          th:src="@{/images/no-avatar.svg}"
                                          class="img-fluid" style="width: 165px; height: 165px; border-radius: 10px;" />
 
-                                    <button type="button" th:title="#{change-image}"
+                                    <button type="button" th:title="#{profile.change-avatar}"
                                             class="ps-1 change-img-btn btn btn-link opacity-75 link-underline-opacity-0
                                                 link-secondary pt-0"
                                             onclick="$(this).siblings('input').click()"><i class="fa-solid fa-pencil"></i>

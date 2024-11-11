@@ -1,8 +1,13 @@
 package ru.javaprojects.projector.projects;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -31,7 +36,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 
 
@@ -47,10 +51,15 @@ public class ProjectService {
     private final ProjectUtil projectUtil;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
-    private final UserService userService;
+    private UserService userService;
 
     @Value("${content-path.projects}")
     private String projectFilesPath;
+
+    @Autowired
+    public void setUserService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
 
     public Project get(long id) {
         return repository.getExisted(id);
@@ -403,5 +412,9 @@ public class ProjectService {
                 .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getCommentsCount));
         projectsIds.forEach(projectId -> commentsCountByProjects.computeIfAbsent(projectId, k -> 0));
         return commentsCountByProjects;
+    }
+
+    public int countLikesForAuthor(long authorId) {
+        return likeRepository.countLikesForAuthor(authorId);
     }
 }

@@ -23,8 +23,7 @@ import static ru.javaprojects.projector.projects.ProjectService.*;
 import static ru.javaprojects.projector.projects.model.ElementType.*;
 import static ru.javaprojects.projector.projects.model.ObjectType.COMMENT;
 import static ru.javaprojects.projector.projects.model.ObjectType.PROJECT;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.*;
 import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
 
@@ -125,7 +124,7 @@ public class ProjectTestData {
 
     public static final Project project1 = new Project(PROJECT1_ID, "Restaurant aggregator",
             "The app offers users to get information about restaurants and vote for their favorite one.", true, ULTRA,
-            LocalDate.of(2021, MARCH, 24), LocalDate.of(2021, MAY, 2), architecture1,
+            LocalDate.of(2021, MARCH, 24), LocalDate.of(2021, MAY, 2), architecture1WithCurrentLocaleLocalizedFields,
             new File("restaurant_aggregator_logo.png",
                     "./content/projects/user@gmail.com/restaurant_aggregator/logo/restaurant_aggregator_logo.png"),
             new File("docker-compose.yaml", "./content/projects/user@gmail.com/restaurant_aggregator/docker/docker-compose.yaml"),
@@ -212,7 +211,7 @@ public class ProjectTestData {
 
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
             "The app creates a list of required key skills for a user-specified profession.", true, VERY_HIGH,
-            LocalDate.of(2022, JULY, 17), LocalDate.of(2022, SEPTEMBER, 23), architecture1,
+            LocalDate.of(2022, JULY, 17), LocalDate.of(2022, SEPTEMBER, 23), architecture1WithCurrentLocaleLocalizedFields,
             new File("skill_aggregator_logo.png", "./content/projects/admin@gmail.com/skill_aggregator/logo/skill_aggregator_logo.png"),
             new File("docker-compose.yaml", "./content/projects/admin@gmail.com/skill_aggregator/docker/docker-compose.yaml"),
             new File("skill_aggregator_preview.png",
@@ -241,7 +240,7 @@ public class ProjectTestData {
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
             "The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.",
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),
-            architecture1, new File("copy_maker_logo.png", "./content/projects/user@gmail.com/copy_maker/logo/copy_maker_logo.png"), null,
+            architecture1WithCurrentLocaleLocalizedFields, new File("copy_maker_logo.png", "./content/projects/user@gmail.com/copy_maker/logo/copy_maker_logo.png"), null,
             new File("copy_maker_preview.png", "./content/projects/user@gmail.com/copy_maker/preview/copy_maker_preview.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7, user);
 
@@ -270,7 +269,7 @@ public class ProjectTestData {
 
     public static ProjectTo getNewTo() {
         return new ProjectTo(null, "New project name", "New project annotation", true, HIGH,
-                LocalDate.of(2022, MARCH, 11), LocalDate.of(2022, DECEMBER, 25), architecture1,
+                LocalDate.of(2022, MARCH, 11), LocalDate.of(2022, DECEMBER, 25), architecture1WithCurrentLocaleLocalizedFields,
                 NEW_LOGO_FILE, NEW_DOCKER_COMPOSE_FILE, NEW_PREVIEW_FILE, "https://newprojectname.ru",
                 "https://github.com/ishlyakhtenkov/newprojectname", null,
                 "https://newprojectname.ru/swagger-ui.html", Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID),

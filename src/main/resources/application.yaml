@@ -111,7 +111,9 @@ content-path:
   projects: ./content/projects/
   avatars: ./content/avatars/
 
-default-locale: ru
+locale:
+  supported: en,ru
+  default: ru
 
 logging:
   charset:

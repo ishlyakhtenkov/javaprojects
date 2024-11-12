@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS project_technology;
 DROP TABLE IF EXISTS project_tag;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS architecture_localized_fields;
 DROP TABLE IF EXISTS architectures;
 DROP TABLE IF EXISTS technologies;
 DROP TABLE IF EXISTS change_email_tokens;
@@ -84,13 +85,25 @@ CREATE UNIQUE INDEX technologies_unique_name_idx ON technologies (name);
 
 CREATE TABLE architectures
 (
-    id               BIGINT        DEFAULT nextval('global_seq') PRIMARY KEY,
-    name             VARCHAR(32)   NOT NULL,
-    description      VARCHAR(400)  NOT NULL,
+    id               BIGINT       DEFAULT nextval('global_seq') PRIMARY KEY,
+    name             VARCHAR(32)  NOT NULL,
+    description      VARCHAR(400) NOT NULL,
     logo_file_name   VARCHAR(128) NOT NULL,
     logo_file_link   VARCHAR(512) NOT NULL
 );
 CREATE UNIQUE INDEX architectures_unique_name_idx ON architectures (name);
+
+CREATE TABLE architecture_localized_fields
+(
+    architecture_id BIGINT             NOT NULL,
+    locale          VARCHAR(3)         NOT NULL,
+    name            VARCHAR(32)        NOT NULL,
+    description     VARCHAR(400)       NOT NULL,
+    FOREIGN KEY (architecture_id) REFERENCES architectures (id) ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX architecture_localized_fields_unique_name_idx ON architecture_localized_fields (name);
+CREATE UNIQUE INDEX architecture_localized_fields_unique_architecture_locale_idx
+    ON architecture_localized_fields (architecture_id, locale);
 
 CREATE TABLE projects
 (

@@ -25,7 +25,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class MvcConfig implements WebMvcConfigurer {
 
-    @Value("default-locale")
+    @Value("${locale.default}")
     private String defaultLocale;
 
     // Add authUser to view model

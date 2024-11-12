@@ -17,7 +17,7 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.validation.NoHtml;
-import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 

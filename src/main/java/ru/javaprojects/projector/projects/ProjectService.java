@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -73,6 +74,8 @@ public class ProjectService {
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithAllInformationAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
+        project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage()));
         TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
         sortedTechnologies.addAll(project.getTechnologies());
         project.setTechnologies(sortedTechnologies);
@@ -108,6 +111,9 @@ public class ProjectService {
 
     private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
         List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(projectsIds.getContent());
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
@@ -120,6 +126,9 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
@@ -128,6 +137,9 @@ public class ProjectService {
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {
         List<Project> projects = visibleOnly ? repository.findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(userId) :
                 repository.findAllWithAllInformationByAuthor_Id(userId);
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         projects.sort(Comparator.comparingInt((Project p) -> p.getPriority().ordinal())
                 .thenComparing(Comparator.comparing(Project::getCreated).reversed()));
         sortTechnologies(projects);
@@ -141,6 +153,9 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
@@ -157,6 +172,9 @@ public class ProjectService {
         List<Project> projects = projectsIds.stream()
                 .map(projectsByIds::get)
                 .toList();
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
@@ -170,6 +188,9 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
+        projects.forEach(project ->
+                project.getArchitecture().getLocalizedFields().removeIf(lf ->
+                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);

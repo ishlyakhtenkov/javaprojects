@@ -45,4 +45,6 @@ content-path:
   projects: ./content/projects/
   avatars: ./content/avatars/
 
-default-locale: en
+locale:
+  supported: en,ru
+  default: en

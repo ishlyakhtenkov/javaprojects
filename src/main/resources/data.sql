@@ -5,6 +5,7 @@ DELETE FROM project_technology;
 DELETE FROM project_tag;
 DELETE FROM tags;
 DELETE FROM projects;
+DELETE FROM architecture_localized_fields;
 DELETE FROM architectures;
 DELETE FROM technologies;
 DELETE FROM change_email_tokens;
@@ -53,6 +54,16 @@ VALUES ('Modular Monolith', 'A modular monolith is an architectural pattern that
        ('Microservices', 'Microservices architecture allow a large application to be separated into smaller ' ||
                          'independent parts, with each part having its own realm of responsibility.', 'microservices.png',
         './content/architectures/microservices/microservices.png');
+
+INSERT INTO architecture_localized_fields(architecture_id, locale, name, description)
+VALUES (100015, 'en', 'Modular Monolith', 'A modular monolith is an architectural pattern that structures the application ' ||
+                                           'into independent modules or components with well-defined boundaries.'),
+       (100015, 'ru', 'Модульный монолит', 'Модульный монолит-это архитектурная картина, которая структурирует применение ' ||
+                                            'в независимые модули или компоненты с четко определенными границами.'),
+       (100016, 'en', 'Microservices', 'Microservices architecture allow a large application to be separated into smaller ' ||
+                                           'independent parts, with each part having its own realm of responsibility.'),
+       (100016, 'ru', 'Микросервисы', 'Архитектура микросервисов позволяет разделить большое приложение на более мелкие ' ||
+                                            'независимые части, причем каждая часть имеет свою собственную сферу ответственности.');
 
 INSERT INTO projects (name, annotation, visible, priority, created, started, finished, architecture_id, logo_file_name, logo_file_link,
                       docker_compose_file_name, docker_compose_file_link, preview_file_name, preview_file_link,

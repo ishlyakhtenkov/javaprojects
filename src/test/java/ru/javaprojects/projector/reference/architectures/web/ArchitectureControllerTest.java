@@ -14,7 +14,7 @@ import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
 import ru.javaprojects.projector.reference.architectures.ArchitectureUtil;
@@ -116,7 +116,6 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
     @Test
     @WithUserDetails(ADMIN_MAIL)
     void create() throws Exception {
-        ArchitectureTo newArchitectureTo = getNewTo();
         Architecture newArchitecture = getNew(architectureFilesPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, ARCHITECTURES_URL)
                 .file(NEW_LOGO_FILE)
@@ -283,7 +282,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -302,7 +301,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -319,7 +318,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -339,7 +338,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
     }

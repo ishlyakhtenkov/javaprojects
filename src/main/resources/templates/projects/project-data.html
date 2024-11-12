@@ -34,7 +34,8 @@
                             <div class="col-lg-6">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text project-form-label" th:text="#{architecture}">Architecture</span>
-                                    <span class="form-control" th:text="${project.architecture.name}"></span>
+                                    <span class="form-control" th:text="${project.architecture.localizedFields.isEmpty() ? project.architecture.name :
+                                  project.architecture.localizedFields.stream().findFirst().get().name}"></span>
                                 </div>
                             </div>
                             <div class="col-lg-6">

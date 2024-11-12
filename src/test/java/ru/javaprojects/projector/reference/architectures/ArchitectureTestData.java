@@ -7,6 +7,10 @@ import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
+import ru.javaprojects.projector.reference.architectures.model.LocalizedFields;
+
+import java.util.Set;
 
 import static ru.javaprojects.projector.common.CommonTestData.*;
 
@@ -23,15 +27,45 @@ public class ArchitectureTestData {
 
     public static final String ARCHITECTURES_TEST_DATA_FILES_PATH = "src/test/test-data-files/architectures";
 
+    public static final LocalizedFields architecture1EnLocalizedFields = new LocalizedFields("en", "Modular Monolith",
+            "A modular monolith is an architectural pattern that structures the application into independent modules or " +
+                    "components with well-defined boundaries.");
+    public static final LocalizedFields architecture1RuLocalizedFields = new LocalizedFields("ru", "Модульный монолит",
+            "Модульный монолит-это архитектурная картина, которая структурирует применение в независимые модули или " +
+                    "компоненты с четко определенными границами.");
+
     public static final Architecture architecture1 = new Architecture(ARCHITECTURE1_ID, "Modular Monolith",
             "A modular monolith is an architectural pattern that structures the application into independent modules or " +
                     "components with well-defined boundaries.", new File("modular_monolith.png",
-            "./content/architectures/modular_monolith/modular_monolith.png"));
+            "./content/architectures/modular_monolith/modular_monolith.png"),
+            Set.of(architecture1EnLocalizedFields, architecture1RuLocalizedFields));
+
+    public static final Architecture architecture1WithCurrentLocaleLocalizedFields =
+            new Architecture(ARCHITECTURE1_ID, "Modular Monolith",
+            "A modular monolith is an architectural pattern that structures the application into independent modules or " +
+                    "components with well-defined boundaries.", new File("modular_monolith.png",
+            "./content/architectures/modular_monolith/modular_monolith.png"),
+            Set.of(architecture1EnLocalizedFields));
+
+    public static final LocalizedFields architecture2EnLocalizedFields = new LocalizedFields("en", "Microservices",
+            "Microservices architecture allow a large application to be separated into smaller independent parts, with " +
+                    "each part having its own realm of responsibility.");
+    public static final LocalizedFields architecture2RuLocalizedFields = new LocalizedFields("ru", "Микросервисы",
+            "Архитектура микросервисов позволяет разделить большое приложение на более мелкие независимые части, причем " +
+                    "каждая часть имеет свою собственную сферу ответственности.");
 
     public static final Architecture architecture2 = new Architecture(ARCHITECTURE2_ID, "Microservices", "Microservices " +
             "architecture allow a large application to be separated into smaller independent parts, with each part having " +
             "its own realm of responsibility.", new File("microservices.png",
-            "./content/architectures/microservices/microservices.png"));
+            "./content/architectures/microservices/microservices.png"),
+            Set.of(architecture2EnLocalizedFields, architecture2RuLocalizedFields));
+
+    public static final Architecture architecture2WithCurrentLocaleLocalizedFields =
+            new Architecture(ARCHITECTURE2_ID, "Microservices", "Microservices " +
+            "architecture allow a large application to be separated into smaller independent parts, with each part having " +
+            "its own realm of responsibility.", new File("microservices.png",
+            "./content/architectures/microservices/microservices.png"),
+            Set.of(architecture2EnLocalizedFields));
 
     public static final MockMultipartFile NEW_LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "Event driven.png",
             MediaType.IMAGE_PNG_VALUE, "logo file content bytes".getBytes());
@@ -43,31 +77,42 @@ public class ArchitectureTestData {
         return new ArchitectureTo(null, "Event Driven", "Event Driven architecture description", NEW_LOGO_FILE);
     }
 
+    private static final String UPDATED_NAME = "updated architecture name";
+    private static final String UPDATED_DESCRIPTION = "updated architecture description";
+    private static final String TRANSLATED_TO_EN = "to en:";
+    private static final String TRANSLATED_TO_RU = "to ru:";
+
     public static Architecture getNew(String architectureFilesPath) {
         ArchitectureTo newTo = getNewTo();
         return new Architecture(null, newTo.getName(), newTo.getDescription(), new File("event_driven.png",
-                architectureFilesPath + FileUtil.normalizePath(newTo.getName() + "/" + "event_driven.png")));
+                architectureFilesPath + FileUtil.normalizePath(newTo.getName() + "/" + "event_driven.png")),
+                Set.of(new LocalizedFields("en", TRANSLATED_TO_EN + newTo.getName(), TRANSLATED_TO_EN + newTo.getDescription()),
+                        new LocalizedFields("ru", TRANSLATED_TO_RU + newTo.getName(), TRANSLATED_TO_RU + newTo.getDescription())));
     }
 
     public static Architecture getUpdated(String architectureFilesPath) {
-        String updatedName = "updated architecture name";
-        return new Architecture(ARCHITECTURE1_ID, updatedName, "updated architecture description",
+        return new Architecture(ARCHITECTURE1_ID, UPDATED_NAME, UPDATED_DESCRIPTION,
                 new File(UPDATED_LOGO_FILE.getOriginalFilename(), architectureFilesPath +
-                        FileUtil.normalizePath(updatedName + "/" + UPDATED_LOGO_FILE.getOriginalFilename())));
+                        FileUtil.normalizePath(UPDATED_NAME + "/" + UPDATED_LOGO_FILE.getOriginalFilename())),
+                Set.of(new LocalizedFields("en", TRANSLATED_TO_EN + UPDATED_NAME, TRANSLATED_TO_EN + UPDATED_DESCRIPTION),
+                        new LocalizedFields("ru", TRANSLATED_TO_RU + UPDATED_NAME, TRANSLATED_TO_RU + UPDATED_DESCRIPTION)));
     }
 
     public static Architecture getUpdatedWithOldLogo(String architectureFilesPath) {
-        String updatedName = "updated architecture name";
-        return new Architecture(ARCHITECTURE1_ID, updatedName, "updated architecture description",
+        return new Architecture(ARCHITECTURE1_ID, UPDATED_NAME, UPDATED_DESCRIPTION,
                 new File(architecture1.getLogo().getFileName(), architectureFilesPath +
-                        FileUtil.normalizePath(updatedName + "/" + architecture1.getLogo().getFileName())));
+                        FileUtil.normalizePath(UPDATED_NAME + "/" + architecture1.getLogo().getFileName())),
+                Set.of(new LocalizedFields("en", TRANSLATED_TO_EN + UPDATED_NAME, TRANSLATED_TO_EN + UPDATED_DESCRIPTION),
+                        new LocalizedFields("ru", TRANSLATED_TO_RU + UPDATED_NAME, TRANSLATED_TO_RU + UPDATED_DESCRIPTION)));
     }
 
     public static Architecture getUpdatedWithOldName(String architectureFilesPath) {
-        return new Architecture(ARCHITECTURE1_ID, architecture1.getName(), "updated architecture description",
+        return new Architecture(ARCHITECTURE1_ID, architecture1.getName(), UPDATED_DESCRIPTION,
                 new File(UPDATED_LOGO_FILE.getOriginalFilename(),
                         architectureFilesPath + FileUtil.normalizePath(architecture1.getName() + "/" +
-                        UPDATED_LOGO_FILE.getOriginalFilename())));
+                        UPDATED_LOGO_FILE.getOriginalFilename())),
+                Set.of(new LocalizedFields("en", TRANSLATED_TO_EN + architecture1.getName(), TRANSLATED_TO_EN + UPDATED_DESCRIPTION),
+                new LocalizedFields("ru", TRANSLATED_TO_RU + architecture1.getName(), TRANSLATED_TO_RU + UPDATED_DESCRIPTION)));
     }
 
     public static MultiValueMap<String, String> getNewParams() {

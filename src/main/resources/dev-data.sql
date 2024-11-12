@@ -18,7 +18,6 @@ VALUES ('Apache Tomcat', 'https://tomcat.com', 'BACKEND', 'HIGH', 'apache_tomcat
        ('Typescript', 'https://typescript.com', 'FRONTEND', 'LOW', 'typescript.svg', './content/technologies/typescript/typescript.svg'), --100065
        ('Spring Data JPA', 'https://sping-data.com', 'BACKEND', 'VERY_HIGH', 'spring_data_jpa.svg', './content/technologies/spring_data_jpa/spring_data_jpa.svg'); --100066
 
-
 INSERT INTO architectures (name, description, logo_file_name, logo_file_link)
 VALUES ('Layered Monolith', 'A layered architecture is a way of organizing the components of a software ' ||
                             'system into distinct layers, each of which performs a specific task or set of tasks.', 'layered_monolith.png',

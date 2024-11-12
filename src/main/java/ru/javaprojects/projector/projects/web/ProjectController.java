@@ -25,6 +25,7 @@ import ru.javaprojects.projector.projects.model.Like;
 import ru.javaprojects.projector.projects.model.Project;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
@@ -151,7 +152,12 @@ public class ProjectController {
 
     private void addAttributesToModel(Model model) {
         model.addAttribute("priorities", Priority.values());
-        model.addAttribute("architectures", architectureService.getAll());
+        List<Architecture> architectures = architectureService.getAll().stream()
+                .map(Architecture::new)
+                .toList();
+        architectures.forEach(architecture -> architecture.getLocalizedFields().removeIf(lf ->
+                !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        model.addAttribute("architectures", architectures);
         model.addAttribute("technologies", technologyService.getAll());
     }
 

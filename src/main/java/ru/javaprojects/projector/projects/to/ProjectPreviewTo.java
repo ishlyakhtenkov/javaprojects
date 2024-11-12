@@ -1,13 +1,12 @@
 package ru.javaprojects.projector.projects.to;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
-import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 

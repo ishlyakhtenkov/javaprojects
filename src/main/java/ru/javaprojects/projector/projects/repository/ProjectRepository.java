@@ -26,10 +26,10 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @Query("SELECT p.id FROM Project p WHERE UPPER(p.name) LIKE UPPER(CONCAT('%', :keyword, '%')) AND p.visible = TRUE")
     Page<Long> findAllVisibleIdsByKeyword(String keyword, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"architecture", "author", "likes"})
+    @EntityGraph(attributePaths = {"architecture.localizedFields", "author", "likes"})
     List<Project> findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(List<Long> projectsIds);
 
-    @EntityGraph(attributePaths = {"architecture", "author", "likes", "technologies"})
+    @EntityGraph(attributePaths = {"architecture.localizedFields", "author", "likes", "technologies"})
     List<Project> findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(List<Long> projectsIds, Sort sort);
 
     @Query("SELECT p.id FROM Project p WHERE p.visible = TRUE")
@@ -39,13 +39,14 @@ public interface ProjectRepository extends NamedRepository<Project> {
             "ORDER BY (COUNT(DISTINCT l.id) + COUNT(DISTINCT c.id)) DESC")
     Page<Long> findAllIdsOrderByPopularity(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
+    @EntityGraph(attributePaths = {"architecture.localizedFields", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(long userId);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})
+    @EntityGraph(attributePaths = {"architecture.localizedFields", "technologies", "likes", "author"})
     List<Project> findAllWithAllInformationByAuthor_Id(long userId);
 
-    @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author", "descriptionElements", "tags"})
+    @EntityGraph(attributePaths = {"architecture.localizedFields", "technologies", "likes", "author",
+            "descriptionElements", "tags"})
     Optional<Project> findWithAllInformationAndDescriptionById(long id);
 
     @EntityGraph(attributePaths = {"author", "descriptionElements"})

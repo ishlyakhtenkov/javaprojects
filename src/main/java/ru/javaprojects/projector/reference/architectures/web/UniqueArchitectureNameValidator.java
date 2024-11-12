@@ -3,7 +3,7 @@ package ru.javaprojects.projector.reference.architectures.web;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import ru.javaprojects.projector.common.validation.UniqueNameValidator;
-import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.model.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureRepository;
 
 @Component

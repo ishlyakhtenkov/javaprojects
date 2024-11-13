@@ -26,6 +26,8 @@ import ru.javaprojects.projector.projects.to.CommentTo;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectPreviewTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
+import ru.javaprojects.projector.reference.architectures.Architecture;
+import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 import ru.javaprojects.projector.users.service.UserService;
@@ -52,6 +54,7 @@ public class ProjectService {
     private final ProjectUtil projectUtil;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
+    private final ArchitectureService architectureService;
     private UserService userService;
 
     @Value("${content-path.projects}")
@@ -74,14 +77,21 @@ public class ProjectService {
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithAllInformationAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
-        project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage()));
+        localizeArchitecture(project);
         TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
         sortedTechnologies.addAll(project.getTechnologies());
         project.setTechnologies(sortedTechnologies);
         project.setDescriptionElements(new TreeSet<>(project.getDescriptionElements()));
         project.setComments(commentRepository.findAllByProjectIdOrderByCreated(id));
         return project;
+    }
+
+    private void localizeArchitecture(HasArchitecture project) {
+        Architecture localizedArchitecture = architectureService.getLocalized(project.getArchitecture().getId(),
+                LocaleContextHolder.getLocale().getLanguage());
+        if (localizedArchitecture != null) {
+            project.setArchitecture(localizedArchitecture);
+        }
     }
 
     public Project getByName(String name) {
@@ -111,9 +121,7 @@ public class ProjectService {
 
     private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
         List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(projectsIds.getContent());
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
@@ -126,9 +134,7 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
@@ -137,9 +143,7 @@ public class ProjectService {
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {
         List<Project> projects = visibleOnly ? repository.findAllWithAllInformationByAuthor_IdAndVisibleIsTrue(userId) :
                 repository.findAllWithAllInformationByAuthor_Id(userId);
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         projects.sort(Comparator.comparingInt((Project p) -> p.getPriority().ordinal())
                 .thenComparing(Comparator.comparing(Project::getCreated).reversed()));
         sortTechnologies(projects);
@@ -153,9 +157,7 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
@@ -172,9 +174,7 @@ public class ProjectService {
         List<Project> projects = projectsIds.stream()
                 .map(projectsByIds::get)
                 .toList();
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
@@ -188,9 +188,7 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
-        projects.forEach(project ->
-                project.getArchitecture().getLocalizedFields().removeIf(lf ->
-                        !lf.getLocale().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage())));
+        projects.forEach(this::localizeArchitecture);
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);

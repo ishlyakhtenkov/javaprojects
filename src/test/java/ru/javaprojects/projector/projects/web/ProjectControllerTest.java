@@ -48,6 +48,8 @@ import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 import static ru.javaprojects.projector.projects.web.ProjectController.PROJECTS_URL;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
 import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1EnLocalized;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2EnLocalized;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
@@ -321,7 +323,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(model().attribute(TECHNOLOGIES_ATTRIBUTE, List.of(TechnologyTestData.technology3,
                         TechnologyTestData.technology1, TechnologyTestData.technology2, TechnologyTestData.technology4)))
                 .andExpect(model().attribute(PRIORITIES_ATTRIBUTE, Priority.values()))
-                .andExpect(model().attribute(ARCHITECTURES_ATTRIBUTE, List.of(architecture2, architecture1)))
+                .andExpect(model().attribute(ARCHITECTURES_ATTRIBUTE, List.of(architecture2EnLocalized, architecture1EnLocalized)))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
     }
 
@@ -770,8 +772,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));
@@ -812,8 +813,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));
@@ -855,8 +855,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));
@@ -903,7 +902,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                         new Object[]{updatedProject.getName()}, getLocale())));
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                "author.registered", "comments", "descriptionElements.project", "tags.id", "architecture.localizedFields");
+                "author.registered", "comments", "descriptionElements.project", "tags.id");
         assertEquals(project1.getLikes(), project.getLikes());
         assertTrue(project1.getTags().contains(tag1));
         assertTrue(project1.getTags().contains(tag2));
@@ -941,8 +940,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                             new Object[]{updatedProject.getName()}, getLocale())));
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "comments", "descriptionElements.id", "descriptionElements.project", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));
@@ -975,7 +973,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
         Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                "author.registered", "comments", "descriptionElements.project", "tags.id", "architecture.localizedFields");
+                "author.registered", "comments", "descriptionElements.project", "tags.id");
         assertEquals(project1.getLikes(), project.getLikes());
         assertTrue(project1.getTags().contains(tag1));
         assertTrue(project1.getTags().contains(tag2));
@@ -1069,8 +1067,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));
@@ -1255,8 +1252,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
             Project project = projectService.getWithAllInformation(PROJECT1_ID, Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(project, updatedProject, "author.roles", "author.password",
-                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id",
-                    "architecture.localizedFields");
+                    "author.registered", "descriptionElements.id", "descriptionElements.project", "comments", "tags.id");
             assertEquals(project1.getLikes(), project.getLikes());
             assertTrue(project1.getTags().contains(tag1));
             assertTrue(project1.getTags().contains(tag2));

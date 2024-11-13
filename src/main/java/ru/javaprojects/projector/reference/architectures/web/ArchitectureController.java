@@ -13,7 +13,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.javaprojects.projector.common.to.FileTo;
-import ru.javaprojects.projector.reference.architectures.model.Architecture;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
 

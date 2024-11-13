@@ -1,10 +1,12 @@
 package ru.javaprojects.projector.reference.architectures.web;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.util.AopTestUtils;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
@@ -14,11 +16,13 @@ import ru.javaprojects.projector.TestContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.reference.architectures.model.Architecture;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
 import ru.javaprojects.projector.reference.architectures.ArchitectureUtil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +65,13 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
         return Paths.get(ARCHITECTURES_TEST_DATA_FILES_PATH);
     }
 
+    @BeforeEach
+    void reloadArchitectures() throws Exception {
+        Method loadArchitecturesMethod = ArchitectureService.class.getDeclaredMethod("loadArchitectures");
+        loadArchitecturesMethod.setAccessible(true);
+        loadArchitecturesMethod.invoke(AopTestUtils.getTargetObject(architectureService));
+    }
+
     @Test
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
@@ -71,7 +82,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(view().name(ARCHITECTURES_VIEW))
                 .andExpect(result -> ARCHITECTURE_MATCHER
                         .assertMatch((List<Architecture>) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(ARCHITECTURES_ATTRIBUTE), List.of(architecture2, architecture1)));
+                        .getModel().get(ARCHITECTURES_ATTRIBUTE), List.of(architecture2EnLocalized, architecture1EnLocalized)));
     }
 
     @Test
@@ -282,7 +293,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -301,7 +312,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -318,7 +329,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -338,7 +349,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.getWithLocalizedFields(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
     }

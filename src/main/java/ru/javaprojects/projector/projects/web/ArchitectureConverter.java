@@ -3,7 +3,7 @@ package ru.javaprojects.projector.projects.web;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.javaprojects.projector.reference.architectures.model.Architecture;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.architectures.ArchitectureRepository;
 
 @Component

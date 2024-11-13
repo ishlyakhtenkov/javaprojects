@@ -124,8 +124,7 @@ function generateProjectCard(project) {
     let architectureDiv = $('<div></div>').attr('title', getMessage('architecture'));
     let architectureImage = $('<img>').addClass('float-end bg-light-subtle border border-light-subtle rounded-circle p-1')
         .attr('src', `/${project.architecture.logo.fileLink}`)
-        .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.localizedFields.length !== 0 ?
-            project.architecture.localizedFields[0].name : project.architecture.name)
+        .attr('data-bs-toggle', 'tooltip').attr('title', project.architecture.name)
         .attr('width', '40').attr('height', '40').css('margin-top', '-20px').css('margin-right', '15px')
         .css('z-index', '4').css('position', 'relative')
         .css('box-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19)')

@@ -63,8 +63,7 @@
                                     <div th:title="#{architecture}">
                                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                                              class="float-end bg-light-subtle border border-light-subtle rounded-circle p-1"
-                                             data-bs-toggle="tooltip" th:title="${project.architecture.localizedFields.isEmpty() ? project.architecture.name :
-                                                                project.architecture.localizedFields.stream().findFirst().get().name}"
+                                             data-bs-toggle="tooltip" th:title="${project.architecture.name}"
                                              onmouseenter="$(this).removeClass('p-1')"
                                              onmouseleave="$(this).addClass('p-1')"
                                              width="40" height="40"

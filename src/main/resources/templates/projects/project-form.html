@@ -61,8 +61,7 @@
                                                 name="architecture" th:title="#{architecture}" required>
                                             <option th:each="architecture : ${architectures}"
                                                     th:value="${architecture.id}"
-                                                    th:text="${architecture.localizedFields.isEmpty() ? architecture.name :
-                                                            architecture.localizedFields.stream().findFirst().get().name}"
+                                                    th:text="${architecture.name}"
                                                     th:selected="${projectTo.architecture != null && projectTo.architecture.id == architecture.id}">
                                             </option>
                                         </select>

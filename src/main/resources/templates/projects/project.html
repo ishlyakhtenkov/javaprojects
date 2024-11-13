@@ -95,10 +95,8 @@
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                              width="40" height="40" class="bg-light-subtle border border-light-subtle rounded-circle p-1" />
                             <span class="h6 ms-1"
-                                  th:text="${project.architecture.localizedFields.isEmpty() ? project.architecture.name :
-                                  project.architecture.localizedFields.stream().findFirst().get().name}"></span>
-                        <div th:text="${project.architecture.localizedFields.isEmpty() ? project.architecture.description :
-                                project.architecture.localizedFields.stream().findFirst().get().description}"></div>
+                                  th:text="${project.architecture.name}"></span>
+                        <div th:text="${project.architecture.description}"></div>
 
                         <h3 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h3>
                         <hr class="mt-0" style="border: 2px solid">

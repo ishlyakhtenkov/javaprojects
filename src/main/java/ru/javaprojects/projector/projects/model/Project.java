@@ -17,7 +17,8 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.validation.NoHtml;
-import ru.javaprojects.projector.reference.architectures.model.Architecture;
+import ru.javaprojects.projector.projects.HasArchitecture;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 import ru.javaprojects.projector.users.model.User;
 
@@ -34,7 +35,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Project extends BaseEntity implements HasIdAndName {
+public class Project extends BaseEntity implements HasIdAndName, HasArchitecture {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
@@ -33,18 +32,11 @@ public class ArchitectureTo extends BaseTo implements HasIdAndName {
     @ImageFile
     private FileTo logo;
 
-    public ArchitectureTo(Long id, String name, String description, MultipartFile logoMultipartFile) {
+    public ArchitectureTo(Long id, String name, String description, FileTo logo) {
         super(id);
         this.name = name;
         this.description = description;
-        this.logo = new FileTo(null, null, logoMultipartFile, null);
-    }
-
-    public ArchitectureTo(Long id, String name, String description, String logoFileName, String logoFileLink) {
-        super(id);
-        this.name = name;
-        this.description = description;
-        this.logo = new FileTo(logoFileName, logoFileLink, null, null);
+        this.logo = logo;
     }
 
     @Override

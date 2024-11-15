@@ -10,8 +10,8 @@ import ru.javaprojects.projector.reference.technologies.model.Technology;
 @Transactional(readOnly = true)
 public interface TechnologyRepository extends NamedRepository<Technology> {
 
-    Page<Technology> findAllByOrderByName(Pageable pageable);
+    Page<Technology> findAll(Pageable pageable);
 
-    @Query("SELECT t FROM Technology t WHERE UPPER(t.name) LIKE UPPER(CONCAT('%', :keyword, '%')) ORDER BY t.name")
+    @Query("SELECT t FROM Technology t WHERE UPPER(t.name) LIKE UPPER(CONCAT('%', :keyword, '%'))")
     Page<Technology> findAllByKeyword(String keyword, Pageable pageable);
 }

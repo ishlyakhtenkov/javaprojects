@@ -98,7 +98,8 @@ public class HomeController {
     @GetMapping(value = "/search/tags", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<Tag>> getTagsByKeyword(@RequestParam String keyword,
                                                      @PageableDefault @SortDefault(value = "name") Pageable pageable) {
-        log.info("get tags by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(), pageable.getPageSize());
+        log.info("get tags by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(),
+                pageable.getPageSize());
         if (keyword.startsWith("#")) {
             keyword = keyword.substring(1);
         }

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
-import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.BaseTo;
@@ -104,11 +103,9 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
     private String tags;
 
     public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
-                     LocalDate finished, Architecture architecture, String logoFileName, String logoFileLink,
-                     String dockerComposeFileName, String dockerComposeFileLink, String previewFileName,
-                     String previewFileLink, String deploymentUrl, String backendSrcUrl, String frontendSrcUrl,
-                     String openApiUrl, Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos,
-                     String tags) {
+                     LocalDate finished, Architecture architecture, FileTo logo, FileTo dockerCompose, FileTo preview,
+                     String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
+                     Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos, String tags) {
         super(id);
         this.name = name;
         this.annotation = annotation;
@@ -117,9 +114,9 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.started = started;
         this.finished = finished;
         this.architecture = architecture;
-        this.logo = new FileTo(logoFileName, logoFileLink, null, null);
-        this.dockerCompose = new FileTo(dockerComposeFileName, dockerComposeFileLink, null, null);
-        this.preview = new FileTo(previewFileName, previewFileLink, null, null);
+        this.logo = logo;
+        this.dockerCompose =dockerCompose;
+        this.preview = preview;
         this.deploymentUrl = deploymentUrl;
         this.backendSrcUrl = backendSrcUrl;
         this.frontendSrcUrl = frontendSrcUrl;
@@ -127,30 +124,6 @@ public class ProjectTo extends BaseTo implements HasIdAndName {
         this.technologiesIds = technologiesIds;
         this.descriptionElementTos = descriptionElementTos;
         this.tags = tags;
-    }
-
-    public ProjectTo(Long id, String name, String annotation, boolean visible, Priority priority, LocalDate started,
-                     LocalDate finished, Architecture architecture, MultipartFile logoMultipartFile,
-                     MultipartFile dockerComposeMultipartFile, MultipartFile previewMultipartFile,
-                     String deploymentUrl, String backendSrcUrl, String frontendSrcUrl, String openApiUrl,
-                     Set<Long> technologiesIds, List<DescriptionElementTo> descriptionElementTos) {
-        super(id);
-        this.name = name;
-        this.annotation = annotation;
-        this.visible = visible;
-        this.priority = priority;
-        this.started = started;
-        this.finished = finished;
-        this.architecture = architecture;
-        this.logo = new FileTo(null, null, logoMultipartFile, null);
-        this.dockerCompose = new FileTo(null, null, dockerComposeMultipartFile, null);;
-        this.preview = new FileTo(null, null, previewMultipartFile, null);;
-        this.deploymentUrl = deploymentUrl;
-        this.backendSrcUrl = backendSrcUrl;
-        this.frontendSrcUrl = frontendSrcUrl;
-        this.openApiUrl = openApiUrl;
-        this.technologiesIds = technologiesIds;
-        this.descriptionElementTos = descriptionElementTos;
     }
 
     @Override

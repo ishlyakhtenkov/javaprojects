@@ -6,6 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 
 import static ru.javaprojects.projector.common.CommonTestData.*;
@@ -54,7 +55,8 @@ public class ArchitectureTestData {
             MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
 
     public static ArchitectureTo getNewTo() {
-        return new ArchitectureTo(null, "Event Driven", "Event Driven architecture description", NEW_LOGO_FILE);
+        return new ArchitectureTo(null, "Event Driven", "Event Driven architecture description",
+                new FileTo(null, null, NEW_LOGO_FILE, null));
     }
 
     private static final String UPDATED_NAME = "updated architecture name";

@@ -43,14 +43,33 @@ public class UserService {
     @Value("${content-path.avatars}")
     private String avatarFilesPath;
 
+    public User get(long id) {
+        return repository.getExisted(id);
+    }
+
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
         return repository.findByEmailIgnoreCase(email).orElseThrow(() ->
                 new NotFoundException("Not found user with email=" + email, "error.notfound.user", new Object[]{email}));
     }
 
-    public User get(long id) {
-        return repository.getExisted(id);
+    public Page<User> getAll(Pageable pageable) {
+        Assert.notNull(pageable, "pageable must not be null");
+        return repository.findAll(pageable);
+    }
+
+    public Page<User> getAllByKeyword(String keyword, Pageable pageable) {
+        Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        return repository.findAllByKeyword(keyword, pageable);
+    }
+
+    public Page<ProfileTo> getAllEnabledProfilesByKeyword(String keyword, Pageable pageable) {
+        Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<User> usersPage = repository.findAllEnabledByKeyword(keyword, pageable);
+        List<ProfileTo> profiles = UserUtil.asProfileTos(usersPage.getContent());
+        return new PageImpl<>(profiles, pageable, usersPage.getTotalElements());
     }
 
     @Transactional
@@ -71,25 +90,6 @@ public class UserService {
             throw new IllegalRequestDataException("Current password for user with id=" + id + " is incorrect",
                     "profile.incorrect-password", null);
         }
-    }
-
-    public Page<User> getAll(Pageable pageable) {
-        Assert.notNull(pageable, "pageable must not be null");
-        return repository.findAll(pageable);
-    }
-
-    public Page<User> getAll(String keyword, Pageable pageable) {
-        Assert.notNull(keyword, "keyword must not be null");
-        Assert.notNull(pageable, "pageable must not be null");
-        return repository.findAllByKeyword(keyword, pageable);
-    }
-
-    public Page<ProfileTo> getAllEnabledProfilesByKeyword(String keyword, Pageable pageable) {
-        Assert.notNull(keyword, "keyword must not be null");
-        Assert.notNull(pageable, "pageable must not be null");
-        Page<User> usersPage = repository.findAllEnabledByKeyword(keyword, pageable);
-        List<ProfileTo> profiles = UserUtil.asProfileTos(usersPage.getContent());
-        return new PageImpl<>(profiles, pageable, usersPage.getTotalElements());
     }
 
     public void create(User user) {

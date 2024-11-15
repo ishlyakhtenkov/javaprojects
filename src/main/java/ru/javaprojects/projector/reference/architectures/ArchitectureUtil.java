@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.reference.architectures;
 
 import lombok.experimental.UtilityClass;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.AppUtil;
 
 import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
@@ -13,8 +14,11 @@ public class ArchitectureUtil {
     }
 
     public static ArchitectureTo asTo(Architecture architecture) {
-        return new ArchitectureTo(architecture.getId(), architecture.getName(), architecture.getDescription(),
-                architecture.getLogo().getFileName(), architecture.getLogo().getFileLink());
+        String logoFileName = architecture.getLogo() != null ? architecture.getLogo().getFileName() : null;
+        String logoFileLink = architecture.getLogo() != null ? architecture.getLogo().getFileLink() : null;
+        FileTo logo = (logoFileName == null || logoFileLink == null) ? null :
+                new FileTo(logoFileName, logoFileLink, null, null);
+        return new ArchitectureTo(architecture.getId(), architecture.getName(), architecture.getDescription(), logo);
     }
 
     public static Architecture updateFromTo(Architecture architecture, ArchitectureTo architectureTo,

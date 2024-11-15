@@ -27,19 +27,18 @@ public class ProjectManagementController {
 
     @GetMapping
     public String getAll(@RequestParam(value = "keyword", required = false) String keyword,
-                         @PageableDefault @SortDefault("name") Pageable pageable, Model model,
+                         @PageableDefault @SortDefault("name") Pageable p, Model model,
                          RedirectAttributes redirectAttributes) {
         Page<ProjectPreviewTo> projects;
         if (keyword != null) {
             if (keyword.isBlank()) {
                 return "redirect:" + MANAGEMENT_PROJECTS_URL;
             }
-            log.info("get projects (pageNumber={}, pageSize={}, keyword={})", pageable.getPageNumber(),
-                    pageable.getPageSize(), keyword);
-            projects = service.getAll(keyword.trim(), pageable);
+            log.info("get projects by keyword={} (pageNumber={}, pageSize={})", keyword, p.getPageNumber(), p.getPageSize());
+            projects = service.getAllByKeyword(keyword.trim(), p);
         } else  {
-            log.info("get projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
-            projects = service.getAll(pageable);
+            log.info("get projects (pageNumber={}, pageSize={})", p.getPageNumber(), p.getPageSize());
+            projects = service.getAll(p);
         }
         if (projects.getContent().isEmpty() && projects.getTotalElements() != 0) {
             if (keyword != null) {

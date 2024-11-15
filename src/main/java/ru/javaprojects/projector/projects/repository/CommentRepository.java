@@ -1,5 +1,6 @@
 package ru.javaprojects.projector.projects.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface CommentRepository extends BaseRepository<Comment> {
 
     @EntityGraph(attributePaths = {"author", "likes"})
-    List<Comment> findAllByProjectIdOrderByCreated(long projectId);
+    List<Comment> findAllByProjectId(long projectId, Sort s);
 
     @EntityGraph(attributePaths = {"author", "likes"})
     Optional<Comment> findById(long id);

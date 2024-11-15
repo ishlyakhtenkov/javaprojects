@@ -33,18 +33,39 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class ProjectRestController {
     private final ProjectService service;
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long id) {
-        log.info("delete project with id={}", id);
-        service.delete(id, AuthUser.authId(), AuthUser.isAdmin());
+    @GetMapping("/by-author")
+    public List<ProjectPreviewTo> getAllProjectsByAuthor(@RequestParam long userId) {
+        log.info("get all projects by author with id={}", userId);
+        boolean visibleOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
+        return service.getAllByAuthor(userId, visibleOnly);
     }
 
-    @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void reveal(@PathVariable long id, @RequestParam boolean visible) {
-        log.info("{} project with id={}", visible ? "reveal" : "hide", id);
-        service.reveal(id, visible, AuthUser.authId(), AuthUser.isAdmin());
+    @GetMapping("/fresh")
+    public Page<ProjectPreviewTo> getFreshProjects(@PageableDefault @SortDefault(value = "created", direction = DESC)
+                                                   Pageable p) {
+        log.info("get fresh projects (pageNumber={}, pageSize={})", p.getPageNumber(), p.getPageSize());
+        return service.getAllVisible(p);
+    }
+
+    @GetMapping("/popular")
+    public Page<ProjectPreviewTo> getPopularProjects(@PageableDefault Pageable p) {
+        log.info("get popular projects (pageNumber={}, pageSize={})", p.getPageNumber(), p.getPageSize());
+        return service.getAllVisibleOrderByPopularity(p);
+    }
+
+    @GetMapping("/by-tag")
+    public Page<ProjectPreviewTo> getProjectsByTag(@RequestParam String tag,
+                                                   @PageableDefault @SortDefault(value = "created", direction = DESC)
+                                                   Pageable p) {
+        log.info("get projects by tag={} (pageNumber={}, pageSize={})", tag, p.getPageNumber(), p.getPageSize());
+        return service.getAllVisibleByTag(tag.trim(), p);
+    }
+
+    @GetMapping("/by-keyword")
+    public Page<ProjectPreviewTo> getProjectsByKeyword(@RequestParam String keyword,
+                                                       @PageableDefault @SortDefault(value = "name") Pageable p) {
+        log.info("get projects by keyword={} (pageNumber={}, pageSize={})", keyword, p.getPageNumber(), p.getPageSize());
+        return service.getAllVisibleByKeyword(keyword.trim(), p);
     }
 
     @PatchMapping("/{id}/like")
@@ -52,6 +73,20 @@ public class ProjectRestController {
     public void likeProject(@PathVariable long id, @RequestParam boolean liked) {
         log.info("{} project with id={} by user with id={}", liked ? "like" : "dislike", id, AuthUser.authId());
         service.likeProject(id, liked, AuthUser.authId());
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void revealProject(@PathVariable long id, @RequestParam boolean visible) {
+        log.info("{} project with id={}", visible ? "reveal" : "hide", id);
+        service.reveal(id, visible, AuthUser.authId(), AuthUser.isAdmin());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProject(@PathVariable long id) {
+        log.info("delete project with id={}", id);
+        service.delete(id, AuthUser.authId(), AuthUser.isAdmin());
     }
 
     @PostMapping(value = "/{id}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -70,13 +105,6 @@ public class ProjectRestController {
         service.likeComment(id, liked, AuthUser.authId());
     }
 
-    @DeleteMapping("/{projectId}/comments/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable long projectId, @PathVariable long id) {
-        log.info("delete comment with id={} for project with id={}{}", id, projectId, AuthUser.isAdmin() ? " by admin" : "");
-        service.deleteComment(id, AuthUser.authId(), AuthUser.isAdmin());
-    }
-
     @PutMapping("/{projectId}/comments/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateComment(@PathVariable long projectId, @PathVariable long id,
@@ -87,39 +115,10 @@ public class ProjectRestController {
         service.updateComment(id, text, AuthUser.authId());
     }
 
-
-    @GetMapping("/by-author")
-    public List<ProjectPreviewTo> getAllProjectsByAuthor(@RequestParam long userId) {
-        log.info("get all projects by user with id={}", userId);
-        boolean visibleOnly = AuthUser.safeGet() == null || AuthUser.authId() != userId;
-        return service.getAllByAuthor(userId, visibleOnly);
-    }
-
-    @GetMapping("/fresh")
-    public Page<ProjectPreviewTo> getFreshProjects(@PageableDefault @SortDefault(value = "created", direction = DESC)
-                                                       Pageable pageable) {
-        log.info("get fresh projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisible(pageable);
-    }
-
-    @GetMapping("/popular")
-    public Page<ProjectPreviewTo> getPopularProjects(@PageableDefault Pageable pageable) {
-        log.info("get popular projects (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisibleOrderByPopularity(pageable);
-    }
-
-    @GetMapping("/by-tag")
-    public Page<ProjectPreviewTo> getProjectsByTag(@RequestParam String tag,
-                                                   @PageableDefault @SortDefault(value = "created", direction = DESC)
-                                                   Pageable pageable) {
-        log.info("get projects by tag={} (pageNumber={}, pageSize={})", tag, pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisibleByTag(tag.trim(), pageable);
-    }
-
-    @GetMapping("/by-keyword")
-    public Page<ProjectPreviewTo> getProjectsByKeyword(@RequestParam String keyword,
-                                                   @PageableDefault @SortDefault(value = "name") Pageable pageable) {
-        log.info("get projects by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(), pageable.getPageSize());
-        return service.getAllVisibleByKeyword(keyword.trim(), pageable);
+    @DeleteMapping("/{projectId}/comments/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable long projectId, @PathVariable long id) {
+        log.info("delete comment with id={} for project with id={}{}", id, projectId, AuthUser.isAdmin() ? " by admin" : "");
+        service.deleteComment(id, AuthUser.authId(), AuthUser.isAdmin());
     }
 }

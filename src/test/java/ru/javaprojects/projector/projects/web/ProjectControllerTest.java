@@ -25,6 +25,7 @@ import ru.javaprojects.projector.projects.ProjectUtil;
 import ru.javaprojects.projector.projects.model.Comment;
 import ru.javaprojects.projector.projects.model.DescriptionElement;
 import ru.javaprojects.projector.projects.model.Project;
+import ru.javaprojects.projector.projects.repository.ProjectRepository;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
 import ru.javaprojects.projector.projects.to.ProjectTo;
 import ru.javaprojects.projector.reference.technologies.TechnologyTestData;
@@ -43,13 +44,20 @@ import static ru.javaprojects.projector.AbstractControllerTest.ExceptionResultMa
 import static ru.javaprojects.projector.common.CommonTestData.*;
 import static ru.javaprojects.projector.common.validation.UniqueNameValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.projects.ProjectService.*;
+import static ru.javaprojects.projector.projects.ProjectTestData.NEW_LOGO_FILE;
+import static ru.javaprojects.projector.projects.ProjectTestData.UPDATED_LOGO_FILE;
+import static ru.javaprojects.projector.projects.ProjectTestData.getNew;
+import static ru.javaprojects.projector.projects.ProjectTestData.getNewInvalidParams;
+import static ru.javaprojects.projector.projects.ProjectTestData.getNewParams;
+import static ru.javaprojects.projector.projects.ProjectTestData.getNewTo;
+import static ru.javaprojects.projector.projects.ProjectTestData.getUpdated;
+import static ru.javaprojects.projector.projects.ProjectTestData.getUpdatedInvalidParams;
+import static ru.javaprojects.projector.projects.ProjectTestData.getUpdatedParams;
+import static ru.javaprojects.projector.projects.ProjectTestData.getUpdatedWithOldName;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.projects.model.ElementType.IMAGE;
 import static ru.javaprojects.projector.projects.web.ProjectController.PROJECTS_URL;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture1EnLocalized;
-import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.architecture2EnLocalized;
+import static ru.javaprojects.projector.reference.architectures.ArchitectureTestData.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
@@ -68,6 +76,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Autowired
     private ProjectUtil projectUtil;
@@ -362,7 +373,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
-            Project created = projectService.getByName(newProjectTo.getName());
+            Project created = projectRepository.findByNameIgnoreCase(newProjectTo.getName()).orElseThrow();
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
@@ -399,7 +410,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
-            Project created = projectService.getByName(newProjectTo.getName());
+            Project created = projectRepository.findByNameIgnoreCase(newProjectTo.getName()).orElseThrow();
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
@@ -435,7 +446,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProject.getName()}, getLocale())));
-            Project created = projectService.getByName(newProject.getName());
+            Project created = projectRepository.findByNameIgnoreCase(newProject.getName()).orElseThrow();
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
@@ -473,7 +484,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                         new Object[]{newProject.getName()}, getLocale())));
-        Project created = projectService.getByName(newProject.getName());
+        Project created = projectRepository.findByNameIgnoreCase(newProject.getName()).orElseThrow();
         newProject.setId(created.getId());
         created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
         PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
@@ -507,7 +518,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertThrows(NotFoundException.class, () -> projectService.getByName(getNewTo().getName()));
+        assertThrows(NotFoundException.class, () ->
+                projectRepository.findByNameIgnoreCase(getNewTo().getName()).orElseThrow());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
@@ -566,7 +578,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getDescriptionElementTos().get(2).getImage().getFileLink());
 
-        assertThrows(NotFoundException.class, () -> projectService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
+        assertThrows(NotFoundException.class, () ->
+                projectRepository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).orElseThrow());
         assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
                 NEW_LOGO_FILE.getOriginalFilename())));
         assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) + DOCKER_DIR +
@@ -590,7 +603,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.logo-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertThrows(NotFoundException.class, () ->
+                projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).orElseThrow());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
@@ -609,7 +623,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.preview-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () -> projectService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertThrows(NotFoundException.class, () ->
+                projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).orElseThrow());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
@@ -633,7 +648,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
-            Project created = projectService.getByName(newProjectTo.getName());
+            Project created = projectRepository.findByNameIgnoreCase(newProjectTo.getName()).orElseThrow();
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",
@@ -699,7 +714,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .get(PROJECT_TO_ATTRIBUTE)).getDescriptionElementTos().get(2).getImage().getFileLink());
 
         assertNotEquals(getNew(projectFilesPath).getAnnotation(),
-                projectService.getByName(project1.getName()).getAnnotation());
+                projectRepository.findByNameIgnoreCase(project1.getName()).orElseThrow().getAnnotation());
     }
 
     @Test
@@ -736,7 +751,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                     .andExpect(status().isFound())
                     .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("project.has-been-created",
                             new Object[]{newProjectTo.getName()}, getLocale())));
-            Project created = projectService.getByAuthorAndName(USER_ID, newProjectTo.getName());
+            Project created = projectRepository.findByAuthor_IdAndName(USER_ID, newProjectTo.getName()).orElseThrow();
             newProject.setId(created.getId());
             created = projectService.getWithAllInformation(created.id(), Comparator.naturalOrder());
             PROJECT_MATCHER.assertMatchIgnoreFields(created, newProject, "author.roles", "author.password",

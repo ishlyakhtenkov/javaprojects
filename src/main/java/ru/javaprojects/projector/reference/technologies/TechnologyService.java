@@ -34,6 +34,13 @@ public class TechnologyService {
         return repository.getExisted(id);
     }
 
+    public Technology getByName(String name) {
+        Assert.notNull(name, "name must not be null");
+        return repository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new NotFoundException("Not found technology with name =" + name, "error.notfound.technology",
+                        new Object[]{name}));
+    }
+
     @Cacheable("technologies")
     public List<Technology> getAll() {
         return repository.findAll(Sort.by("name"));
@@ -41,20 +48,18 @@ public class TechnologyService {
 
     public Page<Technology> getAll(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
-        return repository.findAllByOrderByName(pageable);
+        return repository.findAll(pageable);
     }
 
-    public Page<Technology> getAll(Pageable pageable, String keyword) {
-        Assert.notNull(pageable, "pageable must not be null");
+    public Page<Technology> getAllByKeyword(String keyword, Pageable pageable) {
         Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
         return repository.findAllByKeyword(keyword, pageable);
     }
 
-    public Technology getByName(String name) {
-        Assert.notNull(name, "name must not be null");
-        return repository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Not found technology with name =" + name, "error.notfound.technology",
-                        new Object[]{name}));
+    public Set<Technology> getAllByIds(Set<Long> ids) {
+        Assert.notNull(ids, "ids must not be null");
+        return new HashSet<>(repository.findAllById(ids));
     }
 
     @CacheEvict(value = "technologies", allEntries = true)
@@ -99,10 +104,5 @@ public class TechnologyService {
         repository.delete(technology);
         repository.flush();
         FileUtil.deleteFile(technology.getLogo().getFileLink());
-    }
-
-    public Set<Technology> getAllByIds(Set<Long> ids) {
-        Assert.notNull(ids, "ids must not be null");
-        return new HashSet<>(repository.findAllById(ids));
     }
 }

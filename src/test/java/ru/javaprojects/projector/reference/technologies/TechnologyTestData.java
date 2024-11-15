@@ -6,6 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
@@ -53,7 +54,8 @@ public class TechnologyTestData {
             MediaType.IMAGE_PNG_VALUE, "updated logo file content bytes".getBytes());
 
     public static TechnologyTo getNewTo() {
-        return new TechnologyTo(null, "Apache Tomcat", "https://tomcat.com", BACKEND, MEDIUM, NEW_LOGO_FILE);
+        return new TechnologyTo(null, "Apache Tomcat", "https://tomcat.com", BACKEND, MEDIUM,
+                new FileTo(null, null, NEW_LOGO_FILE, null));
     }
 
     public static Technology getNew(String technologyFilesPath) {

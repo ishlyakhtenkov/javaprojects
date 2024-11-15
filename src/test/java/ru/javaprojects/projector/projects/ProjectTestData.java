@@ -6,6 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.MatcherFactory;
 import ru.javaprojects.projector.common.model.File;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.to.CommentTo;
@@ -270,10 +271,11 @@ public class ProjectTestData {
     public static ProjectTo getNewTo() {
         return new ProjectTo(null, "New project name", "New project annotation", true, HIGH,
                 LocalDate.of(2022, MARCH, 11), LocalDate.of(2022, DECEMBER, 25), architecture1EnLocalized,
-                NEW_LOGO_FILE, NEW_DOCKER_COMPOSE_FILE, NEW_PREVIEW_FILE, "https://newprojectname.ru",
-                "https://github.com/ishlyakhtenkov/newprojectname", null,
-                "https://newprojectname.ru/swagger-ui.html", Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID),
-                new ArrayList<>(List.of(getNewDeTo1(), getNewDeTo2(), getNewDeTo3())));
+                new FileTo(null, null, NEW_LOGO_FILE, null), new FileTo(null, null, NEW_DOCKER_COMPOSE_FILE, null),
+                new FileTo(null, null, NEW_PREVIEW_FILE, null), "https://newprojectname.ru",
+                "https://github.com/ishlyakhtenkov/newprojectname", null, "https://newprojectname.ru/swagger-ui.html",
+                 Set.of(TECHNOLOGY1_ID, TECHNOLOGY2_ID, TECHNOLOGY3_ID),
+                new ArrayList<>(List.of(getNewDeTo1(), getNewDeTo2(), getNewDeTo3())), null);
     }
 
     public static Project getNew(String contentPath) {
@@ -531,17 +533,17 @@ public class ProjectTestData {
                     "_updateddenewimage.png"), project1);
 
     public static DescriptionElementTo getNewDeTo1() {
-        return new DescriptionElementTo(null, TITLE, (byte) 0, "Some title", null, null);
+        return new DescriptionElementTo(null, TITLE, (byte) 0, "Some title", null);
     }
 
     public static DescriptionElementTo getNewDeTo2() {
-        return new DescriptionElementTo(null, PARAGRAPH, (byte) 1, "Some paragraph", null, null);
+        return new DescriptionElementTo(null, PARAGRAPH, (byte) 1, "Some paragraph", null);
     }
 
     public static DescriptionElementTo getNewDeTo3() {
-        return new DescriptionElementTo(null, IMAGE, (byte) 2,
-                new MockMultipartFile("descriptionElementTos[2].image.inputtedFile", "deImage.png",
-                        MediaType.IMAGE_PNG_VALUE, "description element image file content bytes".getBytes()));
+        MockMultipartFile image = new MockMultipartFile("descriptionElementTos[2].image.inputtedFile", "deImage.png",
+                MediaType.IMAGE_PNG_VALUE, "description element image file content bytes".getBytes());
+        return new DescriptionElementTo(null, IMAGE, (byte) 2, null, new FileTo(null, null, image, null));
     }
 
     public static DescriptionElement getNewDe1() {
@@ -558,9 +560,9 @@ public class ProjectTestData {
     }
 
     public static DescriptionElementTo getNewDeToForProjectUpdate() {
-        return new DescriptionElementTo(null, IMAGE, (byte) 5,
-                new MockMultipartFile("descriptionElementTos[5].image.inputtedFile", "updatedDeNewImage.png",
-                        MediaType.IMAGE_PNG_VALUE, "description element image file content bytes".getBytes()));
+        MockMultipartFile image = new MockMultipartFile("descriptionElementTos[5].image.inputtedFile", "updatedDeNewImage.png",
+                MediaType.IMAGE_PNG_VALUE, "description element image file content bytes".getBytes());
+        return new DescriptionElementTo(null, IMAGE, (byte) 5, null, new FileTo(null, null, image, null));
     }
 
     public static CommentTo getNewCommentTo() {

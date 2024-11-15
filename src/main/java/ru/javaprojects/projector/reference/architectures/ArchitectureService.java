@@ -12,6 +12,7 @@ import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.translate.Translator;
 import ru.javaprojects.projector.common.util.FileUtil;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,15 +50,6 @@ public class ArchitectureService {
                                 translator.translate(a.getDescription(), locale), a.getLogo())));
     }
 
-    public List<Architecture> getAll() {
-        return architectures.values().stream()
-                .flatMap(map -> map.entrySet()
-                        .stream())
-                .filter(e -> e.getKey().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage()))
-                .map(Map.Entry::getValue)
-                .toList();
-    }
-
     public Architecture get(long id) {
         return repository.getExisted(id);
     }
@@ -77,6 +69,16 @@ public class ArchitectureService {
         return repository.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new NotFoundException("Not found architecture with name =" + name,
                         "error.notfound.architecture",  new Object[]{name}));
+    }
+
+    public List<Architecture> getAll() {
+        return architectures.values().stream()
+                .flatMap(map -> map.entrySet()
+                        .stream())
+                .filter(e -> e.getKey().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage()))
+                .map(Map.Entry::getValue)
+                .sorted(Comparator.comparing(Architecture::getName))
+                .toList();
     }
 
     public Architecture create(ArchitectureTo architectureTo) {

@@ -27,10 +27,10 @@ public interface ProjectRepository extends NamedRepository<Project> {
     Page<Long> findAllVisibleIdsByKeyword(String keyword, Pageable pageable);
 
     @EntityGraph(attributePaths = {"architecture", "author", "likes"})
-    List<Project> findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(List<Long> projectsIds);
+    List<Project> findAllWithArchitectureAndAuthorAndLikesByIdIn(List<Long> projectsIds, Sort s);
 
     @EntityGraph(attributePaths = {"architecture", "author", "likes", "technologies"})
-    List<Project> findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(List<Long> projectsIds, Sort sort);
+    List<Project> findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(List<Long> projectsIds, Sort s);
 
     @Query("SELECT p.id FROM Project p WHERE p.visible = TRUE")
     Page<Long> findAllIdsByVisibleIsTrue(Pageable pageable);

@@ -69,10 +69,10 @@ public class ProjectController {
     @GetMapping("/{id}/view")
     public String showProject(@PathVariable long id, Model model) {
         log.info("show project with id={}", id);
-        Comparator<Technology> technologyComparator = Comparator
+        Comparator<Technology> priorityComparator = Comparator
                 .comparingInt((Technology t) -> t.getPriority().ordinal())
                 .thenComparing(Technology::getName);
-        Project project = projectService.getWithAllInformation(id, technologyComparator);
+        Project project = projectService.getWithAllInformation(id, priorityComparator);
         AuthUser authUser = AuthUser.safeGet();
         if (!project.isVisible() && (authUser == null || project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin())) {
             throw new IllegalRequestDataException("Forbidden to view disabled project, projectId=" + id,
@@ -149,12 +149,6 @@ public class ProjectController {
         return "projects/project-form";
     }
 
-    private void addAttributesToModel(Model model) {
-        model.addAttribute("priorities", Priority.values());
-        model.addAttribute("architectures", architectureService.getAll());
-        model.addAttribute("technologies", technologyService.getAll());
-    }
-
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for project with id={}", id);
@@ -166,6 +160,12 @@ public class ProjectController {
         model.addAttribute("projectTo", projectUtil.asTo(project));
         addAttributesToModel(model);
         return "projects/project-form";
+    }
+
+    private void addAttributesToModel(Model model) {
+        model.addAttribute("priorities", Priority.values());
+        model.addAttribute("architectures", architectureService.getAll());
+        model.addAttribute("technologies", technologyService.getAll());
     }
 
     @PostMapping

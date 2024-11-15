@@ -69,11 +69,6 @@ public class ProjectService {
         return repository.getExisted(id);
     }
 
-    public Project getWithAuthor(long id) {
-        return repository.findWithAuthorById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
-    }
-
     public Project getWithAllInformation(long id, Comparator<Technology> technologyComparator) {
         Project project = repository.findWithAllInformationAndDescriptionById(id).orElseThrow(() ->
                 new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
@@ -82,7 +77,7 @@ public class ProjectService {
         sortedTechnologies.addAll(project.getTechnologies());
         project.setTechnologies(sortedTechnologies);
         project.setDescriptionElements(new TreeSet<>(project.getDescriptionElements()));
-        project.setComments(commentRepository.findAllByProjectIdOrderByCreated(id));
+        project.setComments(commentRepository.findAllByProjectId(id, Sort.by("created")));
         return project;
     }
 
@@ -94,46 +89,20 @@ public class ProjectService {
         }
     }
 
-    public Project getByName(String name) {
-        Assert.notNull(name, "name must not be null");
-        return repository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "error.notfound.project",
-                        new Object[]{name}));
-    }
-
-    public Project getByAuthorAndName(long userId, String name) {
-        Assert.notNull(name, "name must not be null");
-        return repository.findByAuthor_IdAndName(userId, name)
-                .orElseThrow(() -> new NotFoundException("Not found project with name =" + name, "error.notfound.project",
-                        new Object[]{name}));
-    }
-
     public Page<ProjectPreviewTo> getAll(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
         return getAll(repository.findAllIds(pageable), pageable);
     }
 
-    public Page<ProjectPreviewTo> getAll(String keyword, Pageable pageable) {
+    public Page<ProjectPreviewTo> getAllByKeyword(String keyword, Pageable pageable) {
         Assert.notNull(keyword, "keyword must not be null");
         Assert.notNull(pageable, "pageable must not be null");
         return getAll(repository.findAllIdsByKeyword(keyword, pageable), pageable);
     }
 
     private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
-        List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdInOrderByName(projectsIds.getContent());
-        projects.forEach(this::localizeArchitecture);
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
-    }
-
-    public Page<ProjectPreviewTo> getAllVisibleByKeyword(String keyword, Pageable pageable) {
-        Assert.notNull(keyword, "keyword must not be null");
-        Assert.notNull(pageable, "pageable must not be null");
-        Page<Long> projectsIds = repository.findAllVisibleIdsByKeyword(keyword, pageable);
-        List<Project> projects =
-                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
-                        pageable.getSort());
+        List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdIn(projectsIds.getContent(),
+                Sort.by("name"));
         projects.forEach(this::localizeArchitecture);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
@@ -159,6 +128,19 @@ public class ProjectService {
                         pageable.getSort());
         projects.forEach(this::localizeArchitecture);
         sortTechnologies(projects);
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+    }
+
+    public Page<ProjectPreviewTo> getAllVisibleByKeyword(String keyword, Pageable pageable) {
+        Assert.notNull(keyword, "keyword must not be null");
+        Assert.notNull(pageable, "pageable must not be null");
+        Page<Long> projectsIds = repository.findAllVisibleIdsByKeyword(keyword, pageable);
+        List<Project> projects =
+                repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
+                        pageable.getSort());
+        projects.forEach(this::localizeArchitecture);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
         return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
@@ -197,11 +179,11 @@ public class ProjectService {
 
     private void sortTechnologies(List<Project> projects) {
         projects.forEach(project -> {
-            Comparator<Technology> technologyComparator = Comparator
+            Comparator<Technology> usageThenPriorityThenNaturalComparator = Comparator
                     .comparingInt((Technology t) -> t.getUsage().ordinal())
                     .thenComparing(t -> t.getPriority().ordinal())
                     .thenComparing(Comparator.naturalOrder());
-            TreeSet<Technology> sortedTechnologies = new TreeSet<>(technologyComparator);
+            TreeSet<Technology> sortedTechnologies = new TreeSet<>(usageThenPriorityThenNaturalComparator);
             sortedTechnologies.addAll(project.getTechnologies());
             project.setTechnologies(sortedTechnologies);
         });
@@ -435,5 +417,10 @@ public class ProjectService {
 
     public int countLikesForAuthor(long authorId) {
         return likeRepository.countLikesForAuthor(authorId);
+    }
+
+    private Project getWithAuthor(long id) {
+        return repository.findWithAuthorById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
     }
 }

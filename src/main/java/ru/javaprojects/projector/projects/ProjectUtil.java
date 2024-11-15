@@ -8,6 +8,7 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.to.BaseTo;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.projects.model.*;
 import ru.javaprojects.projector.projects.repository.TagRepository;
 import ru.javaprojects.projector.projects.to.DescriptionElementTo;
@@ -22,8 +23,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.common.util.AppUtil.createFile;
+import static ru.javaprojects.projector.common.util.FileUtil.normalizePath;
 import static ru.javaprojects.projector.projects.ProjectService.*;
 
 @Component
@@ -40,7 +41,9 @@ public class ProjectUtil {
                 .map(de -> {
                     String fileName = de.getImage() != null ? de.getImage().getFileName() : null;
                     String fileLink = de.getImage() != null ? de.getImage().getFileLink() : null;
-                    return new DescriptionElementTo(de.getId(), de.getType(), de.getIndex(), de.getText(), fileName, fileLink);
+                    FileTo image = (fileName == null || fileLink == null) ? null :
+                            new FileTo(fileName, fileLink, null, null);
+                    return new DescriptionElementTo(de.getId(), de.getType(), de.getIndex(), de.getText(), image);
                 })
                 .toList();
 
@@ -48,17 +51,20 @@ public class ProjectUtil {
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet());
 
+        FileTo logo = new FileTo(project.getLogo().getFileName(), project.getLogo().getFileLink(), null, null);
         String dockerComposeFileName = project.getDockerCompose() != null ? project.getDockerCompose().getFileName() : null;
         String dockerComposeFileLink = project.getDockerCompose() != null ? project.getDockerCompose().getFileLink() : null;
+        FileTo dockerCompose = (dockerComposeFileName == null || dockerComposeFileLink == null) ? null :
+                new FileTo(dockerComposeFileName, dockerComposeFileLink, null, null);
+        FileTo preview = new FileTo(project.getPreview().getFileName(), project.getPreview().getFileLink(), null, null);
+
 
         String tags = project.getTags().isEmpty() ? null : project.getTags().stream()
                 .map(Tag::getName).collect(Collectors.joining(" "));
         return new ProjectTo(project.getId(), project.getName(), project.getAnnotation(), project.isVisible(),
                 project.getPriority(), project.getStarted(), project.getFinished(), project.getArchitecture(),
-                project.getLogo().getFileName(), project.getLogo().getFileLink(), dockerComposeFileName, dockerComposeFileLink,
-                project.getPreview().getFileName(), project.getPreview().getFileLink(), project.getDeploymentUrl(),
-                project.getBackendSrcUrl(), project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos,
-                tags);
+                logo, dockerCompose, preview, project.getDeploymentUrl(), project.getBackendSrcUrl(),
+                project.getFrontendSrcUrl(), project.getOpenApiUrl(), technologiesIds, deTos, tags);
     }
 
     public ProjectPreviewTo asPreviewTo(Project project, int commentsCount) {
@@ -87,45 +93,11 @@ public class ProjectUtil {
                 projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0, author);
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
-        projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewFromTo(deTo, project)));
+        projectTo.getDescriptionElementTos().forEach(deTo -> project.addDescriptionElement(createNewDeFromTo(deTo, project)));
         if (projectTo.getTags() != null && !projectTo.getTags().isBlank()) {
             parseTags(projectTo.getTags()).forEach(project::addTag);
         }
         return project;
-    }
-
-    private DescriptionElement createNewFromTo(DescriptionElementTo deTo, Project project) {
-        if (deTo.getType() == ElementType.IMAGE) {
-            if (deTo.getImage() == null || deTo.getImage().isEmpty()) {
-                throw new IllegalRequestDataException("Description element image file is not present",
-                        "project.description-elements.image-not-present", null);
-            }
-            setImageFileAttributes(deTo, project.getName(), project.getAuthor().getEmail());
-        }
-        return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
-                deTo.getImage() != null ? new File(deTo.getImage().getFileName(), deTo.getImage().getFileLink()) : null);
-    }
-
-    private Set<Tag> parseTags(String tagsString) {
-        tagsString = tagsString.toLowerCase();
-        Set<String> tagNames;
-        if (tagsString.contains(",")) {
-            tagNames = Stream.of(tagsString.split(",")).map(String::trim).collect(Collectors.toSet());
-        } else {
-            tagNames = Stream.of(tagsString.split(" ")).map(String::trim).collect(Collectors.toSet());
-        }
-        Set<Tag> dbTags = tagRepository.findAllByNameIn(tagNames);
-        Set<String> dbTagsNames = dbTags.stream()
-                .map(Tag::getName)
-                .collect(Collectors.toSet());
-        List<Tag> newTags = tagNames.stream()
-                .filter(tag -> !dbTagsNames.contains(tag))
-                .map(tag -> new Tag(null, tag))
-                .toList();
-        Set<Tag> tags = new HashSet<>();
-        tags.addAll(dbTags);
-        tags.addAll(newTags);
-        return tags;
     }
 
     public Project updateFromTo(Project project, ProjectTo projectTo) {
@@ -155,11 +127,11 @@ public class ProjectUtil {
         project.getDescriptionElements().removeIf(de -> !notNewDeTos.containsKey(de.getId()));
         project.getDescriptionElements().forEach(de -> {
             DescriptionElementTo deTo = notNewDeTos.get(de.getId());
-            updateFromTo(de, deTo, project);
+            updateDeFromTo(de, deTo, project);
         });
         projectTo.getDescriptionElementTos().stream()
                 .filter(HasId::isNew)
-                .map(deTo -> createNewFromTo(deTo, project))
+                .map(deTo -> createNewDeFromTo(deTo, project))
                 .forEach(project::addDescriptionElement);
 
         if (projectTo.getTags() == null || projectTo.getTags().isBlank()) {
@@ -205,7 +177,41 @@ public class ProjectUtil {
         return project;
     }
 
-    private void updateFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
+    private Set<Tag> parseTags(String tagsString) {
+        tagsString = tagsString.toLowerCase();
+        Set<String> tagNames;
+        if (tagsString.contains(",")) {
+            tagNames = Stream.of(tagsString.split(",")).map(String::trim).collect(Collectors.toSet());
+        } else {
+            tagNames = Stream.of(tagsString.split(" ")).map(String::trim).collect(Collectors.toSet());
+        }
+        Set<Tag> dbTags = tagRepository.findAllByNameIn(tagNames);
+        Set<String> dbTagsNames = dbTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+        List<Tag> newTags = tagNames.stream()
+                .filter(tag -> !dbTagsNames.contains(tag))
+                .map(tag -> new Tag(null, tag))
+                .toList();
+        Set<Tag> tags = new HashSet<>();
+        tags.addAll(dbTags);
+        tags.addAll(newTags);
+        return tags;
+    }
+
+    private DescriptionElement createNewDeFromTo(DescriptionElementTo deTo, Project project) {
+        if (deTo.getType() == ElementType.IMAGE) {
+            if (deTo.getImage() == null || deTo.getImage().isEmpty()) {
+                throw new IllegalRequestDataException("Description element image file is not present",
+                        "project.description-elements.image-not-present", null);
+            }
+            setImageFileAttributes(deTo, project.getName(), project.getAuthor().getEmail());
+        }
+        return new DescriptionElement(null, deTo.getType(), deTo.getIndex(), deTo.getText(),
+                deTo.getImage() != null ? new File(deTo.getImage().getFileName(), deTo.getImage().getFileLink()) : null);
+    }
+
+    private void updateDeFromTo(DescriptionElement de, DescriptionElementTo deTo, Project project) {
         de.setIndex(deTo.getIndex());
         if (deTo.getType() == ElementType.IMAGE && deTo.getImage() != null && !deTo.getImage().isEmpty()) {
             setImageFileAttributes(deTo, project.getName(), project.getAuthor().getEmail());

@@ -9,6 +9,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,18 +44,18 @@ public class UserManagementController {
 
     @GetMapping
     public String getAll(@RequestParam(value = "keyword", required = false) String keyword,
-                         @PageableDefault Pageable pageable, Model model, RedirectAttributes redirectAttributes) {
+                         @PageableDefault @SortDefault({"name", "email"}) Pageable p, Model model,
+                         RedirectAttributes redirectAttributes) {
         Page<User> users;
         if (keyword != null) {
             if (keyword.isBlank()) {
                 return "redirect:/management/users";
             }
-            log.info("get users by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(),
-                    pageable.getPageSize());
-            users = service.getAll(keyword.trim(), pageable);
+            log.info("get users by keyword={} (pageNumber={}, pageSize={})", keyword, p.getPageNumber(), p.getPageSize());
+            users = service.getAllByKeyword(keyword.trim(), p);
         } else  {
-            log.info("get users (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
-            users = service.getAll(pageable);
+            log.info("get users (pageNumber={}, pageSize={})", p.getPageNumber(), p.getPageSize());
+            users = service.getAll(p);
         }
         if (users.getContent().isEmpty() && users.getTotalElements() != 0) {
             if (keyword != null) {

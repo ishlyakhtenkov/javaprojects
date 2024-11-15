@@ -43,8 +43,8 @@ public class ProfileRestController {
 
     @GetMapping("/by-keyword")
     public Page<ProfileTo> getProfilesByKeyword(@RequestParam String keyword,
-                                                @PageableDefault @SortDefault("name") Pageable pageable) {
-        log.info("get profiles by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(), pageable.getPageSize());
-        return userService.getAllEnabledProfilesByKeyword(keyword, pageable);
+                                                @PageableDefault @SortDefault("name") Pageable p) {
+        log.info("get profiles by keyword={} (pageNumber={}, pageSize={})", keyword, p.getPageNumber(), p.getPageSize());
+        return userService.getAllEnabledProfilesByKeyword(keyword, p);
     }
 }

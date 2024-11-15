@@ -64,7 +64,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}/view")
-    public String profile(@PathVariable long id, Model model) {
+    public String showProfile(@PathVariable long id, Model model) {
         log.info("show profile with id={}", id);
         model.addAttribute("user", userService.get(id));
         model.addAttribute("rating", userService.getUserRating(id));

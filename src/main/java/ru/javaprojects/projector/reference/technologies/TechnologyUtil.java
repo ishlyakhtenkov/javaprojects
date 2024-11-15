@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.reference.technologies;
 
 import lombok.experimental.UtilityClass;
+import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.util.AppUtil;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
@@ -15,8 +16,12 @@ public class TechnologyUtil {
     }
 
     public static TechnologyTo asTo(Technology technology) {
+        String logoFileName = technology.getLogo() != null ? technology.getLogo().getFileName() : null;
+        String logoFileLink = technology.getLogo() != null ? technology.getLogo().getFileLink() : null;
+        FileTo logo = (logoFileName == null || logoFileLink == null) ? null :
+                new FileTo(logoFileName, logoFileLink, null, null);
         return new TechnologyTo(technology.getId(), technology.getName(), technology.getUrl(), technology.getUsage(),
-                technology.getPriority(), technology.getLogo().getFileName(), technology.getLogo().getFileLink());
+                technology.getPriority(), logo);
     }
 
     public static Technology updateFromTo(Technology technology, TechnologyTo technologyTo, String technologyFilesPath) {

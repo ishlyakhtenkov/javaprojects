@@ -14,11 +14,10 @@ public interface UserRepository extends BaseRepository<User> {
 
     Optional<User> findByEmailIgnoreCase(String email);
 
-    @Query("SELECT u FROM User u ORDER BY u.name, u.email")
     Page<User> findAll(Pageable pageable);
 
     @Query("SELECT u FROM User u WHERE UPPER(u.name) LIKE UPPER(CONCAT('%', :keyword, '%')) OR " +
-            "UPPER(u.email) LIKE UPPER(CONCAT('%', :keyword, '%')) ORDER BY u.name, u.email")
+            "UPPER(u.email) LIKE UPPER(CONCAT('%', :keyword, '%'))")
     Page<User> findAllByKeyword(String keyword, Pageable pageable);
 
     @Query("SELECT u FROM User u WHERE u.enabled = TRUE AND UPPER(u.name) LIKE UPPER(CONCAT('%', :keyword, '%'))")

@@ -32,20 +32,12 @@ public class DescriptionElementTo extends BaseTo implements Comparable<Descripti
     @Nullable
     private FileTo image;
 
-    public DescriptionElementTo(Long id, ElementType type, Byte index, String text, String imageFileName,
-                                String imageFileLink) {
+    public DescriptionElementTo(Long id, ElementType type, Byte index, String text, FileTo image) {
         super(id);
         this.type = type;
         this.index = index;
         this.text = text;
-        this.image = new FileTo(imageFileName, imageFileLink, null, null);
-    }
-
-    public DescriptionElementTo(Long id, ElementType type, Byte index, MultipartFile imageMultipartFile) {
-        super(id);
-        this.type = type;
-        this.index = index;
-        this.image = new FileTo(null, null, imageMultipartFile, null);
+        this.image = image;
     }
 
     @Override

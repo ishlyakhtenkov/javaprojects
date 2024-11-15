@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
-import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.to.BaseTo;
@@ -44,23 +43,13 @@ public class TechnologyTo extends BaseTo implements HasIdAndName {
     @ImageFile
     private FileTo logo;
 
-    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, MultipartFile logoMultipartFile) {
+    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, FileTo logo) {
         super(id);
         this.name = name;
         this.url = url;
         this.usage = usage;
         this.priority = priority;
-        this.logo = new FileTo(null, null, logoMultipartFile, null);
-    }
-
-    public TechnologyTo(Long id, String name, String url, Usage usage, Priority priority, String logoFileName,
-                        String logoFileLink) {
-        super(id);
-        this.name = name;
-        this.url = url;
-        this.usage = usage;
-        this.priority = priority;
-        this.logo = new FileTo(logoFileName, logoFileLink, null, null);
+        this.logo = logo;
     }
 
     @Override

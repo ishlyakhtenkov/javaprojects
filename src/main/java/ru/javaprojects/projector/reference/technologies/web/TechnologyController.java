@@ -9,6 +9,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,15 +44,16 @@ public class TechnologyController {
 
     @GetMapping
     public String getAll(@RequestParam(value = "keyword", required = false) String keyword,
-                         @PageableDefault Pageable pageable, Model model, RedirectAttributes redirectAttributes) {
+                         @PageableDefault @SortDefault("name") Pageable pageable, Model model,
+                         RedirectAttributes redirectAttributes) {
         Page<Technology> technologies;
         if (keyword != null) {
             if (keyword.isBlank()) {
                 return "redirect:/management/reference/technologies";
             }
-            log.info("get technologies (pageNumber={}, pageSize={}, keyword={})", pageable.getPageNumber(),
-                    pageable.getPageSize(), keyword);
-            technologies = service.getAll(pageable, keyword.trim());
+            log.info("get technologies by keyword={} (pageNumber={}, pageSize={})", keyword, pageable.getPageNumber(),
+                    pageable.getPageSize());
+            technologies = service.getAllByKeyword(keyword.trim(), pageable);
         } else  {
             log.info("get technologies (pageNumber={}, pageSize={})", pageable.getPageNumber(), pageable.getPageSize());
             technologies = service.getAll(pageable);
@@ -74,11 +76,6 @@ public class TechnologyController {
         return "management/reference/technology-form";
     }
 
-    private void addAttributesToModel(Model model) {
-        model.addAttribute("usages", Usage.values());
-        model.addAttribute("priorities", Priority.values());
-    }
-
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable long id, Model model) {
         log.info("show edit form for technology with id={}", id);
@@ -86,6 +83,11 @@ public class TechnologyController {
         model.addAttribute("technologyTo", asTo(technology));
         addAttributesToModel(model);
         return "management/reference/technology-form";
+    }
+
+    private void addAttributesToModel(Model model) {
+        model.addAttribute("usages", Usage.values());
+        model.addAttribute("priorities", Priority.values());
     }
 
     @PostMapping

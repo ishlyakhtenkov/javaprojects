@@ -28,7 +28,7 @@
                         <span class="h2 text-dark-emphasis ms-1" style="line-height: normal;"
                               th:text="${project.name}">Project name</span>
                         <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-warning float-end"
-                           th:title="#{project.invisible-to-users}"></i>
+                           th:title="#{project.hidden-from-users}"></i>
                     </div>
                     <div class="card-body text-start">
                         <div class="ratio mb-2" style="--bs-aspect-ratio: 50%;">

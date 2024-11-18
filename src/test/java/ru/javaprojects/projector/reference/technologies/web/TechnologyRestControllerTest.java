@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 
@@ -28,7 +28,7 @@ import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class TechnologyRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class TechnologyRestControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String TECHNOLOGIES_URL_SLASH = TECHNOLOGIES_URL + "/";
 
     @Value("${content-path.technologies}")
@@ -43,8 +43,8 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(TECHNOLOGIES_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -59,7 +59,7 @@ class TechnologyRestControllerTest extends AbstractControllerTest implements Tes
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void deleteWhenTechnologyInUse() throws Exception {
+    void deleteWhenTechnologyIsReferenced() throws Exception {
         perform(MockMvcRequestBuilders.delete(TECHNOLOGIES_URL_SLASH + TECHNOLOGY1_ID)
                 .with(csrf()))
                 .andExpect(status().isConflict())

@@ -59,7 +59,7 @@ class ChangeEmailServiceTest {
     }
 
     @Test
-    void changeEmailDuplicate() {
+    void changeEmailWhenSomeoneHasThisEmail() {
         IllegalRequestDataException exception =
                 assertThrows(IllegalRequestDataException.class, () -> changeEmailService.changeEmail(USER_ID, ADMIN_MAIL));
         assertEquals("change-email.already-in-use", exception.getMessageCode());
@@ -69,7 +69,7 @@ class ChangeEmailServiceTest {
     }
 
     @Test
-    void changeEmailAlreadyHas() {
+    void changeEmailWhenAlreadyHasThisEmail() {
         IllegalRequestDataException exception =
                 assertThrows(IllegalRequestDataException.class, () -> changeEmailService.changeEmail(USER_ID, USER_MAIL));
         assertEquals("change-email.already-has-email", exception.getMessageCode());
@@ -95,7 +95,7 @@ class ChangeEmailServiceTest {
     }
 
     @Test
-    void changeEmailWhenSomeOneHasTokenWithThisEmail() {
+    void changeEmailWhenSomeoneHasTokenWithThisEmail() {
         changeEmailService.changeEmail(USER_ID, NEW_EMAIL_SOMEONE_HAS_TOKEN);
         ChangeEmailToken createdToken = changeEmailTokenRepository.findByUser_Id(USER_ID).orElseThrow();
         assertTrue(createdToken.getExpiryTimestamp().isAfter(LocalDateTime.now()));

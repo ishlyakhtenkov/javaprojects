@@ -11,19 +11,20 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public interface TestContentFilesManager {
+public interface ContentFilesManager {
 
     Path getContentPath();
 
-    Path getTestDataFilesPath();
+    Path getContentFilesPath();
 
     @BeforeEach
     default void prepareContentFiles() throws IOException {
-        cleanContentDir(getContentPath());
-        createContentFiles(getContentPath());
+        cleanContentDir();
+        createContentFiles();
     }
 
-    private void cleanContentDir(Path contentPath) throws IOException {
+    private void cleanContentDir() throws IOException {
+        Path contentPath = getContentPath();
         if (Files.exists(contentPath)) {
             Files.walkFileTree(contentPath, new SimpleFileVisitor<>() {
 
@@ -46,19 +47,20 @@ public interface TestContentFilesManager {
         }
     }
 
-    private void createContentFiles(Path contentPath) throws IOException {
+    private void createContentFiles() throws IOException {
+        Path contentPath = getContentPath();
         Files.createDirectories(contentPath);
-        Files.walkFileTree(getTestDataFilesPath(), new SimpleFileVisitor<>() {
+        Files.walkFileTree(getContentFilesPath(), new SimpleFileVisitor<>() {
 
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                Files.createDirectories(contentPath.resolve(getTestDataFilesPath().relativize(dir)));
+                Files.createDirectories(contentPath.resolve(getContentFilesPath().relativize(dir)));
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.copy(file, contentPath.resolve(getTestDataFilesPath().relativize(file)), REPLACE_EXISTING);
+                Files.copy(file, contentPath.resolve(getContentFilesPath().relativize(file)), REPLACE_EXISTING);
                 return FileVisitResult.CONTINUE;
             }
         });

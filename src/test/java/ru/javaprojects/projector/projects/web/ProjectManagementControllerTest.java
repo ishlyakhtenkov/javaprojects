@@ -32,8 +32,8 @@ class ProjectManagementControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name(MANAGEMENT_PROJECTS_VIEW));
-        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                .getModel().get(PROJECTS_ATTRIBUTE);
+        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn()
+                        .getModelAndView()).getModel().get(PROJECTS_ATTRIBUTE);
         assertEquals(3, projects.getTotalElements());
         assertEquals(2, projects.getTotalPages());
         PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects.getContent(),
@@ -50,8 +50,8 @@ class ProjectManagementControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
                 .andExpect(view().name(MANAGEMENT_PROJECTS_VIEW));
-        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                .getModel().get(PROJECTS_ATTRIBUTE);
+        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn()
+                        .getModelAndView()).getModel().get(PROJECTS_ATTRIBUTE);
         assertEquals(1, projects.getTotalElements());
         assertEquals(1, projects.getTotalPages());
         PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects.getContent(), List.of(project1PreviewTo),

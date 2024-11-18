@@ -106,7 +106,7 @@
                                             <div class="form-switch text-truncate w-100">
                                                 <input type="checkbox" role="switch" th:field="*{visible}" class="form-check-input me-1"
                                                        style="cursor: pointer;" id="visibilityCheckbox" />
-                                                <span class="text-muted" th:text="${projectTo.visible} ? #{project.visible-to-users} : #{project.invisible-to-users}"
+                                                <span class="text-muted" th:text="${projectTo.visible} ? #{project.visible-to-users} : #{project.hidden-from-users}"
                                                       id="visibilityCheckboxDesc"></span>
                                             </div>
                                         </span>

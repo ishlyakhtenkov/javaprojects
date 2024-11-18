@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 
@@ -28,7 +28,7 @@ import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ArchitectureRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class ArchitectureRestControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String ARCHITECTURES_URL_SLASH = ARCHITECTURES_URL + "/";
 
     @Value("${content-path.architectures}")
@@ -43,8 +43,8 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(ARCHITECTURES_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(ARCHITECTURES_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -59,7 +59,7 @@ class ArchitectureRestControllerTest extends AbstractControllerTest implements T
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void deleteWhenArchitectureInUse() throws Exception {
+    void deleteWhenArchitectureIsReferenced() throws Exception {
         perform(MockMvcRequestBuilders.delete(ARCHITECTURES_URL_SLASH + ARCHITECTURE1_ID)
                 .with(csrf()))
                 .andExpect(status().isConflict())

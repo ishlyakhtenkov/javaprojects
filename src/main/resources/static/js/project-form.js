@@ -44,7 +44,7 @@ $('.date-input').on('change', (event) => {
 });
 
 visibilityCheckbox.on('click', () => {
-    visibilityCheckboxDesc.html(getMessage(visibilityCheckbox.prop('checked') === true ? 'project.visible-to-users' : 'project.invisible-to-users'));
+    visibilityCheckboxDesc.html(getMessage(visibilityCheckbox.prop('checked') === true ? 'project.visible-to-users' : 'project.hidden-from-users'));
 });
 
 annotationInput.on('keyup', () => {

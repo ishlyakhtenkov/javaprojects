@@ -221,13 +221,13 @@ public class ProjectService {
 
 
     @Transactional
-    public void reveal(long id, boolean visible, long userId, boolean byAdmin) {
+    public void hide(long id, boolean visible, long userId, boolean byAdmin) {
         Project project = getWithAuthor(id);
         if (project.getAuthor().id() == userId || byAdmin) {
             project.setVisible(visible);
         } else {
             throw new IllegalRequestDataException("Forbidden to reveal/hide another user project, projectId=" + id +
-                    ", userId=" + userId, "project.forbidden-reveal-not-belong", null);
+                    ", userId=" + userId, "project.forbidden-hide-not-belong", null);
         }
     }
 

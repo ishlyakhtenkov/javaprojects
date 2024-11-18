@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.mail.MailSender;
 import ru.javaprojects.projector.common.util.FileUtil;
@@ -49,7 +49,7 @@ import static ru.javaprojects.projector.users.util.UserUtil.asProfileTo;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 
-class ProfileControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class ProfileControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String PROFILE_RESET_PASSWORD_URL = PROFILE_URL + "/reset-password";
     private static final String PROFILE_CONFIRM_CHANGE_EMAIL_URL = PROFILE_URL + "/change-email/confirm";
     private static final String PROFILE_VIEW_URL = PROFILE_URL + "/%d/view";
@@ -82,8 +82,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(AVATARS_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -343,10 +343,10 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileWithoutChangingEmail() throws Exception {
-        User updatedProfileUser = getUpdatedUserAfterProfileUpdate(avatarFilesPath);
+        User updatedProfileUser = getUserAfterProfileUpdate(avatarFilesPath);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)
-                .params(getUpdatedProfileParams(avatarFilesPath))
+                .params(getUpdatedProfileToParams(avatarFilesPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
@@ -363,8 +363,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileWithChangingEmail() throws Exception {
-        User updatedProfileUser = getUpdatedUserAfterProfileUpdate(avatarFilesPath);
-        MultiValueMap<String, String> updatedProfileParams = getUpdatedProfileParams(avatarFilesPath);
+        User updatedProfileUser = getUserAfterProfileUpdate(avatarFilesPath);
+        MultiValueMap<String, String> updatedProfileParams = getUpdatedProfileToParams(avatarFilesPath);
         updatedProfileParams.set(EMAIL_PARAM, NEW_EMAIL);
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)
@@ -393,8 +393,8 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileWithoutChangingEmailWhenAvatarIsBytesArray() throws Exception {
-        User updatedProfileUser = getUpdatedUserAfterProfileUpdate(avatarFilesPath);
-        MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(avatarFilesPath);
+        User updatedProfileUser = getUserAfterProfileUpdate(avatarFilesPath);
+        MultiValueMap<String, String> updatedParams = getUpdatedProfileToParams(avatarFilesPath);
         updatedParams.add(AVATAR_INPUTTED_FILE_BYTES_PARAM,  Arrays.toString(UPDATED_AVATAR_FILE.getBytes()));
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .params(updatedParams)
@@ -414,9 +414,9 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileWithoutChangingEmailAndAvatar() throws Exception {
-        User updatedProfileUser = getUpdatedUserAfterProfileUpdateWithOldAvatar();
+        User updatedProfileUser = geUserAfterProfileUpdateWithOldAvatar();
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
-                .params(getUpdatedProfileParams(avatarFilesPath))
+                .params(getUpdatedProfileToParams(avatarFilesPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(String.format(PROFILE_VIEW_URL, USER_ID)))
@@ -433,14 +433,14 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     void updateProfileUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)
-                .params(getUpdatedProfileParams(avatarFilesPath))
+                .params(getUpdatedProfileToParams(avatarFilesPath))
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertNotEquals(userService.get(USER_ID).getName(), getUpdatedUserAfterProfileUpdate(avatarFilesPath).getName());
+        assertNotEquals(userService.get(USER_ID).getName(), getUserAfterProfileUpdate(avatarFilesPath).getName());
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdatedUserAfterProfileUpdate(avatarFilesPath).getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUserAfterProfileUpdate(avatarFilesPath).getAvatar().getFileLink())));
         assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
@@ -449,7 +449,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileInvalid() throws Exception {
-        MultiValueMap<String, String> updatedProfileInvalidParams = getUpdatedProfileInvalidParams(avatarFilesPath);
+        MultiValueMap<String, String> updatedProfileInvalidParams = getUpdatedProfileToInvalidParams(avatarFilesPath);
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)
                 .params(updatedProfileInvalidParams)
@@ -468,7 +468,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
                 .get(PROFILE_TO_ATTRIBUTE)).getAvatar().getFileLink());
         assertNotEquals(userService.get(USER_ID).getName(), updatedProfileInvalidParams.get(NAME_PARAM).get(0));
         assertTrue(Files.exists(Paths.get(user.getAvatar().getFileLink())));
-        assertTrue(Files.notExists(Paths.get(getUpdatedUserAfterProfileUpdate(avatarFilesPath).getAvatar().getFileLink())));
+        assertTrue(Files.notExists(Paths.get(getUserAfterProfileUpdate(avatarFilesPath).getAvatar().getFileLink())));
         assertTrue(changeEmailTokenRepository.findByUser_Id(USER_ID).isEmpty());
         Mockito.verify(mailSender, Mockito.times(0)).sendEmail(Mockito.anyString(), Mockito.anyString(),
                 Mockito.anyString());
@@ -477,7 +477,7 @@ class ProfileControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(USER_MAIL)
     void updateProfileDuplicateEmail() throws Exception {
-        MultiValueMap<String, String> updatedParams = getUpdatedProfileParams(avatarFilesPath);
+        MultiValueMap<String, String> updatedParams = getUpdatedProfileToParams(avatarFilesPath);
         updatedParams.set(EMAIL_PARAM, admin.getEmail());
         ResultActions actions = perform(MockMvcRequestBuilders.multipart(HttpMethod.POST, PROFILE_URL)
                 .file(UPDATED_AVATAR_FILE)

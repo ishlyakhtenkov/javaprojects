@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.File;
@@ -61,7 +61,7 @@ import static ru.javaprojects.projector.reference.architectures.ArchitectureTest
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ProjectControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class ProjectControllerTest extends AbstractControllerTest implements ContentFilesManager {
     static final String PROJECTS_URL_SLASH = PROJECTS_URL + "/";
     static final String PROJECTS_DATA_URL = PROJECTS_URL_SLASH + "%d/data";
     static final String PROJECTS_VIEW_URL = PROJECTS_URL_SLASH + "%d/view";
@@ -89,13 +89,13 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(PROJECTS_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(PROJECTS_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void showProjectPageUnauthorized() throws Exception {
+    void showProjectViewPageUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT1_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
@@ -123,7 +123,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     @Test
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
-    void showProjectPage() throws Exception {
+    void showProjectViewPage() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT1_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
@@ -153,7 +153,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void showProjectPageWhenProjectHidedAndBelongs() throws Exception {
+    void showProjectViewPageWhenProjectHiddenAndBelongs() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
@@ -180,7 +180,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void showProjectPageWhenProjectHidedAndNotBelongs() throws Exception {
+    void showProjectViewPageWhenProjectHiddenAndNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.forbidden-view-hided", null, getLocale()),
@@ -188,7 +188,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     }
 
     @Test
-    void showProjectPageUnauthorizedWhenProjectHided() throws Exception {
+    void showProjectViewPageUnauthorizedWhenProjectHidden() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.forbidden-view-hided", null, getLocale()),
@@ -197,7 +197,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void showProjectPageWhenProjectHidedAndNotBelongsByAdmin() throws Exception {
+    void showProjectViewPageWhenProjectHiddenAndNotBelongsByAdmin() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, PROJECT3_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECT_ATTRIBUTE))
@@ -223,7 +223,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
     }
 
     @Test
-    void showProjectPageNotFound() throws Exception {
+    void showProjectViewPageNotFound() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(PROJECTS_VIEW_URL, NOT_EXISTING_ID)))
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("error.notfound.entity", new Object[]{NOT_EXISTING_ID}, getLocale()),
@@ -334,7 +334,8 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(model().attribute(TECHNOLOGIES_ATTRIBUTE, List.of(TechnologyTestData.technology3,
                         TechnologyTestData.technology1, TechnologyTestData.technology2, TechnologyTestData.technology4)))
                 .andExpect(model().attribute(PRIORITIES_ATTRIBUTE, Priority.values()))
-                .andExpect(model().attribute(ARCHITECTURES_ATTRIBUTE, List.of(architecture2EnLocalized, architecture1EnLocalized)))
+                .andExpect(model().attribute(ARCHITECTURES_ATTRIBUTE, List.of(architecture2EnLocalized,
+                        architecture1EnLocalized)))
                 .andExpect(view().name(PROJECT_FORM_VIEW));
     }
 
@@ -496,7 +497,9 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getDockerCompose().getFileLink())));
         assertTrue(Files.exists(Paths.get(created.getPreview().getFileLink())));
-        try (Stream<Path> pathStream = Files.list(Paths.get(projectFilesPath + "user@gmail.com/new_project_name/description/images"))) {
+        try (Stream<Path> pathStream =
+                     Files.list(Paths.get(projectFilesPath, USER_MAIL, FileUtil.normalizePath(getNewTo().getName()),
+                             DESCRIPTION_IMG_DIR))) {
             long fileCounter = pathStream
                     .peek(path ->
                             assertTrue(path.toString()
@@ -518,8 +521,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertThrows(NotFoundException.class, () ->
-                projectRepository.findByNameIgnoreCase(getNewTo().getName()).orElseThrow());
+        assertTrue(projectRepository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
@@ -578,12 +580,11 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
         assertNull(((ProjectTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(PROJECT_TO_ATTRIBUTE)).getDescriptionElementTos().get(2).getImage().getFileLink());
 
-        assertThrows(NotFoundException.class, () ->
-                projectRepository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).orElseThrow());
-        assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) + LOGO_DIR +
-                NEW_LOGO_FILE.getOriginalFilename())));
-        assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) + DOCKER_DIR +
-                NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())));
+        assertTrue(projectRepository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).isEmpty());
+        assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) +
+                LOGO_DIR + NEW_LOGO_FILE.getOriginalFilename())));
+        assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL, newInvalidParams.get(NAME_PARAM).get(0) +
+                DOCKER_DIR + NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())));
         assertTrue(Files.notExists(Paths.get(projectFilesPath, USER_MAIL,
                 FileUtil.normalizePath(newInvalidParams.get(NAME_PARAM).get(0) + PREVIEW_DIR +
                         NEW_PREVIEW_FILE.getOriginalFilename()))));
@@ -603,8 +604,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.logo-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () ->
-                projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).orElseThrow());
+        assertTrue(projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getPreview().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
@@ -623,8 +623,7 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("project.preview-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () ->
-                projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).orElseThrow());
+        assertTrue(projectRepository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNew(projectFilesPath).getDockerCompose().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getNewDe3().getImage().getFileLink())));
@@ -726,12 +725,12 @@ class ProjectControllerTest extends AbstractControllerTest implements TestConten
             ProjectTo newProjectTo = getNewTo();
             newProjectTo.setName(project2.getName());
             Project newProject = getNew(projectFilesPath);
-            newProject.getLogo().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + LOGO_DIR +
-                    NEW_LOGO_FILE.getOriginalFilename()));
-            newProject.getPreview().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() +
-                    PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename()));
-            newProject.getDockerCompose().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project2.getName() + DOCKER_DIR +
-                    NEW_DOCKER_COMPOSE_FILE.getOriginalFilename()));
+            newProject.getLogo().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                    project2.getName() + LOGO_DIR + NEW_LOGO_FILE.getOriginalFilename()));
+            newProject.getPreview().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                    project2.getName() + PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename()));
+            newProject.getDockerCompose().setFileLink(projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                    project2.getName() + DOCKER_DIR + NEW_DOCKER_COMPOSE_FILE.getOriginalFilename()));
             String deFileLink = "./content/projects/user@gmail.com/skill_aggregator/description/images/" +
                     PREPARED_UUID_STRING + "_deimage.png";
             newProject.getDescriptionElements().stream()

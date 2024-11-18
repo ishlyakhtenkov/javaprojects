@@ -18,20 +18,30 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javaprojects.projector.common.CommonTestData.getPageableParams;
+import static ru.javaprojects.projector.common.CommonTestData.*;
 import static ru.javaprojects.projector.projects.ProjectTestData.*;
 import static ru.javaprojects.projector.users.UserTestData.*;
 
 class HomeControllerTest extends AbstractControllerTest {
+    private static final String ABOUT_URL = "/about";
+    private static final String CONTACT_URL = "/contact";
+    private static final String TAGS_URL = "/tags/%s";
+    private static final String SEARCH_URL = "/search";
+    private static final String SEARCH_TAGS_URL = "/search/tags";
+
+    private static final String HOME_VIEW = "home/index";
+    private static final String ABOUT_VIEW = "home/about";
+    private static final String CONTACT_VIEW = "home/contact";
+    private static final String SEARCH_VIEW = "home/search";
 
     @Test
     @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
     void showHomePage() throws Exception {
-        perform(MockMvcRequestBuilders.get("/"))
+        perform(MockMvcRequestBuilders.get(HOME_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
@@ -41,10 +51,10 @@ class HomeControllerTest extends AbstractControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     void showHomePageUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/"))
+        perform(MockMvcRequestBuilders.get(HOME_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
@@ -54,12 +64,12 @@ class HomeControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
-    void showHomePageWithAuthorProjectsWhenNotBelongs() throws Exception {
-        perform(MockMvcRequestBuilders.get("/")
-                .param("by-author", String.valueOf(USER_ID)))
+    void showHomePageWithProjectsByAuthorWhenNotBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get(HOME_URL)
+                .param(BY_AUTHOR_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
@@ -69,12 +79,12 @@ class HomeControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
-    void showHomePageWithAuthorProjectsWhenBelongs() throws Exception {
-        perform(MockMvcRequestBuilders.get("/")
-                .param("by-author", String.valueOf(USER_ID)))
+    void showHomePageWithProjectsByAuthorWhenBelongs() throws Exception {
+        perform(MockMvcRequestBuilders.get(HOME_URL)
+                .param(BY_AUTHOR_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
@@ -83,12 +93,12 @@ class HomeControllerTest extends AbstractControllerTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void showHomePageWithAuthorProjectsUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/")
-                .param("by-author", String.valueOf(USER_ID)))
+    void showHomePageWithProjectsByAuthorUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(HOME_URL)
+                .param(BY_AUTHOR_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
@@ -99,11 +109,11 @@ class HomeControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
     void showHomePageWithPopularProjects() throws Exception {
-        perform(MockMvcRequestBuilders.get("/")
-                .param("popular", ""))
+        perform(MockMvcRequestBuilders.get(HOME_URL)
+                .param(POPULAR_PARAM, EMPTY_STRING))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo, project2PreviewTo),
@@ -114,11 +124,11 @@ class HomeControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
     void showHomePageWithPopularProjectsUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/")
-                .param("popular", ""))
+        perform(MockMvcRequestBuilders.get(HOME_URL)
+                .param(POPULAR_PARAM, EMPTY_STRING))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo, project2PreviewTo),
@@ -129,10 +139,10 @@ class HomeControllerTest extends AbstractControllerTest {
     @WithUserDetails(USER_MAIL)
     @SuppressWarnings("unchecked")
     void showHomePageWithProjectsByTag() throws Exception {
-        perform(MockMvcRequestBuilders.get("/tags/spring"))
+        perform(MockMvcRequestBuilders.get(String.format(TAGS_URL, tag1.getName())))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
@@ -142,10 +152,10 @@ class HomeControllerTest extends AbstractControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     void showHomePageWithProjectsByTagUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/tags/spring"))
+        perform(MockMvcRequestBuilders.get(String.format(TAGS_URL, tag1.getName())))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_ATTRIBUTE))
-                .andExpect(view().name("home/index"))
+                .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
                                         .getModel().get(PROJECTS_ATTRIBUTE), List.of(project2PreviewTo, project1PreviewTo),
@@ -154,32 +164,32 @@ class HomeControllerTest extends AbstractControllerTest {
 
     @Test
     void showAboutPageUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/about"))
+        perform(MockMvcRequestBuilders.get(ABOUT_URL))
                 .andExpect(status().isOk())
-                .andExpect(view().name("home/about"));
+                .andExpect(view().name(ABOUT_VIEW));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void showAboutPageAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/about"))
+        perform(MockMvcRequestBuilders.get(ABOUT_URL))
                 .andExpect(status().isOk())
-                .andExpect(view().name("home/about"));
+                .andExpect(view().name(ABOUT_VIEW));
     }
 
     @Test
     void showContactPageUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/contact"))
+        perform(MockMvcRequestBuilders.get(CONTACT_URL))
                 .andExpect(status().isOk())
-                .andExpect(view().name("home/contact"));
+                .andExpect(view().name(CONTACT_VIEW));
     }
 
     @Test
     @WithUserDetails(USER_MAIL)
     void showContactPageAuthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get("/contact"))
+        perform(MockMvcRequestBuilders.get(CONTACT_URL))
                 .andExpect(status().isOk())
-                .andExpect(view().name("home/contact"));
+                .andExpect(view().name(CONTACT_VIEW));
     }
 
     @Test
@@ -195,15 +205,15 @@ class HomeControllerTest extends AbstractControllerTest {
 
     @SuppressWarnings("unchecked")
     private void doSearch() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get("/search")
-                .param(KEYWORD_PARAM, "aggregator"))
+        ResultActions actions = perform(MockMvcRequestBuilders.get(SEARCH_URL)
+                .param(KEYWORD_PARAM, AGGREGATOR_KEYWORD))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(PROFILES_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(TAGS_PAGE_ATTRIBUTE))
-                .andExpect(view().name("home/search"));
-        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
-                .getModel().get(PROJECTS_PAGE_ATTRIBUTE);
+                .andExpect(view().name(SEARCH_VIEW));
+        Page<ProjectPreviewTo> projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn()
+                        .getModelAndView()).getModel().get(PROJECTS_PAGE_ATTRIBUTE);
         assertEquals(2, projects.getTotalElements());
         assertEquals(1, projects.getTotalPages());
         Page<ProfileTo> profiles = (Page<ProfileTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
@@ -217,13 +227,13 @@ class HomeControllerTest extends AbstractControllerTest {
         PROJECT_PREVIEW_TO_MATCHER.assertMatchIgnoreFields(projects.getContent(),
                 List.of(project1PreviewTo, project2PreviewTo), "author.roles", "author.password", "author.registered");
 
-        actions = perform(MockMvcRequestBuilders.get("/search")
+        actions = perform(MockMvcRequestBuilders.get(SEARCH_URL)
                 .param(KEYWORD_PARAM, tag1.getName()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(PROFILES_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(TAGS_PAGE_ATTRIBUTE))
-                .andExpect(view().name("home/search"));
+                .andExpect(view().name(SEARCH_VIEW));
         projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
                 .getModel().get(PROJECTS_PAGE_ATTRIBUTE);
         assertEquals(0, projects.getTotalElements());
@@ -238,13 +248,13 @@ class HomeControllerTest extends AbstractControllerTest {
         assertEquals(1, tags.getTotalPages());
         TAG_MATCHER.assertMatch(tags.getContent(), List.of(tag1));
 
-        actions = perform(MockMvcRequestBuilders.get("/search")
+        actions = perform(MockMvcRequestBuilders.get(SEARCH_URL)
                 .param(KEYWORD_PARAM, admin.getName()))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(PROJECTS_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(PROFILES_PAGE_ATTRIBUTE))
                 .andExpect(model().attributeExists(TAGS_PAGE_ATTRIBUTE))
-                .andExpect(view().name("home/search"));
+                .andExpect(view().name(SEARCH_VIEW));
         projects = (Page<ProjectPreviewTo>) Objects.requireNonNull(actions.andReturn().getModelAndView())
                 .getModel().get(PROJECTS_PAGE_ATTRIBUTE);
         assertEquals(0, projects.getTotalElements());
@@ -264,8 +274,8 @@ class HomeControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(USER_MAIL)
     void getTagsByKeyword() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get("/search/tags")
-                .param(KEYWORD_PARAM, "spring")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(SEARCH_TAGS_URL)
+                .param(KEYWORD_PARAM, tag1.getName())
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -275,8 +285,8 @@ class HomeControllerTest extends AbstractControllerTest {
 
     @Test
     void getTagsByKeywordUnauthorized() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get("/search/tags")
-                .param(KEYWORD_PARAM, "spring")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(SEARCH_TAGS_URL)
+                .param(KEYWORD_PARAM, tag1.getName())
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));

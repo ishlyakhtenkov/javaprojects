@@ -11,7 +11,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.app.AuthUser;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
@@ -33,7 +33,7 @@ import static ru.javaprojects.projector.common.CommonTestData.HOME_URL;
 import static ru.javaprojects.projector.common.CommonTestData.NOT_EXISTING_ID;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_ID;
 import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
-import static ru.javaprojects.projector.users.UserTestData.AVATARS_TEST_DATA_FILES_PATH;
+import static ru.javaprojects.projector.users.UserTestData.AVATARS_TEST_CONTENT_FILES_PATH;
 import static ru.javaprojects.projector.users.UserTestData.ENABLED_PARAM;
 import static ru.javaprojects.projector.users.UserTestData.INVALID_PASSWORD;
 import static ru.javaprojects.projector.users.UserTestData.NEW_PASSWORD;
@@ -43,10 +43,9 @@ import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.admin;
 import static ru.javaprojects.projector.users.UserTestData.user;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
-import static ru.javaprojects.projector.users.web.ProfileController.PROFILE_URL;
 import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 
-class UserManagementRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class UserManagementRestControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String USERS_URL_SLASH = USERS_URL + "/";
     private static final String USERS_CHANGE_PASSWORD_URL = USERS_URL + "/change-password/";
 
@@ -65,8 +64,8 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(AVATARS_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -99,28 +98,6 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                 .andExpect(problemDetail(messageSource.getMessage("user.forbidden-disable-yourself", null, getLocale())))
                 .andExpect(problemInstance(USERS_URL_SLASH + ADMIN_ID));
         assertTrue(service.get(ADMIN_ID).isEnabled());
-    }
-
-    @Test
-    void instantBan() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(HOME_URL).with(user(new AuthUser(user))))
-                .andExpect(status().isOk());
-        HttpSession userSession = actions.andReturn().getRequest().getSession();
-        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession).getId(), new AuthUser(user));
-        assertFalse(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
-        ResultActions actions2 = perform(MockMvcRequestBuilders.get(HOME_URL).with(user(new AuthUser(user))))
-                .andExpect(status().isOk());
-        HttpSession userSession2 = actions2.andReturn().getRequest().getSession();
-        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession2).getId(), new AuthUser(user));
-        assertFalse(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
-
-        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID)
-                .with(user(new AuthUser(admin)))
-                .param(ENABLED_PARAM, String.valueOf(false))
-                .with(csrf()))
-                .andExpect(status().isNoContent());
-        assertTrue(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
-        assertTrue(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
     }
 
     @Test
@@ -158,6 +135,28 @@ class UserManagementRestControllerTest extends AbstractControllerTest implements
                 .with(csrf()))
                 .andExpect(status().isForbidden());
         assertTrue(service.get(USER_ID).isEnabled());
+    }
+
+    @Test
+    void instantBan() throws Exception {
+        ResultActions actions = perform(MockMvcRequestBuilders.get(HOME_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession = actions.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        ResultActions actions2 = perform(MockMvcRequestBuilders.get(HOME_URL).with(user(new AuthUser(user))))
+                .andExpect(status().isOk());
+        HttpSession userSession2 = actions2.andReturn().getRequest().getSession();
+        sessionRegistry.registerNewSession(Objects.requireNonNull(userSession2).getId(), new AuthUser(user));
+        assertFalse(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
+
+        perform(MockMvcRequestBuilders.patch(USERS_URL_SLASH + USER_ID)
+                .with(user(new AuthUser(admin)))
+                .param(ENABLED_PARAM, String.valueOf(false))
+                .with(csrf()))
+                .andExpect(status().isNoContent());
+        assertTrue(sessionRegistry.getSessionInformation(userSession.getId()).isExpired());
+        assertTrue(sessionRegistry.getSessionInformation(userSession2.getId()).isExpired());
     }
 
     @Test

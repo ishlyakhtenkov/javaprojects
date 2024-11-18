@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.JsonUtil;
@@ -41,11 +41,16 @@ import static ru.javaprojects.projector.projects.web.ProjectControllerTest.PROJE
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ProjectRestControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class ProjectRestControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String PROJECTS_LIKE_PROJECT_URL = PROJECTS_URL_SLASH + "%d/like";
     private static final String PROJECTS_COMMENTS_URL = PROJECTS_URL_SLASH + "%d/comments";
     private static final String PROJECTS_COMMENTS_URL_SLASH_ID = PROJECTS_URL_SLASH + "%d/comments/%d";
     private static final String PROJECTS_LIKE_COMMENT_URL = PROJECTS_COMMENTS_URL_SLASH_ID + "/like";
+    private static final String PROJECTS_BY_AUTHOR_URL = PROJECTS_URL_SLASH + "/by-author";
+    private static final String PROJECTS_FRESH_URL = PROJECTS_URL_SLASH + "/fresh";
+    private static final String PROJECTS_POPULAR_URL = PROJECTS_URL_SLASH + "/popular";
+    private static final String PROJECTS_BY_TAG_URL = PROJECTS_URL_SLASH + "/by-tag";
+    private static final String PROJECTS_BY_KEYWORD_URL = PROJECTS_URL_SLASH + "/by-keyword";
 
     @Value("${content-path.projects}")
     private String projectFilesPath;
@@ -65,8 +70,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(PROJECTS_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(PROJECTS_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -587,7 +592,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void revealProject() throws Exception {
+    void hideProject() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -603,7 +608,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(USER2_MAIL)
-    void revealProjectNotBelongs() throws Exception {
+    void hideProjectNotBelongs() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -612,7 +617,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
                         IllegalRequestDataException.class))
                 .andExpect(problemTitle(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase()))
                 .andExpect(problemStatus(HttpStatus.UNPROCESSABLE_ENTITY.value()))
-                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-reveal-not-belong", null,
+                .andExpect(problemDetail(messageSource.getMessage("project.forbidden-hide-not-belong", null,
                         getLocale())))
                 .andExpect(problemInstance(PROJECTS_URL_SLASH + PROJECT1_ID));
         assertTrue(projectService.get(PROJECT1_ID).isVisible());
@@ -620,7 +625,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void revealProjectNotBelongsByAdmin() throws Exception {
+    void hideProjectNotBelongsByAdmin() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -636,7 +641,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void revealProjectNotFound() throws Exception {
+    void hideProjectNotFound() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + NOT_EXISTING_ID)
                 .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -651,7 +656,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     }
 
     @Test
-    void revealProjectUnauthorized() throws Exception {
+    void hideProjectUnauthorized() throws Exception {
         perform(MockMvcRequestBuilders.patch(PROJECTS_URL_SLASH + PROJECT1_ID)
                 .param(VISIBLE_PARAM, String.valueOf(false))
                 .with(csrf()))
@@ -662,8 +667,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     }
 
     @Test
-    void getAllByAuthorUnauthorized() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+    void getAllProjectsByAuthorUnauthorized() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_BY_AUTHOR_URL)
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -673,8 +678,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(USER_MAIL)
-    void getAllByAuthorWhenAuthor() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+    void getAllProjectsByAuthorWhenAuthor() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_BY_AUTHOR_URL)
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -684,8 +689,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void getAllByAuthorWhenNotAuthor() throws Exception {
-        perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-author")
+    void getAllProjectsByAuthorWhenNotAuthor() throws Exception {
+        perform(MockMvcRequestBuilders.get(PROJECTS_BY_AUTHOR_URL)
                 .param(USER_ID_PARAM, String.valueOf(USER_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -696,7 +701,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     @Test
     @WithUserDetails(USER_MAIL)
     void getFreshProjects() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "fresh")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_FRESH_URL)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -708,7 +713,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     void getFreshProjectsUnauthorized() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "fresh")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_FRESH_URL)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -721,7 +726,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     @Test
     @WithUserDetails(USER_MAIL)
     void getPopularProjects() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "popular")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_POPULAR_URL)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -733,7 +738,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     void getPopularProjectsUnauthorized() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "popular")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_POPULAR_URL)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -746,7 +751,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     @Test
     @WithUserDetails(USER_MAIL)
     void getProjectsByTag() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-tag")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_BY_TAG_URL)
                 .param(TAG_PARAM, tag1.getName())
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
@@ -759,7 +764,7 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     void getProjectsByTagUnauthorized() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-tag")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_BY_TAG_URL)
                 .param(TAG_PARAM, tag1.getName())
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
@@ -773,8 +778,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
     @Test
     @WithUserDetails(USER_MAIL)
     void getProjectsByKeyword() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-keyword")
-                .param(KEYWORD_PARAM, "aggregator")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_BY_KEYWORD_URL)
+                .param(KEYWORD_PARAM, AGGREGATOR_KEYWORD)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -786,8 +791,8 @@ class ProjectRestControllerTest extends AbstractControllerTest implements TestCo
 
     @Test
     void getProjectsByKeywordUnauthorized() throws Exception {
-        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_URL_SLASH + "by-keyword")
-                .param(KEYWORD_PARAM, "aggregator")
+        ResultActions actions = perform(MockMvcRequestBuilders.get(PROJECTS_BY_KEYWORD_URL)
+                .param(KEYWORD_PARAM, AGGREGATOR_KEYWORD)
                 .params(getPageableParams()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));

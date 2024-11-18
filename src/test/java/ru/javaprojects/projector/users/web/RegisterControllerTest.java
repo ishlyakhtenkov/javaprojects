@@ -73,7 +73,7 @@ class RegisterControllerTest extends AbstractControllerTest {
 
     @Test
     void register() throws Exception {
-        RegisterTo newRegisterTo = getNewRegisterTo();
+        RegisterTo newRegisterTo = getRegisterTo();
         perform(MockMvcRequestBuilders.post(REGISTER_URL)
                 .params(getRegisterToParams())
                 .with(csrf()))
@@ -98,7 +98,7 @@ class RegisterControllerTest extends AbstractControllerTest {
 
     @Test
     void registerWhenRegisterTokenForThatEmailAlreadyExists() throws Exception {
-        RegisterTo newRegisterTo = getNewRegisterTo();
+        RegisterTo newRegisterTo = getRegisterTo();
         newRegisterTo.setEmail(registerToken.getEmail());
         MultiValueMap<String, String> registerToParams = getRegisterToParams();
         registerToParams.set(EMAIL_PARAM, registerToken.getEmail());

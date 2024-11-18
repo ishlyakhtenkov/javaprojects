@@ -23,7 +23,7 @@
                     <div class="card-header text-center">
                         <span class="h3 text-dark-emphasis" th:text="${project.name}">Project name</span>
                         <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-warning float-end"
-                           th:title="#{project.invisible-to-users}"></i>
+                           th:title="#{project.hidden-from-users}"></i>
                     </div>
                     <div class="card-body text-start">
                         <div class="input-group mb-3">
@@ -59,7 +59,7 @@
                                     <span class="input-group-text project-form-label" th:text="#{project.visibility}">Visibility</span>
                                     <span class="form-control"
                                           th:utext="${project.visible} ? '<i class=&quot;text-success me-1 fa-solid fa-eye&quot;></i> ' + #{project.visible-to-users} :
-                                          '<i class=&quot;text-warning me-1 fa-solid fa-eye-slash&quot;></i> ' + #{project.invisible-to-users}">
+                                          '<i class=&quot;text-warning me-1 fa-solid fa-eye-slash&quot;></i> ' + #{project.hidden-from-users}">
                                     </span>
                                 </div>
                             </div>

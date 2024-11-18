@@ -219,7 +219,7 @@ function generateProjectCard(project) {
     cardBody.append(name);
     if (!project.visible) {
         let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
-            .attr('title', getMessage('project.invisible-to-users')).css('position', 'relative')
+            .attr('title', getMessage('project.hidden-from-users')).css('position', 'relative')
             .css('z-index', '2');
         name.append(invisibleSymbol);
     }

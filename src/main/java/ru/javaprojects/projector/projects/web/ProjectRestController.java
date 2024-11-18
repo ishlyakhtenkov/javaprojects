@@ -77,9 +77,9 @@ public class ProjectRestController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void revealProject(@PathVariable long id, @RequestParam boolean visible) {
+    public void hideProject(@PathVariable long id, @RequestParam boolean visible) {
         log.info("{} project with id={}", visible ? "reveal" : "hide", id);
-        service.reveal(id, visible, AuthUser.authId(), AuthUser.isAdmin());
+        service.hide(id, visible, AuthUser.authId(), AuthUser.isAdmin());
     }
 
     @DeleteMapping("/{id}")

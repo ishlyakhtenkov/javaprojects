@@ -28,19 +28,19 @@ public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(User.class, "password", "registered");
 
-    public static final MatcherFactory.Matcher<RegisterTo> REGISTER_TO_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(RegisterTo.class);
-
     public static final MatcherFactory.Matcher<UserTo> USER_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(UserTo.class);
-
-    public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
-            MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
 
     public static final MatcherFactory.Matcher<ProfileTo> PROFILE_TO_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(ProfileTo.class);
 
-    public static final String AVATARS_TEST_DATA_FILES_PATH = "src/test/test-data-files/avatars";
+    public static final MatcherFactory.Matcher<RegisterTo> REGISTER_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(RegisterTo.class);
+
+    public static final MatcherFactory.Matcher<PasswordResetTo> PASSWORD_RESET_TO_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(PasswordResetTo.class);
+
+    public static final String AVATARS_TEST_CONTENT_FILES_PATH = "src/test/test-content-files/avatars";
 
     public static final String USER_ATTRIBUTE = "user";
     public static final String USERS_ATTRIBUTE = "users";
@@ -49,10 +49,10 @@ public class UserTestData {
     public static final String ROLES_ATTRIBUTE = "roles";
     public static final String REGISTER_TO_ATTRIBUTE = "registerTo";
     public static final String PASSWORD_RESET_TO_ATTRIBUTE = "passwordResetTo";
-    public static final String ERROR_ATTRIBUTE = "error";
     public static final String ONLINE_USERS_IDS_ATTRIBUTE = "onlineUsersIds";
     public static final String PROFILES_PAGE_ATTRIBUTE = "profilesPage";
     public static final String RATING_ATTRIBUTE = "rating";
+    public static final String ERROR_ATTRIBUTE = "error";
 
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
@@ -90,15 +90,15 @@ public class UserTestData {
     public static final int USER_RATING = 6;
     public static final int ADMIN_RATING = 6;
 
+    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "Some info", "password", true,
+            Set.of(Role.USER), new File("cool_user.jpg", "./content/avatars/user@gmail.com/cool_user.jpg"));
 
-    public static final User user = new User(USER_ID, USER_MAIL, "John Doe", "Some info", "password", true, Set.of(Role.USER),
-            new File("cool_user.jpg", "./content/avatars/user@gmail.com/cool_user.jpg"));
+    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack",
+            "Java developer with 10 years of production experience.", "admin", true, Set.of(Role.USER, Role.ADMIN),
+            new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
 
-    public static final User admin = new User(ADMIN_ID, ADMIN_MAIL, "Jack", "Java developer with 10 years of production experience.",
-            "admin", true, Set.of(Role.USER, Role.ADMIN), new File("admin.jpg", "./content/avatars/admin@gmail.com/admin.jpg"));
-
-    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", null, "somePassword", true, Set.of(Role.USER),
-            new File("cat.jpg", "./content/avatars/user2@gmail.com/cat.jpg"));
+    public static final User user2 = new User(USER2_ID, USER2_MAIL, "Alice Key", null, "somePassword", true,
+            Set.of(Role.USER), new File("cat.jpg", "./content/avatars/user2@gmail.com/cat.jpg"));
 
     public static final User disabledUser = new User(DISABLED_USER_ID, DISABLED_USER_MAIL, "Freeman25", "password",
             false, Set.of(Role.USER));
@@ -114,7 +114,8 @@ public class UserTestData {
         String updatedEmail = "updated@gmail.com";
         return new User(USER_ID, updatedEmail, "updatedName", user.getInformation(), user.getPassword(), user.isEnabled(),
                 Set.of(Role.USER, Role.ADMIN),
-                new File(user.getAvatar().getFileName(), avatarFilesPath + updatedEmail + "/" + user.getAvatar().getFileName()));
+                new File(user.getAvatar().getFileName(), avatarFilesPath + updatedEmail + "/" +
+                        user.getAvatar().getFileName()));
     }
 
     public static User getUpdatedUserWithOldEMail() {
@@ -162,13 +163,13 @@ public class UserTestData {
         return params;
     }
 
-    public static RegisterTo getNewRegisterTo() {
+    public static RegisterTo getRegisterTo() {
         return new RegisterTo(null, "newuser@gmail.com", "newName", "newPassword");
     }
 
     public static MultiValueMap<String, String> getRegisterToParams() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        RegisterTo newRegisterTo = getNewRegisterTo();
+        RegisterTo newRegisterTo = getRegisterTo();
         params.add(EMAIL_PARAM, newRegisterTo.getEmail());
         params.add(NAME_PARAM, newRegisterTo.getName());
         params.add(PASSWORD_PARAM, newRegisterTo.getPassword());
@@ -184,8 +185,8 @@ public class UserTestData {
     }
 
     public static final RegisterToken expiredRegisterToken = new RegisterToken(100004L,
-            "5a99dd09-d23f-44bb-8d41-b6ff44275d01", parseLocalDateTime("2024-08-06 19:35:56"), "some@gmail.com", "someName",
-            "{noop}somePassword");
+            "5a99dd09-d23f-44bb-8d41-b6ff44275d01", parseLocalDateTime("2024-08-06 19:35:56"), "some@gmail.com",
+            "someName", "{noop}somePassword");
 
     public static final RegisterToken registerToken = new RegisterToken(100005L, "52bde839-9779-4005-b81c-9131c9590d79",
             parseLocalDateTime("2052-05-24 16:42:03"), "new@gmail.com", "newName", "{noop}newPassword");
@@ -205,20 +206,20 @@ public class UserTestData {
     public static final ChangeEmailToken expiredChangeEmailToken = new ChangeEmailToken(100009L,
             "5a49dd09-g23f-44bb-8d41-b6ff44275s56", parseLocalDateTime("2024-08-05 21:49:01"), "some@gmail.com", admin);
 
-    public static User getUpdatedUserAfterProfileUpdate(String avatarFilesPath) {
+    public static User getUserAfterProfileUpdate(String avatarFilesPath) {
         return new User(USER_ID, user.getEmail(), "updatedName", "updated info", user.getPassword(), user.isEnabled(),
                 user.getRoles(),  new File(UPDATED_AVATAR_FILE.getOriginalFilename(), avatarFilesPath +
                         FileUtil.normalizePath(user.getEmail() + "/" + UPDATED_AVATAR_FILE.getOriginalFilename())));
     }
 
-    public static User getUpdatedUserAfterProfileUpdateWithOldAvatar() {
+    public static User geUserAfterProfileUpdateWithOldAvatar() {
         return new User(USER_ID, user.getEmail(), "updatedName", "updated info", user.getPassword(), user.isEnabled(),
                 user.getRoles(), user.getAvatar());
     }
 
-    public static MultiValueMap<String, String> getUpdatedProfileParams(String avatarFilesPath) {
+    public static MultiValueMap<String, String> getUpdatedProfileToParams(String avatarFilesPath) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        User updatedProfileUser = getUpdatedUserAfterProfileUpdate(avatarFilesPath);
+        User updatedProfileUser = getUserAfterProfileUpdate(avatarFilesPath);
         params.add(ID_PARAM, String.valueOf(USER_ID));
         params.add(NAME_PARAM, updatedProfileUser.getName());
         params.add(EMAIL_PARAM, updatedProfileUser.getEmail());
@@ -228,8 +229,8 @@ public class UserTestData {
         return params;
     }
 
-    public static MultiValueMap<String, String> getUpdatedProfileInvalidParams(String avatarFilesPath) {
-        MultiValueMap<String, String> params = getUpdatedProfileParams(avatarFilesPath);
+    public static MultiValueMap<String, String> getUpdatedProfileToInvalidParams(String avatarFilesPath) {
+        MultiValueMap<String, String> params = getUpdatedProfileToParams(avatarFilesPath);
         params.set(NAME_PARAM, LONG_STRING);
         params.set(EMAIL_PARAM, INVALID_EMAIL);
         params.set(INFORMATION_PARAM, HTML_TEXT);

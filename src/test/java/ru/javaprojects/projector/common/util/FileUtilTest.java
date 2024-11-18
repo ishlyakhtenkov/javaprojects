@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.to.FileTo;
 
@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.TECHNOLOGIES_TEST_DATA_FILES_PATH;
+import static ru.javaprojects.projector.reference.technologies.TechnologyTestData.TECHNOLOGIES_TEST_CONTENT_FILES_PATH;
 
 @SpringBootTest
 @ActiveProfiles({"dev", "test"})
-class FileUtilTest implements TestContentFilesManager {
+class FileUtilTest implements ContentFilesManager {
     private static final String NEW_DIR_NAME = "newDir";
     private static final String EXISTING_DIR_NAME = "angular";
     private static final String EXISTING_FILE_NAME = "angular.svg";
@@ -40,12 +40,12 @@ class FileUtilTest implements TestContentFilesManager {
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(TECHNOLOGIES_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
-    void uploadMultipart() throws IOException {
+    void uploadMultipartFile() throws IOException {
         MockMultipartFile file = new MockMultipartFile(FILE_NAME, BYTES_ARRAY);
         FileUtil.upload(file, technologyFilesPath + NEW_DIR_NAME, file.getName());
         assertEquals(file.getSize(), Files.size(Paths.get(technologyFilesPath, NEW_DIR_NAME, file.getName())));
@@ -53,14 +53,14 @@ class FileUtilTest implements TestContentFilesManager {
     }
 
     @Test
-    void uploadMultipartWhenFileIsEmpty() {
+    void uploadMultipartFileWhenFileIsEmpty() {
         MockMultipartFile file = new MockMultipartFile(FILE_NAME, EMPTY_BYTES_ARRAY);
         assertThrows(IllegalRequestDataException.class, () -> FileUtil.upload(file, technologyFilesPath, file.getName()));
         assertTrue(Files.notExists(Paths.get(technologyFilesPath, file.getName())));
     }
 
     @Test
-    void uploadMultipartWhenFileExists() throws IOException {
+    void uploadMultipartFileWhenFileWithSuchNameExists() throws IOException {
         assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
         MockMultipartFile file = new MockMultipartFile(EXISTING_FILE_NAME, BYTES_ARRAY);
         FileUtil.upload(file, technologyFilesPath + EXISTING_DIR_NAME, file.getName());
@@ -83,7 +83,7 @@ class FileUtilTest implements TestContentFilesManager {
     }
 
     @Test
-    void uploadBytesArrayWhenFileExists() throws IOException {
+    void uploadBytesArrayWhenFileWithSuchNameExists() throws IOException {
         assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));
         FileUtil.upload(BYTES_ARRAY, technologyFilesPath + EXISTING_DIR_NAME, EXISTING_FILE_NAME);
         assertTrue(Files.exists(Paths.get(technologyFilesPath, EXISTING_DIR_NAME, EXISTING_FILE_NAME)));

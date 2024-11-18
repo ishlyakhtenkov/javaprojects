@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.Priority;
@@ -41,7 +41,7 @@ import static ru.javaprojects.projector.reference.technologies.web.UniqueTechnol
 import static ru.javaprojects.projector.users.UserTestData.*;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class TechnologyControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class TechnologyControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String TECHNOLOGIES_ADD_URL = TECHNOLOGIES_URL + "/add";
     private static final String TECHNOLOGIES_EDIT_URL = TECHNOLOGIES_URL + "/edit/";
     private static final String TECHNOLOGIES_VIEW = "management/reference/technologies";
@@ -59,8 +59,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements TestCon
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(TECHNOLOGIES_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(TECHNOLOGIES_TEST_CONTENT_FILES_PATH);
     }
 
     @Test

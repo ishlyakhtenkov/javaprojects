@@ -41,7 +41,7 @@ public class ProjectTestData {
 
     public static final MatcherFactory.Matcher<Tag> TAG_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Tag.class);
 
-    public static final String PROJECTS_TEST_DATA_FILES_PATH = "src/test/test-data-files/projects";
+    public static final String PROJECTS_TEST_CONTENT_FILES_PATH = "src/test/test-content-files/projects";
 
     public static final String PROJECT_ATTRIBUTE = "project";
     public static final String PROJECTS_ATTRIBUTE = "projects";
@@ -50,10 +50,8 @@ public class ProjectTestData {
     public static final String PROJECT_TO_ATTRIBUTE = "projectTo";
     public static final String HAS_FRONTEND_TECHNOLOGIES_ATTRIBUTE = "hasFrontendTechnologies";
     public static final String LIKED_ATTRIBUTE = "liked";
-    public static final String LIKED_PROJECTS_IDS_ATTRIBUTE = "likedProjectsIds";
     public static final String LIKED_COMMENTS_IDS_ATTRIBUTE = "likedCommentsIds";
     public static final String COMMENTS_ATTRIBUTE = "comments";
-    public static final String COMMENTS_COUNT_ATTRIBUTE = "commentsCount";
 
     public static final String ANNOTATION_PARAM = "annotation";
     public static final String VISIBLE_PARAM = "visible";
@@ -115,6 +113,8 @@ public class ProjectTestData {
     public static final long TAG3_ID = 100047;
     public static final long TAG4_ID = 100048;
 
+    public static final String AGGREGATOR_KEYWORD = "aggregator";
+
     public static final String UPDATED_COMMENT_TEXT = "updated comment text";
     public static final String PREPARED_UUID_STRING = "51bd80d0-d529-421e-a6fa-ae4f55d20d7b";
 
@@ -144,7 +144,8 @@ public class ProjectTestData {
 
     public static final DescriptionElement de3 = new DescriptionElement(DESCRIPTION_ELEMENT3_ID, IMAGE,
             (byte) 2, null, new File("restaurant_aggregator_schema.png",
-            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/restaurant_aggregator_schema.png"), project1);
+            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/restaurant_aggregator_schema.png"),
+            project1);
 
     public static final DescriptionElement de4 = new DescriptionElement(DESCRIPTION_ELEMENT4_ID, TITLE,
             (byte) 3, "Registration, profile", null, project1);
@@ -155,18 +156,24 @@ public class ProjectTestData {
 
     public static final DescriptionElement de6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
             (byte) 5, null, new File("registration_and_profile.png",
-            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
+            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/registration_and_profile.png"),
+            project1);
 
     public static final Like project1Like1 = new Like(PROJECT1_LIKE1_ID, PROJECT1_ID, USER_ID, PROJECT);
     public static final Like project1Like2 = new Like(PROJECT1_LIKE2_ID, PROJECT1_ID, ADMIN_ID, PROJECT);
     public static final Like project1Like3 = new Like(PROJECT1_LIKE3_ID, PROJECT1_ID, USER2_ID, PROJECT);
     public static final Like project1Like4 = new Like(PROJECT1_LIKE4_ID, PROJECT1_ID, DISABLED_USER_ID, PROJECT);
 
-    public static final Like project1Comment1Like1 = new Like(PROJECT1_COMMENT1_LIKE1_ID, PROJECT1_COMMENT1_ID, ADMIN_ID, COMMENT);
-    public static final Like project1Comment1Like2 = new Like(PROJECT1_COMMENT1_LIKE2_ID, PROJECT1_COMMENT1_ID, USER_ID, COMMENT);
-    public static final Like project1Comment1Like3 = new Like(PROJECT1_COMMENT1_LIKE3_ID, PROJECT1_COMMENT1_ID, USER2_ID, COMMENT);
-    public static final Like project1Comment4Like1 = new Like(PROJECT1_COMMENT4_LIKE1_ID, PROJECT1_COMMENT4_ID, ADMIN_ID, COMMENT);
-    public static final Like project1Comment4Like2 = new Like(PROJECT1_COMMENT4_LIKE2_ID, PROJECT1_COMMENT4_ID, USER2_ID, COMMENT);
+    public static final Like project1Comment1Like1 = new Like(PROJECT1_COMMENT1_LIKE1_ID, PROJECT1_COMMENT1_ID, ADMIN_ID,
+            COMMENT);
+    public static final Like project1Comment1Like2 = new Like(PROJECT1_COMMENT1_LIKE2_ID, PROJECT1_COMMENT1_ID, USER_ID,
+            COMMENT);
+    public static final Like project1Comment1Like3 = new Like(PROJECT1_COMMENT1_LIKE3_ID, PROJECT1_COMMENT1_ID, USER2_ID,
+            COMMENT);
+    public static final Like project1Comment4Like1 = new Like(PROJECT1_COMMENT4_LIKE1_ID, PROJECT1_COMMENT4_ID, ADMIN_ID,
+            COMMENT);
+    public static final Like project1Comment4Like2 = new Like(PROJECT1_COMMENT4_LIKE2_ID, PROJECT1_COMMENT4_ID, USER2_ID,
+            COMMENT);
 
     public static final Comment project1Comment1 = new Comment(PROJECT1_COMMENT1_ID, PROJECT1_ID, admin, null,
             "admin 1st comment", parseLocalDateTime("2024-09-11 11:44:56"), null, false,
@@ -179,15 +186,17 @@ public class ProjectTestData {
     public static final Comment project1Comment3 = new Comment(PROJECT1_COMMENT3_ID, PROJECT1_ID, user, null,
             "user 1st comment", parseLocalDateTime("2024-09-11 11:55:37"), null, false, Set.of());
 
-    public static final Comment project1Comment4 = new Comment(PROJECT1_COMMENT4_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
-            "user 2nd comment for admin 1st comment", parseLocalDateTime("2024-09-11 11:57:23"), null, false,
-            Set.of(project1Comment4Like1, project1Comment4Like2));
+    public static final Comment project1Comment4 = new Comment(PROJECT1_COMMENT4_ID, PROJECT1_ID, user,
+            PROJECT1_COMMENT1_ID, "user 2nd comment for admin 1st comment", parseLocalDateTime("2024-09-11 11:57:23"),
+            null, false, Set.of(project1Comment4Like1, project1Comment4Like2));
 
-    public static final Comment project1Comment5 = new Comment(PROJECT1_COMMENT5_ID, PROJECT1_ID, user, PROJECT1_COMMENT4_ID,
-            "user 3rd comment for its user 2nd comment", parseLocalDateTime("2024-09-11 12:14:13"), null, false, Set.of());
+    public static final Comment project1Comment5 = new Comment(PROJECT1_COMMENT5_ID, PROJECT1_ID, user,
+            PROJECT1_COMMENT4_ID, "user 3rd comment for its user 2nd comment", parseLocalDateTime("2024-09-11 12:14:13"),
+            null, false, Set.of());
 
-    public static final Comment project1Comment6 = new Comment(PROJECT1_COMMENT6_ID, PROJECT1_ID, user, PROJECT1_COMMENT1_ID,
-            "user 4th comment deleted", parseLocalDateTime("2024-09-11 13:18:53"), null, true, Set.of());
+    public static final Comment project1Comment6 = new Comment(PROJECT1_COMMENT6_ID, PROJECT1_ID, user,
+            PROJECT1_COMMENT1_ID, "user 4th comment deleted", parseLocalDateTime("2024-09-11 13:18:53"), null, true,
+            Set.of());
 
     public static final  Map<Comment, Integer> project1CommentIndents = new LinkedHashMap<>();
 
@@ -213,8 +222,10 @@ public class ProjectTestData {
     public static final Project project2 = new Project(PROJECT2_ID, "Skill aggregator",
             "The app creates a list of required key skills for a user-specified profession.", true, VERY_HIGH,
             LocalDate.of(2022, JULY, 17), LocalDate.of(2022, SEPTEMBER, 23), architecture1EnLocalized,
-            new File("skill_aggregator_logo.png", "./content/projects/admin@gmail.com/skill_aggregator/logo/skill_aggregator_logo.png"),
-            new File("docker-compose.yaml", "./content/projects/admin@gmail.com/skill_aggregator/docker/docker-compose.yaml"),
+            new File("skill_aggregator_logo.png",
+                    "./content/projects/admin@gmail.com/skill_aggregator/logo/skill_aggregator_logo.png"),
+            new File("docker-compose.yaml",
+                    "./content/projects/admin@gmail.com/skill_aggregator/docker/docker-compose.yaml"),
             new File("skill_aggregator_preview.png",
                     "./content/projects/admin@gmail.com/skill_aggregator/preview/skill_aggregator_preview.png"),
             "https://projector.ru/skill-aggregator", "https://github.com/ishlyakhtenkov/skillaggregator",
@@ -241,8 +252,10 @@ public class ProjectTestData {
     public static final Project project3 = new Project(PROJECT3_ID, "Copy maker",
             "The app creates copies of electronic documents by analyzing selected invoices and documentation inventories.",
             false, MEDIUM, LocalDate.of(2022, OCTOBER, 11), LocalDate.of(2022, DECEMBER, 29),
-            architecture1EnLocalized, new File("copy_maker_logo.png", "./content/projects/user@gmail.com/copy_maker/logo/copy_maker_logo.png"), null,
-            new File("copy_maker_preview.png", "./content/projects/user@gmail.com/copy_maker/preview/copy_maker_preview.png"),
+            architecture1EnLocalized, new File("copy_maker_logo.png",
+            "./content/projects/user@gmail.com/copy_maker/logo/copy_maker_logo.png"), null,
+            new File("copy_maker_preview.png",
+                    "./content/projects/user@gmail.com/copy_maker/preview/copy_maker_preview.png"),
             null, "https://github.com/ishlyakhtenkov/doccopymaker", null, null, 7, user);
 
     static {
@@ -250,8 +263,8 @@ public class ProjectTestData {
         project3.getTechnologies().addAll(Set.of(technology1, technology2));
     }
 
-    public static final MockMultipartFile NEW_LOGO_FILE = new MockMultipartFile("logo.inputtedFile", "New project logo.png",
-            MediaType.IMAGE_PNG_VALUE, "new logo file content bytes".getBytes());
+    public static final MockMultipartFile NEW_LOGO_FILE = new MockMultipartFile("logo.inputtedFile",
+            "New project logo.png",  MediaType.IMAGE_PNG_VALUE, "new logo file content bytes".getBytes());
 
     public static final MockMultipartFile NEW_PREVIEW_FILE = new MockMultipartFile("preview.inputtedFile",
             "New project preview.png", MediaType.IMAGE_PNG_VALUE, "new preview file bytes".getBytes());
@@ -282,10 +295,10 @@ public class ProjectTestData {
         ProjectTo newTo = getNewTo();
         return new Project(null, newTo.getName(), newTo.getAnnotation(), newTo.isVisible(), newTo.getPriority(),
                 newTo.getStarted(), newTo.getFinished(), newTo.getArchitecture(),
-                new File("new_project_logo.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() + LOGO_DIR +
-                        NEW_LOGO_FILE.getOriginalFilename())),
-                new File("docker-compose.yaml", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() + DOCKER_DIR +
-                        NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())),
+                new File("new_project_logo.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() +
+                        LOGO_DIR + NEW_LOGO_FILE.getOriginalFilename())),
+                new File("docker-compose.yaml", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() +
+                        DOCKER_DIR + NEW_DOCKER_COMPOSE_FILE.getOriginalFilename())),
                 new File("new_project_preview.png", contentPath + FileUtil.normalizePath(USER_MAIL + "/" + newTo.getName() +
                         PREVIEW_DIR + NEW_PREVIEW_FILE.getOriginalFilename())),
                 newTo.getDeploymentUrl(), newTo.getBackendSrcUrl(), newTo.getFrontendSrcUrl(), newTo.getOpenApiUrl(), 0,
@@ -361,17 +374,17 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         Project updated = new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2EnLocalized,
-                new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName + LOGO_DIR +
-                        UPDATED_LOGO_FILE.getOriginalFilename())),
-                new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
-                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
+                new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        updatedName + LOGO_DIR + UPDATED_LOGO_FILE.getOriginalFilename())),
+                new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        updatedName + DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
+                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        updatedName + PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
-                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4, getUpdatedDe6(),
-                updatedDe5, getNewDeForProjectUpdate())), project1.getLikes(),
+                new TreeSet<>(Set.of(technology1)), new TreeSet<>(Set.of(updatedDe2, updatedDe1, updatedDe4,
+                getUpdatedDe6(), updatedDe5, getNewDeForProjectUpdate())), project1.getLikes(),
                 project1.getComments(), Set.of(tag1, tag2, new Tag(null, "hibernate")));
         updated.setCreated(project1.getCreated());
         return updated;
@@ -380,12 +393,12 @@ public class ProjectTestData {
     public static Project getUpdatedWithOldName(String projectFilesPath) {
         Project updated = new Project(PROJECT1_ID, project1.getName(), "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2EnLocalized,
-                new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
-                        LOGO_DIR + UPDATED_LOGO_FILE.getOriginalFilename())),
-                new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
-                        DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
-                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + project1.getName() +
-                        PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
+                new File("updated_project_logo.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        project1.getName() + LOGO_DIR + UPDATED_LOGO_FILE.getOriginalFilename())),
+                new File("docker-compose-updated.yaml", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        project1.getName() + DOCKER_DIR + UPDATED_DOCKER_COMPOSE_FILE.getOriginalFilename())),
+                new File("updated_project_preview.png", projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        project1.getName() + PREVIEW_DIR + UPDATED_PREVIEW_FILE.getOriginalFilename())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
@@ -401,12 +414,12 @@ public class ProjectTestData {
         String updatedName = "updatedProjectName";
         Project updated = new Project(PROJECT1_ID, updatedName, "updated project description", false, LOW,
                 LocalDate.of(2023, FEBRUARY, 15), LocalDate.of(2023, JULY, 12), architecture2EnLocalized,
-                new File(project1.getLogo().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        LOGO_DIR + project1.getLogo().getFileName())),
-                new File(project1.getDockerCompose().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        DOCKER_DIR + project1.getDockerCompose().getFileName())),
-                new File(project1.getPreview().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" + updatedName +
-                        PREVIEW_DIR + project1.getPreview().getFileName())),
+                new File(project1.getLogo().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        updatedName + LOGO_DIR + project1.getLogo().getFileName())),
+                new File(project1.getDockerCompose().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL +
+                        "/" + updatedName + DOCKER_DIR + project1.getDockerCompose().getFileName())),
+                new File(project1.getPreview().getFileName(), projectFilesPath + FileUtil.normalizePath(USER_MAIL + "/" +
+                        updatedName + PREVIEW_DIR + project1.getPreview().getFileName())),
                 "https://updatedProjectName.ru", "https://github.com/ishlyakhtenkov/updatedProjectName",
                 "https://github.com/ishlyakhtenkov/updatedProjectName/front",
                 "https://updatedProjectName.ru/swagger-ui.html", project1.getViews(), project1.getAuthor(),
@@ -503,16 +516,19 @@ public class ProjectTestData {
     public static DescriptionElement getUpdatedDe6() {
         return new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
                 (byte) 3, null, new File("registration_and_profile.png",
-                "./content/projects/user@gmail.com/updatedprojectname/description/images/registration_and_profile.png"), project1);
+                "./content/projects/user@gmail.com/updatedprojectname/description/images/registration_and_profile.png"),
+                project1);
     }
 
     public static final DescriptionElement updatedDe6 = new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE,
             (byte) 3, null, new File("registration_and_profile.png",
-            "./content/projects/user@gmail.com/updatedprojectname/description/images/registration_and_profile.png"), project1);
+            "./content/projects/user@gmail.com/updatedprojectname/description/images/registration_and_profile.png"),
+            project1);
 
     public static final DescriptionElement updatedDe6WhenProjectNameNotUpdated =
             new DescriptionElement(DESCRIPTION_ELEMENT6_ID, IMAGE, (byte) 3, null, new File("registration_and_profile.png",
-            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/registration_and_profile.png"), project1);
+            "./content/projects/user@gmail.com/restaurant_aggregator/description/images/registration_and_profile.png"),
+                    project1);
 
     public static final DescriptionElement newDeForProjectUpdate = new DescriptionElement(null, IMAGE,
             (byte) 5, null, new File("updatedDeNewImage.png",
@@ -556,12 +572,14 @@ public class ProjectTestData {
 
     public static DescriptionElement getNewDe3() {
         return new DescriptionElement(null, IMAGE, (byte) 2, null, new File("deImage.png",
-                "./content/projects/user@gmail.com/new_project_name/description/images/" + PREPARED_UUID_STRING + "_deimage.png"));
+                "./content/projects/user@gmail.com/new_project_name/description/images/" + PREPARED_UUID_STRING +
+                        "_deimage.png"));
     }
 
     public static DescriptionElementTo getNewDeToForProjectUpdate() {
-        MockMultipartFile image = new MockMultipartFile("descriptionElementTos[5].image.inputtedFile", "updatedDeNewImage.png",
-                MediaType.IMAGE_PNG_VALUE, "description element image file content bytes".getBytes());
+        MockMultipartFile image = new MockMultipartFile("descriptionElementTos[5].image.inputtedFile",
+                "updatedDeNewImage.png", MediaType.IMAGE_PNG_VALUE,
+                "description element image file content bytes".getBytes());
         return new DescriptionElementTo(null, IMAGE, (byte) 5, null, new FileTo(null, null, image, null));
     }
 

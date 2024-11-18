@@ -31,7 +31,7 @@ public class TechnologyTestData {
     public static final long TECHNOLOGY3_ID = 100013;
     public static final long TECHNOLOGY4_ID = 100014;
 
-    public static final String TECHNOLOGIES_TEST_DATA_FILES_PATH = "src/test/test-data-files/technologies";
+    public static final String TECHNOLOGIES_TEST_CONTENT_FILES_PATH = "src/test/test-content-files/technologies";
 
     public static final Technology technology1 = new Technology(TECHNOLOGY1_ID, "Java",
             "https://www.oracle.com/java", BACKEND, ULTRA, new File("java.svg", "./content/technologies/java/java.svg"));

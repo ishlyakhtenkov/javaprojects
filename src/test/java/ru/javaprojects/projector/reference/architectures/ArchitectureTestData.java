@@ -22,7 +22,7 @@ public class ArchitectureTestData {
     public static final long ARCHITECTURE1_ID = 100015;
     public static final long ARCHITECTURE2_ID = 100016;
 
-    public static final String ARCHITECTURES_TEST_DATA_FILES_PATH = "src/test/test-data-files/architectures";
+    public static final String ARCHITECTURES_TEST_CONTENT_FILES_PATH = "src/test/test-content-files/architectures";
 
     public static final Architecture architecture1 = new Architecture(ARCHITECTURE1_ID, "Modular Monolith",
             "A modular monolith is an architectural pattern that structures the application into independent modules or " +

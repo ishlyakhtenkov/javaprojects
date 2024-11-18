@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
@@ -21,7 +21,6 @@ import ru.javaprojects.projector.reference.architectures.ArchitectureService;
 import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
 import ru.javaprojects.projector.reference.architectures.ArchitectureUtil;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +42,7 @@ import static ru.javaprojects.projector.users.UserTestData.ADMIN_MAIL;
 import static ru.javaprojects.projector.users.UserTestData.USER_MAIL;
 import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 
-class ArchitectureControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class ArchitectureControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String ARCHITECTURES_ADD_URL = ARCHITECTURES_URL + "/add";
     private static final String ARCHITECTURES_EDIT_URL = ARCHITECTURES_URL + "/edit/";
     private static final String ARCHITECTURES_VIEW = "management/reference/architectures";
@@ -61,8 +60,8 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(ARCHITECTURES_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(ARCHITECTURES_TEST_CONTENT_FILES_PATH);
     }
 
     @BeforeEach
@@ -82,7 +81,8 @@ class ArchitectureControllerTest extends AbstractControllerTest implements TestC
                 .andExpect(view().name(ARCHITECTURES_VIEW))
                 .andExpect(result -> ARCHITECTURE_MATCHER
                         .assertMatch((List<Architecture>) Objects.requireNonNull(result.getModelAndView())
-                        .getModel().get(ARCHITECTURES_ATTRIBUTE), List.of(architecture2EnLocalized, architecture1EnLocalized)));
+                        .getModel().get(ARCHITECTURES_ATTRIBUTE), List.of(architecture2EnLocalized,
+                                architecture1EnLocalized)));
     }
 
     @Test

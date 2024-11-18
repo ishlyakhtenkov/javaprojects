@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ru.javaprojects.projector.AbstractControllerTest;
-import ru.javaprojects.projector.TestContentFilesManager;
+import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
 import ru.javaprojects.projector.users.model.Role;
@@ -38,7 +38,7 @@ import static ru.javaprojects.projector.users.web.LoginController.LOGIN_URL;
 import static ru.javaprojects.projector.users.web.UniqueEmailValidator.DUPLICATE_ERROR_CODE;
 import static ru.javaprojects.projector.users.web.UserManagementController.USERS_URL;
 
-class UserManagementControllerTest extends AbstractControllerTest implements TestContentFilesManager {
+class UserManagementControllerTest extends AbstractControllerTest implements ContentFilesManager {
     private static final String USERS_ADD_URL = USERS_URL + "/add";
     private static final String USERS_CREATE_URL = USERS_URL + "/create";
     private static final String USERS_EDIT_URL = USERS_URL + "/edit/";
@@ -59,8 +59,8 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
     }
 
     @Override
-    public Path getTestDataFilesPath() {
-        return Paths.get(AVATARS_TEST_DATA_FILES_PATH);
+    public Path getContentFilesPath() {
+        return Paths.get(AVATARS_TEST_CONTENT_FILES_PATH);
     }
 
     @Test
@@ -82,7 +82,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
     @Test
     @WithUserDetails(ADMIN_MAIL)
     @SuppressWarnings("unchecked")
-    void showUsersPageSearchByKeyword() throws Exception {
+    void showUsersPageWithSearchByKeyword() throws Exception {
         ResultActions actions = perform(MockMvcRequestBuilders.get(USERS_URL)
                 .param(KEYWORD_PARAM, admin.getName()))
                 .andExpect(status().isOk())
@@ -261,7 +261,7 @@ class UserManagementControllerTest extends AbstractControllerTest implements Tes
 
     @Test
     @WithUserDetails(ADMIN_MAIL)
-    void updateThatHasNoAvatar() throws Exception {
+    void updateUserThatHasNoAvatar() throws Exception {
         User updated = new User(disabledUser);
         updated.setEmail(NEW_EMAIL);
         updated.setName("new name");

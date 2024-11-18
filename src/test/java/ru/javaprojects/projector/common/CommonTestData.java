@@ -21,6 +21,8 @@ public class CommonTestData {
     public static final String LOGO_FILE_NAME_PARAM = "logo.fileName";
     public static final String LOGO_FILE_LINK_PARAM = "logo.fileLink";
     public static final String LOGO_INPUTTED_FILE_BYTES_PARAM = "logo.inputtedFileBytes";
+    public static final String POPULAR_PARAM = "popular";
+    public static final String BY_AUTHOR_PARAM = "by-author";
 
     public static final long NOT_EXISTING_ID = 100;
     public static final String HTML_TEXT = "<h1>name</h1>";

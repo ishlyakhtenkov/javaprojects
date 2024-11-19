@@ -89,7 +89,8 @@ public class ProjectUtil {
         Project project = new Project(null, name, projectTo.getAnnotation(), projectTo.isVisible(),
                 projectTo.getPriority(), projectTo.getStarted(), projectTo.getFinished(), projectTo.getArchitecture(),
                 createFile(projectTo::getLogo, projectFilesPath, author.getEmail() + "/"  + name + LOGO_DIR), dockerCompose,
-                createFile(projectTo::getPreview, projectFilesPath, author.getEmail() + "/"  + name + PREVIEW_DIR), projectTo.getDeploymentUrl(),
+                createFile(projectTo::getPreview, projectFilesPath, author.getEmail() + "/"  + name + PREVIEW_DIR),
+                projectTo.getDeploymentUrl(),
                 projectTo.getBackendSrcUrl(), projectTo.getFrontendSrcUrl(), projectTo.getOpenApiUrl(), 0, author);
 
         technologyService.getAllByIds(projectTo.getTechnologiesIds()).forEach(project::addTechnology);
@@ -145,10 +146,12 @@ public class ProjectUtil {
         }
 
         if (projectTo.getLogo() != null && !projectTo.getLogo().isEmpty()) {
-            project.setLogo(createFile(projectTo::getLogo, projectFilesPath, authorEmail + "/"  + projectTo.getName() + LOGO_DIR));
+            project.setLogo(createFile(projectTo::getLogo, projectFilesPath, authorEmail + "/"  + projectTo.getName() +
+                    LOGO_DIR));
         }
         if (projectTo.getPreview() != null && !projectTo.getPreview().isEmpty()) {
-            project.setPreview(createFile(projectTo::getPreview, projectFilesPath, authorEmail + "/"  + projectTo.getName() + PREVIEW_DIR));
+            project.setPreview(createFile(projectTo::getPreview, projectFilesPath, authorEmail + "/"  +
+                    projectTo.getName() + PREVIEW_DIR));
         }
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             project.setDockerCompose(createFile(projectTo::getDockerCompose, projectFilesPath,
@@ -156,21 +159,21 @@ public class ProjectUtil {
         }
 
         if (!project.getName().equalsIgnoreCase(projectOldName)) {
-            project.getLogo().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + LOGO_DIR +
-                    project.getLogo().getFileName()));
-            project.getPreview().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + PREVIEW_DIR +
-                    project.getPreview().getFileName()));
+            project.getLogo().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() +
+                    LOGO_DIR + project.getLogo().getFileName()));
+            project.getPreview().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() +
+                    PREVIEW_DIR + project.getPreview().getFileName()));
             if (project.getDockerCompose() != null) {
-                project.getDockerCompose().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + DOCKER_DIR +
-                        project.getDockerCompose().getFileName()));
+                project.getDockerCompose().setFileLink(projectFilesPath + normalizePath(authorEmail + "/" +
+                        project.getName() + DOCKER_DIR + project.getDockerCompose().getFileName()));
             }
             project.getDescriptionElements().stream()
                     .filter(de -> de.getType() == ElementType.IMAGE && !de.isNew() && de.getImage() != null)
                     .forEach(de -> {
                         String fileNameWithPrefix = de.getImage().getFileLink()
                                 .substring(de.getImage().getFileLink().lastIndexOf('/') + 1);
-                        String newFileLink =
-                                projectFilesPath + normalizePath(authorEmail + "/" + project.getName() + DESCRIPTION_IMG_DIR + fileNameWithPrefix);
+                        String newFileLink = projectFilesPath + normalizePath(authorEmail + "/" + project.getName() +
+                                DESCRIPTION_IMG_DIR + fileNameWithPrefix);
                         de.getImage().setFileLink(newFileLink);
                     });
         }
@@ -225,8 +228,8 @@ public class ProjectUtil {
     private void setImageFileAttributes(DescriptionElementTo deTo, String projectName, String authorEmail) {
         String fileName = deTo.getImage().getRealFileName();
         String uniquePrefix = UUID.randomUUID().toString();
-        String fileLink = projectFilesPath + normalizePath(authorEmail + "/" + projectName + DESCRIPTION_IMG_DIR + uniquePrefix + "_" +
-                fileName);
+        String fileLink = projectFilesPath + normalizePath(authorEmail + "/" + projectName + DESCRIPTION_IMG_DIR +
+                uniquePrefix + "_" + fileName);
         deTo.getImage().setFileName(fileName);
         deTo.getImage().setFileLink(fileLink);
     }

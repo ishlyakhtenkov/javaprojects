@@ -24,7 +24,7 @@ public class DescriptionElementTo extends BaseTo implements Comparable<Descripti
     @PositiveOrZero
     private Byte index;
 
-    @Nullable //TODO validate not empty when not image
+    @Nullable
     @NoHtml
     @Size(max = 1024)
     private String text;

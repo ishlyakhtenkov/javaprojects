@@ -5,10 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaprojects.projector.common.repository.NamedRepository;
+import ru.javaprojects.projector.reference.ReferenceRepository;
+import ru.javaprojects.projector.reference.architectures.Architecture;
 import ru.javaprojects.projector.reference.technologies.model.Technology;
 
 @Transactional(readOnly = true)
-public interface TechnologyRepository extends NamedRepository<Technology> {
+public interface TechnologyRepository extends ReferenceRepository<Technology> {
 
     Page<Technology> findAll(Pageable pageable);
 

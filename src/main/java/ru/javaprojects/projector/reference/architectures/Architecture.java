@@ -12,6 +12,7 @@ import ru.javaprojects.projector.common.HasIdAndName;
 import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.validation.NoHtml;
+import ru.javaprojects.projector.reference.Reference;
 
 @Entity
 @Table(name = "architectures",
@@ -19,7 +20,7 @@ import ru.javaprojects.projector.common.validation.NoHtml;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Architecture extends BaseEntity implements HasIdAndName {
+public class Architecture extends BaseEntity implements HasIdAndName, Reference {
     @NotBlank
     @NoHtml
     @Size(max = 32)

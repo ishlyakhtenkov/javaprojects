@@ -15,12 +15,13 @@ import ru.javaprojects.projector.common.to.BaseTo;
 import ru.javaprojects.projector.common.to.FileTo;
 import ru.javaprojects.projector.common.validation.ImageFile;
 import ru.javaprojects.projector.common.validation.NoHtml;
+import ru.javaprojects.projector.reference.ReferenceTo;
 import ru.javaprojects.projector.reference.technologies.model.Usage;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class TechnologyTo extends BaseTo implements HasIdAndName {
+public class TechnologyTo extends BaseTo implements HasIdAndName, ReferenceTo {
     @NotBlank
     @NoHtml
     @Size(max = 32)

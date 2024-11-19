@@ -4,3 +4,7 @@ spring:
   sql:
     init:
       data-locations: classpath:data.sql
+
+logging:
+  level:
+    org.springframework.transaction.interceptor: TRACE

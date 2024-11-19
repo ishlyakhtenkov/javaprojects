@@ -91,22 +91,13 @@ public class ProjectService {
 
     public Page<ProjectPreviewTo> getAll(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
-        return getAll(repository.findAllIds(pageable), pageable);
+        return getProjectPreviewToPage(repository.findAllIds(pageable), pageable);
     }
 
     public Page<ProjectPreviewTo> getAllByKeyword(String keyword, Pageable pageable) {
         Assert.notNull(keyword, "keyword must not be null");
         Assert.notNull(pageable, "pageable must not be null");
-        return getAll(repository.findAllIdsByKeyword(keyword, pageable), pageable);
-    }
-
-    private Page<ProjectPreviewTo> getAll(Page<Long> projectsIds, Pageable pageable) {
-        List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdIn(projectsIds.getContent(),
-                Sort.by("name"));
-        projects.forEach(this::localizeArchitecture);
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+        return getProjectPreviewToPage(repository.findAllIdsByKeyword(keyword, pageable), pageable);
     }
 
     public List<ProjectPreviewTo> getAllByAuthor(long userId, boolean visibleOnly) {
@@ -126,11 +117,7 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
-        projects.forEach(this::localizeArchitecture);
-        sortTechnologies(projects);
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+        return getProjectPreviewToPage(projects, pageable, projectsIds.getTotalElements());
     }
 
     public Page<ProjectPreviewTo> getAllVisibleByKeyword(String keyword, Pageable pageable) {
@@ -140,10 +127,7 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
-        projects.forEach(this::localizeArchitecture);
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+        return getProjectPreviewToPage(projects, pageable, projectsIds.getTotalElements());
     }
 
     public Page<ProjectPreviewTo> getAllVisibleOrderByPopularity(Pageable pageable) {
@@ -156,11 +140,7 @@ public class ProjectService {
         List<Project> projects = projectsIds.stream()
                 .map(projectsByIds::get)
                 .toList();
-        projects.forEach(this::localizeArchitecture);
-        sortTechnologies(projects);
-        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
-        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+        return getProjectPreviewToPage(projects, pageable, projectsIds.getTotalElements());
     }
 
     public Page<ProjectPreviewTo> getAllVisibleByTag(String tag, Pageable pageable) {
@@ -170,11 +150,24 @@ public class ProjectService {
         List<Project> projects =
                 repository.findAllWithArchitectureAndAuthorAndTechnologiesAndLikesByIdIn(projectsIds.getContent(),
                         pageable.getSort());
+        return getProjectPreviewToPage(projects, pageable, projectsIds.getTotalElements());
+    }
+
+    private Page<ProjectPreviewTo> getProjectPreviewToPage(Page<Long> projectsIds, Pageable p) {
+        List<Project> projects = repository.findAllWithArchitectureAndAuthorAndLikesByIdIn(projectsIds.getContent(),
+                p.getSort());
+        projects.forEach(this::localizeArchitecture);
+        Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
+        List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
+        return new PageImpl<>(projectPreviewTos, p, projectsIds.getTotalElements());
+    }
+
+    private Page<ProjectPreviewTo> getProjectPreviewToPage(List<Project> projects, Pageable p, long total) {
         projects.forEach(this::localizeArchitecture);
         sortTechnologies(projects);
         Map<Long, Integer> commentsCountByProjects = getCommentsCountByProjects(projects);
         List<ProjectPreviewTo> projectPreviewTos = projectUtil.asPreviewTos(projects, commentsCountByProjects);
-        return new PageImpl<>(projectPreviewTos, pageable, projectsIds.getTotalElements());
+        return new PageImpl<>(projectPreviewTos, p, total);
     }
 
     private void sortTechnologies(List<Project> projects) {
@@ -197,41 +190,6 @@ public class ProjectService {
     }
 
     @Transactional
-    public void delete(long id, long userId, boolean byAdmin) {
-        Project project = repository.findWithDescriptionAndAuthorById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
-        if (project.getAuthor().id() == userId || byAdmin) {
-            repository.delete(project);
-            repository.flush();
-            likeRepository.deleteAllByObjectId(id);
-            likeRepository.flush();
-            FileUtil.deleteFile(project.getLogo().getFileLink());
-            FileUtil.deleteFile(project.getPreview().getFileLink());
-            if (project.getDockerCompose() != null) {
-                FileUtil.deleteFile(project.getDockerCompose().getFileLink());
-            }
-            project.getDescriptionElements().stream()
-                    .filter(de -> de.getType() == IMAGE && de.getImage() != null)
-                    .forEach(de -> FileUtil.deleteFile(de.getImage().getFileLink()));
-        } else {
-            throw new IllegalRequestDataException("Forbidden to delete another user project, projectId=" + id +
-                    ", userId=" + userId, "project.forbidden-delete-not-belong", null);
-        }
-    }
-
-
-    @Transactional
-    public void hide(long id, boolean visible, long userId, boolean byAdmin) {
-        Project project = getWithAuthor(id);
-        if (project.getAuthor().id() == userId || byAdmin) {
-            project.setVisible(visible);
-        } else {
-            throw new IllegalRequestDataException("Forbidden to reveal/hide another user project, projectId=" + id +
-                    ", userId=" + userId, "project.forbidden-hide-not-belong", null);
-        }
-    }
-
-    @Transactional
     public Project create(ProjectTo projectTo, long userId) {
         Assert.notNull(projectTo, "projectTo must not be null");
         if (projectTo.getLogo() == null || projectTo.getLogo().isEmpty()) {
@@ -245,8 +203,10 @@ public class ProjectService {
         User author = userService.get(userId);
         Project project = repository.saveAndFlush(projectUtil.createNewFromTo(projectTo, author));
 
-        uploadFile(projectTo.getLogo(), author.getEmail(), project.getName(), LOGO_DIR, projectTo.getLogo().getRealFileName());
-        uploadFile(projectTo.getPreview(), author.getEmail(), project.getName(), PREVIEW_DIR, projectTo.getPreview().getRealFileName());
+        uploadFile(projectTo.getLogo(), author.getEmail(), project.getName(), LOGO_DIR,
+                projectTo.getLogo().getRealFileName());
+        uploadFile(projectTo.getPreview(), author.getEmail(), project.getName(), PREVIEW_DIR,
+                projectTo.getPreview().getRealFileName());
         if (projectTo.getDockerCompose() != null && !projectTo.getDockerCompose().isEmpty()) {
             uploadFile(projectTo.getDockerCompose(), author.getEmail(), project.getName(), DOCKER_DIR,
                     projectTo.getDockerCompose().getRealFileName());
@@ -264,8 +224,8 @@ public class ProjectService {
                 new NotFoundException("Not found project with id=" + projectTo.getId(), "error.notfound.entity",
                         new Object[]{projectTo.getId()}));
         if (project.getAuthor().id() != userId && !byAdmin) {
-            throw new IllegalRequestDataException("Forbidden to edit another user project, projectId=" + projectTo.getId() +
-                    ", userId=" + userId, "project.forbidden-edit-not-belong", null);
+            throw new IllegalRequestDataException("Forbidden to edit another user project, projectId=" +
+                    projectTo.getId() + ", userId=" + userId, "project.forbidden-edit-not-belong", null);
         }
         String authorEmail = project.getAuthor().getEmail();
         String projectOldName = project.getName();
@@ -308,30 +268,6 @@ public class ProjectService {
         return project;
     }
 
-    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink,
-                                              String authorEmail, String projectName, String projectOldName, String dirName) {
-        if (fileTo != null && !fileTo.isEmpty()) {
-            if (oldFileLink != null && !oldFileLink.equalsIgnoreCase(currentFileLink)) {
-                FileUtil.deleteFile(oldFileLink);
-            }
-            FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
-                    FileUtil.normalizePath(fileTo.getRealFileName()));
-        } else if (!projectName.equalsIgnoreCase(projectOldName)) {
-            FileUtil.moveFile(oldFileLink, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName));
-        }
-    }
-
-    private void uploadDeImage(DescriptionElementTo deTo, String authorEmail, String projectName) {
-        FileTo image = deTo.getImage();
-        String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
-        uploadFile(image, authorEmail, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
-    }
-
-    private void uploadFile(FileTo fileTo, String authorEmail, String projectName, String dirName, String fileName) {
-        FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
-                FileUtil.normalizePath(fileName));
-    }
-
     public void likeProject(long id, boolean liked, long userId) {
         Project project = getWithAuthor(id);
         if (project.getAuthor().id() == userId) {
@@ -350,6 +286,80 @@ public class ProjectService {
         });
     }
 
+    @Transactional
+    public void hide(long id, boolean visible, long userId, boolean byAdmin) {
+        Project project = getWithAuthor(id);
+        if (project.getAuthor().id() == userId || byAdmin) {
+            project.setVisible(visible);
+        } else {
+            throw new IllegalRequestDataException("Forbidden to reveal/hide another user project, projectId=" + id +
+                    ", userId=" + userId, "project.forbidden-hide-not-belong", null);
+        }
+    }
+
+    @Transactional
+    public void delete(long id, long userId, boolean byAdmin) {
+        Project project = repository.findWithDescriptionAndAuthorById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
+        if (project.getAuthor().id() == userId || byAdmin) {
+            repository.delete(project);
+            repository.flush();
+            likeRepository.deleteAllByObjectId(id);
+            likeRepository.flush();
+            FileUtil.deleteFile(project.getLogo().getFileLink());
+            FileUtil.deleteFile(project.getPreview().getFileLink());
+            if (project.getDockerCompose() != null) {
+                FileUtil.deleteFile(project.getDockerCompose().getFileLink());
+            }
+            project.getDescriptionElements().stream()
+                    .filter(de -> de.getType() == IMAGE && de.getImage() != null)
+                    .forEach(de -> FileUtil.deleteFile(de.getImage().getFileLink()));
+        } else {
+            throw new IllegalRequestDataException("Forbidden to delete another user project, projectId=" + id +
+                    ", userId=" + userId, "project.forbidden-delete-not-belong", null);
+        }
+    }
+
+    private void updateProjectFileIfNecessary(FileTo fileTo, String oldFileLink, String currentFileLink,
+                                              String authorEmail, String projectName, String projectOldName, String dirName) {
+        if (fileTo != null && !fileTo.isEmpty()) {
+            if (oldFileLink != null && !oldFileLink.equalsIgnoreCase(currentFileLink)) {
+                FileUtil.deleteFile(oldFileLink);
+            }
+            FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
+                    FileUtil.normalizePath(fileTo.getRealFileName()));
+        } else if (!projectName.equalsIgnoreCase(projectOldName)) {
+            FileUtil.moveFile(oldFileLink, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName +
+                    dirName));
+        }
+    }
+
+    private void uploadDeImage(DescriptionElementTo deTo, String authorEmail, String projectName) {
+        FileTo image = deTo.getImage();
+        String uniquePrefixFileName = image.getFileLink().substring(image.getFileLink().lastIndexOf('/') + 1);
+        uploadFile(image, authorEmail, projectName, DESCRIPTION_IMG_DIR, uniquePrefixFileName);
+    }
+
+    private void uploadFile(FileTo fileTo, String authorEmail, String projectName, String dirName, String fileName) {
+        FileUtil.upload(fileTo, projectFilesPath + FileUtil.normalizePath(authorEmail + "/" + projectName + dirName),
+                FileUtil.normalizePath(fileName));
+    }
+
+    private Map<Long, Integer> getCommentsCountByProjects(List<Project> projects) {
+        List<Long> projectsIds = projects.stream()
+                .map(BaseEntity::getId)
+                .toList();
+        Map<Long, Integer> commentsCountByProjects = commentRepository.countCommentsByProjects(projectsIds).stream()
+                .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getCommentsCount));
+        projectsIds.forEach(projectId -> commentsCountByProjects.computeIfAbsent(projectId, k -> 0));
+        return commentsCountByProjects;
+    }
+
+    private Project getWithAuthor(long id) {
+        return repository.findWithAuthorById(id).orElseThrow(() ->
+                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
+    }
+
     public Comment createComment(CommentTo commentTo, long userId) {
         Assert.notNull(commentTo, "commentTo must not be null");
         User author = userService.get(userId);
@@ -361,9 +371,24 @@ public class ProjectService {
                 commentTo.getText()));
     }
 
+    @Transactional
+    public void updateComment(long commentId, String text, long userId) {
+        Assert.notNull(text, "text must not be null");
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity",
+                        new Object[]{commentId}));
+        if (comment.getAuthor().id() == userId) {
+            comment.setText(text);
+        } else {
+            throw new IllegalRequestDataException("Forbidden to edit another user comment, commentId=" + commentId +
+                    ", userId=" + userId, "comment.forbidden-edit-not-belong", null);
+        }
+    }
+
     public void likeComment(long commentId, boolean liked, long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity",
+                        new Object[]{commentId}));
         if (comment.getAuthor().id() == userId) {
             throw new IllegalRequestDataException("Forbidden to like yourself, userId=" + userId +
                     ", commentId=" + commentId, "comment.forbidden-like-yourself", null);
@@ -383,7 +408,8 @@ public class ProjectService {
     @Transactional
     public void deleteComment(long commentId, long userId, boolean byAdmin) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
+                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity",
+                        new Object[]{commentId}));
         if (comment.getAuthor().id() == userId || byAdmin) {
             comment.setDeleted(true);
         } else {
@@ -392,35 +418,7 @@ public class ProjectService {
         }
     }
 
-    @Transactional
-    public void updateComment(long commentId, String text, long userId) {
-        Assert.notNull(text, "text must not be null");
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new NotFoundException("Not found comment with id=" + commentId, "error.notfound.entity", new Object[]{commentId}));
-        if (comment.getAuthor().id() == userId) {
-            comment.setText(text);
-        } else {
-            throw new IllegalRequestDataException("Forbidden to edit another user comment, commentId=" + commentId +
-                    ", userId=" + userId, "comment.forbidden-edit-not-belong", null);
-        }
-    }
-
-    public Map<Long, Integer> getCommentsCountByProjects(List<Project> projects) {
-        List<Long> projectsIds = projects.stream()
-                .map(BaseEntity::getId)
-                .toList();
-        Map<Long, Integer> commentsCountByProjects = commentRepository.countCommentsByProjects(projectsIds).stream()
-                .collect(Collectors.toMap(CommentCount::getProjectId, CommentCount::getCommentsCount));
-        projectsIds.forEach(projectId -> commentsCountByProjects.computeIfAbsent(projectId, k -> 0));
-        return commentsCountByProjects;
-    }
-
     public int countLikesForAuthor(long authorId) {
         return likeRepository.countLikesForAuthor(authorId);
-    }
-
-    private Project getWithAuthor(long id) {
-        return repository.findWithAuthorById(id).orElseThrow(() ->
-                new NotFoundException("Not found project with id=" + id, "error.notfound.entity", new Object[]{id}));
     }
 }

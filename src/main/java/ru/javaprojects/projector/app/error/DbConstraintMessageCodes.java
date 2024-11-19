@@ -14,7 +14,7 @@ public class DbConstraintMessageCodes {
         dbConstraintsMap.put("users_unique_email_idx", "error.duplicate.email");
         dbConstraintsMap.put("technologies_unique_name_idx", "error.duplicate.technology-name");
         dbConstraintsMap.put("architectures_unique_name_idx", "error.duplicate.architecture-name");
-        dbConstraintsMap.put("projects_unique_name_idx", "error.duplicate.project-name");
+        dbConstraintsMap.put("projects_unique_author_name_idx", "error.duplicate.project-name");
         dbConstraintsMap.put("foreign key(architecture_id) references", "architecture.is-referenced");
         dbConstraintsMap.put("foreign key(technology_id) references", "technology.is-referenced");
     }

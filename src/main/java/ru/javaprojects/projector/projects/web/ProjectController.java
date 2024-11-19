@@ -74,7 +74,8 @@ public class ProjectController {
                 .thenComparing(Technology::getName);
         Project project = projectService.getWithAllInformation(id, priorityComparator);
         AuthUser authUser = AuthUser.safeGet();
-        if (!project.isVisible() && (authUser == null || project.getAuthor().getId() != AuthUser.authId() && !AuthUser.isAdmin())) {
+        if (!project.isVisible() && (authUser == null || project.getAuthor().getId() != AuthUser.authId() &&
+                !AuthUser.isAdmin())) {
             throw new IllegalRequestDataException("Forbidden to view disabled project, projectId=" + id,
                     "project.forbidden-view-hided", null);
         }

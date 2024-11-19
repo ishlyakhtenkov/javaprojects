@@ -115,11 +115,9 @@ public class UserService {
         User user = get(profileTo.getId());
         File oldAvatar = user.getAvatar();
         repository.saveAndFlush(updateFromTo(user, profileTo, avatarFilesPath));
-        if (!profileTo.getAvatar().isEmpty()) {
-            FileTo newAvatar = profileTo.getAvatar();
-            String filename = normalizePath(newAvatar.getInputtedFile() != null && !newAvatar.getInputtedFile().isEmpty() ?
-                    newAvatar.getInputtedFile().getOriginalFilename() : newAvatar.getFileName());
-            FileUtil.upload(newAvatar, avatarFilesPath + FileUtil.normalizePath(user.getEmail() + "/"), filename);
+        if (profileTo.getAvatar() != null && !profileTo.getAvatar().isEmpty()) {
+            FileUtil.upload(profileTo.getAvatar(),  avatarFilesPath + FileUtil.normalizePath(user.getEmail() + "/"),
+                    FileUtil.normalizePath(profileTo.getAvatar().getRealFileName()));
             if (oldAvatar != null && !oldAvatar.hasExternalLink() &&
                     !oldAvatar.getFileLink().equalsIgnoreCase(user.getAvatar().getFileLink())) {
                 FileUtil.deleteFile(oldAvatar.getFileLink());

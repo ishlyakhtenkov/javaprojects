@@ -16,10 +16,7 @@ import ru.javaprojects.projector.ContentFilesManager;
 import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.util.FileUtil;
-import ru.javaprojects.projector.reference.architectures.Architecture;
-import ru.javaprojects.projector.reference.architectures.ArchitectureService;
-import ru.javaprojects.projector.reference.architectures.ArchitectureTo;
-import ru.javaprojects.projector.reference.architectures.ArchitectureUtil;
+import ru.javaprojects.projector.reference.architectures.*;
 
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -52,7 +49,10 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
     private String architectureFilesPath;
     
     @Autowired
-    private ArchitectureService architectureService;
+    private ArchitectureService service;
+
+    @Autowired
+    private ArchitectureRepository repository;
 
     @Override
     public Path getContentPath() {
@@ -68,7 +68,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
     void reloadArchitectures() throws Exception {
         Method loadArchitecturesMethod = ArchitectureService.class.getDeclaredMethod("loadArchitectures");
         loadArchitecturesMethod.setAccessible(true);
-        loadArchitecturesMethod.invoke(AopTestUtils.getTargetObject(architectureService));
+        loadArchitecturesMethod.invoke(AopTestUtils.getTargetObject(service));
     }
 
     @Test
@@ -135,7 +135,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.created",
                         new Object[]{newArchitecture.getName()}, getLocale())));
-        Architecture created = architectureService.getByName(newArchitecture.getName());
+        Architecture created = repository.findByNameIgnoreCase(newArchitecture.getName()).orElseThrow();
         newArchitecture.setId(created.getId());
         ARCHITECTURE_MATCHER.assertMatch(created, newArchitecture);
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
@@ -155,7 +155,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.created",
                         new Object[]{newArchitecture.getName()}, getLocale())));
-        Architecture created = architectureService.getByName(newArchitecture.getName());
+        Architecture created = repository.findByNameIgnoreCase(newArchitecture.getName()).orElseThrow();
         newArchitecture.setId(created.getId());
         ARCHITECTURE_MATCHER.assertMatch(created, newArchitecture);
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
@@ -170,7 +170,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertThrows(NotFoundException.class, () -> architectureService.getByName(getNew(architectureFilesPath).getName()));
+        assertTrue(() -> repository.findByNameIgnoreCase(getNew(architectureFilesPath).getName()).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(architectureFilesPath).getLogo().getFileLink())));
     }
 
@@ -182,7 +182,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertThrows(NotFoundException.class, () -> architectureService.getByName(getNew(architectureFilesPath).getName()));
+        assertTrue(() -> repository.findByNameIgnoreCase(getNew(architectureFilesPath).getName()).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(architectureFilesPath).getLogo().getFileLink())));
     }
 
@@ -205,7 +205,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                         .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((ArchitectureTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertThrows(NotFoundException.class, () -> architectureService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
+        assertTrue(() -> repository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).isEmpty());
         assertTrue(Files.notExists(Paths.get(architectureFilesPath,
                 FileUtil.normalizePath(newInvalidParams.get(NAME_PARAM).get(0) + "/" + NEW_LOGO_FILE.getOriginalFilename()))));
 
@@ -221,7 +221,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("architecture.logo-not-present", null, getLocale()), 
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () -> architectureService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertTrue(() -> repository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).isEmpty());
     }
 
     @Test
@@ -245,7 +245,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
         assertNull(((ArchitectureTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileLink());
         assertNotEquals(getNew(architectureFilesPath).getDescription(),
-                architectureService.getByName(architecture1.getName()).getDescription());
+                repository.findByNameIgnoreCase(architecture1.getName()).orElseThrow().getDescription());
     }
 
     @Test
@@ -293,7 +293,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(service.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -312,7 +312,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(service.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -329,7 +329,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(service.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath + FileUtil.normalizePath(architecture1.getName()))));
@@ -349,7 +349,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(redirectedUrl(ARCHITECTURES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("architecture.updated",
                         new Object[]{updatedArchitecture.getName()}, getLocale())));
-        ARCHITECTURE_MATCHER.assertMatch(architectureService.get(ARCHITECTURE1_ID), updatedArchitecture);
+        ARCHITECTURE_MATCHER.assertMatch(service.get(ARCHITECTURE1_ID), updatedArchitecture);
         assertTrue(Files.exists(Paths.get(updatedArchitecture.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architecture1.getLogo().getFileLink())));
     }
@@ -377,7 +377,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertNotEquals(architectureService.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
+        assertNotEquals(service.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
         assertTrue(Files.exists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(architectureFilesPath).getLogo().getFileLink())));
     }
@@ -390,7 +390,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                 .params(getUpdatedParams(architectureFilesPath))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertNotEquals(architectureService.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
+        assertNotEquals(service.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
         assertTrue(Files.exists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(architectureFilesPath).getLogo().getFileLink())));
     }
@@ -414,7 +414,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                         .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((ArchitectureTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertNotEquals(architectureService.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
+        assertNotEquals(service.get(ARCHITECTURE1_ID).getName(), getUpdated(architectureFilesPath).getName());
         assertTrue(Files.exists(Paths.get(architecture1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(architectureFilesPath).getLogo().getFileLink())));
     }
@@ -439,7 +439,7 @@ class ArchitectureControllerTest extends AbstractControllerTest implements Conte
                         .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((ArchitectureTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(ARCHITECTURE_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertNotEquals(architectureService.get(ARCHITECTURE1_ID).getName(), architecture2.getName());
+        assertNotEquals(service.get(ARCHITECTURE1_ID).getName(), architecture2.getName());
         assertTrue(Files.exists(Paths.get(architecture2.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(architectureFilesPath +
                 FileUtil.normalizePath(architecture2.getName() + "/" + UPDATED_LOGO_FILE.getOriginalFilename()))));

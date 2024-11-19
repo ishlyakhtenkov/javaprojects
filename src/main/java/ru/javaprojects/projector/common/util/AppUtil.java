@@ -52,6 +52,14 @@ public class AppUtil {
 
     public static File createFile(Supplier<FileTo> fileToExtractor, String filesPath, String dir) {
         String filename = normalizePath(fileToExtractor.get().getRealFileName());
+        filesPath = filesPath.endsWith("/") ? filesPath : filesPath + "/";
+        dir = dir.endsWith("/") ? dir : dir + "/";
         return new File(filename, filesPath + normalizePath(dir + filename));
+    }
+
+    public static FileTo asFileTo(File file) {
+        String fileName = file.getFileName();
+        String fileLink = file.getFileLink();
+        return fileName == null || fileLink == null ? null : new FileTo(fileName, fileLink, null, null);
     }
 }

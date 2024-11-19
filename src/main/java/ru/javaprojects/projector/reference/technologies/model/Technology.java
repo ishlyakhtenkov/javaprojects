@@ -14,6 +14,7 @@ import ru.javaprojects.projector.common.model.BaseEntity;
 import ru.javaprojects.projector.common.model.File;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.validation.NoHtml;
+import ru.javaprojects.projector.reference.Reference;
 
 @Entity
 @Table(name = "technologies",
@@ -21,7 +22,7 @@ import ru.javaprojects.projector.common.validation.NoHtml;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Technology extends BaseEntity implements HasIdAndName, Comparable<Technology> {
+public class Technology extends BaseEntity implements HasIdAndName, Comparable<Technology>, Reference {
     @NotBlank
     @NoHtml
     @Size(max = 32)

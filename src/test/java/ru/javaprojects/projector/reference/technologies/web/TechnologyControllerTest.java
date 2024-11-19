@@ -16,6 +16,7 @@ import ru.javaprojects.projector.common.error.IllegalRequestDataException;
 import ru.javaprojects.projector.common.error.NotFoundException;
 import ru.javaprojects.projector.common.model.Priority;
 import ru.javaprojects.projector.common.util.FileUtil;
+import ru.javaprojects.projector.reference.technologies.TechnologyRepository;
 import ru.javaprojects.projector.reference.technologies.TechnologyService;
 import ru.javaprojects.projector.reference.technologies.TechnologyTo;
 import ru.javaprojects.projector.reference.technologies.TechnologyUtil;
@@ -51,7 +52,10 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
     private String technologyFilesPath;
 
     @Autowired
-    private TechnologyService technologyService;
+    private TechnologyService service;
+
+    @Autowired
+    private TechnologyRepository repository;
 
     @Override
     public Path getContentPath() {
@@ -151,7 +155,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
                         new Object[]{newTechnologyTo.getName()}, getLocale())));
 
-        Technology created = technologyService.getByName(newTechnologyTo.getName());
+        Technology created = repository.findByNameIgnoreCase(newTechnologyTo.getName()).orElseThrow();
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
@@ -171,7 +175,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.created",
                         new Object[]{newTechnology.getName()}, getLocale())));
-        Technology created = technologyService.getByName(newTechnology.getName());
+        Technology created = repository.findByNameIgnoreCase(newTechnology.getName()).orElseThrow();
         newTechnology.setId(created.getId());
         TECHNOLOGY_MATCHER.assertMatch(created, newTechnology);
         assertTrue(Files.exists(Paths.get(created.getLogo().getFileLink())));
@@ -186,7 +190,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
+        assertTrue(() -> repository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(technologyFilesPath).getLogo().getFileLink())));
     }
 
@@ -198,7 +202,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .params((getNewParams()))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertThrows(NotFoundException.class, () -> technologyService.getByName(getNewTo().getName()));
+        assertTrue(() -> repository.findByNameIgnoreCase(getNewTo().getName()).isEmpty());
         assertTrue(Files.notExists(Paths.get(getNew(technologyFilesPath).getLogo().getFileLink())));
     }
 
@@ -221,7 +225,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                         .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertThrows(NotFoundException.class, () -> technologyService.getByName(newInvalidParams.get(NAME_PARAM).get(0)));
+        assertTrue(() -> repository.findByNameIgnoreCase(newInvalidParams.get(NAME_PARAM).get(0)).isEmpty());
         assertTrue(Files.notExists(Paths.get(technologyFilesPath,
                 FileUtil.normalizePath(newInvalidParams.get(NAME_PARAM).get(0) + "/" + NEW_LOGO_FILE.getOriginalFilename()))));
 
@@ -237,7 +241,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(exception().message(messageSource.getMessage("error.internal-server-error", null, getLocale()),
                         messageSource.getMessage("technology.logo-not-present", null, getLocale()),
                         IllegalRequestDataException.class));
-        assertThrows(NotFoundException.class, () -> technologyService.getByName(newParams.get(NAME_PARAM).get(0)));
+        assertTrue(() -> repository.findByNameIgnoreCase(newParams.get(NAME_PARAM).get(0)).isEmpty());
     }
 
     @Test
@@ -260,7 +264,8 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                         .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertNotEquals(getNew(technologyFilesPath).getUrl(), technologyService.getByName(technology1.getName()).getUrl());
+        assertNotEquals(getNew(technologyFilesPath).getUrl(), repository.findByNameIgnoreCase(technology1.getName())
+                .orElseThrow().getUrl());
     }
 
     @Test
@@ -310,7 +315,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
                         new Object[]{updatedTechnology.getName()}, getLocale())));
-        TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
+        TECHNOLOGY_MATCHER.assertMatch(service.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technologyFilesPath + FileUtil.normalizePath(technology1.getName()))));
@@ -329,7 +334,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
                         new Object[]{updatedTechnology.getName()}, getLocale())));
-        TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
+        TECHNOLOGY_MATCHER.assertMatch(service.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technologyFilesPath + FileUtil.normalizePath(technology1.getName()))));
@@ -346,7 +351,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
                         new Object[]{updatedTechnology.getName()}, getLocale())));
-        TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
+        TECHNOLOGY_MATCHER.assertMatch(service.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technologyFilesPath + FileUtil.normalizePath(technology1.getName()))));
@@ -366,7 +371,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(redirectedUrl(TECHNOLOGIES_URL))
                 .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("technology.updated",
                         new Object[]{updatedTechnology.getName()}, getLocale())));
-        TECHNOLOGY_MATCHER.assertMatch(technologyService.get(TECHNOLOGY1_ID), updatedTechnology);
+        TECHNOLOGY_MATCHER.assertMatch(service.get(TECHNOLOGY1_ID), updatedTechnology);
         assertTrue(Files.exists(Paths.get(updatedTechnology.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technology1.getLogo().getFileLink())));
     }
@@ -394,7 +399,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .andExpect(status().isFound())
                 .andExpect(result ->
                         assertTrue(Objects.requireNonNull(result.getResponse().getRedirectedUrl()).endsWith(LOGIN_URL)));
-        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(technologyFilesPath).getName());
+        assertNotEquals(service.get(TECHNOLOGY1_ID).getName(), getUpdated(technologyFilesPath).getName());
         assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(technologyFilesPath).getLogo().getFileLink())));
     }
@@ -407,7 +412,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                 .params(getUpdatedParams(technologyFilesPath))
                 .with(csrf()))
                 .andExpect(status().isForbidden());
-        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), getUpdated(technologyFilesPath).getName());
+        assertNotEquals(service.get(TECHNOLOGY1_ID).getName(), getUpdated(technologyFilesPath).getName());
         assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(technologyFilesPath).getLogo().getFileLink())));
     }
@@ -432,7 +437,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                         .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), updatedInvalidParams.get(NAME_PARAM).get(0));
+        assertNotEquals(service.get(TECHNOLOGY1_ID).getName(), updatedInvalidParams.get(NAME_PARAM).get(0));
         assertTrue(Files.exists(Paths.get(technology1.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(getUpdated(technologyFilesPath).getLogo().getFileLink())));
     }
@@ -457,7 +462,7 @@ class TechnologyControllerTest extends AbstractControllerTest implements Content
                         .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileName());
         assertNull(((TechnologyTo) Objects.requireNonNull(actions.andReturn().getModelAndView()).getModel()
                 .get(TECHNOLOGY_TO_ATTRIBUTE)).getLogo().getFileLink());
-        assertNotEquals(technologyService.get(TECHNOLOGY1_ID).getName(), technology2.getName());
+        assertNotEquals(service.get(TECHNOLOGY1_ID).getName(), technology2.getName());
         assertTrue(Files.exists(Paths.get(technology2.getLogo().getFileLink())));
         assertTrue(Files.notExists(Paths.get(technologyFilesPath +
                 FileUtil.normalizePath(technology2.getName() + "/" + UPDATED_LOGO_FILE.getOriginalFilename()))));

@@ -1,23 +1,23 @@
 package ru.javaprojects.projector.reference.architectures;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import ru.javaprojects.projector.common.error.NotFoundException;
+import ru.javaprojects.projector.common.translate.TranslateException;
 import ru.javaprojects.projector.common.translate.Translator;
 import ru.javaprojects.projector.reference.ReferenceService;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class ArchitectureService extends ReferenceService<Architecture, ArchitectureTo> {
+    private static final String NATIVE = "native";
     private final Translator translator;
     private final List<String> supportedLocales;
     private Map<Long, Map<String, Architecture>> architectures;
@@ -37,10 +37,20 @@ public class ArchitectureService extends ReferenceService<Architecture, Architec
     }
 
     private Map<String, Architecture> localizeArchitecture(Architecture a) {
-        return supportedLocales.stream()
-                .collect(Collectors.toMap(Function.identity(), locale ->
-                        new Architecture(a.getId(), translator.translate(a.getName(), locale),
-                                translator.translate(a.getDescription(), locale), a.getLogo())));
+        Map<String, Architecture> localizedArchitectures = new HashMap<>();
+        localizedArchitectures.put(NATIVE, a);
+        supportedLocales.forEach(locale -> {
+            try {
+                String localizedName = translator.translate(a.getName(), locale);
+                String localizedDescription = translator.translate(a.getDescription(), locale);
+                Architecture localizedArchitecture = new Architecture(a.getId(), localizedName, localizedDescription,
+                        a.getLogo());
+                localizedArchitectures.put(locale, localizedArchitecture);
+            } catch (TranslateException e) {
+                log.error(e.getMessage());
+            }
+        });
+        return localizedArchitectures;
     }
 
     public Architecture getLocalized(long id, String locale) {
@@ -48,19 +58,20 @@ public class ArchitectureService extends ReferenceService<Architecture, Architec
         if (localizedArchitectures != null) {
             return localizedArchitectures.get(locale.toLowerCase());
         } else {
-            throw new NotFoundException("Localized architecture with id=" + id + " not found",
-                    "error.notfound.architecture.localized", new Object[]{id});
+            throw new NotFoundException("Architecture with id=" + id + " not found",
+                    "error.notfound.entity", new Object[]{id});
         }
     }
 
     public List<Architecture> getAll() {
-        return architectures.values().stream()
-                .flatMap(map -> map.entrySet()
-                        .stream())
-                .filter(e -> e.getKey().equalsIgnoreCase(LocaleContextHolder.getLocale().getLanguage()))
-                .map(Map.Entry::getValue)
-                .sorted(Comparator.comparing(Architecture::getName))
-                .toList();
+        List<Architecture> architectureList = new ArrayList<>();
+        architectures.forEach((id, localizedArchitectures) -> {
+            Architecture localizedArchitecture = localizedArchitectures.get(LocaleContextHolder.getLocale()
+                    .getLanguage().toLowerCase());
+            architectureList.add(localizedArchitecture != null ? localizedArchitecture : localizedArchitectures.get(NATIVE));
+        });
+        architectureList.sort(Comparator.comparing(Architecture::getName));
+        return architectureList;
     }
 
     @Override

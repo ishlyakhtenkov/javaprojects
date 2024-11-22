@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import ru.javaprojects.projector.common.mail.MailException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -21,9 +22,15 @@ public class GoogleTranslator implements Translator {
     @Override
     @SuppressWarnings("unchecked")
     public String translate(String text, String locale) {
-        log.info("translate {}... to {}", text.length() < 20 ? text : text.substring(0, 19), locale);
-        String googleTranslateUrl = String.format(GOOGLE_TRANSLATE_URL_TEMPLATE, locale, text);
-        ResponseEntity<Object[]> response = restTemplate.getForEntity(googleTranslateUrl, Object[].class);
-        return ((ArrayList<String>) Objects.requireNonNull(response.getBody())[0]).get(0);
+        String textInfo = text.length() < 20 ? text : text.substring(0, 19);
+        log.info("translate {}... to {}", textInfo, locale);
+        try {
+            String googleTranslateUrl = String.format(GOOGLE_TRANSLATE_URL_TEMPLATE, locale, text);
+            ResponseEntity<Object[]> response = restTemplate.getForEntity(googleTranslateUrl, Object[].class);
+            return ((ArrayList<String>) Objects.requireNonNull(response.getBody())[0]).get(0);
+        } catch (Exception e) {
+            throw new TranslateException("Failed to translate (" + textInfo + "): " + e.getMessage(),
+                    "error.failed-to-translate", new Object[]{textInfo});
+        }
     }
 }

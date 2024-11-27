@@ -22,7 +22,7 @@
     </head>
     <script>
         let systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        const theme = localStorage.getItem('bs-theme') != null ? localStorage.getItem('bs-theme') : systemTheme;
+        let theme = localStorage.getItem('bs-theme') != null ? localStorage.getItem('bs-theme') : systemTheme;
         document.documentElement.setAttribute('data-bs-theme', theme);
     </script>
     <body>

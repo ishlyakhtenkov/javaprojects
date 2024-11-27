@@ -1,7 +1,7 @@
 const searchBtn = $('#searchBtn');
 const searchForm = $('#searchForm');
 
-setUpThemeSwitch(theme);
+setThemeSwitchBtnTitle();
 
 searchBtn.on('click', (event) => {
     event.stopPropagation();
@@ -21,21 +21,16 @@ $(window).click(function() {
     }
 });
 
-function setUpThemeSwitch(theme) {
-    if (theme === 'dark') {
-        $('#themeSwitcherIcon').removeClass('bi bi-moon-stars-fill text-secondary')
-            .addClass('bi bi-sun-fill text-warning').parent().attr('title', getMessage('info.switch-to-light-theme'));
-    } else {
-        $('#themeSwitcherIcon').removeClass('bi bi-sun-fill text-warning')
-            .addClass('bi bi-moon-stars-fill text-secondary').parent().attr('title', getMessage('info.switch-to-dark-theme'));
-    }
+function setThemeSwitchBtnTitle() {
+    let title = (theme === 'dark') ? getMessage('info.switch-to-light-theme') : getMessage('info.switch-to-dark-theme');
+    $('#themeSwitchBtn').attr('title', title);
 }
 
-function setTheme(themeSwitch) {
-    let theme = themeSwitch.find('i').attr('class').includes('bi-sun-fill') ? 'light' : 'dark';
+function changeTheme() {
+    theme = (theme === 'light') ? 'dark' : 'light';
     localStorage.setItem('bs-theme', theme);
     $('html').attr('data-bs-theme', theme);
-    setUpThemeSwitch(theme);
+    setThemeSwitchBtnTitle();
 }
 
 function changeLocale(locale) {

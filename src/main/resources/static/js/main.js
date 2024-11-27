@@ -1,6 +1,8 @@
 const searchBtn = $('#searchBtn');
 const searchForm = $('#searchForm');
 
+setUpThemeSwitch(theme);
+
 searchBtn.on('click', (event) => {
     event.stopPropagation();
     searchBtn.attr('hidden', true);
@@ -18,9 +20,6 @@ $(window).click(function() {
         searchBtn.attr('hidden', false);
     }
 });
-
-
-setUpThemeSwitch(theme);
 
 function setUpThemeSwitch(theme) {
     if (theme === 'dark') {
@@ -60,4 +59,15 @@ function shareAppOnTelegram() {
 
 function shareAppOnWhatsApp() {
     window.open(`https://api.whatsapp.com/send?text=${getMessage('info.app-description')} ${window.location.origin}`);
+}
+
+function setupToggles() {
+    $('.with-popover').on('shown.bs.popover', () => {
+        $('.btn-close').on('click', () => $('.with-popover').popover('hide'));
+    });
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 }

@@ -20,7 +20,8 @@ $.each(selectors, function (i, selector) {
     })
 
     $(selector).on('shown.bs.select', () => {
-        selectorFormControl.addClass('border-primary-subtle').attr('style', 'box-shadow: 0 0 0 0.25rem rgba(0, 110, 255, 0.25)');
+        selectorFormControl.addClass('border-primary-subtle')
+            .attr('style', 'box-shadow: 0 0 0 0.25rem rgba(0, 110, 255, 0.25)');
         selectorLabel.attr('hidden', false);
         if ($(selector).val().length === 0) {
             selectorTitle.html('&nbsp;');

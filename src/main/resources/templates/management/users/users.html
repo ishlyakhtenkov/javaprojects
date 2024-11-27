@@ -64,7 +64,7 @@
                              th:src="@{${user.avatar.getSrc()}}"
                              class="rounded-circle border border-light-subtle" width="32" height="32"
                              style="cursor: zoom-in; object-fit: cover;"
-                             th:data-filename="${user.avatar.fileName}" onclick="showLargerImage($(this))" />
+                             th:data-filename="${user.avatar.fileName}" onclick="zoomImage($(this))" />
                     </td>
                     <td th:text="${#strings.listJoin(#messages.setMsg(user.roles.!['user.role.' + name.toLowerCase]), ', ')}"></td>
                     <td th:text="${#temporals.format(user.registered, 'dd.MM.yyyy HH:mm')}"></td>
@@ -90,15 +90,18 @@
                         <span class="form-switch tiny ms-3">
                             <input type="checkbox" role="switch" class="form-check-input"
                                    style="cursor: pointer; margin-top: 6px;" th:checked="${user.enabled}"
-                                   th:data-name="${user.name}" th:title="${user.enabled} ? #{user.disable} : #{user.enable}"
-                                   th:onclick="|enableUser(this, '${user.id}')|" />
+                                   th:data-id="${user.id}" th:data-name="${user.name}"
+                                   th:title="${user.enabled} ? #{user.disable} : #{user.enable}"
+                                   onclick="enableUser($(this))" />
                         </span>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{user.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"
-                           th:data-name="${user.name}"
                            th:data-bs-title="#{user.delete-this} + '?'"
                            th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
-                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${user.name} + '&quot; onclick=&quot;deleteUser(this, ' + ${user.id} + ')&quot;>' + #{delete} + '</button></div>'">
+                             '<button class=&quot;btn btn-sm btn-danger&quot;' + 'data-id=&quot;' + ${user.id} + '&quot;' +
+                             'data-name=&quot;' + ${user.name} + '&quot;' + 'data-type=&quot;user&quot;' +
+                             'data-delete-uri=&quot;/management/users&quot;' +
+                             'onclick=&quot;deleteEntity($(this))&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-user-xmark"></i>
                         </a>
                     </td>
@@ -169,15 +172,15 @@
         </div>
 
         <!-- Image modal -->
-        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="zoomImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
-                        <span id="largerImageModalHeader"></span>
+                        <span id="zoomImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
+                        <img src="" id="zoomImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>

@@ -269,7 +269,7 @@
                                                  class="element-image rounded-2 mt-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 165px;"
                                                  th:data-filename="${projectTo.preview.fileName}"
-                                                 onclick="showLargerImage($(this))" />
+                                                 onclick="zoomImage($(this))" />
 
                                             <div class="empty-image-div border rounded-2 mt-2 mb-1 align-content-center text-center"
                                                  th:classappend="${#fields.hasErrors('preview')} ? 'border-danger' : ''"
@@ -433,7 +433,7 @@
                                                  class="element-image rounded-2 mt-2 mb-1 border"
                                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
                                                  th:data-filename="${element.image.fileName}"
-                                                 onclick="showLargerImage($(this))" />
+                                                 onclick="zoomImage($(this))" />
 
                                             <button type="button" class="change-img-btn btn btn-link opacity-75 link-underline-opacity-0 link-secondary pt-1"
                                                     th:title="#{change-image}"
@@ -490,15 +490,15 @@
         </div>
 
         <!-- Image modal -->
-        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="zoomImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
-                        <span id="largerImageModalHeader"></span>
+                        <span id="zoomImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
+                        <img src="" id="zoomImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>

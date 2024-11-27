@@ -74,10 +74,12 @@
                         </a>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{technology.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"
-                           th:data-name="${technology.name}"
                            th:data-bs-title="#{technology.delete-this} + '?'"
                            th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
-                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${technology.name} + '&quot; onclick=&quot;deleteTechnology(this, ' + ${technology.id} + ')&quot;>' + #{delete} + '</button></div>'">
+                             '<button class=&quot;btn btn-sm btn-danger&quot;'  + 'data-id=&quot;' + ${technology.id} + '&quot;' +
+                             'data-name=&quot;' + ${technology.name} + '&quot;' + 'data-type=&quot;technology&quot;' +
+                             'data-delete-uri=&quot;/management/reference/technologies&quot;' +
+                             'onclick=&quot;deleteEntity($(this))&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
@@ -115,6 +117,5 @@
         </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/table-content.js?v=1"></script>
-        <script src="/js/technologies.js?v=1"></script>
     </ownScript>
 </th:block>

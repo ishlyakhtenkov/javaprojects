@@ -2,6 +2,14 @@ const deleteParam = 'delete';
 
 $(window).on('load', () => setupPopovers());
 
+function setupPopovers() {
+    let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    let popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
+        new bootstrap.Popover(popoverTriggerEl, {html : true, sanitize: false}));
+    document.querySelectorAll('[data-bs-toggle="popover"]')
+        .forEach(e => e.setAttribute('title', e.getAttribute('data-bs-original-title')));
+}
+
 // override method in common.js
 function checkActionHappened() {
     let actionSpan = $("#actionSpan");
@@ -24,12 +32,19 @@ function checkDeleteActionHappened() {
     }
 }
 
-function setupPopovers() {
-    let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    let popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
-        new bootstrap.Popover(popoverTriggerEl, {html : true, sanitize: false}));
-    document.querySelectorAll('[data-bs-toggle="popover"]')
-        .forEach(e => e.setAttribute('title', e.getAttribute('data-bs-original-title')));
+function deleteEntity(delButton) {
+    let id = delButton.data('id');
+    let name = delButton.data('name');
+    let type = delButton.data('type');
+    let deleteUri = delButton.data('delete-uri');
+    $.ajax({
+        url: `${deleteUri}/${id}`,
+        type: "DELETE"
+    }).done(function() {
+        deleteTableRow(id, getMessage(`${type}.deleted`, [name]));
+    }).fail(function(data) {
+        handleError(data, getMessage(`${type}.failed-to-delete`, [name]));
+    });
 }
 
 function fixPaginationLinks() {

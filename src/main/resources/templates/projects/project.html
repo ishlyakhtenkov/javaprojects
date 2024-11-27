@@ -149,7 +149,7 @@
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
                                 <img th:src="@{${element.image != null ? ('/' + element.image.fileLink) : ''}}"
                                      class="rounded-2 my-1 border"
-                                     style="cursor: zoom-in; max-width: 100%;" onclick="showLargerImage($(this))" />
+                                     style="cursor: zoom-in; max-width: 100%;" onclick="zoomImage($(this))" />
                             </div>
                         </div>
 
@@ -165,11 +165,13 @@
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary-emphasis small commentsCounter" th:text="${comments.size()}"></span>
                                 </a>
-                                <a type="button" th:title="#{like}" th:onclick="|likeProject(this, '${project.id}')|"
-                                   class="like-btn btn-link link-danger text-decoration-none ms-3 with-popover"
+                                <a type="button" class="like-btn btn-link link-danger text-decoration-none ms-3 with-popover"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
+                                   th:data-id="${project.id}"
                                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
-                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
+                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot;' +
+                                   'type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} +
+                                   '</a></div>'" data-bs-html="true" onclick="likeProject($(this))">
                                     <i class="fa-heart" th:title="#{like}" th:classappend="${liked == null || !liked ? 'fa-regular' : 'fa-solid'}"></i>
                                     <span class="text-secondary-emphasis small" th:title="#{like}" th:text="${project.likes.size()}"></span>
                                 </a>
@@ -257,11 +259,13 @@
                                      th:styleappend="${commentEntry.getKey().deleted ? 'font-style: italic' : ''}">Text</div>
 
                                 <div th:if="${!commentEntry.getKey().deleted}" class="comment-actions">
-                                    <a type="button" th:title="#{like}" th:onclick="|like(this, '${commentEntry.getKey().id}')|"
-                                       class="like-btn btn-link link-danger text-decoration-none with-popover"
+                                    <a type="button" class="like-btn btn-link link-danger text-decoration-none with-popover"
+                                       th:data-id="${commentEntry.getKey().id}"
                                        data-bs-toggle="popover" data-bs-trigger="manual"
                                        th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
-                                       th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
+                                       th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot;' +
+                                       'type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} +
+                                       '</a></div>'" data-bs-html="true" onclick="likeComment($(this))">
                                         <i class="fa-heart" th:title="#{like}"
                                            th:classappend="${likedCommentsIds == null || !likedCommentsIds.contains(commentEntry.getKey().id) ?
                                             'fa-regular' : 'fa-solid'}"></i>
@@ -304,15 +308,15 @@
 
 
         <!-- Image modal -->
-        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="zoomImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
-                        <span id="largerImageModalHeader"></span>
+                        <span id="zoomImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
+                        <img src="" id="zoomImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>

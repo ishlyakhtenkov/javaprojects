@@ -127,7 +127,7 @@
                                     <div class="text-muted tiny" th:text="#{project.preview}">Preview</div>
                                     <img th:src="@{${project.preview != null ? ('/' + project.preview.fileLink) : ''}}"
                                          style="max-width: 100%; max-height: 165px; cursor: zoom-in;" class="rounded-2 mt-1"
-                                         th:data-filename="${project.preview.fileName}" onclick="showLargerImage($(this))"/>
+                                         th:data-filename="${project.preview.fileName}" onclick="zoomImage($(this))"/>
                                 </div>
                             </div>
                             <div class="col-lg-8 mb-3">
@@ -166,7 +166,7 @@
                                  th:src="@{${element.image != null ? ('/' + element.image.fileLink) : ''}}"
                                  class="rounded-2 my-1 border" th:data-filename="${element.image.fileName}"
                                  style="cursor: zoom-in; max-width: 95%; max-height: 150px;"
-                                 onclick="showLargerImage($(this))"/>
+                                 onclick="zoomImage($(this))"/>
                         </div>
                     </div>
                     <div class="card-footer text-end">
@@ -178,15 +178,15 @@
         </div>
 
         <!-- Image modal -->
-        <div class="modal fade" id="largerImageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="zoomImageModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
-                        <span id="largerImageModalHeader"></span>
+                        <span id="zoomImageModalHeader"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="" id="largerImage" class="border" style="max-width: 100%;" />
+                        <img src="" id="zoomImage" class="border" style="max-width: 100%;" />
                     </div>
                 </div>
             </div>

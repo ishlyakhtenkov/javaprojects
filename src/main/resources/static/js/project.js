@@ -264,25 +264,14 @@ function generateCommentDiv(comment, isReply) {
     return commentDiv;
 }
 
-function getAvatarLink(avatar) {
-    return avatar != null ? (avatar.fileLink.startsWith('https://') ? avatar.fileLink : `/${avatar.fileLink}`) : '/images/no-avatar.svg';
-}
-
-function formatDateTime(dateTime) {
-    let dateAndTime = dateTime.split('T');
-    let dateParts =  dateAndTime[0].split('-');
-    let formattedDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-    let formattedTime = dateAndTime[1].substring(0, dateAndTime[1].lastIndexOf(':'));
-    return `${formattedDate} ${formattedTime}`;
-}
-
-function like(likeBtn, commentId) {
+function likeComment(likeBtn) {
+    let id = likeBtn.data('id');
     if (authUser != null) {
         let likeIcon = $(likeBtn).find('i');
         let likeCounter = $(likeBtn).find('span');
         let liked = likeIcon.attr('class').includes('fa-regular');
         $.ajax({
-            url: `/projects/${projectId}/comments/${commentId}/like`,
+            url: `/projects/${projectId}/comments/${id}/like`,
             type: "PATCH",
             data: "liked=" + liked
         }).done(function() {
@@ -297,30 +286,6 @@ function like(likeBtn, commentId) {
         $(likeBtn).popover('toggle');
     }
 }
-
-function likeProject(likeBtn, id) {
-    if (authUser != null) {
-        let likeIcon = $(likeBtn).find('i');
-        let likeCounter = $(likeBtn).find('span');
-        let liked = likeIcon.attr('class').includes('fa-regular');
-        $.ajax({
-            url: `/projects/${id}/like`,
-            type: "PATCH",
-            data: { id: id, liked: liked },
-        }).done(function() {
-            likeIcon.removeClass(liked ? 'fa-regular' : 'fa-solid').addClass(liked ? 'fa-solid' : 'fa-regular');
-            likeCounter.text(+(likeCounter.text()) + (liked ? 1 : -1));
-        }).fail(function(data) {
-            likeIcon.removeClass(liked ? 'fa-solid' : 'fa-regular').addClass(liked ? 'fa-regular' : 'fa-solid');
-            handleError(data, getMessage(liked ? 'project.failed-to-like' : 'project.failed-to-dislike'));
-        });
-    } else  {
-        $('.with-popover').popover('hide');
-        $(likeBtn).popover('toggle');
-    }
-}
-
-
 
 function deleteComment(id) {
     $.ajax({
@@ -394,7 +359,6 @@ function edit(editBtn) {
 
     $('#sendEditBtn').on('click', () => {
         let text = $('#editComment').val();
-
         $.ajax({
             url: `/projects/${projectId}/comments/${commentId}`,
             type: "PUT",

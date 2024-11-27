@@ -300,7 +300,7 @@ function addNewElement(type) {
 
         let inputtedImage = $('<img />').addClass('element-image rounded-2 mt-2 mb-1 border')
             .attr('hidden', true).css('max-height', '150px').css('cursor', 'zoom-in').css('max-width', '95%')
-            .click(function () {showLargerImage($(this))});
+            .click(function () {zoomImage($(this))});
 
         let imageInput = $('<input type="file"/>').attr('accept', 'image/*')
             .attr('id', `elementImage-${newElementContainerIndex}`).attr('required', true)

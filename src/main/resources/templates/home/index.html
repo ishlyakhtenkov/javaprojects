@@ -77,11 +77,13 @@
                                     <i class="fa-regular fa-comments"></i>
                                     <span class="text-secondary-emphasis small" th:text="${project.commentsCount}"></span>
                                 </a>
-                                <a type="button" title="Like" th:onclick="|likeProject(this, '${project.id}')|"
-                                   class="with-popover btn-link link-danger text-decoration-none ms-3"
+                                <a type="button" class="with-popover btn-link link-danger text-decoration-none ms-3"
                                    data-bs-toggle="popover" data-bs-trigger="manual"
+                                   th:data-id="${project.id}"
                                    th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
-                                  th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'" data-bs-html="true">
+                                   th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot;' +
+                                   'type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} +
+                                   '</a></div>'" data-bs-html="true" onclick="likeProject($(this))">
                                     <i class="fa-heart" th:title="#{like}"
                                        th:classappend="${authUser == null || !project.likesUserIds.contains(authUser.id) ?
                                             'fa-regular' : 'fa-solid'}"></i>

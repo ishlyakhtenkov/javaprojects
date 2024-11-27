@@ -46,8 +46,8 @@
                                 </span>
                             </div>
 
-                            <div th:hidden="${architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null}"
-                                 class="input-group" id="filePreviewDiv">
+                            <div id="filePreviewDiv" class="input-group"
+                                 th:hidden="${architectureTo.logo.fileLink == null && architectureTo.logo.inputtedFileBytes == null}">
                                 <span class="input-group-text text-start d-inline-block text-truncate w-25" th:text="#{logo}">Logo</span>
                                 <div class="form-control py-1 text-start">
                                     <img th:src="@{${architectureTo.logo.getSrc()}}"
@@ -110,6 +110,7 @@
 
     <ownScript>
         <script src="/js/cancel-button.js?v=1"></script>
+        <script src="/js/reference-form.js?v=1"></script>
         <script src="/js/architecture-form.js?v=1"></script>
     </ownScript>
 </th:block>

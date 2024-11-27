@@ -86,15 +86,18 @@
                             <input type="checkbox" role="switch" class="form-check-input"
                                    style="cursor: pointer; margin-top: 6px;" th:checked="${project.visible}"
                                    th:data-name="${project.name}"
+                                   th:data-id="${project.id}"
                                    th:title="${project.visible} ? #{project.hide} : #{project.reveal}"
-                                   th:onclick="|revealProject(this, '${project.id}')|" />
+                                   onclick="hideProject($(this))" />
                         </span>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{project.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"
-                           th:data-name="${project.name}"
                            th:data-bs-title="#{project.delete-this} + '?'"
                            th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
-                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${project.name} + '&quot; onclick=&quot;deleteProject(this, ' + ${project.id} + ')&quot;>' + #{delete} + '</button></div>'">
+                             '<button class=&quot;btn btn-sm btn-danger&quot;' + 'data-id=&quot;' + ${project.id} + '&quot;' +
+                             'data-name=&quot;' + ${project.name} + '&quot;' + 'data-type=&quot;project&quot;' +
+                             'data-delete-uri=&quot;/projects&quot;' +
+                             'onclick=&quot;deleteEntity($(this))&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>

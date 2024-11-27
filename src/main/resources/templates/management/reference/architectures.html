@@ -57,10 +57,12 @@
                         </a>
                         <a tabindex="0" type="button" class="btn-link link-danger ms-3" th:title="#{architecture.delete}"
                            data-bs-toggle="popover" data-bs-trigger="focus"
-                           th:data-name="${architecture.name}"
                            th:data-bs-title="#{architecture.delete-this} + '?'"
                            th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
-                             '<button class=&quot;btn btn-sm btn-danger&quot; data-name=&quot;' + ${architecture.name} + '&quot; onclick=&quot;deleteArchitecture(this, ' + ${architecture.id} + ')&quot;>' + #{delete} + '</button></div>'">
+                             '<button class=&quot;btn btn-sm btn-danger&quot;' + 'data-id=&quot;' + ${architecture.id} + '&quot;' +
+                             'data-name=&quot;' + ${architecture.name} + '&quot;' + 'data-type=&quot;architecture&quot;' +
+                             'data-delete-uri=&quot;/management/reference/architectures&quot;' +
+                             'onclick=&quot;deleteEntity($(this))&quot;>' + #{delete} + '</button></div>'">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
@@ -76,6 +78,5 @@
         </script>
         <script src="/js/common.js?v=1"></script>
         <script src="/js/table-content.js?v=1"></script>
-        <script src="/js/architectures.js?v=1"></script>
     </ownScript>
 </th:block>

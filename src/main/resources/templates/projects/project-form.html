@@ -7,16 +7,19 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
-                    <a th:href="@{/management/projects}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                    <a th:if="${authUser.isAdmin()}" th:href="@{/management/projects}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
                         <i class="fas fa-layer-group me-1"></i><span th:text="#{project.projects}"></span>
                     </a>
+                    <span th:if="${!authUser.isAdmin()}">
+                        <i class="fas fa-layer-group me-1"></i><span th:text="#{project.projects}"></span>
+                    </span>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${projectTo.isNew()} ? #{add} : #{edit}">Add/Edit</li>
             </ol>
         </nav>
 
         <!-- Create/Edit project card -->
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center my-3">
             <div class="col-12 col-xxl-10">
                 <div class="card shadow">
                     <div class="card-header text-center">

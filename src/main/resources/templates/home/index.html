@@ -6,7 +6,7 @@
 
 <th:block th:replace="~{fragments/main::page(title=#{home},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
-        <div class="px-xl-5">
+        <div>
             <button type="button" class="with-popover btn btn-outline-success float-end" data-bs-toggle="popover" data-bs-trigger="manual"
                     th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                     th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
@@ -33,7 +33,7 @@
             <h5 class="alert alert-warning" th:text="#{project.no-projects-found}">No projects found.</h5>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3 px-xl-5" id="projectsArea">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3" id="projectsArea">
             <div th:each="project : ${projects}" class="col mb-4">
                 <div class="card h-100 project-card rounded-3">
                     <div class="ratio" style="--bs-aspect-ratio: 50%;">

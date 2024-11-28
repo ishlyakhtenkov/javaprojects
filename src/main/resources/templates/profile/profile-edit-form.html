@@ -7,13 +7,9 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
-                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
-                    </a>
-                </li>
-                <li class="breadcrumb-item text-truncate">
-                    <a th:href="@{/profile}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover" th:text="#{profile}">
-                        Profile
+                    <a th:href="@{'/profile/' + ${authUser.id} + '/view'}"
+                       class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-id-card me-1"></i><span th:text="#{profile}"></span>
                     </a>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="#{edit}">Edit</li>

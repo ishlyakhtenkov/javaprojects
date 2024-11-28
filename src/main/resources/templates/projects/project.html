@@ -10,9 +10,12 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
-                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
+                    <a th:if="${authUser != null && authUser.isAdmin()}" th:href="@{/management/projects}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-layer-group me-1"></i><span th:text="#{project.projects}"></span>
                     </a>
+                    <span th:if="${authUser == null || !authUser.isAdmin()}">
+                        <i class="fas fa-layer-group me-1"></i><span th:text="#{project.projects}"></span>
+                    </span>
                 </li>
                 <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="${project.name}">Project name</li>
             </ol>
@@ -22,21 +25,33 @@
                 <div class="card shadow">
                     <span id="projectId" th:text="${project.id}" hidden></span>
                     <span id="projectAuthorId" th:text="${project.author.id}" hidden></span>
-                    <div class="card-header text-center">
-                        <img th:src="@{${'/' + project.logo.fileLink}}" alt="Logo" width="32" height="32"
-                             class="d-inline-block align-text-bottom">
-                        <span class="h2 text-dark-emphasis ms-1" style="line-height: normal;"
-                              th:text="${project.name}">Project name</span>
-                        <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-warning float-end"
-                           th:title="#{project.hidden-from-users}"></i>
+                    <div class="ratio" style="--bs-aspect-ratio: 50%;">
+                        <img th:src="@{${project.preview.getSrc()}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
                     </div>
                     <div class="card-body text-start">
-                        <div class="ratio mb-2" style="--bs-aspect-ratio: 50%;">
-                            <img th:src="@{'/' + ${project.preview.fileLink}}" class="card-img-top rounded-3"  style="object-fit: cover"/>
+                        <div class="d-flex">
+                            <div class="pb-1 ps-3" style="position: relative; z-index: 2; margin-left: -16px;">
+                                <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                    <img class="rounded-circle border" th:src="@{${project.author.avatar != null ?
+                                        project.author.avatar.getSrc() : '/images/no-avatar.svg'}}" width="40" height="40"
+                                         style="object-fit: cover" th:title="${project.author.name}"
+                                         onmouseenter="$(this).addClass('opacity-75')" onmouseleave="$(this).removeClass('opacity-75')" />
+                                </a>
+                            </div>
+                            <div class="pb-1 ps-2 pe-3" style="position: relative; z-index: 2;">
+                                <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis">
+                                    <span class="h6" th:text="${project.author.name}" >Author name</span>
+                                </a>
+                                <div class="tiny text-secondary-emphasis" style="margin-top: -3px;"
+                                     th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}">Created</div>
+                            </div>
                         </div>
 
-                        <span th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}"
-                              class="tiny text-secondary-emphasis float-end" style="margin-top: -3px;">Created</span>
+                        <div class="mb-0">
+                            <span class="h2" th:text="${project.name}">Project name</span>
+                            <i th:if="${!project.visible}" class="h4 fa-solid fa-eye-slash text-warning float-end"
+                               th:title="#{project.hidden-from-users}"></i>
+                        </div>
                         <div class="mt-3">
                             <div>
                                 <a class="icon-link link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -75,7 +90,7 @@
                             </div>
                         </div>
 
-                        <h3 class="mt-3" th:text="#{project.developer}">Developer</h3>
+                        <h4 class="mt-3" th:text="#{project.developer}">Developer</h4>
                         <hr class="mt-0" style="border: 2px solid;">
                         <a th:href="@{'/profile/' + ${project.author.id} + '/view'}" class="text-decoration-none link-body-emphasis"
                            th:title="${project.author.name}">
@@ -90,7 +105,7 @@
                             ' - ' + ${#temporals.format(project.finished, 'dd.MM.yyyy')} + ' (' +
                             ${T(java.time.temporal.ChronoUnit).DAYS.between(project.started, project.finished)} + ' ' + #{project.days} + ')'">Dev period</div>
 
-                        <h3 class="mt-3" th:text="#{architecture}">Architecture</h3>
+                        <h4 class="mt-3" th:text="#{architecture}">Architecture</h4>
                         <hr class="mt-0" style="border: 2px solid;">
                         <img th:src="@{${project.architecture.logo != null ? ('/' + project.architecture.logo.fileLink) : ''}}"
                              width="40" height="40" class="bg-light-subtle border border-light-subtle rounded-circle p-1" />
@@ -98,7 +113,7 @@
                                   th:text="${project.architecture.name}"></span>
                         <div th:text="${project.architecture.description}"></div>
 
-                        <h3 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h3>
+                        <h4 class="mt-3" th:text="#{project.tech-stack}">Technologies stack</h4>
                         <hr class="mt-0" style="border: 2px solid">
 
                         <ul class="nav nav-underline">
@@ -135,13 +150,13 @@
                         </div>
 
                         <div th:if="${!project.descriptionElements.isEmpty()}">
-                            <h3 class="mt-4" th:text="#{project.app-description}">Application description</h3>
+                            <h4 class="mt-4" th:text="#{project.app-description}">Application description</h4>
                             <hr class="mt-0" style="border: 2px solid;">
                         </div>
 
                         <div th:each="element : ${project.descriptionElements}">
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
-                                <h4 th:text="${element.text}"></h4>
+                                <h5 th:text="${element.text}"></h5>
                             </div>
                             <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
                                 <p th:text="${element.text}" style="white-space: pre-wrap;"></p>
@@ -213,8 +228,8 @@
             <div class="col-12 col-xxl-6">
                 <div class="card shadow">
                     <div class="card-body text-start">
-                        <span class="h3" th:text="#{comment.comments}">Comments</span>
-                        <span class="h3 text-secondary-emphasis ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
+                        <span class="h4" th:text="#{comment.comments}">Comments</span>
+                        <span class="h4 text-secondary-emphasis ms-1 fw-light commentsCounter" th:text="${comments.size()}"></span>
 
 
                         <div class="col-12 mt-3" id="newCommentDiv">

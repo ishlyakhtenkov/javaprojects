@@ -1,12 +1,17 @@
 const changePasswordModal = $('#changePasswordModal');
+let changePasswordUserId;
+let changePasswordUserName;
 
 changePasswordModal.on('show.bs.modal', function(e) {
+    let changePasswordBtn = $(e.relatedTarget);
+    changePasswordUserId = changePasswordBtn.data('id');
+    changePasswordUserName = changePasswordBtn.data('name');
+    console.log($(e.relatedTarget));
     let modal = $(e.currentTarget);
     resetPasswordModalValues(modal);
-    modal.find('#changePasswordModalUserId').val($(e.relatedTarget).data('id'));
-    let userName = modal.data('name');
-    modal.find('#changePasswordModalUserName').val(userName);
-    modal.find('#changePasswordModalLabel').text(getMessage('user.change-password-for', [userName]));
+    modal.find('#changePasswordModalUserId').val(changePasswordUserId);
+    modal.find('#changePasswordModalUserName').val(changePasswordUserName);
+    modal.find('#changePasswordModalLabel').text(getMessage('user.change-password-for', [changePasswordUserName]));
 });
 
 function changePassword() {

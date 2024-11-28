@@ -9,11 +9,17 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb ms-2 flex-nowrap"  style="font-size: 1.5em;">
                 <li class="breadcrumb-item text-truncate">
-                    <a th:href="@{/}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                        <i class="fas fa-home me-1"></i><span th:text="#{home}">Home</span>
+                    <a th:if="${authUser != null && authUser.isAdmin()}" th:href="@{/management/users}" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <i class="fas fa-people-group me-1"></i><span th:text="#{user.users}"></span>
                     </a>
+                    <span th:if="${authUser == null || !authUser.isAdmin()}">
+                        <i class="fas fa-people-group me-1"></i><span th:text="#{user.users}"></span>
+                    </span>
                 </li>
-                <li class="breadcrumb-item text-truncate active" aria-current="page" th:text="#{profile}">Profile</li>
+                <li th:if="${authUser == null || authUser.id != user.id}" class="breadcrumb-item text-truncate active"
+                    aria-current="page" th:text="${user.name}">Name</li>
+                <li th:if="${authUser != null && authUser.id == user.id}" class="breadcrumb-item text-truncate active"
+                    aria-current="page" th:text="#{profile}">Profile</li>
             </ol>
         </nav>
 
@@ -87,8 +93,12 @@
                             </ul>
                             <div class="tab-content pt-1">
                                 <div class="tab-pane fade show active" id="informationTab" role="tabpanel"
-                                     aria-labelledby="nav-general-tab" tabindex="0" style="white-space: pre-wrap;"
-                                     th:text="${user.information}">Info</div>
+                                     aria-labelledby="nav-general-tab" tabindex="0">
+                                    <div th:if="${user.information != null && !user.information.isBlank()}"
+                                         th:text="${user.information}" style="white-space: pre-wrap;">Information</div>
+                                    <div th:if="${user.information == null || user.information.isBlank()}"
+                                         class="alert alert-secondary mt-1 mb-0" th:text="#{profile.no-information}">No info</div>
+                                </div>
                                 <div class="tab-pane fade" id="qualificationTab" role="tabpanel"
                                      aria-labelledby="nav-general-tab" tabindex="0"></div>
                                 <div class="tab-pane fade" id="projectsTab" role="tabpanel"

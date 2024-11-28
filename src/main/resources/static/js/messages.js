@@ -77,6 +77,9 @@ enMessages.set('info.link-copied', 'Link copied');
 enMessages.set('info.app-description', 'A platform for viewing and discussing projects developed by users.');
 enMessages.set('info.failed-to-get-tags', 'Failed to get tags');
 
+enMessages.set('profile.no-qualification', 'Qualification not defined as there are no projects');
+enMessages.set('profile.no-projects', 'There are no projects yet');
+
 enMessages.set('cancel', 'Cancel');
 enMessages.set('like', 'Like');
 enMessages.set('edit', 'Edit');
@@ -164,6 +167,8 @@ ruMessages.set('info.link-copied', 'Ссылка скопирована');
 ruMessages.set('info.app-description', 'Платформа для просмотра и обсуждения проектов, разработанных пользователями.');
 ruMessages.set('info.failed-to-get-tags', 'Не удалось загрузить тэги');
 
+ruMessages.set('profile.no-qualification', 'Квалификация не определена, так как нет проектов');
+ruMessages.set('profile.no-projects', 'Проектов пока нет');
 
 ruMessages.set('cancel', 'Отмена');
 ruMessages.set('like', 'Нравится');

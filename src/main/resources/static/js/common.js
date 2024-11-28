@@ -242,7 +242,7 @@ function generateProjectCard(project, cardClass, architectureImageZIndex, withMn
         .attr('data-bs-content', `"<div class='text-center'><a href='/login' type='button' class='btn btn-sm btn-warning px-3'>${getMessage('login')}</a></div>"`)
         .attr('data-bs-html', 'true')
         .on('click', function () {
-            likeProject($(this));
+            likeProject(likeBtn);
         });
     let likeSymbol = $('<i></i>').addClass('fa-heart')
         .addClass(`${authUser === null || !project.likesUserIds.includes(authUser.id) ? 'fa-regular' : 'fa-solid'}`)

@@ -213,14 +213,14 @@ function generateCommentDiv(comment, isReply) {
 
     let buttonsDiv = $('<div></div>').addClass('comment-actions');
     let likeBtn = $('<a></a>').addClass('like-btn btn-link link-danger text-decoration-none with-popover')
-        .attr('type', 'button').attr('title', getMessage('like'));
+        .attr('data-id', comment.id).attr('type', 'button').attr('title', getMessage('like'))
+        .on('click', function () {
+            likeComment(likeBtn);
+        });
     let likeSymbol = $('<i></i>').addClass('fa-regular fa-heart');
     let likeCounter = $('<span></span>').addClass('text-secondary-emphasis small').text(` ${comment.likes.length}`);
     likeBtn.append(likeSymbol);
     likeBtn.append(likeCounter);
-    likeBtn.on('click', () => {
-        like(likeBtn, comment.id);
-    });
 
     let replyBtn = $('<a></a>').addClass('reply-btn btn-link text-decoration-none ms-2 with-popover')
         .attr('type', 'button').attr('id', `replyBtn-${comment.id}`);
@@ -267,8 +267,8 @@ function generateCommentDiv(comment, isReply) {
 function likeComment(likeBtn) {
     let id = likeBtn.data('id');
     if (authUser != null) {
-        let likeIcon = $(likeBtn).find('i');
-        let likeCounter = $(likeBtn).find('span');
+        let likeIcon = likeBtn.find('i');
+        let likeCounter = likeBtn.find('span');
         let liked = likeIcon.attr('class').includes('fa-regular');
         $.ajax({
             url: `/projects/${projectId}/comments/${id}/like`,
@@ -283,7 +283,7 @@ function likeComment(likeBtn) {
         });
     } else  {
         $('.with-popover').popover('hide');
-        $(likeBtn).popover('toggle');
+        likeBtn.popover('toggle');
     }
 }
 

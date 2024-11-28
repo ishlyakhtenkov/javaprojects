@@ -113,8 +113,8 @@ ruMessages.set('comment.delete', 'Удалить комментарий');
 ruMessages.set('comment.deleted', 'Комментарий удален');
 ruMessages.set('comment.failed-to-add', 'Не удалось добавить комментарий');
 ruMessages.set('comment.failed-to-update', 'Не удалось обновить комментарий');
-ruMessages.set('comment.failed-to-like', 'Не удалось дизлайкнуть комментарий');
-ruMessages.set('comment.failed-to-dislike', 'Не удалось лайкнуть комментарий');
+ruMessages.set('comment.failed-to-like', 'Не удалось лайкнуть комментарий');
+ruMessages.set('comment.failed-to-dislike', 'Не удалось дизлайкнуть комментарий');
 ruMessages.set('comment.failed-to-delete', 'Не удалось удалить комментарий');
 
 ruMessages.set('project.reveal', 'Сделать видимым');

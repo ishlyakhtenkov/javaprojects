@@ -168,7 +168,7 @@ function generateProjectCard(project, cardClass, architectureImageZIndex, withMn
     dFlexDiv.append(authorNameAndCreatedDiv);
     if (withMngBtn && authUser !== null && project.author.id === authUser.id) {
         let manageDiv = $('<div></div>').addClass('pt-4 ms-auto ps-3 pe-3').css('position', 'relative')
-            .css('z-index', '3').css('margin-right', '-16px');
+            .css('z-index', '5').css('margin-right', '-16px');
         let manageBtn = $('<button></button>').attr('type', 'button').attr('title', getMessage('project.manage'))
             .addClass('btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle manage-dropdown')
             .attr('data-bs-toggle', 'dropdown').attr('data-bs-auto-close', 'outside').attr('id', `manageBtn-${project.id}`);

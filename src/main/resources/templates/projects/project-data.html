@@ -151,7 +151,7 @@
                             <div th:text="${project.annotation}" style="white-space: pre-wrap;"></div>
                         </div>
 
-                        <div class="border rounded-2 px-3 pb-3 mt-3">
+                        <div class="border rounded-2 px-3 pb-3 mt-3" style="min-height: 60px;">
                             <div class="text-start text-muted tiny" th:text="#{project.tags}">Tags</div>
                             <a th:each="tag : ${project.tags}" class="text-decoration-none me-2" th:text="'#' + ${tag.name}"
                                th:href="@{'/tags/' + ${tag.name}}"></a>
@@ -159,6 +159,10 @@
 
                         <!-- Description block -->
                         <div class="fw-bold text-info-emphasis my-2" th:text="#{project.description-elements}">Description elements</div>
+                        <div th:if="${project.descriptionElements.isEmpty()}" class="alert alert-warning mb-0"
+                             th:text="#{project.description-elements.not-have}">
+                            No description elements
+                        </div>
                         <div th:each="element : ${project.descriptionElements}" class="border rounded-2 mb-1 px-3 pb-1">
                             <div class="text-start text-muted tiny" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}">Type</div>
                             <span th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}"

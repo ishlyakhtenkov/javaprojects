@@ -184,9 +184,9 @@ public class ProjectUtil {
         tagsString = tagsString.toLowerCase();
         Set<String> tagNames;
         if (tagsString.contains(",")) {
-            tagNames = Stream.of(tagsString.split(",")).map(String::trim).collect(Collectors.toSet());
+            tagNames = Stream.of(tagsString.split(",")).map(this::normalizeTagName).collect(Collectors.toSet());
         } else {
-            tagNames = Stream.of(tagsString.split(" ")).map(String::trim).collect(Collectors.toSet());
+            tagNames = Stream.of(tagsString.split(" ")).map(this::normalizeTagName).collect(Collectors.toSet());
         }
         Set<Tag> dbTags = tagRepository.findAllByNameIn(tagNames);
         Set<String> dbTagsNames = dbTags.stream()
@@ -200,6 +200,14 @@ public class ProjectUtil {
         tags.addAll(dbTags);
         tags.addAll(newTags);
         return tags;
+    }
+
+    private String normalizeTagName(String tagName) {
+        tagName = tagName.trim();
+        if (tagName.startsWith("#")) {
+            tagName = tagName.substring(1);
+        }
+        return tagName;
     }
 
     private DescriptionElement createNewDeFromTo(DescriptionElementTo deTo, Project project) {

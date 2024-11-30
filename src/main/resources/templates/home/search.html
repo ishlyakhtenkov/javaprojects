@@ -7,7 +7,7 @@
 
 <th:block th:replace="~{fragments/main::page(title=#{search},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
-        <div class="px-xl-5">
+        <div>
             <button type="button" class="with-popover btn btn-outline-success float-end" data-bs-toggle="popover" data-bs-trigger="manual"
                     th:data-bs-title="'<a type=&quot;button&quot; class=&quot;btn-close ms-2 float-end tiny&quot;></a><div>'+ #{info.only-for-auth-users}+ '</div>'"
                     th:data-bs-content="'<div class=&quot;text-center&quot;><a href=&quot;/login&quot; type=&quot;button&quot; class=&quot;btn btn-sm btn-warning px-3&quot;>' + #{login} + '</a></div>'"
@@ -18,7 +18,7 @@
         </div>
 
         <div th:if="${profilesPage.getContent().isEmpty() && projectsPage.getContent().isEmpty() &&
-                        tagsPage.getContent().isEmpty()}" class="px-xl-5 mt-3">
+                        tagsPage.getContent().isEmpty()}" class="mt-3">
             <h5 class="alert alert-warning" th:text="#{search.nothing-found} + '.'">Nothing found.</h5>
         </div>
 

@@ -59,17 +59,8 @@ function getProjectsAndFillTabs() {
         url: '/projects/by-author',
         data: `userId=${$('#userId').text()}`
     }).done(projects => {
-        if (projects.length !== 0) {
-            fillProjectsTab(projects);
-            fillQualificationTab(projects);
-        } else {
-            let noQualification = $('<div></div>').addClass('alert alert-secondary mt-1 mb-0')
-                .text(getMessage('profile.no-qualification'));
-            qualificationTab.append(noQualification);
-            let noProjects = $('<div></div>').addClass('alert alert-secondary mb-0').css('margin-top', '10px')
-                .text(getMessage('profile.no-projects'));
-            projectsTab.append(noProjects);
-        }
+        fillProjectsTab(projects);
+        fillQualificationTab(projects);
     }).fail(function(data) {
         handleError(data, getMessage('project.failed-to-get-projects'));
     });
@@ -78,7 +69,7 @@ function getProjectsAndFillTabs() {
 function fillProjectsTab(projects) {
     projectsTab.empty();
     let row = $('<div></div>').addClass('row justify-content-center');
-    let column = $('<div></div>').addClass('col-md-9');
+    let column = $('<div></div>').addClass(projects.length === 0 ? 'col-md-12' : 'col-md-9');
     if (authUser != null && authUser.id == $('#userId').text()) {
         let addNewBtnSm = $('<a></a>').addClass('btn btn-sm btn-outline-success float-end d-none d-sm-block')
             .css('margin-top', '-20px').attr('href', '/projects/add')
@@ -93,6 +84,11 @@ function fillProjectsTab(projects) {
         column.append(generateProjectCard(project, 'mt-3', '4', true));
     });
     projectsTab.append(row);
+    if (projects.length === 0) {
+        let noProjects = $('<div></div>').addClass('alert alert-secondary mb-0').css('margin-top', '10px')
+            .text(getMessage('profile.no-projects'));
+        projectsTab.append(noProjects);
+    }
 
     setupToggles();
 }
@@ -157,6 +153,12 @@ function fillQualificationTab(projects) {
         technologySpan.append(technologyLink);
         qualificationTab.append(technologySpan);
     });
+
+    if (projects.length === 0) {
+        let noQualification = $('<div></div>').addClass('alert alert-secondary mt-1 mb-0')
+            .text(getMessage('profile.no-qualification'));
+        qualificationTab.append(noQualification);
+    }
 }
 
 const priorities = new Map();

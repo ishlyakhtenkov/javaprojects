@@ -20,8 +20,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: javaprojects.test@gmail.com
-    password: puqtlmwroiyfcwrv
+    username: ENC(BnbODaTnMFBqH3KLxBrjLZeHDrAAJpRmG4GtTNyIfouDVS1n8b55iw==)
+    password: ENC(K9sXXFTBZkJ3uui+7iR5PwQA38GE5yysZWzh4utJWkc=)
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -37,18 +37,18 @@ spring:
         registration:
           github:
             client-id: Ov23limtCsXY6a5Mo2n5
-            client-secret: 3df949fa01c835eeab89b807f3599d0f20bcbb8b
+            client-secret: ENC(cbDoCZM/cAA4qHETljUUxpkNIK/Xr3SYx8nMvdGbUxDFkGvVWBrr4tdCV0HZJeZTZ5EmCTV4zFo=)
             scope:
               - email
           google:
             client-id: 736298200785-b7v7fojvbcq9krp5dbggkp97005res6v.apps.googleusercontent.com
-            client-secret: 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
+            client-secret: ENC(JMjtjcKTQHgK2S9hJd44jYK+zs3xDWSG2Xa9wLXRumYOSmqiy0MtaJL0tKY/8ssW)
             scope:
               - email
               - profile
           vk:
             client-id: 51562377
-            client-secret: jNM1YHQy1362Mqs49wUN
+            client-secret: ENC(dB7o18XnZKlFNuVtwd6y4QpAVpc9U+0INPiClUAqJt0=)
             client-name: Vkontakte
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-authentication-method: client_secret_post
@@ -56,13 +56,13 @@ spring:
             scope: email
           yandex:
             client-id: 3984d5cf1fac440d8cd9ace098f0a81b
-            client-secret: 8f3e8521a0124c3eb539afea7c402731
+            client-secret: ENC(P8WtPflxBYrBkSI6VHvdedYtdMaVXSD860OPtjWALiXwxHyGAyWCRTqLXHVoAUNn)
             client-name: Yandex
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
           gitlab:
             client-id: dd84fce3a150f603cbf8805c903a27335646b02267e72101d1a787c975c34a64
-            client-secret: gloas-ee13f8eb5692bc627a7cf95c7ab8997bae3c6333dcefe1d8825772a26874e137
+            client-secret: ENC(YOWL/TbtfaIBTr9DigsYVTw0Y4CML9ceTCZujaaKm9GxcVqyB3ImPBxWOlSnSOSGpBUoE4Biqaf4pbClZhsyoTof9jG7bg0gl6JkJVJLzwY=)
             client-name: GitLab
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -124,3 +124,9 @@ logging:
   pattern:
     console: '%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr([%mdc]){yellow} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}'
     file: '%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%mdc] - %msg%n'
+
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    password: projector

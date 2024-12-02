@@ -1,6 +1,7 @@
 package ru.javaprojects.projector.app.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import ru.javaprojects.projector.common.util.JacksonObjectMapper;
 @Configuration
 @EnableScheduling
 @EnableCaching
+@EnableEncryptableProperties
 public class AppConfig {
     @Bean
     public SpringDataDialect springDataDialect() {

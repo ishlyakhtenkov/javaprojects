@@ -361,12 +361,14 @@ function getElementActionsBtnHtml(type) {
 }
 
 function checkImageElementsNotEmpty() {
-    $('.element-image-input').each(function() {
+    let hasEmptyImageElements = false;
+    $('.element-image-input').each(function () {
         if ($(this).attr('required') && !$(this).val().length) {
-            console.log($(this).siblings('.empty-image-div'));
             $(this).siblings('.empty-image-div').addClass('bg-danger-subtle border-2 border-danger');
-            failToast(getMessage('info.empty-image-elements'));
+            hasEmptyImageElements = true;
         }
-
-    })
+    });
+    if (hasEmptyImageElements) {
+        failToast(getMessage('info.empty-image-elements'));
+    }
 }

@@ -16,14 +16,13 @@ changePasswordModal.on('show.bs.modal', function(e) {
 });
 
 function changePassword() {
-    let currentPassword = changePasswordModal.find('#currentPassword').val();
     let password = changePasswordModal.find('#password').val();
     let repeatPassword = changePasswordModal.find('#repeatPassword').val();
-    if (currentPassword.length && password.length && repeatPassword.length && password === repeatPassword) {
+    if (password.length && repeatPassword.length && password === repeatPassword) {
         $.ajax({
             url: "/profile/change-password",
             type: "PATCH",
-            data: { currentPassword: currentPassword, newPassword: password },
+            data: "password=" + password
         }).done(function () {
             changePasswordModal.modal('toggle');
             successToast(getMessage('user.password-changed'));

@@ -57,8 +57,6 @@ public class UserTestData {
     public static final String USERNAME_PARAM = "username";
     public static final String PASSWORD_PARAM = "password";
     public static final String ENABLED_PARAM = "enabled";
-    public static final String NEW_PASSWORD_PARAM = "newPassword";
-    public static final String CURRENT_PASSWORD_PARAM = "currentPassword";
     public static final String EMAIL_PARAM = "email";
     public static final String INFORMATION_PARAM = "information";
     public static final String TOKEN_PARAM = "token";
@@ -73,7 +71,6 @@ public class UserTestData {
     public static final String NEW_EMAIL_SOMEONE_HAS_TOKEN = "someNew@gmail.com";
     public static final String INVALID_PASSWORD = "pass";
     public static final String INVALID_EMAIL = "invEmail.gmail.ru";
-    public static final String INCORRECT_PASSWORD = "sdfdsf3213123";
     public static final String NOT_EXISTING_EMAIL = "notExisting@gmail.com";
     public static final String NOT_EXISTING_TOKEN = UUID.randomUUID().toString();
 

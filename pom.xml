@@ -10,10 +10,10 @@
 	</parent>
 
 	<groupId>ru.javaprojects</groupId>
-	<artifactId>projector</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>projector</name>
-	<description>Project Management Application</description>
+	<artifactId>javaprojects</artifactId>
+	<version>1.0</version>
+	<name>javaprojects</name>
+	<description>Javaprojects.ru Application</description>
 
 	<properties>
 		<java.version>17</java.version>

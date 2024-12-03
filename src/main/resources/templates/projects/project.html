@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--/*@thymesVar id="project" type="ru.javaprojects.projector.projects.model.Project"*/-->
+<!--/*@thymesVar id="project" type="ru.javaprojects.javaprojects.projects.model.Project"*/-->
 <!--/*@thymesVar id="comments" type="java.util.Map"*/-->
 <!--/*@thymesVar id="likedCommentsIds" type="java.util.Set"*/-->
-<!--/*@thymesVar id="authUser" type="ru.javaprojects.projector.users.model.User"*/-->
+<!--/*@thymesVar id="authUser" type="ru.javaprojects.javaprojects.users.model.User"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=${project.name},appMain=~{::appMain}, ownScript=~{::ownScript}, ownCss='project.css')}">
     <appMain>
@@ -136,7 +136,7 @@
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="backendTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
                                 <span th:each="technology : ${project.technologies}" class="badge bg-body-tertiary me-2 mt-2"
-                                      th:if="${technology.usage == T(ru.javaprojects.projector.reference.technologies.model.Usage).BACKEND}">
+                                      th:if="${technology.usage == T(ru.javaprojects.javaprojects.reference.technologies.model.Usage).BACKEND}">
                                     <a type="button" th:href="@{${technology.url}}" target="_blank"
                                        class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis">
                                         <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
@@ -146,7 +146,7 @@
                             </div>
                             <div class="tab-pane fade" id="frontendTab" role="tabpanel" aria-labelledby="nav-general-tab" tabindex="0">
                                 <span th:each="technology : ${project.technologies}" class="badge bg-body-tertiary me-2 mt-2"
-                                      th:if="${technology.usage == T(ru.javaprojects.projector.reference.technologies.model.Usage).FRONTEND}">
+                                      th:if="${technology.usage == T(ru.javaprojects.javaprojects.reference.technologies.model.Usage).FRONTEND}">
                                     <a type="button" th:href="@{${technology.url}}" target="_blank"
                                        class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover link-body-emphasis">
                                         <img th:src="@{${technology.logo != null ? ('/' + technology.logo.fileLink) : ''}}"
@@ -162,13 +162,13 @@
                         </div>
 
                         <div th:each="element : ${project.descriptionElements}">
-                            <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE}">
+                            <div th:if="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).TITLE}">
                                 <h5 th:text="${element.text}"></h5>
                             </div>
-                            <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
+                            <div th:if="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).PARAGRAPH}">
                                 <p th:text="${element.text}" style="white-space: pre-wrap;"></p>
                             </div>
-                            <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
+                            <div th:if="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).IMAGE}">
                                 <img th:src="@{${element.image != null ? ('/' + element.image.fileLink) : ''}}"
                                      class="rounded-2 my-1 border"
                                      style="cursor: zoom-in; max-width: 100%;" onclick="zoomImage($(this))" />

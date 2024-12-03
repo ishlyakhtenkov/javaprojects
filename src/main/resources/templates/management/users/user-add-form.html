@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--/*@thymesVar id="user" type="ru.javaprojects.projector.users.model.User"*/-->
+<!--/*@thymesVar id="user" type="ru.javaprojects.javaprojects.users.model.User"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=#{user.users},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'users', 'management'} })}">
     <appMain>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--/*@thymesVar id="projectTo" type="ru.javaprojects.projector.projects.to.ProjectTo"*/-->
+<!--/*@thymesVar id="projectTo" type="ru.javaprojects.javaprojects.projects.to.ProjectTo"*/-->
 
 <th:block th:replace="~{fragments/main::page(title=#{project.projects},appMain=~{::appMain}, ownScript=~{::ownScript}, activeMenuItem=${ {'projects', 'management'} })}">
     <appMain>
@@ -380,8 +380,8 @@
                                            th:name="${'descriptionElementTos[' + itemStat.index + '].index'}"
                                            th:value="${element.index}"/>
 
-                                    <div th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE ||
-                                        element.type == T(ru.javaprojects.projector.projects.model.ElementType).PARAGRAPH}">
+                                    <div th:if="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).TITLE ||
+                                        element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).PARAGRAPH}">
                                         <div class="form-floating">
                                             <div th:replace="~{:: element-actions-btn(addClass='position-absolute')}"></div>
 
@@ -391,9 +391,9 @@
                                                       th:id="${'elementText-' + itemStat.index}"
                                                       th:class="${#fields.hasErrors('descriptionElementTos[__${itemStat.index}__].text')} ?
                                                       'form-control lh-base is-invalid rounded-2' : 'form-control lh-base rounded-2'"
-                                                      th:classappend="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE ? 'fw-medium' : ''}"
+                                                      th:classappend="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).TITLE ? 'fw-medium' : ''}"
                                                       placeholder="Title" style="white-space: pre-wrap;"
-                                                      th:styleappend="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).TITLE} ?
+                                                      th:styleappend="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).TITLE} ?
                                                       'height: 65px;' : 'height: 120px;'"
                                                       required></textarea>
                                             <label class="text-muted" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}"></label>
@@ -408,7 +408,7 @@
                                     </div>
 
                                     <div class="border rounded-2 ps-3 pe-2 pb-1"
-                                         th:if="${element.type == T(ru.javaprojects.projector.projects.model.ElementType).IMAGE}">
+                                         th:if="${element.type == T(ru.javaprojects.javaprojects.projects.model.ElementType).IMAGE}">
                                         <div th:replace="~{:: element-actions-btn(addClass='float-end')}"></div>
 
                                         <div class="text-start text-muted tiny" th:text="#{'project.description-elements.' + ${element.type.name.toLowerCase()}}">Type</div>

@@ -95,15 +95,15 @@ server:
 
 register:
   token-expiration-time: 86400000
-  confirm-url: https://javaprojects.ru/projector/register/confirm
+  confirm-url: https://javaprojects.ru/register/confirm
 
 password-reset:
   token-expiration-time: 86400000
-  confirm-url: https://javaprojects.ru/projector/profile/reset-password
+  confirm-url: https://javaprojects.ru/profile/reset-password
 
 change-email:
   token-expiration-time: 86400000
-  confirm-url: https://javaprojects.ru/projector/profile/change-email
+  confirm-url: https://javaprojects.ru/profile/change-email
 
 content-path:
   technologies: ./content/technologies/
@@ -120,7 +120,7 @@ logging:
     console: UTF-8
     file: UTF-8
   file:
-    name: logs/projector.log
+    name: logs/javaprojects.log
   pattern:
     console: '%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr([%mdc]){yellow} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}'
     file: '%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%mdc] - %msg%n'

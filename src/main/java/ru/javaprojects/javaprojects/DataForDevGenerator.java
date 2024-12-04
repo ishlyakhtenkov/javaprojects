@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-@Profile({"dev", "!test"})
+@Profile({"dev", "!test & !default"})
 @AllArgsConstructor
 public class DataForDevGenerator {
     private final ProjectRepository projectRepository;

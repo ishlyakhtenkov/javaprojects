@@ -136,12 +136,12 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Message was sent</h5>
+                        <h5 class="modal-title" th:text="#{change-email.message-sent}">Message was sent</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Password reset message was sent to your email.<br/>
-                        To reset your password, follow instructions in it.
+                        <div th:text="#{change-email.message-sent.info1}">Password reset message was sent to your email.</div>
+                        <div th:text="#{change-email.message-sent.info2}">To reset your password, follow instructions in it.</div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

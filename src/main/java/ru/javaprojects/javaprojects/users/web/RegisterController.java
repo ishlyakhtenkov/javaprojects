@@ -59,7 +59,7 @@ public class RegisterController {
         log.info("confirm register by token={}", token);
         service.confirmRegister(token);
         redirectAttributes.addFlashAttribute("action",
-                messageSource.getMessage("register.email-confirmed", null, LocaleContextHolder.getLocale()));
+                messageSource.getMessage("register.confirmed", null, LocaleContextHolder.getLocale()));
         return "redirect:/login";
     }
 }

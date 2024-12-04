@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: default
 
   sql:
     init:
@@ -8,9 +8,9 @@ spring:
       platform: postgresql
 
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:postgresql://localhost:5432/javaprojects
+    username: ENC(nwq/5pkZWyETjOhE8qh2dTzMmQWsX+E8)
+    password: ENC(8qA0tC2gRuAaCeowLt0BNO+JzwWPIFJ9)
 
   jpa:
     open-in-view: false
@@ -20,8 +20,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ENC(BnbODaTnMFBqH3KLxBrjLZeHDrAAJpRmG4GtTNyIfouDVS1n8b55iw==)
-    password: ENC(K9sXXFTBZkJ3uui+7iR5PwQA38GE5yysZWzh4utJWkc=)
+    username: ENC(FupNfUyPCMacs0SoZxwsuAbXDrRk/yInYnu+ZTrixaJquUYXvEu5Iw==)
+    password: ENC(uIGFNShjldNUheHtZq7lxYAyA5I1fNCaajK/XXFhMhs=)
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -36,33 +36,33 @@ spring:
       client:
         registration:
           github:
-            client-id: Ov23limtCsXY6a5Mo2n5
-            client-secret: ENC(cbDoCZM/cAA4qHETljUUxpkNIK/Xr3SYx8nMvdGbUxDFkGvVWBrr4tdCV0HZJeZTZ5EmCTV4zFo=)
+            client-id: ENC(ntdKyrZ5OseCDnS9RY1Uc2p2Yq0XumqCaqR+vf1Yyzo=)
+            client-secret: ENC(R6+eqDq3dWATHwuIaLyXR12gHiE5yLbhudaDlhZutRnuJXQZ47uLpRJohzNmDN6+ML3tZFhfxJk=)
             scope:
               - email
           google:
-            client-id: 736298200785-b7v7fojvbcq9krp5dbggkp97005res6v.apps.googleusercontent.com
-            client-secret: ENC(JMjtjcKTQHgK2S9hJd44jYK+zs3xDWSG2Xa9wLXRumYOSmqiy0MtaJL0tKY/8ssW)
+            client-id: ENC(4uGiklD8FPMPtd2dkh/EufEHKF4QsqY+gvaLw22VsLuzET03A2S6b6GwOhf5RvOfA+qG2/MDRV/FXoWZzoFlHzj5wDPnbYWW2xfwj2J/RIAT2VKYdG+0EQ==)
+            client-secret: ENC(mtSv1DLeHTpA0j5f9/HqJQKcI7Cnf22vfhktwGWrHS2PPyLI81NHANh31DdRhVaJ)
             scope:
               - email
               - profile
           vk:
-            client-id: 51562377
-            client-secret: ENC(dB7o18XnZKlFNuVtwd6y4QpAVpc9U+0INPiClUAqJt0=)
+            client-id: ENC(lrQk6wgxUsKeo2JujsrSqt0JZVF+W5TO)
+            client-secret: ENC(jSQamdxRx11qJq4wqP2sYsKdZsJ21AUOc1cudnhtsiA=)
             client-name: Vkontakte
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             scope: email
           yandex:
-            client-id: 3984d5cf1fac440d8cd9ace098f0a81b
-            client-secret: ENC(P8WtPflxBYrBkSI6VHvdedYtdMaVXSD860OPtjWALiXwxHyGAyWCRTqLXHVoAUNn)
+            client-id: ENC(bTTYp13sMUL2AvBpyYmQthKiD1eyQJSQ007Kn8pbFvJYswoucxbB01giEGzmWmc3)
+            client-secret: ENC(jktn1BuGyIYNYhQYA/Uyl0imbZFj/UOs14ZbCTFLfsE3/vAd/f9mweqF7kbWkrF8)
             client-name: Yandex
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
           gitlab:
-            client-id: dd84fce3a150f603cbf8805c903a27335646b02267e72101d1a787c975c34a64
-            client-secret: ENC(YOWL/TbtfaIBTr9DigsYVTw0Y4CML9ceTCZujaaKm9GxcVqyB3ImPBxWOlSnSOSGpBUoE4Biqaf4pbClZhsyoTof9jG7bg0gl6JkJVJLzwY=)
+            client-id: ENC(BQMiAXbH4WmHdaOrrWVUGTA3MhMv53zxcJgrHQCJJJA+QW3iOt+2eY2NtzVF0/TnXNCzQDNNXaYp+9pdb29OU5J+8YEcTMvK4ktG5fQqGLg=)
+            client-secret: ENC(20xuiSnlIN6BlS+7lbqr4b0y2bQ8lbxmLrzH5l/gFy6AkpJUGWjE+3drXg1aal8hee+BKlIWj1+S1yIkKR6n0Angx/wr/kXMRnCvc8V356A=)
             client-name: GitLab
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
@@ -103,7 +103,7 @@ password-reset:
 
 change-email:
   token-expiration-time: 86400000
-  confirm-url: https://javaprojects.ru/profile/change-email
+  confirm-url: https://javaprojects.ru/profile/change-email/confirm
 
 content-path:
   technologies: ./content/technologies/
@@ -129,4 +129,4 @@ jasypt:
   encryptor:
     algorithm: PBEWithMD5AndDES
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
-    password: projector
+    password:

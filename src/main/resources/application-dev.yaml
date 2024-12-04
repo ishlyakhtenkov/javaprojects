@@ -16,14 +16,6 @@ spring:
       hibernate:
         format_sql: true
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: javaprojects.test@gmail.com
-    password: puqtlmwroiyfcwrv
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
   web:
     resources:
       static-locations: file:src/main/resources/static
@@ -37,7 +29,7 @@ password-reset:
   confirm-url: http://localhost:8080/profile/reset-password
 
 change-email:
-  confirm-url: http://localhost:8080/profile/change-email
+  confirm-url: http://localhost:8080/profile/change-email/confirm
 
 content-path:
   technologies: ./content/technologies/

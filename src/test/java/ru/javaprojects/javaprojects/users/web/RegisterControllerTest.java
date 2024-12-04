@@ -170,7 +170,7 @@ class RegisterControllerTest extends AbstractControllerTest {
                 .with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(LOGIN_URL))
-                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.email-confirmed", null,
+                .andExpect(flash().attribute(ACTION_ATTRIBUTE, messageSource.getMessage("register.confirmed", null,
                         getLocale())));
         assertTrue(tokenRepository.findByToken(registerToken.getToken()).isEmpty());
         User created = userService.getByEmail(registerToken.getEmail());

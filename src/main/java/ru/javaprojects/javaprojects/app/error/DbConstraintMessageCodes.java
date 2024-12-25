@@ -21,7 +21,7 @@ public class DbConstraintMessageCodes {
 
     public static Optional<String> getMessageCode(String exceptionMessage) {
         exceptionMessage = exceptionMessage.toLowerCase();
-        for (Map.Entry<String, String> entry : dbConstraintsMap.entrySet()) {
+        for (var entry : dbConstraintsMap.entrySet()) {
             if (exceptionMessage.contains(entry.getKey())) {
                 return Optional.of(entry.getValue());
             }

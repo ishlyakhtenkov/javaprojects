@@ -22,13 +22,13 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.client.RestTemplate;
-import ru.javaprojects.javaprojects.common.error.NotFoundException;
 import ru.javaprojects.javaprojects.app.AuthUser;
+import ru.javaprojects.javaprojects.app.sociallogin.AppOAuth2UserService;
+import ru.javaprojects.javaprojects.app.sociallogin.TokenResponseConverter;
+import ru.javaprojects.javaprojects.common.error.NotFoundException;
 import ru.javaprojects.javaprojects.users.model.Role;
 import ru.javaprojects.javaprojects.users.model.User;
 import ru.javaprojects.javaprojects.users.service.UserService;
-import ru.javaprojects.javaprojects.app.sociallogin.AppOAuth2UserService;
-import ru.javaprojects.javaprojects.app.sociallogin.TokenResponseConverter;
 
 import java.util.Arrays;
 
@@ -124,13 +124,11 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
-                new DefaultAuthorizationCodeTokenResponseClient();
-        OAuth2AccessTokenResponseHttpMessageConverter tokenResponseHttpMessageConverter =
-                new OAuth2AccessTokenResponseHttpMessageConverter();
+        var accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+        var tokenResponseHttpMessageConverter = new OAuth2AccessTokenResponseHttpMessageConverter();
         tokenResponseHttpMessageConverter.setAccessTokenResponseConverter(new TokenResponseConverter());
-        RestTemplate restTemplate = new RestTemplate(Arrays.asList(
-                new FormHttpMessageConverter(), tokenResponseHttpMessageConverter));
+        var restTemplate = new RestTemplate(Arrays.asList(new FormHttpMessageConverter(),
+                tokenResponseHttpMessageConverter));
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         accessTokenResponseClient.setRestOperations(restTemplate);
         return accessTokenResponseClient;

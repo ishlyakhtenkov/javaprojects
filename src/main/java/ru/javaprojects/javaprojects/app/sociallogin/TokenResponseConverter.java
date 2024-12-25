@@ -12,7 +12,7 @@ public class TokenResponseConverter implements Converter<Map<String, Object>, OA
     @Override
     public OAuth2AccessTokenResponse convert(Map<String, Object> tokenResponseParameters) {
         String accessToken = (String) tokenResponseParameters.get(OAuth2ParameterNames.ACCESS_TOKEN);
-        OAuth2AccessToken.TokenType accessTokenType = OAuth2AccessToken.TokenType.BEARER;
+        var accessTokenType = OAuth2AccessToken.TokenType.BEARER;
         Map<String, Object> additionalParameters = new HashMap<>(tokenResponseParameters);
         return OAuth2AccessTokenResponse.withToken(accessToken)
                 .tokenType(accessTokenType)

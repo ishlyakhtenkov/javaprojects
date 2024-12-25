@@ -52,7 +52,7 @@ public class RestExceptionHandler {
             invalidParams.put(error.getField(), error.getDefaultMessage());
         }
         log.warn("BindingException: {} at request {}", invalidParams, req.getRequestURI());
-        ProblemDetail problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
+        var problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
         problemDetail.setProperty("invalid_params", invalidParams);
         return problemDetail;
     }
@@ -63,7 +63,7 @@ public class RestExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .toList();
         log.warn("ConstraintViolationException: {} at request {}", invalidParams, req.getRequestURI());
-        ProblemDetail problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
+        var problemDetail = createProblemDetail(e, HttpStatus.UNPROCESSABLE_ENTITY, e.getLocalizedMessage());
         problemDetail.setProperty("invalid_params", invalidParams);
         return problemDetail;
     }
@@ -97,7 +97,6 @@ public class RestExceptionHandler {
     }
 
     private ProblemDetail createProblemDetail(Exception e, HttpStatusCode statusCode, String detail) {
-        ErrorResponse.Builder builder = ErrorResponse.builder(e, statusCode, detail);
-        return builder.build().getBody();
+        return ErrorResponse.builder(e, statusCode, detail).build().getBody();
     }
 }

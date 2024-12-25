@@ -26,8 +26,8 @@ public class AppMailSender implements MailSender {
     public void sendEmail(String to, String subject, String text) {
         log.info("send email to {}:({})", to, subject);
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
+            var message = mailSender.createMimeMessage();
+            var mimeMessageHelper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);

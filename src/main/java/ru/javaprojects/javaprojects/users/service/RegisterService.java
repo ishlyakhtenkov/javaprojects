@@ -33,7 +33,7 @@ public class RegisterService extends TokenService<RegisterToken> {
     public void register(RegisterTo registerTo) {
         Assert.notNull(registerTo, "registerTo must not be null");
         prepareToSave(registerTo);
-        RegisterToken registerToken = ((RegisterTokenRepository) tokenRepository)
+        var registerToken = ((RegisterTokenRepository) tokenRepository)
                 .findByEmailIgnoreCase(registerTo.getEmail()).orElseGet(RegisterToken::new);
         registerToken.setToken(UUID.randomUUID().toString());
         registerToken.setExpiryTimestamp(LocalDateTime.now().plus(tokenExpirationTime, MILLIS));
@@ -47,7 +47,7 @@ public class RegisterService extends TokenService<RegisterToken> {
     @Transactional
     public void confirmRegister(String token) {
         Assert.notNull(token, "token must not be null");
-        RegisterToken registerToken = getAndCheckToken(token);
+        var registerToken = getAndCheckToken(token);
         userRepository.save(new User(null, registerToken.getEmail(), registerToken.getName(), registerToken.getPassword(),
                 true, Set.of(Role.USER)));
         tokenRepository.delete(registerToken);

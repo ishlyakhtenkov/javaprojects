@@ -27,21 +27,21 @@ public class AppOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public org.springframework.security.oauth2.core.user.OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        org.springframework.security.oauth2.core.user.OAuth2User oAuth2User = super.loadUser(userRequest);
+        var oAuth2User = super.loadUser(userRequest);
         String clientRegistrationId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2UserDataExtractor oAuth2UserDataExtractor = oAuth2UserDataExtractors.computeIfAbsent(clientRegistrationId,
-                clientRegId -> {
+        var oAuth2UserDataExtractor = oAuth2UserDataExtractors.computeIfAbsent(clientRegistrationId,
+                _ -> {
                     throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_CLIENT),
                             "Unknown provider: " + clientRegistrationId);
                 });
-        OAuth2UserData oAuth2UserData = new OAuth2UserData(oAuth2User, userRequest);
+        var oAuth2UserData = new OAuth2UserData(oAuth2User, userRequest);
         String email = oAuth2UserDataExtractor.getEmail(oAuth2UserData);
         String name = oAuth2UserDataExtractor.getName(oAuth2UserData);
         if (email == null || name == null) {
             throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN),
                     clientRegistrationId + " account does not contain email or name");
         }
-        AppOAuth2User user = new AppOAuth2User(oAuth2User, repository.findByEmailIgnoreCase(email.toLowerCase())
+        var user = new AppOAuth2User(oAuth2User, repository.findByEmailIgnoreCase(email.toLowerCase())
                 .orElseGet(() -> {
                     String avatarUrl = oAuth2UserDataExtractor.getAvatarUrl(oAuth2UserData);
                     File avatar = null;

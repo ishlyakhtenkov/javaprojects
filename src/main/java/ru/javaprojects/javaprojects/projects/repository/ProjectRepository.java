@@ -35,8 +35,9 @@ public interface ProjectRepository extends NamedRepository<Project> {
     @Query("SELECT p.id FROM Project p WHERE p.visible = TRUE")
     Page<Long> findAllIdsByVisibleIsTrue(Pageable pageable);
 
-    @Query("SELECT p.id FROM Project p LEFT JOIN p.likes l LEFT JOIN p.comments c WHERE p.visible = TRUE GROUP BY p.id " +
-            "ORDER BY (COUNT(DISTINCT l.id) + COUNT(DISTINCT c.id)) DESC")
+    @Query("""
+            SELECT p.id FROM Project p LEFT JOIN p.likes l LEFT JOIN p.comments c WHERE p.visible = TRUE GROUP BY p.id
+            ORDER BY (COUNT(DISTINCT l.id) + COUNT(DISTINCT c.id)) DESC""")
     Page<Long> findAllIdsOrderByPopularity(Pageable pageable);
 
     @EntityGraph(attributePaths = {"architecture", "technologies", "likes", "author"})

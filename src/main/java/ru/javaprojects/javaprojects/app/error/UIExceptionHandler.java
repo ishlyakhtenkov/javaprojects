@@ -33,9 +33,8 @@ public class UIExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public @ResponseBody ProblemDetail maxUploadSizeException(HttpServletRequest req, MaxUploadSizeExceededException e) {
         log.warn("MaxUploadSizeExceededException at request {}: {}", req.getRequestURI(), e.toString());
-        ErrorResponse.Builder builder = ErrorResponse.builder(e, HttpStatus.UNPROCESSABLE_ENTITY,
-                AppUtil.getRootCause(e).getLocalizedMessage());
-        return builder.build().getBody();
+        return ErrorResponse.builder(e, HttpStatus.UNPROCESSABLE_ENTITY, AppUtil.getRootCause(e).getLocalizedMessage())
+                .build().getBody();
     }
 
     @ExceptionHandler(LocalizedException.class)

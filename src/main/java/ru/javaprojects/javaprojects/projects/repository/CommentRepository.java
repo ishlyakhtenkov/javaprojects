@@ -19,7 +19,8 @@ public interface CommentRepository extends BaseRepository<Comment> {
     @EntityGraph(attributePaths = {"author", "likes"})
     Optional<Comment> findById(long id);
 
-    @Query("SELECT c.projectId AS projectId, COUNT(c.projectId) AS commentsCount FROM Comment c " +
-            "WHERE c.projectId IN :projectsIds GROUP BY c.projectId")
+    @Query("""
+            SELECT c.projectId AS projectId, COUNT(c.projectId) AS commentsCount FROM Comment c
+            WHERE c.projectId IN :projectsIds GROUP BY c.projectId""")
     List<CommentCount> countCommentsByProjects(List<Long> projectsIds);
 }

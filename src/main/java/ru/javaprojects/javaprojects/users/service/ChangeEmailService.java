@@ -46,7 +46,7 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
             String exMessageCode = user.id() == userId ? "change-email.already-has-email" : "change-email.already-in-use";
             throw new IllegalRequestDataException(exMessage, exMessageCode, new Object[]{newEmail});
         });
-        ChangeEmailToken changeEmailToken = ((ChangeEmailTokenRepository) tokenRepository).findByUser_Id(userId)
+        var changeEmailToken = ((ChangeEmailTokenRepository) tokenRepository).findByUser_Id(userId)
                 .orElseGet(() -> new ChangeEmailToken(null, UUID.randomUUID().toString(),
                         LocalDateTime.now().plus(tokenExpirationTime, MILLIS), newEmail, userRepository.getExisted(userId)));
         if (!changeEmailToken.isNew()) {
@@ -61,7 +61,7 @@ public class ChangeEmailService extends TokenService<ChangeEmailToken> {
     @Transactional
     public void confirmChangeEmail(String token, long userId) {
         Assert.notNull(token, "token must not be null");
-        ChangeEmailToken changeEmailToken = getAndCheckToken(token);
+        var changeEmailToken = getAndCheckToken(token);
         User user = changeEmailToken.getUser();
         if (user.id() != userId) {
             throw new TokenException("token " + token + " not belongs to user with id=" + userId,

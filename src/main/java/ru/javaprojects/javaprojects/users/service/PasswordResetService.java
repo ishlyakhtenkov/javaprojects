@@ -33,7 +33,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
     @Transactional
     public void sendPasswordResetEmail(String email) {
         Assert.notNull(email, "email must not be null");
-        PasswordResetToken passwordResetToken = ((PasswordResetTokenRepository) tokenRepository)
+        var passwordResetToken = ((PasswordResetTokenRepository) tokenRepository)
                 .findByUserEmailIgnoreCase(email)
                 .orElseGet(() -> new PasswordResetToken(null, UUID.randomUUID().toString(),
                         LocalDateTime.now().plus(tokenExpirationTime, MILLIS),
@@ -58,7 +58,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
 
     public PasswordResetToken checkToken(String token) {
         Assert.notNull(token, "token must not be null");
-        PasswordResetToken passwordResetToken = getAndCheckToken(token);
+        var passwordResetToken = getAndCheckToken(token);
         checkUserDisabled(passwordResetToken);
         return passwordResetToken;
     }
@@ -66,7 +66,7 @@ public class PasswordResetService extends TokenService<PasswordResetToken> {
     @Transactional
     public void resetPassword(PasswordResetTo passwordResetTo) {
         Assert.notNull(passwordResetTo, "passwordResetTo must not be null");
-        PasswordResetToken passwordResetToken = checkToken(passwordResetTo.getToken());
+        var passwordResetToken = checkToken(passwordResetTo.getToken());
         passwordResetToken.getUser().setPassword(PASSWORD_ENCODER.encode(passwordResetTo.getPassword()));
         tokenRepository.delete(passwordResetToken);
     }

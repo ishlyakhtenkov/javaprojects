@@ -27,7 +27,7 @@ public abstract class UniqueNameValidator<E extends HasIdAndName, R extends Name
 
     @Override
     public void validate(@NonNull Object target, @NonNull Errors errors) {
-        HasIdAndName named = ((HasIdAndName) target);
+        var named = ((HasIdAndName) target);
         if (StringUtils.hasText(named.getName())) {
             repository.findByNameIgnoreCase(named.getName())
                     .ifPresent(dbNamed -> {

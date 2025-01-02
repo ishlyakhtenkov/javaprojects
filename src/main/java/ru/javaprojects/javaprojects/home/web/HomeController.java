@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.javaprojects.javaprojects.app.AuthUser;
 import ru.javaprojects.javaprojects.projects.ProjectService;
 import ru.javaprojects.javaprojects.projects.model.Tag;
 import ru.javaprojects.javaprojects.projects.repository.TagRepository;
@@ -43,7 +44,9 @@ public class HomeController {
             projects = projectService.getAllVisibleOrderByPopularity(getFirstPage(Sort.unsorted())).getContent();
         } else if (authorId != null) {
             log.info("Show home page with projects by author with id =" + authorId);
-            projects = projectService.getAllByAuthor(authorId, true);
+            AuthUser authUser = AuthUser.safeGet();
+            boolean visibleOnly = authUser == null || authUser.id() != authorId;
+            projects = projectService.getAllByAuthor(authorId, visibleOnly);
         } else {
             log.info("Show home page");
             projects = projectService.getAllVisible(getFirstPage(Sort.by(DESC, "created"))).getContent();

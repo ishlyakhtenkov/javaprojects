@@ -189,22 +189,22 @@ function generateProjectCard(project, cardClass, architectureImageZIndex, withMn
         editProjectItem.append(editProjectLink);
         dropdownMenu.append(editProjectItem);
         let hideProjectItem = $('<li></li>');
-        let hideProjectBtn = $('<button></button>').addClass('dropdown-item')
+        let hideProjectBtn = $('<button></button>').addClass('dropdown-item').data('id', project.id).data('name', project.name)
             .html(`<i class="fa-solid ${project.visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(project.visible ? 'project.hide' : 'project.reveal')}`)
-            .on('click', (event) => {
-                hideProject(project.id, project.name, $(event.target));
+            .on('click', function () {
+                hideProject(hideProjectBtn);
             });
         hideProjectItem.append(hideProjectBtn);
         dropdownMenu.append(hideProjectItem);
         let deleteProjectItem = $('<li></li>');
         let deleteProjectBtn = $('<button></button>').addClass('dropdown-item')
             .html(`<i class="fa-solid fa-trash-can fa-fw text-danger me-2"></i>${getMessage('delete')}`)
-            .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus ')
+            .attr('tabindex', '0').attr('data-bs-toggle', 'popover').attr('data-bs-trigger', 'focus')
             .attr('data-bs-title', `${getMessage('project.delete')}?`)
             .attr('data-bs-content', `"<div class='text-center'><a type='button' class='btn btn-sm btn-secondary me-2'>${getMessage('cancel')}</a><a type='button' id='delProject-${project.id}' class='btn btn-sm btn-danger'>${getMessage('delete')}</a></div>"`)
             .attr('data-bs-html', 'true');
         deleteProjectBtn.on('shown.bs.popover', () => {
-            $(`#delProject-${project.id}`).on('click', () => deleteProject(project.id, project.name));
+            $(`#delProject-${project.id}`).on('click', () => deleteProject(project.id, project.name, getProjectsAndFillTabs));
         });
         deleteProjectItem.append(deleteProjectBtn);
         dropdownMenu.append(deleteProjectItem);
@@ -321,4 +321,41 @@ function generateProjectCard(project, cardClass, architectureImageZIndex, withMn
 
     card.append(footer);
     return card;
+}
+
+function hideProject(hideBtn) {
+    let id = hideBtn.data('id');
+    let name = hideBtn.data('name');
+    $(`#manageBtn-${id}`).click();
+    let visible = !hideBtn.find('i').attr('class').includes('fa-eye-slash');
+    $.ajax({
+        url: `/projects/${id}`,
+        type: "PATCH",
+        data: "visible=" + visible
+    }).done(function () {
+        successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
+        if (!visible) {
+            let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
+                .attr('title', getMessage('project.hidden-from-users')).css('position', 'relative')
+                .css('z-index', '2');
+            $(`#${id}-name-elem`).append(invisibleSymbol);
+        } else {
+            $(`#${id}-name-elem`).find('i').remove();
+        }
+        hideBtn.html(`<i class="fa-solid ${visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(visible ? 'project.hide' : 'project.reveal')}`);
+    }).fail(function (data) {
+        handleError(data, getMessage(visible ? 'project.failed-to-reveal' : 'project.failed-to-hide', [name]));
+    });
+}
+
+function deleteProject(id, name, afterDeleteCallback) {
+    $.ajax({
+        url: `/projects/${id}`,
+        type: "DELETE"
+    }).done(function () {
+        successToast(getMessage('project.deleted', [name]));
+        afterDeleteCallback();
+    }).fail(function (data) {
+        handleError(data, getMessage('project.failed-to-delete', [name]));
+    });
 }

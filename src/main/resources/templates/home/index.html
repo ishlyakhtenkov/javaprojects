@@ -35,7 +35,7 @@
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mt-3" id="projectsArea">
             <div th:each="project : ${projects}" class="col mb-4">
-                <div class="card h-100 project-card rounded-3">
+                <div class="card h-100 project-card rounded-3" th:id="'project-card-' + ${project.id}">
                     <div class="ratio" style="--bs-aspect-ratio: 50%;">
                         <img th:src="@{${project.preview.getSrc()}}" class="card-img-top rounded-top-3"  style="object-fit: cover"/>
                     </div>
@@ -67,8 +67,50 @@
                                     <div class="tiny text-secondary-emphasis" style="margin-top: -3px;"
                                          th:text="${#temporals.format(project.created, 'dd.MM.yyyy HH:mm')}">Created</div>
                                 </div>
+                                <div th:if="${authUser != null && param.get('by-author') != null && ('' + authUser.id == '' + param.get('by-author'))}"
+                                     class="pt-4 ms-auto ps-3 pe-3" style="position: relative; z-index: 5; margin-right: -16px;">
+                                    <button type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                            th:id="'manageBtn-' + ${project.id}" th:title="#{project.manage}"
+                                            class="btn btn-link link-secondary link-underline-opacity-0 p-0 dropdown-toggle manage-dropdown">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a type="button" class="dropdown-item" th:href="@{'/projects/' + ${project.id} + '/data'}"
+                                               th:utext="${'<i class=''fa-solid fa-magnifying-glass fa-fw text-secondary me-2''></i>'} + #{show}">
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a type="button" class="dropdown-item" th:href="@{'/projects/edit/' + ${project.id}}"
+                                               th:utext="${'<i class=''fa-solid fa-pen-to-square fa-fw text-success me-2''></i>'} + #{edit}">
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a type="button" class="dropdown-item" th:data-id="${project.id}" th:data-name="${project.name}"
+                                               th:utext="${project.visible ? '<i class=''fa-solid fa-eye-slash fa-fw text-warning me-2''></i>' :
+                                               '<i class=''fa-solid fa-eye fa-fw text-warning me-2''></i>'} +
+                                               (${project.visible} ? #{project.hide} : #{project.reveal})" onclick="hideProject($(this))">
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button tabindex="0" type="button" class="dropdown-item delete-project-btn"
+                                               th:utext="${'<i class=''fa-solid fa-trash-can fa-fw text-danger me-2''></i>'} + #{delete}"
+                                               data-bs-toggle="popover" data-bs-trigger="focus" th:data-id="${project.id}" th:data-name="${project.name}"
+                                               th:data-bs-title="#{project.delete} + '?'"
+                                               th:data-bs-content="'<div class=&quot;text-center&quot;><button class=&quot;btn btn-sm btn-secondary me-2&quot;>' + #{cancel} + '</button>' +
+                                                 '<button class=&quot;btn btn-sm btn-danger&quot;' + 'id=&quot;delProject-' + ${project.id}  + '&quot;>' + #{delete} + '</button></div>'" th:data-bs-html="true">
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        <h5 class="card-title" th:text="${project.name}">Title</h5>
+                        <h5 class="card-title" th:id="${project.id} + '-name-elem'">
+                            <span th:text="${project.name}"></span>
+                            <span th:if="${!project.visible}">
+                                <i class="fa-solid fa-eye-slash text-warning tiny float-end"
+                                   th:title="#{project.hidden-from-users}" style="position: relative; z-index: 2;"></i>
+                            </span>
+                        </h5>
                         <span class="card-text" th:text="${project.annotation}">Annotation</span>
                         <div class="row mt-auto pt-3 pb-1" style="position: relative; z-index: 2;">
                             <div class="col-8">

@@ -87,7 +87,7 @@ class HomeControllerTest extends AbstractControllerTest {
                 .andExpect(view().name(HOME_VIEW))
                 .andExpect(result -> PROJECT_PREVIEW_TO_MATCHER
                         .assertMatchIgnoreFields((List<ProjectPreviewTo>) Objects.requireNonNull(result.getModelAndView())
-                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo),
+                                        .getModel().get(PROJECTS_ATTRIBUTE), List.of(project1PreviewTo, project3PreviewTo),
                                 "author.roles", "author.password", "author.registered"));
     }
 

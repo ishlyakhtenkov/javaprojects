@@ -92,41 +92,6 @@ function fillProjectsTab(projects) {
     setupToggles();
 }
 
-function deleteProject(id, name) {
-    $.ajax({
-        url: `/projects/${id}`,
-        type: "DELETE"
-    }).done(function () {
-        successToast(getMessage('project.deleted', [name]));
-        getProjectsAndFillTabs();
-    }).fail(function (data) {
-        handleError(data, getMessage('project.failed-to-delete', [name]));
-    });
-}
-
-function hideProject(id, name, hideBtn) {
-    $(`#manageBtn-${id}`).click();
-    let visible = !hideBtn.find('i').attr('class').includes('fa-eye-slash');
-    $.ajax({
-        url: `/projects/${id}`,
-        type: "PATCH",
-        data: "visible=" + visible
-    }).done(function () {
-        successToast(getMessage(visible ? 'project.has-been-revealed' : 'project.has-been-hided', [name]));
-        if (!visible) {
-            let invisibleSymbol = $('<i></i>').addClass('fa-solid fa-eye-slash text-warning tiny float-end')
-                .attr('title', getMessage('project.hidden-from-users')).css('position', 'relative')
-                .css('z-index', '2');
-            $(`#${id}-name-elem`).append(invisibleSymbol);
-        } else {
-            $(`#${id}-name-elem`).find('i').remove();
-        }
-        hideBtn.html(`<i class="fa-solid ${visible ? 'fa-eye-slash' : 'fa-eye'} fa-fw text-warning me-2"></i>${getMessage(visible ? 'project.hide' : 'project.reveal')}`);
-    }).fail(function (data) {
-        handleError(data, getMessage(visible ? 'project.failed-to-reveal' : 'project.failed-to-hide', [name]));
-    });
-}
-
 function fillQualificationTab(projects) {
     qualificationTab.empty();
     let technologies = [];

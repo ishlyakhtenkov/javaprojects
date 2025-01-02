@@ -1,3 +1,19 @@
+$(window).on('load', () => setupPopovers());
+
+function setupPopovers() {
+    let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    let popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
+        new bootstrap.Popover(popoverTriggerEl, {html : true, sanitize: false}));
+    document.querySelectorAll('[data-bs-toggle="popover"]')
+        .forEach(e => e.setAttribute('title', e.getAttribute('data-bs-original-title')));
+}
+
+$('.delete-project-btn').on('shown.bs.popover', (event) => {
+    let projectId = ($(event.target).data('id'));
+    let projectName = ($(event.target).data('name'));
+    $(`#delProject-${projectId}`).on('click', () => deleteProject(projectId, projectName, () => $(`#project-card-${projectId}`).remove()));
+});
+
 setupToggles();
 
 function showAddProjectPage(newBtn) {

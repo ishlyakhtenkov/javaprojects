@@ -1,6 +1,7 @@
 package ru.javaprojects.javaprojects.app.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.client.RestTemplate;
 import ru.javaprojects.javaprojects.app.AuthUser;
 import ru.javaprojects.javaprojects.app.sociallogin.AppOAuth2UserService;
+import ru.javaprojects.javaprojects.app.sociallogin.OAuth2AuthenticationSuccessHandler;
 import ru.javaprojects.javaprojects.app.sociallogin.TokenResponseConverter;
 import ru.javaprojects.javaprojects.common.error.NotFoundException;
 import ru.javaprojects.javaprojects.users.model.Role;
@@ -34,14 +36,21 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private static final String LOGIN_SUCCESS_URL = "/";
 
     private final UserService userService;
     private final SessionRegistry sessionRegistry;
     private final UserMdcLoggingFilter userMdcLoggingFilter;
     private final AppOAuth2UserService AppOAuth2UserService;
+
+    @Value("${remember-me.key}")
+    private String rememberMeKey;
+
+    @Value("${remember-me.cookie-name}")
+    private String rememberMeCookieName;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -71,6 +80,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public OAuth2AuthenticationSuccessHandler oAuth2AuthSuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler(LOGIN_SUCCESS_URL, rememberMeKey, rememberMeCookieName);
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .addFilterAfter(userMdcLoggingFilter, AuthorizationFilter.class)
@@ -90,13 +104,13 @@ public class SecurityConfig {
                         formLogin
                                 .permitAll()
                                 .loginPage("/login")
-                                .defaultSuccessUrl("/", true)
+                                .defaultSuccessUrl(LOGIN_SUCCESS_URL, true)
                                 .failureHandler(authenticationFailureHandler())
                 )
                 .oauth2Login((oauth2Login) ->
                         oauth2Login
                                 .loginPage("/login")
-                                .defaultSuccessUrl("/", true)
+                                .successHandler(oAuth2AuthSuccessHandler())
                                 .tokenEndpoint((tokenEndpoint) ->
                                         tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
                                 .userInfoEndpoint((userInfoEndpoint) ->
@@ -113,8 +127,8 @@ public class SecurityConfig {
                 )
                 .rememberMe((rememberMe) ->
                         rememberMe
-                                .key("remember-me-key")
-                                .rememberMeCookieName("javaprojects-remember-me"))
+                                .key(rememberMeKey)
+                                .rememberMeCookieName(rememberMeCookieName))
                 .sessionManagement((sessionManagement) ->
                         sessionManagement
                                 .maximumSessions(5)

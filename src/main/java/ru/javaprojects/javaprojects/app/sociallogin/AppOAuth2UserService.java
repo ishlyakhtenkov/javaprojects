@@ -8,16 +8,18 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.stereotype.Service;
+import ru.javaprojects.javaprojects.app.sociallogin.extractor.OAuth2UserData;
+import ru.javaprojects.javaprojects.app.sociallogin.extractor.OAuth2UserDataExtractor;
 import ru.javaprojects.javaprojects.common.model.File;
 import ru.javaprojects.javaprojects.users.model.Role;
 import ru.javaprojects.javaprojects.users.model.User;
 import ru.javaprojects.javaprojects.users.repository.UserRepository;
-import ru.javaprojects.javaprojects.app.sociallogin.extractor.OAuth2UserData;
-import ru.javaprojects.javaprojects.app.sociallogin.extractor.OAuth2UserDataExtractor;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static ru.javaprojects.javaprojects.app.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Service
 @AllArgsConstructor
@@ -48,8 +50,8 @@ public class AppOAuth2UserService extends DefaultOAuth2UserService {
                     if (avatarUrl != null) {
                         avatar = new File(clientRegistrationId + "_oAuth2_avatar", avatarUrl);
                     }
-                    return repository.save(new User(null, email, name, null, UUID.randomUUID().toString(), true,
-                            Set.of(Role.USER), avatar));
+                    return repository.save(new User(null, email, name, null,
+                            PASSWORD_ENCODER.encode(UUID.randomUUID().toString()), true, Set.of(Role.USER), avatar));
                 }));
         if (!user.isEnabled()) {
             throw new DisabledException("Account is disabled");

@@ -128,7 +128,7 @@ public class UserService {
         repository.delete(user);
         repository.flush();
         expireUserSessions(id);
-        if (user.getAvatar() != null) {
+        if (user.getAvatar() != null && !user.getAvatar().hasExternalLink()) {
             FileUtil.deleteFile(user.getAvatar().getFileLink());
         }
     }

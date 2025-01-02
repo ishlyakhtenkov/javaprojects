@@ -93,7 +93,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <button tabindex="0" type="button" class="dropdown-item delete-project-btn"
+                                            <button tabindex="0" type="button" class="dropdown-item delete-project-btn" th:title="' '"
                                                th:utext="${'<i class=''fa-solid fa-trash-can fa-fw text-danger me-2''></i>'} + #{delete}"
                                                data-bs-toggle="popover" data-bs-trigger="focus" th:data-id="${project.id}" th:data-name="${project.name}"
                                                th:data-bs-title="#{project.delete} + '?'"
